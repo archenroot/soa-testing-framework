@@ -5,14 +5,19 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 
 public class GenerateSQLStatement {
-    private static final String JDBC_DRIVER = "oracle.jdbc.driver.OracleDriver";
-    private static final String JDBC_URL = "jdbc:oracle:thin:@10.200.100.80:1521:MY_SID";
-    private static String JDBC_USER = "MY_SCHEMA";
-    private static String JDBC_PASSWD = "THE_PASSWORD";
+    private String JDBC_DRIVER = "oracle.jdbc.driver.OracleDriver";
+    private String JDBC_URL = "jdbc:oracle:thin:@10.200.100.80:1521:MY_SID";
+    private String JDBC_USER = "MY_SCHEMA";
+    private String JDBC_PASSWD = "THE_PASSWORD";
 
     private static final SimpleDateFormat dateFormat = 
                          new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
+    GenerateSQLStatement(){}
+    
+    GenerateSQLStatement(){
+        
+    }
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
             usage();

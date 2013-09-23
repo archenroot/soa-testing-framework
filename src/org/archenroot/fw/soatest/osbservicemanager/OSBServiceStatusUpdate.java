@@ -7,24 +7,28 @@ package org.archenroot.fw.soatest.osbservicemanager;
 
 
 import com.bea.wli.config.Ref;
-import com.bea.wli.sb.management.configuration.*;
-import static org.archenroot.fw.soatest.osbservicemanager.OSBServiceStatusUpdate.changeProxyServiceStatus;
+import com.bea.wli.sb.management.configuration.ALSBConfigurationMBean;
+import com.bea.wli.sb.management.configuration.BusinessServiceConfigurationMBean;
+import com.bea.wli.sb.management.configuration.ProxyServiceConfigurationMBean;
+import com.bea.wli.sb.management.configuration.SessionManagementMBean;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Hashtable;
-import javax.management.*;
-import javax.management.remote.*;
-
+import java.util.HashMap;
+import javax.management.MBeanServerConnection;
+import javax.management.ObjectName;
+import javax.management.remote.JMXConnector;
+import javax.management.remote.JMXConnectorFactory;
+import javax.management.remote.JMXServiceURL;
 import javax.naming.Context;
 import weblogic.management.jmx.MBeanServerInvocationHandler;
 import weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean;
-import weblogic.management.mbeanservers.runtime.RuntimeServiceMBean;
 
 public class OSBServiceStatusUpdate {
+    /*
     private static JMXConnector initConnection(String hostname, int port,String username, String password) throws IOException,MalformedURLException
     {
         JMXServiceURL serviceURL = new JMXServiceURL("t3", hostname, port,"/jndi/" + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME);
-        Hashtable<String, String> h = new Hashtable<String, String>();
+        HashMap<String, String> h = new HashMap<String, String>();
         h.put(Context.SECURITY_PRINCIPAL, username);
         h.put(Context.SECURITY_CREDENTIALS, password);
         h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "weblogic.management.remote");
@@ -109,7 +113,7 @@ public class OSBServiceStatusUpdate {
         
        
     //}
-    
+    */
 }
 
 class MyWLBeanBrowser{
