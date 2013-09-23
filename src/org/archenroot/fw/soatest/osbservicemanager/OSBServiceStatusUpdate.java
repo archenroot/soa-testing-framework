@@ -103,12 +103,12 @@ public class OSBServiceStatusUpdate {
         return statusmsg;
     }
       
-    public static void main(String[] args) {       
+   // public static void main(String[] args) {       
         //changeProxyServiceStatus(servicetype, status, serviceURI, host, port, username, password)       
-        System.out.println(changeProxyServiceStatus("ProxyService", false, "HudsonDemo/proxy/JMSListener", "prometheus", 7001, "weblogic", "Weblogic123"));
+       // System.out.println(changeProxyServiceStatus("ProxyService", false, "HudsonDemo/proxy/JMSListener", "prometheus", 7001, "weblogic", "Weblogic123"));
         
        
-    }
+    //}
     
 }
 

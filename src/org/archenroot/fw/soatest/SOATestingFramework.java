@@ -12,6 +12,7 @@ import org.archenroot.fw.soatest.jms.JMSTestComponent;
 import org.archenroot.fw.soatest.ftp.FTPTestComponent;
 import org.archenroot.fw.soatest.osbservicemanager.OSBServiceManagerTestComponent;
 import org.archenroot.fw.soatest.soap.SOAPTestComponent;
+import org.archenroot.fw.soatest.xml.SOATestingFrameworkConfiguration;
 import org.archenroot.fw.soatest.xml.XMLTestComponent;
 
 
@@ -22,6 +23,7 @@ import org.archenroot.fw.soatest.xml.XMLTestComponent;
 public class SOATestingFramework {
     
     File soaTFConfigFile;
+    SOATestingFrameworkConfiguration soaTFConfig;
     
     
     SOATestingFramework(){
@@ -32,6 +34,9 @@ public class SOATestingFramework {
         this.soaTFConfigFile = new File(soaTFConfigFilePath);
     }
     
+    public void readConfiguration(){
+        this.soaTFConfig = new SOATestingFrameworkConfiguration(this.soaTFConfigFile);
+    }
     public void setSOATFConfigFile(String soaTFConfigFilePath){
         this.soaTFConfigFile = new File(soaTFConfigFilePath);
     }
@@ -65,4 +70,24 @@ public class SOATestingFramework {
     public XMLTestComponent getXMLTestComponent(){
         return null;
     }  
+
+    public File getSoaTFConfigFile() {
+        return soaTFConfigFile;
+    }
+
+    public SOATestingFrameworkConfiguration getSoaTFConfig() {
+        return soaTFConfig;
+    }
+    
+    public void setSoaTFConfigFile(File soaTFConfigFile) {
+        this.soaTFConfigFile = soaTFConfigFile;
+    }
+
+    public void setSoaTFConfig(SOATestingFrameworkConfiguration soaTFConfig) {
+        this.soaTFConfig = soaTFConfig;
+    }
+
+    
+    
+    
 }

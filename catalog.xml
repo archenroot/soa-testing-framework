@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="system">
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/EndPointType.xsd" uri="xml-resources/jaxb/SOATFConfiguration/EndPointType.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/DatabaseType.xsd" uri="xml-resources/jaxb/SOATFConfiguration/DatabaseType.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/JMSType.xsd" uri="xml-resources/jaxb/SOATFConfiguration/JMSType.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SOAPType.xsd" uri="xml-resources/jaxb/SOATFConfiguration/SOAPType.xsd"/>
+</catalog>
