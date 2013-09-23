@@ -6,15 +6,14 @@
 package org.archenroot.fw.soatest;
 
 import java.io.File;
+import java.io.IOException;
 import org.archenroot.fw.soatest.database.DatabaseTestComponent;
 import org.archenroot.fw.soatest.file.FileTestComponent;
 import org.archenroot.fw.soatest.jms.JMSTestComponent;
 import org.archenroot.fw.soatest.ftp.FTPTestComponent;
 import org.archenroot.fw.soatest.osbservicemanager.OSBServiceManagerTestComponent;
 import org.archenroot.fw.soatest.soap.SOAPTestComponent;
-import org.archenroot.fw.soatest.xml.SOATestingFrameworkConfiguration;
 import org.archenroot.fw.soatest.xml.XMLTestComponent;
-
 
 /**
  *
@@ -22,20 +21,27 @@ import org.archenroot.fw.soatest.xml.XMLTestComponent;
  */
 public class SOATestingFramework {
     
-    File soaTFConfigFile;
-    SOATestingFrameworkConfiguration soaTFConfig;
+    private File soaTFConfigFile;
+    private SOATestingFrameworkConfiguration soaTFConfig;
+    private DatabaseTestComponent dbTC;
+    private FileTestComponent fileTC;
+    private FTPTestComponent ftpTC;
+    private JMSTestComponent jmsTC;
+    private SOAPTestComponent soapTC;
     
-    
-    SOATestingFramework(){
+    // Dummy constructor not for use
+    private SOATestingFramework(){
         
     }
     
-    SOATestingFramework(String soaTFConfigFilePath){
+    public SOATestingFramework(String soaTFConfigFilePath){
         this.soaTFConfigFile = new File(soaTFConfigFilePath);
+        readConfiguration();
     }
     
     public void readConfiguration(){
         this.soaTFConfig = new SOATestingFrameworkConfiguration(this.soaTFConfigFile);
+        
     }
     public void setSOATFConfigFile(String soaTFConfigFilePath){
         this.soaTFConfigFile = new File(soaTFConfigFilePath);
@@ -49,8 +55,9 @@ public class SOATestingFramework {
         
     }
     
-    public DatabaseTestComponent getDatabaseTestComponent(){
-        return null;
+    public DatabaseTestComponent getDatabaseTestComponent() throws IOException{
+        return new DatabaseTestComponent(
+                this.soaTFConfig.getDatabaseType());
     }
     public FileTestComponent getFileTestComponent(){
         return null;

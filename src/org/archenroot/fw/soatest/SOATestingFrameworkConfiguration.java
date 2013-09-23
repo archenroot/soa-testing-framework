@@ -15,9 +15,10 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.archenroot.fw.soatest.xml;
+package org.archenroot.fw.soatest;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -38,7 +39,7 @@ import org.archenroot.fw.soatest.configuration.SOAPType;
  *
  * @author zANGETSu
  */
-public class SOATestingFrameworkConfiguration {
+class SOATestingFrameworkConfiguration {
     private File SOATFXMLConfigFile;
     
     SOATestingFrameworkConfiguration(){
@@ -47,17 +48,19 @@ public class SOATestingFrameworkConfiguration {
     
     public SOATestingFrameworkConfiguration(String xmlConfigFile){
         this.SOATFXMLConfigFile = new File(xmlConfigFile);
-    }
+     }
     
     public SOATestingFrameworkConfiguration (File xmlConfigFile){
         this.SOATFXMLConfigFile = xmlConfigFile;
     }
     
-    public EndPointType getEndPointType(){
+    public EndPointType getEndPointType() throws IOException{
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(EndPointType.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             File xmlFile = this.SOATFXMLConfigFile;
+            System.out.println("Current dir: " + new File(".").getCanonicalPath());
+            boolean fileExists = xmlFile.exists();
             EndPointType endPointType = (EndPointType) jaxbUnmarshaller.unmarshal(xmlFile);
            
             return endPointType;
@@ -68,31 +71,31 @@ public class SOATestingFrameworkConfiguration {
         return null;
     }
     
-    public DatabaseType getDatabaseType(){
+    public DatabaseType getDatabaseType() throws IOException{
         return this.getEndPointType().getDatabase();   
     }
  
-    public AdminServerType getAdminServerType(){
+    public AdminServerType getAdminServerType() throws IOException{
         return this.getEndPointType().getJMS().getAdminServer();
     }
     
-    public DatabaseTypeEnumType getDatabaseTypeEnumType(){
+    public DatabaseTypeEnumType getDatabaseTypeEnumType() throws IOException{
         return this.getEndPointType().getDatabase().getDatabaseType();
     }
     
-    public JMSServerType getJMSServerType(){
+    public JMSServerType getJMSServerType() throws IOException{
         return this.getEndPointType().getJMS().getJmsServer();
     }
     
-    public JMSType getJMSType(){
+    public JMSType getJMSType() throws IOException{
         return this.getEndPointType().getJMS();
     }
     
-    public List<ManagedServerType> getManagedServerType(){
+    public List<ManagedServerType> getManagedServerType() throws IOException{
         return this.getEndPointType().getJMS().getManagedServer();
     }
     
-    public SOAPType getSOAPType(){
+    public SOAPType getSOAPType() throws IOException{
         return this.getEndPointType().getSOAP();
     }
 }

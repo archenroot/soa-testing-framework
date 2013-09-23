@@ -1,31 +1,53 @@
 package org.archenroot.fw.soatest.database;
 
 import java.io.*;
+import java.math.BigInteger;
 import java.sql.*;
 import java.text.SimpleDateFormat;
 
-public class GenerateSQLStatement {
-    private String JDBC_DRIVER = "oracle.jdbc.driver.OracleDriver";
-    private String JDBC_URL = "jdbc:oracle:thin:@10.200.100.80:1521:MY_SID";
-    private String JDBC_USER = "MY_SCHEMA";
-    private String JDBC_PASSWD = "THE_PASSWORD";
-
+public class SQLStatementGenerator {
+    
+    private String jdbcDriver;
+    private String jdbcUrl = "jdbc:oracle:thin:@10.200.100.80:1521:MY_SID";
+    private String jdbcUserName = "MY_SCHEMA";
+    private String jdbcPassword = "THE_PASSWORD";
+    private String tableName;
+    
     private static final SimpleDateFormat dateFormat = 
                          new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-    GenerateSQLStatement(){}
+    SQLStatementGenerator(){}
     
-    GenerateSQLStatement(){
-        
+    SQLStatementGenerator(String jdbcDriver
+            , String hostName
+            , BigInteger port
+            , String userName
+            , String password
+            , String serviceId
+            , String connectAs
+            , String tableName){
+        this.jdbcDriver = jdbcDriver;
+        this.jdbcUrl = constructJdbcUrl(hostName, port, serviceId);
+        this.jdbcUserName = userName;
+        this.jdbcPassword = password;
+        this.tableName = tableName;
     }
-    public static void main(String[] args) throws Exception {
+    
+    private String constructJdbcUrl(String hostName, BigInteger port, String serviceId){
+        return "jdbc:oracle:thin:@" 
+                + hostName + ":" 
+                + port.toString() + ":" 
+                + serviceId;
+    }
+    public void createInsertStatement() throws Exception {
+        /*
         if (args.length < 1) {
             usage();
             System.exit(1);
         }
 
         int i = 0;
-        String tableName = args[i];
+        String tableName = this.tableName;
         String fileName = null;
         if (tableName.contains("/")) { // username/password provided
             String[] uid_pass = args[0].split("/");
@@ -38,7 +60,8 @@ public class GenerateSQLStatement {
             i++;
             tableName = args[i];
         }
-
+        */
+        /*
         if ("-f".equals(tableName)) {
             tableName = null;
             if (args.length < (i + 2)) {
@@ -47,19 +70,21 @@ public class GenerateSQLStatement {
             }
             fileName = args[i + 1];
         }
-
-        Class.forName(JDBC_DRIVER);
+        */
+        
+        Class.forName(this.jdbcDriver);
         Connection conn = null;
         try {
-            conn = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWD);
+            conn = DriverManager.getConnection(this.jdbcUrl, this.jdbcUserName, this.jdbcPassword);
             if (tableName != null) {
                 generateInsertStatements(conn, tableName);
             }
             else {
+                /*
                 PrintWriter p = new PrintWriter(new FileWriter("insert_all.sql"));
                 p.println("spool insert_all.log");
 
-                BufferedReader r = new BufferedReader(new FileReader(fileName));
+                //BufferedReader r = new BufferedReader(new FileReader(fileName));
                 tableName = r.readLine();
                 while (tableName != null) {
                     p.println(String.format("@%s_insert.sql", tableName));
@@ -70,6 +95,7 @@ public class GenerateSQLStatement {
 
                 p.println("spool off");
                 p.close();
+                        */
             }
         }
         finally {

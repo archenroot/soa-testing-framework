@@ -20,10 +20,7 @@ package org.archenroot.fw.soatest.database;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.math.BigInteger;
-import java.nio.charset.Charset;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.archenroot.fw.soatest.configuration.DatabaseType;
@@ -35,13 +32,22 @@ import org.archenroot.fw.soatest.configuration.DatabaseType;
 public class DatabaseTestComponent {
     
     private String databaseType;
+    private String jdbcDriverClass;
     private String hostName;
     private BigInteger port;
     private String userName;
     private String password;
     private String serviceId;
     private String connectAs;
+    private String tableName ="MESSAGE_STORE";
 
+    protected enum CRUDType {INSERT, SELECT, UPDATE, DELETE}
+    
+    public final class JDBCDriverClass {
+        public static final String Oracle = "oracle.jdbc.driver.OracleDriver";
+        public static final String Microsoft = "NOT IMPLEMENTED YET";
+    }
+            
     private class UnknownCRUDTypeException extends Exception {
 
         public UnknownCRUDTypeException() {}
@@ -59,19 +65,18 @@ public class DatabaseTestComponent {
             super(message, cause);
         }
     }
-    
-    private enum CRUDType {INSERT, SELECT, UPDATE, DELETE}
-    private enum JDBCDriverClass ()
+  
     DatabaseTestComponent(){
-        
+        // DUMMY constructor not for usage
     }
     
-    DatabaseTestComponent(DatabaseType dt){
+    public DatabaseTestComponent(DatabaseType dt){
         init(dt);
     }
     
     private void init(DatabaseType dt){
         this.databaseType = dt.getDatabaseType().value();
+        this.jdbcDriverClass = JDBCDriverClass.Oracle;
         this.hostName = dt.getHostName();
         this.port = dt.getPort();
         this.userName = dt.getUserName();
@@ -80,9 +85,23 @@ public class DatabaseTestComponent {
         this.connectAs = dt.getConnectAs();
     }
     
-     private String generateInsertStatement(){
+     public String generateInsertStatement(){
+        try {
+            SQLStatementGenerator sqlStGen = new SQLStatementGenerator(
+                    this.jdbcDriverClass
+                    , this.hostName
+                    , this.port
+                    , this.userName
+                    , this.password
+                    , this.serviceId
+                    , this.connectAs
+                    , this.tableName);
+            sqlStGen.createInsertStatement();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseTestComponent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        //return null;
         return null;
-        
     }
     
     private String generateSelectStatement(){
