@@ -20,14 +20,16 @@ package org.archenroot.fw.soatest;
 import java.io.File;
 import java.io.IOException;
 import org.archenroot.fw.soatest.database.DatabaseTestComponent;
+import org.archenroot.fw.soatest.database.DatabaseTestComponent.CRUDType;
 import static org.archenroot.fw.soatest.database.DatabaseTestComponent.CRUDType.INSERT;
+import org.archenroot.fw.soatest.database.UnknownCRUDTypeException;
 
 /**
  *
  * @author zANGETSu
  */
 public class Main {
-    public static void main(String[] args) throws IOException, DatabaseTestComponent.UnknownCRUDTypeException {
+    public static void main(String[] args) throws IOException, UnknownCRUDTypeException{
         String path = new File(".").getCanonicalPath().toString() +
                 "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml";
         boolean fileExists = new File(path).exists();
@@ -40,6 +42,6 @@ public class Main {
                 "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
         //soaTFConfig.getDatabaseType();
     DatabaseTestComponent dtc = new DatabaseTestComponent(soaTFConfig.getDatabaseType());
-    dtc.generateSQLStatement(INSERT);
+    dtc.generateSQLStatement(CRUDType.INSERT);
     }
 }

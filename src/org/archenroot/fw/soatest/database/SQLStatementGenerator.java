@@ -4,6 +4,7 @@ import java.io.*;
 import java.math.BigInteger;
 import java.sql.*;
 import java.text.SimpleDateFormat;
+import org.archenroot.fw.soatest.helper.RandomGenerator;
 
 public class SQLStatementGenerator {
 
@@ -110,42 +111,33 @@ public class SQLStatementGenerator {
         ResultSet rs = stmt.executeQuery("SELECT * FROM " + objectName);
         ResultSetMetaData rsmd = rs.getMetaData();
         int numColumns = rsmd.getColumnCount();
+        
+        
         int[] columnTypes = new int[numColumns];
         String columnNames = "";
+        String columnValues = "";
         for (int i = 0; i < numColumns; i++) {
-            columnTypes[i] = rsmd.getColumnType(i + 1);
             if (i != 0) {
-                columnNames += ",";
+                columnNames += ", ";
+                columnValues += ", ";
             }
             columnNames += rsmd.getColumnName(i + 1);
-        }
-
-        java.util.Date d = null;
-        PrintWriter p = new PrintWriter(new FileWriter(objectName + "_insert.sql"));
-        p.println("set sqlt off");
-        p.println("set sqlblanklines on");
-        p.println("set define off");
-        while (rs.next()) {
-            String columnValues = "";
-            for (int i = 0; i < numColumns; i++) {
-                if (i != 0) {
-                    columnValues += ",";
-                }
-
-                switch (columnTypes[i]) {
+            
+            switch (rsmd.getColumnType(i + 1)) {
                     case Types.BIGINT:
                     case Types.BIT:
                     case Types.BOOLEAN:
                     case Types.DECIMAL:
                     case Types.DOUBLE:
                     case Types.FLOAT:
+                    case Types.NUMERIC:
                     case Types.INTEGER:
                     case Types.SMALLINT:
                     case Types.TINYINT:
-                        String v = rs.getString(i + 1);
+                        String v = RandomGenerator.getNumericString(rsmd.getPrecision(i + 1));
                         columnValues += v;
                         break;
-
+                    /*
                     case Types.DATE:
                         d = rs.getDate(i + 1);
                     case Types.TIME:
@@ -165,22 +157,31 @@ public class SQLStatementGenerator {
                                     + "', 'YYYY/MM/DD HH24:MI:SS')";
                         }
                         break;
-
+                    */
                     default:
-                        v = rs.getString(i + 1);
-                        if (v != null) {
-                            columnValues += "'" + v.replaceAll("'", "''") + "'";
-                        } else {
-                            columnValues += "null";
-                        }
+                        columnValues += "'" + RandomGenerator.getAlphabeticalString(rsmd.getPrecision(i + 1)) + "'";
                         break;
                 }
-            }
-            p.println(String.format("INSERT INTO %s (%s) values (%s)\n/",
+        }
+        
+        java.util.Date d = null;
+        String outFile;
+        if (outputSQLScriptFileName.isEmpty()){
+            outFile = objectName + "_insert.sql";
+        } else{
+            outFile = this.outputSQLScriptFileName;
+        }
+        PrintWriter p = new PrintWriter(new FileWriter(outFile));
+        p.println("set sqlt off");
+        p.println("set sqlblanklines on");
+        p.println("set define off");
+        
+        
+        p.println(String.format("INSERT INTO %s (%s) values (%s)\n/",
                     objectName,
                     columnNames,
                     columnValues));
-        }
+        
         p.close();
     }
 

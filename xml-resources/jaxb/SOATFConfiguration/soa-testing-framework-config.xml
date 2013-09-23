@@ -3,38 +3,32 @@
 <epc:EndPointType xsi:schemaLocation="http://www.archenroot.org/SOATestingFramework/EndPointType EndPointType.xsd" xmlns:epc="http://www.archenroot.org/SOATestingFramework/EndPointType" xmlns:db="http://www.archenroot.org/SOATestingFramework/EndPointType/Database" xmlns:jms="http://www.archenroot.org/SOATestingFramework/EndPointType/JMS" xmlns:soaps="http://www.archenroot.org/SOATestingFramework/EndPointType/SOAP" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<epc:Database>
 		<db:databaseType>Oracle</db:databaseType>
+                <db:databaseDriverClassName>oracle.jdbc.driver.OracleDriver</db:databaseDriverClassName>
 		<db:hostName>localhost</db:hostName>
 		<db:port>1521</db:port>
 		<db:userName>HUDSON_DEMO</db:userName>
 		<db:password>HUDSON_DEMO</db:password>
 		<db:serviceId>XE</db:serviceId>
 		<db:connectAs></db:connectAs>
+                <db:objectName>MESSAGE_STORE</db:objectName>
+                <db:outputSQLScriptFileName>insert_sql.sql</db:outputSQLScriptFileName>
 	</epc:Database>
 	<epc:JMS>
 		<jms:adminServer>
 			<jms:messageBeanServer>weblogic.management.mbeanservers.domainruntime</jms:messageBeanServer>
 			<jms:protocol>t3</jms:protocol>
-			<jms:hostName>String</jms:hostName>
-			<jms:userName>String</jms:userName>
-			<jms:password>String</jms:password>
+			<jms:hostName>prometheus</jms:hostName>
+			<jms:userName>weblogic</jms:userName>
+			<jms:password>Weblogic123</jms:password>
 			<jms:service>com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean</jms:service>
 		</jms:adminServer>
 		<jms:managedServer>
 			<jms:protocol>t3</jms:protocol>
-			<jms:userName>String</jms:userName>
-			<jms:password>String</jms:password>
+			<jms:userName>weblogic</jms:userName>
+			<jms:password>Weblogic123</jms:password>
 			<jms:hosts>
 				<jms:hostname>String</jms:hostname>
-				<jms:port>0</jms:port>
-			</jms:hosts>
-		</jms:managedServer>
-		<jms:managedServer>
-			<jms:protocol>t3</jms:protocol>
-			<jms:userName>String</jms:userName>
-			<jms:password>String</jms:password>
-			<jms:hosts>
-				<jms:hostname>String</jms:hostname>
-				<jms:port>0</jms:port>
+				<jms:port>11001</jms:port>
 			</jms:hosts>
 		</jms:managedServer>
 		<jms:jmsServer>
