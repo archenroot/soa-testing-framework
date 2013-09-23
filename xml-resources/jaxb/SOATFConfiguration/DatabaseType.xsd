@@ -13,12 +13,15 @@ elementFormDefault="qualified" attributeFormDefault="unqualified">
 	<xs:complexType name="DatabaseType">
 		<xs:sequence>
 			<xs:element name="databaseType" type="db:DatabaseTypeEnumType" minOccurs="1" maxOccurs="1"/>
+                        <xs:element name="databaseDriverClassName" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="port" type="xs:integer" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="serviceId" type="xs:string" minOccurs="1" maxOccurs="1"/>
 			<xs:element name="connectAs" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="objectName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+                        <xs:element name="outputSQLScriptFileName" type="xs:string" minOccurs="1" maxOccurs="1"/>
 		</xs:sequence>
 	</xs:complexType>
 </xs:schema>

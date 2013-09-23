@@ -21,6 +21,9 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.math.BigInteger;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.archenroot.fw.soatest.configuration.DatabaseType;
@@ -39,16 +42,18 @@ public class DatabaseTestComponent {
     private String password;
     private String serviceId;
     private String connectAs;
-    private String tableName ="MESSAGE_STORE";
-
-    protected enum CRUDType {INSERT, SELECT, UPDATE, DELETE}
+    private String objectName = "MESSAGE_STORE";
+    private String jdbcUrl;
+    private Connection conn;
+    private String outputSQLScriptFileName;
+    private DatabaseType dt;
     
-    public final class JDBCDriverClass {
-        public static final String Oracle = "oracle.jdbc.driver.OracleDriver";
-        public static final String Microsoft = "NOT IMPLEMENTED YET";
-    }
-            
-    private class UnknownCRUDTypeException extends Exception {
+    
+    
+    public enum CRUDType {INSERT, SELECT, UPDATE, DELETE}
+    
+               
+    public class UnknownCRUDTypeException extends Exception {
 
         public UnknownCRUDTypeException() {}
         
@@ -66,55 +71,81 @@ public class DatabaseTestComponent {
         }
     }
   
-    DatabaseTestComponent(){
+    private DatabaseTestComponent(){
         // DUMMY constructor not for usage
     }
     
     public DatabaseTestComponent(DatabaseType dt){
+        this.dt = dt;
         init(dt);
     }
     
     private void init(DatabaseType dt){
-        this.databaseType = dt.getDatabaseType().value();
-        this.jdbcDriverClass = JDBCDriverClass.Oracle;
-        this.hostName = dt.getHostName();
-        this.port = dt.getPort();
-        this.userName = dt.getUserName();
-        this.password = dt.getPassword();
-        this.serviceId = dt.getServiceId();
-        this.connectAs = dt.getConnectAs();
+        try {
+            this.databaseType = dt.getDatabaseType().value();
+            this.jdbcDriverClass = dt.getHostName();
+            this.hostName = dt.getHostName();
+            this.port = dt.getPort();
+            this.userName = dt.getUserName();
+            this.password = dt.getPassword();
+            this.serviceId = dt.getServiceId();
+            this.connectAs = dt.getConnectAs();
+            this.jdbcUrl = constructJdbcUrl(hostName, port, serviceId);
+            Class.forName(this.jdbcDriverClass);
+            this.conn = DriverManager.getConnection(
+                      this.jdbcUrl
+                    , this.userName
+                    , this.password);
+            
+        }   catch (ClassNotFoundException ex) {
+            Logger.getLogger(DatabaseTestComponent.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseTestComponent.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
-     public String generateInsertStatement(){
+    private String constructJdbcUrl(String hostName, BigInteger port, String serviceId){
+        return "jdbc:oracle:thin:@" 
+                + hostName + ":" 
+                + port.toString() + ":" 
+                + serviceId;
+    }
+     public void generateInsertStatementsFromObject(){
         try {
-            SQLStatementGenerator sqlStGen = new SQLStatementGenerator(
-                    this.jdbcDriverClass
-                    , this.hostName
-                    , this.port
-                    , this.userName
-                    , this.password
-                    , this.serviceId
-                    , this.connectAs
-                    , this.tableName);
-            sqlStGen.createInsertStatement();
+            SQLStatementGenerator sqlStGen = 
+                    new SQLStatementGenerator(
+                          this.conn
+                        , this.objectName
+                        , this.outputSQLScriptFileName);
+            sqlStGen.generateInsertStatementsFromObject();
         } catch (Exception ex) {
             Logger.getLogger(DatabaseTestComponent.class.getName()).log(Level.SEVERE, null, ex);
         }
-        //return null;
-        return null;
     }
-    
-    private String generateSelectStatement(){
+     
+     public void generateSingleRowInsertStatement(){
+         try {
+            SQLStatementGenerator sqlStGen = 
+                    new SQLStatementGenerator(
+                          this.conn
+                        , this.objectName
+                        , this.outputSQLScriptFileName);
+            sqlStGen.generateOneRowSampleInsertStatement();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseTestComponent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+     }
+    public String generateSelectStatement(){
         return null;
         
     }
     
-    private String generateUpdateStatement(){
+    public String generateUpdateStatement(){
         return null;
         
     }
     
-    private String generateDeleteStatement(){
+    public String generateDeleteStatement(){
         return null;
         
     }
@@ -147,16 +178,16 @@ public class DatabaseTestComponent {
         this.connectAs = connectAs;
     }
     
-    public String generateSQLStatement(CRUDType crudType ) throws UnknownCRUDTypeException{
+    public void generateSQLStatement(CRUDType crudType) throws UnknownCRUDTypeException{
         switch (crudType) {
             case INSERT:
-                return this.generateInsertStatement();
+                this.generateSingleRowInsertStatement();
             case SELECT:
-                return this.generateSelectStatement();
+                this.generateSelectStatement();
             case UPDATE:
-                return this.generateUpdateStatement();
+                this.generateUpdateStatement();
             case DELETE:
-                return this.generateDeleteStatement();
+                this.generateDeleteStatement();
             default:
                 throw new UnknownCRUDTypeException("Unknown CRUDType value: supported values are " 
                         + CRUDType.INSERT.toString() + ", "

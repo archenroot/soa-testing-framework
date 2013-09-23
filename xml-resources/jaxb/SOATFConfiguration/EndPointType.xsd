@@ -9,9 +9,9 @@ xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:epc="http://www.archenroot.org/SOATestingFramework/EndPointType" 
 xmlns:db="http://www.archenroot.org/SOATestingFramework/EndPointType/Database" 
 xmlns:jms="http://www.archenroot.org/SOATestingFramework/EndPointType/JMS" 
-xmlns:soaps="http://www.archenroot.org/SOATestingFramework/EndPointType/SOAP"
- targetNamespace="http://www.archenroot.org/SOATestingFramework/EndPointConnection" 
- elementFormDefault="qualified" version="1.0">
+xmlns:soaps="http://www.archenroot.org/SOATestingFramework/EndPointType/SOAP" 
+targetNamespace="http://www.archenroot.org/SOATestingFramework/EndPointType" 
+elementFormDefault="qualified" version="1.0">
 	<xs:import namespace="http://www.archenroot.org/SOATestingFramework/EndPointType/Database" schemaLocation="DatabaseType.xsd"/>
 	<xs:import namespace="http://www.archenroot.org/SOATestingFramework/EndPointType/JMS" schemaLocation="JMSType.xsd"/>
 	<xs:import namespace="http://www.archenroot.org/SOATestingFramework/EndPointType/SOAP" schemaLocation="SOAPType.xsd"/>
