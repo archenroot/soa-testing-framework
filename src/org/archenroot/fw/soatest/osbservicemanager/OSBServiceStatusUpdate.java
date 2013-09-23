@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.archenroot.fw.soatest.servicemanager;
+package org.archenroot.fw.soatest.osbservicemanager;
 
 
 import com.bea.wli.config.Ref;
 import com.bea.wli.sb.management.configuration.*;
-import static org.archenroot.fw.soatest.servicemanager.OSBServiceStatusUpdate.changeProxyServiceStatus;
+import static org.archenroot.fw.soatest.osbservicemanager.OSBServiceStatusUpdate.changeProxyServiceStatus;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Hashtable;

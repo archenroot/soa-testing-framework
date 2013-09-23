@@ -3,22 +3,20 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.archenroot.fw.soatest.soapservice;
+package org.archenroot.fw.soatest.ftp;
 
 /**
  *
  * @author zANGETSu
  */
-public class SOAPResponse {
+public class FTPTester {
+
+    /**
+     * @param args the command line arguments
+     */
+    public static void main(String[] args) {
+        // TODO code application logic here
+    }
     
     
-    public void getResponse(){
-        
-    }
-    public void validateResponse(){
-        
-    }
-    public void getElement(){
-        
-    }
 }

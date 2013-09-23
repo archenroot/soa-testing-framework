@@ -1,4 +1,4 @@
-package org.archenroot.fw.soatest.jmsserver;
+package org.archenroot.fw.soatest.jms;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -3,13 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.archenroot.fw.soatest.ftpserver;
+package org.archenroot.fw.soatest.file;
 
 /**
  *
  * @author zANGETSu
  */
-public class FTPTester {
+public class FileTester {
 
     /**
      * @param args the command line arguments
@@ -17,6 +17,5 @@ public class FTPTester {
     public static void main(String[] args) {
         // TODO code application logic here
     }
-    
     
 }

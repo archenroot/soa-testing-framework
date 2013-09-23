@@ -21,6 +21,7 @@ is divided into following sections:
         -->
 <project xmlns:j2seproject1="http://www.netbeans.org/ns/j2se-project/1" xmlns:j2seproject3="http://www.netbeans.org/ns/j2se-project/3" xmlns:jaxrpc="http://www.netbeans.org/ns/j2se-project/jax-rpc" basedir=".." default="default" name="SOATestingFramework-impl">
     <import file="groovy-build.xml"/>
+    <import file="xml_binding_build.xml"/>
     <fail message="Please build using Ant 1.8.0 or higher.">
         <condition>
             <not>
@@ -954,7 +955,7 @@ is divided into following sections:
     <target depends="init" if="netbeans.automatic.build" name="-clean-after-automatic-build">
         <antcall target="clean"/>
     </target>
-    <target depends="init,deps-jar,-groovy-init-macrodef-javac" name="-pre-pre-compile">
+    <target depends="init,deps-jar,jaxb-code-generation,-groovy-init-macrodef-javac" name="-pre-pre-compile">
         <mkdir dir="${build.classes.dir}"/>
     </target>
     <target name="-pre-compile">

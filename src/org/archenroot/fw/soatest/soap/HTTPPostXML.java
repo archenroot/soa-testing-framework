@@ -1,4 +1,4 @@
-package org.archenroot.fw.soatest.soapservice;
+package org.archenroot.fw.soatest.soap;
 
  /*
  * $Header: 
