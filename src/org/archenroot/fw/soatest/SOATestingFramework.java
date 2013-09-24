@@ -12,7 +12,7 @@ import org.archenroot.fw.soatest.file.FileTestComponent;
 import org.archenroot.fw.soatest.jms.JMSTestComponent;
 import org.archenroot.fw.soatest.ftp.FTPTestComponent;
 import org.archenroot.fw.soatest.osbservicemanager.OSBServiceManagerTestComponent;
-import org.archenroot.fw.soatest.soap.SOAPTestComponent;
+import org.archenroot.fw.soatest.soap.SoapTestComponent;
 import org.archenroot.fw.soatest.xml.XMLTestComponent;
 
 /**
@@ -27,7 +27,7 @@ public class SOATestingFramework {
     private FileTestComponent fileTC;
     private FTPTestComponent ftpTC;
     private JMSTestComponent jmsTC;
-    private SOAPTestComponent soapTC;
+    private SoapTestComponent soapTC;
     
     // Dummy constructor not for use
     private SOATestingFramework(){
@@ -71,7 +71,7 @@ public class SOATestingFramework {
     public OSBServiceManagerTestComponent getOSBServiceManagerTestComponent(){
         return null;
     }
-    public SOAPTestComponent getSOAPTestComponent(){
+    public SoapTestComponent getSOAPTestComponent(){
         return null;
     }
     public XMLTestComponent getXMLTestComponent(){

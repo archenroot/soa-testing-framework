@@ -1,0 +1,8 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:hud="http://archenroot.org/HudsonDemo/">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <hud:sendJMSMessage>
+         <messageContent>?</messageContent>
+      </hud:sendJMSMessage>
+   </soapenv:Body>
+</soapenv:Envelope>

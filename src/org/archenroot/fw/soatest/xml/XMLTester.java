@@ -34,7 +34,7 @@ public class XMLTester {
     public static void main(String[] args) {
         try {
             XMLValidator xmlVal = new XMLValidator();
-            xmlVal.validateXMLFile();
+            //xmlVal.validateXMLFile();
             SchemaFactory factory
                     = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
             Schema schema = factory.newSchema(new File("PremiseContact.xsd"));

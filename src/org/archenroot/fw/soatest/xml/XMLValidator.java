@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  */
 public class XMLValidator {
 
-    public static boolean validateXMLFile() {
+    public static boolean validateXMLFile(String xmlFileName, String xsdFileName) {
         try {
 
             // Parse an XML document into a DOM tree.
