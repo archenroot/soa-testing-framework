@@ -44,7 +44,7 @@ public class XMLValidator {
             Document document = parser.parse(new File("soa-testing-framework-config.xml"));
             System.out.println(new File(".").getCanonicalPath());
             System.out.println(new File("soa-testing-framework-config.xml").exists());
-            DOMSource source = new StreamSource(new File("soa-testing-framework-config.xml"));
+            StreamSource source = new StreamSource(new File("soa-testing-framework-config.xml"));
             
             // Create a SchemaFactory capable of understanding WXS schemas.
             SchemaFactory factory

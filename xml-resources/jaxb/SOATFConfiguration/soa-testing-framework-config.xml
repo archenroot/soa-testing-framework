@@ -43,8 +43,8 @@
 	</epc:JMS>
 	<epc:SOAP>
 		<soaps:serviceName>String</soaps:serviceName>
-		<soaps:endPointURI>String</soaps:endPointURI>
-		<soaps:operation>String</soaps:operation>
+		<soaps:endPointURI>http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue</soaps:endPointURI>
+		<soaps:operationName>String</soaps:operationName>
 		<soaps:requestName>String</soaps:requestName>
 		<soaps:requestMessageXMLFile>String</soaps:requestMessageXMLFile>
 		<soaps:responseMessageXMLFile>String</soaps:responseMessageXMLFile>
