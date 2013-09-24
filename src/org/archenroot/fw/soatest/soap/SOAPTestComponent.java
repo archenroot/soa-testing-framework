@@ -37,13 +37,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 import javax.swing.ImageIcon;
+import javax.wsdl.Definition;
+import javax.wsdl.WSDLException;
+import javax.xml.validation.Schema;
 import org.apache.xmlbeans.XmlException;
+import org.archenroot.fw.soatest.xml.XMLValidator;
 
 /**
  *
  * @author zANGETSu
  */
-
 public class SOAPTestComponent {
 
     // Variables coming from configuration xml file
@@ -63,16 +66,19 @@ public class SOAPTestComponent {
     private RequestXmlDocument soapRequestXmlDocument = null;
     private ModelItem modelItem = null;
     private static String wsdlUriSuffix = "?wsdl";
-        
+
     // Other minor variables
     private static String newRequestDefaultName = "New SOAP Request";
     private String responseMessageContent = "";
 
-    private enum FlowDirectionType{INBOUND, OUTBOUND};
-    
+    private enum FlowDirectionType {
+
+        INBOUND, OUTBOUND
+    };
+
     private SOAPTestComponent() {
     }
-    
+
     public SOAPTestComponent(
             String serviceName,
             String endPointUri,
@@ -87,7 +93,7 @@ public class SOAPTestComponent {
     }
 
     public void generateSoapEnvelopeRequest() throws Request.SubmitException, XmlException, IOException, SoapUIException {
-        
+
         this.modelItem = this.getDefaultModelItem();
         this.project = new WsdlProject();
         this.project.setName(this.serviceName);
@@ -104,13 +110,12 @@ public class SOAPTestComponent {
         this.soapRequest.setRequestContent(wsdlOperation.createRequest(true));
         //request.setRequestContent("AA");
         this.soapRequestXmlDocument = new RequestXmlDocument(this.soapRequest);
-        saveContentToFile(this.soapRequestXmlDocument.getXml(),this.requestMessageXmlFile);
-     
+        saveContentToFile(this.soapRequestXmlDocument.getXml(), this.requestMessageXmlFile);
+
     }
 
-    
     public void invokeService() throws Request.SubmitException, IOException {
-           // submit the request
+        // submit the request
         wsdlSubmit = (WsdlSubmit) this.soapRequest.submit(new WsdlSubmitContext(this.modelItem), false);
 
         // wait for the response
@@ -118,7 +123,7 @@ public class SOAPTestComponent {
 
         // print the response
         responseMessageContent = soapResponse.getContentAsXml();
-        
+
         saveContentToFile(responseMessageContent, this.responseMessageXmlFile);
 
         //assertNotNull(content);
@@ -192,10 +197,26 @@ public class SOAPTestComponent {
         return mi;
 
     }
-    
-    public boolean validateMessage(FlowDirectionType fdt) throws UnknownFlowDirectionTypeException{
-        switch(fdt){
+
+    public org.w3c.dom.Element getSchemaFromWsdl() throws WSDLException {
+        javax.wsdl.xml.WSDLReader wsdlReader11 = javax.wsdl.factory.WSDLFactory.newInstance().newWSDLReader();
+        Definition def = wsdlReader11.readWSDL(this.endPointUri + this.wsdlUriSuffix);
+        org.w3c.dom.Element elt = null;
+        for (Object o : def.getTypes().getExtensibilityElements()) {
+            if (o instanceof javax.wsdl.extensions.schema.Schema) {
+                 elt = ((javax.wsdl.extensions.schema.Schema) o).getElement();
+                // Navigate in the DOM model of the schema
+                // You can use Schema#getImport() to work with imports
+            }
+        }
+        return elt;
+
+    }
+
+    public boolean validateMessage(FlowDirectionType fdt) throws UnknownFlowDirectionTypeException {
+        switch (fdt) {
             case INBOUND:
+                XMLValidator.validateXMLFile();
                 break;
             case OUTBOUND:
                 break;
@@ -204,12 +225,12 @@ public class SOAPTestComponent {
                         + FlowDirectionType.INBOUND.toString() + ", "
                         + FlowDirectionType.OUTBOUND.toString() + ", "
                         );
-        } 
-        
+        }
+
         return true;
     }
-    
-    private void saveContentToFile(String content, String fileName) throws IOException{
+
+    private void saveContentToFile(String content, String fileName) throws IOException {
         FileWriter fw = new FileWriter(new File(fileName));
         fw.write(content);
         fw.flush();

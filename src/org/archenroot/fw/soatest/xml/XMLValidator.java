@@ -35,7 +35,7 @@ import org.xml.sax.SAXException;
  */
 public class XMLValidator {
 
-    public void validateXMLFile() {
+    public static boolean validateXMLFile() {
         try {
 
             // Parse an XML document into a DOM tree.
@@ -76,6 +76,7 @@ public class XMLValidator {
         } catch (IOException e) {
             // exception handling
         }
+        return false;
     }
     public void validateXMLMessage(){
         
