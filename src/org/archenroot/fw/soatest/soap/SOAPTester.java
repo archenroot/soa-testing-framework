@@ -6,6 +6,7 @@
 package org.archenroot.fw.soatest.soap;
 
 import com.eviware.soapui.impl.WsdlInterfaceFactory;
+import com.eviware.soapui.impl.support.components.RequestXmlDocument;
 import com.eviware.soapui.impl.wsdl.WsdlInterface;
 import com.eviware.soapui.impl.wsdl.WsdlOperation;
 import com.eviware.soapui.impl.wsdl.WsdlProject;
@@ -130,10 +131,12 @@ public class SOAPTester {
             
             
             // generate the request content from the schema
-            //request.setRequestContent(operation.createRequest(true));
-            request.setRequestContent("AA");
+            request.setRequestContent(operation.createRequest(true));
+            //request.setRequestContent("AA");
             
             System.out.println("SOAP Request: " + request.toString());
+            RequestXmlDocument rXmlDocument = new RequestXmlDocument(request);
+            System.out.println("Request content: " + rXmlDocument.getXml());
             // submit the request
             submit = (WsdlSubmit) request.submit(new WsdlSubmitContext(mi), false);
 

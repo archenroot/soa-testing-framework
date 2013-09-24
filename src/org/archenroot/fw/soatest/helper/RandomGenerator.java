@@ -58,4 +58,15 @@ public class RandomGenerator {
         return sb.toString();
     }
     
+    public static String getAlphaNumericString(int length){
+        char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01232456789".toCharArray();
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            char c = chars[random.nextInt(chars.length)];
+            sb.append(c);
+        }
+        return sb.toString();
+    }
+    
 }
