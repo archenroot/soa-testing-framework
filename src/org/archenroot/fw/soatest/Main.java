@@ -38,6 +38,7 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.archenroot.fw.soatest.database.UnknownCRUDTypeException;
+import org.archenroot.fw.soatest.soap.JAXPProcessor;
 import org.archenroot.fw.soatest.soap.SoapTestComponent;
 import org.archenroot.fw.soatest.soap.UnknownFlowDirectionTypeException;
 import org.ow2.easywsdl.schema.api.SchemaException;
@@ -104,6 +105,9 @@ public class Main {
         //stc.getAndSaveXmlSchemaFromWsdl();
         //stc.getAndSaveSoapEnvelopeRequest();
         //stc.invokeService();
+        JAXPProcessor.getSoapBodyContent("soapRequest.xml");
+        
+        
         stc.isSoapRequestEnvelopeValid();
         stc.validateMessage(SoapTestComponent.FlowDirectionType.INBOUND);
         stc.validateMessage(SoapTestComponent.FlowDirectionType.OUTBOUND);
