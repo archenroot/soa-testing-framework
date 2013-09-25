@@ -1,19 +1,22 @@
-2013-09-25 15:48:49,715 WARN  [SoapUI] Missing folder [C:\Dev\proj\SOATestingFramework\soa-testing-framework\.\ext] for external libraries
-2013-09-25 15:48:50,128 INFO  [DefaultSoapUICore] initialized soapui-settings from [C:\Users\IBM_ADMIN\soapui-settings.xml]
-2013-09-25 15:48:51,174 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/xop.xsd with targetNamespace http://www.w3.org/2004/08/xop/include
-2013-09-25 15:48:51,226 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/XMLSchema.xsd with targetNamespace http://www.w3.org/2001/XMLSchema
-2013-09-25 15:48:51,229 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/xml.xsd with targetNamespace http://www.w3.org/XML/1998/namespace
-2013-09-25 15:48:51,231 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/swaref.xsd with targetNamespace http://ws-i.org/profiles/basic/1.1/xsd
-2013-09-25 15:48:51,232 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/xmime200505.xsd with targetNamespace http://www.w3.org/2005/05/xmlmime
-2013-09-25 15:48:51,234 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/xmime200411.xsd with targetNamespace http://www.w3.org/2004/11/xmlmime
-2013-09-25 15:48:51,237 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/soapEnvelope.xsd with targetNamespace http://schemas.xmlsoap.org/soap/envelope/
-2013-09-25 15:48:51,247 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/soapEncoding.xsd with targetNamespace http://schemas.xmlsoap.org/soap/encoding/
-2013-09-25 15:48:51,251 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/soapEnvelope12.xsd with targetNamespace http://www.w3.org/2003/05/soap-envelope
-2013-09-25 15:48:51,260 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/soapEncoding12.xsd with targetNamespace http://www.w3.org/2003/05/soap-encoding
-2013-09-25 15:48:51,630 INFO  [SchemaUtils] Loading schema types from [http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?wsdl]
-2013-09-25 15:48:51,630 INFO  [SchemaUtils] Getting schema http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?wsdl
-2013-09-25 15:48:51,635 INFO  [SchemaUtils] Getting schema http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?SCHEMA%2FHudsonDemo%2Fschema%2FSendJMS
-2013-09-25 15:48:51,921 INFO  [WsdlImporter] Finding importer for {http://archenroot.org/HudsonDemo/}HudsonDemoSOAP
-2013-09-25 15:48:51,925 INFO  [WsdlImporter] Importing binding {http://archenroot.org/HudsonDemo/}HudsonDemoSOAP
-2013-09-25 15:48:51,974 INFO  [Soap11HttpBindingImporter] importing endpoint http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue
-2013-09-25 15:48:51,985 INFO  [Soap11HttpBindingImporter] importing operation sendJMSMessage
+2013-09-25 16:03:29,278 WARN  [SoapUI] Missing folder [C:\Dev\proj\SOATestingFramework\soa-testing-framework\.\ext] for external libraries
+2013-09-25 16:03:29,626 INFO  [DefaultSoapUICore] initialized soapui-settings from [C:\Users\IBM_ADMIN\soapui-settings.xml]
+2013-09-25 16:03:30,641 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/xop.xsd with targetNamespace http://www.w3.org/2004/08/xop/include
+2013-09-25 16:03:30,694 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/XMLSchema.xsd with targetNamespace http://www.w3.org/2001/XMLSchema
+2013-09-25 16:03:30,696 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/xml.xsd with targetNamespace http://www.w3.org/XML/1998/namespace
+2013-09-25 16:03:30,699 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/swaref.xsd with targetNamespace http://ws-i.org/profiles/basic/1.1/xsd
+2013-09-25 16:03:30,701 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/xmime200505.xsd with targetNamespace http://www.w3.org/2005/05/xmlmime
+2013-09-25 16:03:30,703 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/xmime200411.xsd with targetNamespace http://www.w3.org/2004/11/xmlmime
+2013-09-25 16:03:30,706 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/soapEnvelope.xsd with targetNamespace http://schemas.xmlsoap.org/soap/envelope/
+2013-09-25 16:03:30,717 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/soapEncoding.xsd with targetNamespace http://schemas.xmlsoap.org/soap/encoding/
+2013-09-25 16:03:30,723 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/soapEnvelope12.xsd with targetNamespace http://www.w3.org/2003/05/soap-envelope
+2013-09-25 16:03:30,733 INFO  [SchemaUtils] Added default schema from file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/lib/soapui-4.5.2.jar!/com/eviware/soapui/resources/xsds/soapEncoding12.xsd with targetNamespace http://www.w3.org/2003/05/soap-encoding
+2013-09-25 16:03:31,125 INFO  [SchemaUtils] Loading schema types from [http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?wsdl]
+2013-09-25 16:03:31,125 INFO  [SchemaUtils] Getting schema http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?wsdl
+2013-09-25 16:03:31,131 INFO  [SchemaUtils] Getting schema http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?SCHEMA%2FHudsonDemo%2Fschema%2FSendJMS
+2013-09-25 16:03:31,415 INFO  [WsdlImporter] Finding importer for {http://archenroot.org/HudsonDemo/}HudsonDemoSOAP
+2013-09-25 16:03:31,420 INFO  [WsdlImporter] Importing binding {http://archenroot.org/HudsonDemo/}HudsonDemoSOAP
+2013-09-25 16:03:31,464 INFO  [Soap11HttpBindingImporter] importing endpoint http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue
+2013-09-25 16:03:31,478 INFO  [Soap11HttpBindingImporter] importing operation sendJMSMessage
+2013-09-25 16:03:49,762 INFO  [SchemaUtils] Loading schema types from [http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?wsdl]
+2013-09-25 16:03:49,762 INFO  [SchemaUtils] Getting schema http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?wsdl
+2013-09-25 16:03:49,768 INFO  [SchemaUtils] Getting schema http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue?SCHEMA%2FHudsonDemo%2Fschema%2FSendJMS

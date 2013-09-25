@@ -17,6 +17,7 @@
  */
 package org.archenroot.fw.soatest.soap;
 
+import org.archenroot.fw.soatest.xml.XPathNamespaceContext;
 import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
@@ -31,6 +32,8 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument.Schema;
+import org.jdom.Element;
+import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -65,14 +68,17 @@ public class JAXPProcessor {
         nsContext.addNamespace("soapenv", "http://schemas.xmlsoap.org/soap/envelope/");
         nsContext.addNamespace("sen", "http://www.example.org/SendJMS");
         xpath.setNamespaceContext(nsContext);
-        XPathExpression expr = xpath.compile("/soapenv:Envelope/soapenv:Body/sen:sendJMSMessage");
+        XPathExpression expr = xpath.compile("/soapenv:Envelope/soapenv:Body/sen:sendJMSMessage/sen:messageContent");
         
         Object result = expr.evaluate(doc, XPathConstants.NODE);
         System.out.println("Namespace URI: " + ((Node) result).getNamespaceURI());
         System.out.println("Prefix: " + ((Node) result).getPrefix());
         System.out.println(((Node) result).getLocalName());
-        
-        System.out.println(result.toString());
+        XMLOutputter xmlOutputter = new XMLOutputter();
+        //xmlOutputter.outputString((Element) result);
+        System.out.println(expr.evaluate(doc));
         return result;
     }
+    
+    
 }

@@ -19,9 +19,22 @@ import javax.xml.ws.Service;
 import javax.xml.ws.soap.SOAPBinding;
 import org.w3c.dom.Document;
 
+/**
+ *
+ * @author zANGETSu
+ */
 public class JAXWSDispatch{
 
-public SOAPMessage invoke(QName serviceName, QName portName, String endpointUrl, String soapActionUri) throws Exception {
+    /**
+//     *
+     * @param serviceName
+     * @param portName
+     * @param endpointUrl
+     * @param soapActionUri
+     * @return
+     * @throws Exception
+     */
+    public SOAPMessage invoke(QName serviceName, QName portName, String endpointUrl, String soapActionUri) throws Exception {
         /** Create a service and add at least one port to it. **/
         Service service = Service.create(serviceName);
         service.addPort(portName, SOAPBinding.SOAP11HTTP_BINDING, endpointUrl);

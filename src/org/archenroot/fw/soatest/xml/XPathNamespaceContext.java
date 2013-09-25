@@ -1,4 +1,4 @@
-package org.archenroot.fw.soatest.soap;
+package org.archenroot.fw.soatest.xml;
 
 import java.util.Collections;
 import java.util.HashMap;
