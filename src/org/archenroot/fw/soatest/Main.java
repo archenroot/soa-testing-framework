@@ -17,34 +17,31 @@
  */
 package org.archenroot.fw.soatest;
 
+import com.eviware.soapui.impl.wsdl.support.UrlSchemaLoader;
+import com.eviware.soapui.impl.wsdl.support.wsdl.AbstractWsdlDefinitionLoader;
+import com.eviware.soapui.impl.wsdl.support.wsdl.CachedWsdlLoader;
+import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlDefinitionLoader;
+import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlLoader;
 import com.eviware.soapui.model.iface.Request;
 import com.eviware.soapui.support.SoapUIException;
+import com.eviware.x.dialogs.XProgressMonitor;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.ListIterator;
 import javax.wsdl.WSDLException;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlException;
-import org.archenroot.fw.soatest.database.DatabaseTestComponent;
-import org.archenroot.fw.soatest.database.DatabaseTestComponent.CRUDType;
-import static org.archenroot.fw.soatest.database.DatabaseTestComponent.CRUDType.INSERT;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
 import org.archenroot.fw.soatest.database.UnknownCRUDTypeException;
 import org.archenroot.fw.soatest.soap.SoapTestComponent;
 import org.archenroot.fw.soatest.soap.UnknownFlowDirectionTypeException;
-import org.ow2.easywsdl.schema.api.Element;
-import org.ow2.easywsdl.schema.api.Schema;
 import org.ow2.easywsdl.schema.api.SchemaException;
-import org.ow2.easywsdl.schema.api.SchemaReader;
-import org.ow2.easywsdl.schema.api.Type;
-import org.ow2.easywsdl.schema.api.extensions.NamespaceMapperImpl;
-import org.ow2.easywsdl.wsdl.WSDLFactory;
-import org.ow2.easywsdl.wsdl.api.Description;
-import org.ow2.easywsdl.wsdl.api.WSDLReader;
-import org.ow2.easywsdl.wsdl.impl.wsdl11.WSDLReaderImpl;
-import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 /**
  *
@@ -52,7 +49,7 @@ import org.w3c.dom.Document;
  */
 public class Main {
 
-    public static void main(String[] args) throws IOException, UnknownCRUDTypeException, WSDLException, Request.SubmitException, SoapUIException, XmlException, UnknownFlowDirectionTypeException, org.ow2.easywsdl.wsdl.api.WSDLException, URISyntaxException, SchemaException {
+    public static void main(String[] args) throws IOException, UnknownCRUDTypeException, WSDLException, Request.SubmitException, SoapUIException, XmlException, UnknownFlowDirectionTypeException, org.ow2.easywsdl.wsdl.api.WSDLException, URISyntaxException, SchemaException, Exception {
         String path = new File(".").getCanonicalPath().toString()
                 + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml";
         boolean fileExists = new File(path).exists();
@@ -66,11 +63,13 @@ public class Main {
         //soaTFConfig.getDatabaseType();
         //DatabaseTestComponent dtc = new DatabaseTestComponent(soaTFConfig.getDatabaseType());
         //dtc.generateSQLStatement(CRUDType.INSERT);
-
-        //WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
         /*
+        WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+        
         WSDLReaderImpl r = new WSDLReaderImpl();
-        Description mydesc = r.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
+        //Description mydesc = r.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
+        Description desc = r.read(new URL("http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue"));
+        
         SchemaReader sreader = r.getSchemaReader();
         //Listmydesc.getImports()
         Schema schema = sreader.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
@@ -81,6 +80,7 @@ public class Main {
             Object type = types.next();
             System.out.println(((Type) type).toString());
         }
+        */
         /*
         
         ListIterator elements = schema.getElements().listIterator();
@@ -102,10 +102,38 @@ public class Main {
                 "soapRequest.xml",
                 "soapResponse.xml");
         //stc.getAndSaveXmlSchemaFromWsdl();
-        stc.generateSoapEnvelopeRequest();
-        stc.invokeService();
+        //stc.getAndSaveSoapEnvelopeRequest();
+        //stc.invokeService();
+        stc.isSoapRequestEnvelopeValid();
         stc.validateMessage(SoapTestComponent.FlowDirectionType.INBOUND);
         stc.validateMessage(SoapTestComponent.FlowDirectionType.OUTBOUND);
         System.out.println("completed.");
+        UrlSchemaLoader sl = new UrlSchemaLoader(stc.getSoapEndPointUri());
+        XmlObject xo = sl.loadXmlObject(stc.getSoapEndPointUri() + "?wsdl", null);
+        xo.save(new File("testXMLOject.xml"));
+        CachedWsdlLoader cwl = new CachedWsdlLoader(stc.getWsdlInterface());
+        cwl.saveDefinition(".");
+        System.out.println("Latest import: " + cwl.getLatestImportURI());
+;        System.out.println( stc.getWsdlContext().hasSchemaTypes());
+        SchemaTypeSystem sts = stc.getWsdlContext().getSchemaTypeSystem();
+        SchemaType st[] = sts.documentTypes();
+        
+       List allSeenTypes = new ArrayList();
+ allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
+ //allSeenTypes.addAll(Arrays.asList(sts.attributeTypes()));
+ //allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
+ for (int i = 0; i < allSeenTypes.size(); i++)
+ {
+     SchemaType sType = (SchemaType)allSeenTypes.get(i);
+     System.out.println("Visiting " + sType.toString());
+     
+     allSeenTypes.addAll(Arrays.asList(sType.getAnonymousTypes()));
+ }
+        
+        
+        
+        System.exit(0);
+        
+        
     }
 }

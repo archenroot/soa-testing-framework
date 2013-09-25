@@ -1,0 +1,22 @@
+2013-09-25 11:50:22,949 ERROR [errorlog] com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlInterfaceDefinition.load(WsdlInterfaceDefinition.java:56)
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlContext.loadDefinition(WsdlContext.java:66)
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlContext.loadDefinition(WsdlContext.java:30)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext.cacheDefinition(AbstractDefinitionContext.java:278)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext.access$400(AbstractDefinitionContext.java:44)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext$Loader.construct(AbstractDefinitionContext.java:245)
+	at com.eviware.soapui.support.swing.SwingWorkerDelegator.construct(SwingWorkerDelegator.java:46)
+	at com.eviware.soapui.support.swing.SwingWorker$2.run(SwingWorker.java:149)
+	at java.lang.Thread.run(Thread.java:724)
+2013-09-25 11:50:22,963 ERROR [errorlog] com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+com.eviware.soapui.impl.support.definition.support.InvalidDefinitionException
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlInterfaceDefinition.load(WsdlInterfaceDefinition.java:56)
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlContext.loadDefinition(WsdlContext.java:66)
+	at com.eviware.soapui.impl.wsdl.support.wsdl.WsdlContext.loadDefinition(WsdlContext.java:30)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext.cacheDefinition(AbstractDefinitionContext.java:278)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext.access$400(AbstractDefinitionContext.java:44)
+	at com.eviware.soapui.impl.support.definition.support.AbstractDefinitionContext$Loader.construct(AbstractDefinitionContext.java:245)
+	at com.eviware.soapui.support.swing.SwingWorkerDelegator.construct(SwingWorkerDelegator.java:46)
+	at com.eviware.soapui.support.swing.SwingWorker$2.run(SwingWorker.java:149)
+	at java.lang.Thread.run(Thread.java:724)

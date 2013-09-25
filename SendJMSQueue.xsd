@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://www.example.org/SendJMS" elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://www.example.org/SendJMS">
+  <xsd:element name="sendJMSMessage">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="messageContent" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+  <xsd:element name="sendJMSMessageResponse">
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="response" type="xsd:string"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</schema>
