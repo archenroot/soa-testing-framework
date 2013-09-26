@@ -22,5 +22,40 @@ package org.archenroot.fw.soatest;
  * @author zANGETSu
  */
 public class SoaTestingFrameworkFactory {
-    
+
+    public static SoaTestingFramework buildSoaTestingFramework(SoaTestingFrameworkType soaTestingFrameworkType) {
+        SoaTestingFramework soaTestingFramework = null;
+        switch (soaTestingFrameworkType) {
+            case DATABASE:
+                
+                break;
+            case FILE:
+                
+                break;
+            case FTP:
+                
+                break;
+            case JMS:
+                
+                break;
+            case OSB:
+                
+                break;
+            case REST:
+                
+                break;
+            case SOAP:
+                
+                break;
+            case TOOL:
+                
+                break;
+            case XML:
+                
+                break;
+        }
+
+        return soaTestingFramework;
+
+    }
 }

@@ -1,60 +1,120 @@
-/*
- * Copyright (C) 2013 zANGETSu
- *
- * This program is free software; you can redistribute it and/or
- * modify it under the terms of the GNU General Public License
- * as published by the Free Software Foundation; either version 2
- * of the License, or (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program; if not, write to the Free Software
- * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
- */
 package org.archenroot.fw.soatest;
 
-import org.archenroot.fw.soatest.SoaTestingFrameworkType.DatabaseTestOperationType;
+import java.util.EnumSet;
+import java.util.Set;
 
-/**
- *
- * @author zANGETSu
- */
-public final class SoaTestingFrameworkType {
-    private EndPointType endPointType;
-    private OperationType operationType
-    
-    private enum EndPointType {
+public enum SoaTestingFrameworkType {
 
-        DATABASE (DatabaseTestOperationType.ONE_ROW_INSERT),
-        FILE,
-        FTP,
-        JMS,
-        SOAP,
-        XML
+    DATABASE("Database Testing Framework Type Domain"),
+    FILE("File Testing Framework Type Domain"),
+    FTP("FTP Testing Framework Type Domain"),
+    JMS("JMS Testing Framework Type Domain"),
+    OSB("OSB Testing Framework Type Domain"),
+    REST("REST Testing Framework Type Domain"),
+    SOAP("SOAP Testing Framework Type Domain"),
+    TOOL("TOOL Testing Framework Type Domain"),
+    XML("XML Testing Framework Type Domain");
+
+    private final String displayName;
+
+    private SoaTestingFrameworkType(final String displayDescription) {
+        this.displayName = displayDescription;
     }
-    
-    public enum DatabaseTestOperationType{
-       ONE_ROW_INSERT 
+
+    public String getDisplayName() {
+        return displayName;
     }
-    
-    private enum FileTestOperationType{
+
+    public enum FrameworkOperation {
+
+        // Database related framework operations
+        DATABASE_OPERATIONS_DEFINITION_BEGIN("Dummy constant for database enumset EnumSet.range() begining"),
+        CHECK_NUMBER_OF_ROWS_IN_DATABASE(SoaTestingFrameworkType.DATABASE, "Check number of records in the database and log the result"),
+        EXECUTE_INSERT_FROM_FILE(SoaTestingFrameworkType.DATABASE, "Execute INSERT statement over database from provided SQL script file"),
+        EXECUTE_INSERT_DYNAMIC(SoaTestingFrameworkType.DATABASE, "Execute INSERT statement over database dynamically generated from database object structure"),
+        EXECUTE_SELECT_AND_EXPORT_TO_CSV(SoaTestingFrameworkType.DATABASE, "Execute SELECT statement over database by provided SQL script"),
+        EXECUTE_UPDATE_FROM_FILE(SoaTestingFrameworkType.DATABASE, "Execute UPDATE statement over database from provided SQL script file"),
+        GENERATE_INSERT_DYNAMICALLY_ONE_ROW(SoaTestingFrameworkType.DATABASE, "Generate dynamicaly one row of INSERT sql statement for provided database object object"),
+        GENRATE_INSERT_ALL_EXISTING_ROWS(SoaTestingFrameworkType.DATABASE, "Generate INSERT statement for all rows in provided database object"),
+        GENERATE_SELECT(SoaTestingFrameworkType.DATABASE, "Generate SELECT statement for provided object in database"),
+        UPDATE_DYNAMIC_ONE_ROW(SoaTestingFrameworkType.DATABASE, "Database insert operation"),
+        UPDATE_DYNAMIC(SoaTestingFrameworkType.DATABASE, "Database insert operation"),
+        DATABASE_OPERATIONS_DEFINITION_END("Dummy constant for database operations EnumSet.range() end"),
         
-    }
-    
-    private enum FtpTestOperationType{
+        // FILE related framework operations
+        FILE_OPERATIONS_DEFINITION_BEGIN("Dummy constant for FILE enumset EnumSet.range() begining"),
+        // Not implemented yet
+        FILE_OPERATIONS_DEFINITION_END("Dummy constant for FILE operations EnumSet.range() end"),
         
-    }
-    private enum JmsTestOperationType{
+        // FTP related framework operations
+        FTP_OPERATIONS_DEFINITION_BEGIN("Dummy constant for FTP enumset EnumSet.range() begining"),
+        // Not implemented yet
+        FTP_OPERATIONS_DEFINITION_END("Dummy constant for FTP operations EnumSet.range() end"),
         
-    }
-    private enum SoapTestOperationType{
+        // JMS related freamework operations
+        JMS_OPERATIONS_DEFINITION_BEGIN("Dummy constant for JMS enumset EnumSet.range() begining"),
+        READ_MESSAGE_IN_QUEUE(SoaTestingFrameworkType.JMS, "Read message in queue by provided id - the message will not be dropped from the queue"),
+        READ_ALL_MASSAGES_IN_QUEUE(SoaTestingFrameworkType.JMS, "Read all messages in queue - the message will not be dropped from the queue"),
+        CHECK_NUMBER_OF_MESSAGES_IN_QUEUE(SoaTestingFrameworkType.JMS, "Get number of messages in queue and log it"),
+        CHECK_NUMBER_OF_MESSAGES_IN_TOPIC(SoaTestingFrameworkType.JMS, "Get number of messages in topic and log it"),
+        JMS_OPERATIONS_DEFINITION_END("Dummy constant for JMS operations EnumSet.range() end"),
         
-    }
-    private enum XmlTestOperationType{
+        // OSB related framework operations
+        OSB_OPERATIONS_DEFINITION_BEGIN("Dummy constant for OSB enumset EnumSet.range() begining"),
+        ENABLE_BUSINESS_SERVICE(SoaTestingFrameworkType.OSB,"Access the OSB cluster provided via configuration file and enable business service"),
+        ENABLE_PROXY_SERVICE(SoaTestingFrameworkType.OSB,"Access the OSB cluster provided via configuration file and enable proxy service"),
+        DISABLE_BUSINESS_SERVICE(SoaTestingFrameworkType.OSB,"Access the OSB cluster provided via configuration file and disable business service"),
+        DISABLE_PROXY_SERVICE(SoaTestingFrameworkType.OSB, "Access the OSB cluster provided via configuration file and disable business service"),
+        OSB_OPERATIONS_DEFINITION_END("Dummy constant for OSB operations EnumSet.range() end"),
         
+        // REST related framework operations
+        REST_OPERATIONS_DEFINITION_BEGIN("Dummy constant for REST enumset EnumSet.range() begining"),
+        REST_OPERATIONS_DEFINITION_END("Dummy constant for REST operations EnumSet.range() end"),
+        
+        // SOAP related framework operations
+        SOAP_OPERATIONS_DEFINITION_BEGIN("Dummy constant for SOAP enumset EnumSet.range() begining"),
+        GENERATE_DYNAMICALLY_SOAP_REQUEST_TO_FILE(SoaTestingFrameworkType.SOAP, "Read WSDL from service, generate default SOAP Envelope message and save it to file."),
+        INVOKE_SERVICE_WITH_PROVIDED_ENVELOPE(SoaTestingFrameworkType.SOAP, "Read SOAP envelope message and use it for proxy/business or any WSDL based service invokation"),
+        VALIDATE_SOAP_REQUEST_FILE(SoaTestingFrameworkType.SOAP, "Validate SOAP Envelope request message file"),
+        VALIDATE_SOAP_RESPONSE_FILE(SoaTestingFrameworkType.SOAP, "Validate SOAP Envelope response message file"),
+        SOAP_OPERATIONS_DEFINITION_END("Dummy constant for SOAP operations EnumSet.range() end"),
+        
+        // TOOL related framework operations
+        TOOL_OPERATIONS_DEFINITION_BEGIN("Dummy constant for TOOL enumset EnumSet.range() begining"),
+        CHECK_XML_FILE_AGAINST_DATABASE_ROW_SIMPLE_MAPPING(SoaTestingFrameworkType.TOOL, "Check xml file against row in database using 1:1 simple mapping"),
+        TOOL_OPERATIONS_DEFINITION_END("Dummy constant for TOOL operations EnumSet.range() end"),
+        
+        // XML related framework operations
+        XML_OPERATIONS_DEFINITION_BEGIN("Dummy constant for XML enumset EnumSet.range() begining"),
+        XML_OPERATIONS_DEFINITION_END("Dummy constant for XML operations EnumSet.range() end");
+
+        public static Set<FrameworkOperation> databaseOperations = EnumSet.of(DATABASE_OPERATIONS_DEFINITION_BEGIN, DATABASE_OPERATIONS_DEFINITION_END);
+        public static Set<FrameworkOperation> fileOperations = EnumSet.of(FILE_OPERATIONS_DEFINITION_BEGIN, FILE_OPERATIONS_DEFINITION_END);
+        public static Set<FrameworkOperation> ftpOperations = EnumSet.of(FTP_OPERATIONS_DEFINITION_BEGIN, FTP_OPERATIONS_DEFINITION_END);
+        public static Set<FrameworkOperation> jmsOperations = EnumSet.of(JMS_OPERATIONS_DEFINITION_BEGIN, JMS_OPERATIONS_DEFINITION_END);
+        public static Set<FrameworkOperation> osbOperations = EnumSet.of(OSB_OPERATIONS_DEFINITION_BEGIN, SOAP_OPERATIONS_DEFINITION_END);
+        public static Set<FrameworkOperation> restOperations = EnumSet.of(REST_OPERATIONS_DEFINITION_BEGIN, REST_OPERATIONS_DEFINITION_END);
+        public static Set<FrameworkOperation> soapOperations = EnumSet.of(SOAP_OPERATIONS_DEFINITION_BEGIN, SOAP_OPERATIONS_DEFINITION_END);
+        public static Set<FrameworkOperation> xmlOperations = EnumSet.of(XML_OPERATIONS_DEFINITION_BEGIN, XML_OPERATIONS_DEFINITION_END);
+
+        //public static Set<FrameworkOperation> fileOperations = EnumSet.range();
+        private String soaTestingFrameworkTypeDescription;
+        private String frameworkOperationDesription;
+
+        private FrameworkOperation(String operationDescription) {
+            this.frameworkOperationDesription = operationDescription;
+        }
+
+        private FrameworkOperation(SoaTestingFrameworkType type, String operationDescription) {
+            this.soaTestingFrameworkTypeDescription = type.getDisplayName();
+            this.frameworkOperationDesription = operationDescription;
+        }
+
+        public String getSoaTestingFrameworkTypeDescription() {
+            return this.soaTestingFrameworkTypeDescription;
+        }
+        public String getFrameworkOperationDesription(){
+            return this.frameworkOperationDesription;
+        }
     }
 }
