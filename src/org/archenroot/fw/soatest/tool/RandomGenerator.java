@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.archenroot.fw.soatest.helper;
+package org.archenroot.fw.soatest.tool;
 
 import java.util.Random;
 
@@ -23,9 +23,9 @@ import java.util.Random;
  *
  * @author zANGETSu
  */
-public class RandomGenerator {
-    
-    public static String getAlphabeticalString(){
+public final class RandomGenerator {
+
+    public final static String getRandomAlphabetical() {
         char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
@@ -35,8 +35,8 @@ public class RandomGenerator {
         }
         return sb.toString();
     }
-    
-    public static String getAlphabeticalString(int length){
+
+    public final static String getRandomAlphabetical(int length) {
         char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
@@ -46,8 +46,8 @@ public class RandomGenerator {
         }
         return sb.toString();
     }
-    
-    public static String getNumericString(int length){
+
+    public final static String getNumeric(int length) {
         char[] chars = "1232456789".toCharArray();
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
@@ -57,8 +57,36 @@ public class RandomGenerator {
         }
         return sb.toString();
     }
-    
-    public static String getAlphaNumericString(int length){
+
+    public final static int RandomInt() {
+        return 1;
+    }
+
+    public final static Integer RandomInteger() {
+        return 1;
+    }
+
+    public final static float getRandomFloat() {
+        return 0;
+
+    }
+
+    public final static Double RandomDouble() {
+        return null;
+
+    }
+
+    public final static long getRandomLong() {
+        return 0;
+
+    }
+
+    public final static CharSequence getRandomCharSequence() {
+        return null;
+
+    }
+
+    public static String getRandomAlphaNumeric(int length) {
         char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01232456789".toCharArray();
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
@@ -69,4 +97,9 @@ public class RandomGenerator {
         return sb.toString();
     }
     
+    public static final String GetRandomAscii(){
+        return null;
+        
+    }
+
 }

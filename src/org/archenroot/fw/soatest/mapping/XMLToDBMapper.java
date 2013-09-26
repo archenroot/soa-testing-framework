@@ -3,12 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.archenroot.fw.soatest.helper;
+package org.archenroot.fw.soatest.mapping;
 
 /**
  *
  * @author zANGETSu
  */
-public class DBToXMLMapper {
+public class XMLToDBMapper {
     
 }

@@ -4,9 +4,9 @@ import java.io.*;
 import java.math.BigInteger;
 import java.sql.*;
 import java.text.SimpleDateFormat;
-import org.archenroot.fw.soatest.helper.RandomGenerator;
+import org.archenroot.fw.soatest.tool.RandomGenerator;
 
-public class SQLStatementGenerator {
+public final class SQLStatementGenerator {
 
     private static final SimpleDateFormat dateFormat
             = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -134,7 +134,7 @@ public class SQLStatementGenerator {
                     case Types.INTEGER:
                     case Types.SMALLINT:
                     case Types.TINYINT:
-                        String v = RandomGenerator.getNumericString(rsmd.getPrecision(i + 1));
+                        String v = RandomGenerator.getNumeric(rsmd.getPrecision(i + 1));
                         columnValues += v;
                         break;
                     /*
@@ -159,7 +159,7 @@ public class SQLStatementGenerator {
                         break;
                     */
                     default:
-                        columnValues += "'" + RandomGenerator.getAlphabeticalString(rsmd.getPrecision(i + 1)) + "'";
+                        columnValues += "'" + RandomGenerator.getRandomAlphabetical(rsmd.getPrecision(i + 1)) + "'";
                         break;
                 }
         }

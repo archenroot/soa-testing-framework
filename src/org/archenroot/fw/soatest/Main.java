@@ -56,9 +56,9 @@ public class Main {
         boolean fileExists = new File(path).exists();
         System.out.println(new File(new File(".").getCanonicalPath().toString()
                 + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml").exists());
-        SOATestingFramework soaTF = new SOATestingFramework("\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
-        SOATestingFrameworkConfiguration soaTFConfig
-                = new SOATestingFrameworkConfiguration(
+        SoaTestingFramework soaTF = new SoaTestingFramework("\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
+        SoaTestingFrameworkConfiguration soaTFConfig
+                = new SoaTestingFrameworkConfiguration(
                 new File(".").getCanonicalPath().toString()
                 + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
         //soaTFConfig.getDatabaseType();
