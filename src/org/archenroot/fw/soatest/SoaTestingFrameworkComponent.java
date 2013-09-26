@@ -9,18 +9,17 @@ import java.io.File;
 import java.io.IOException;
 import org.archenroot.fw.soatest.database.DatabaseTestComponent;
 import org.archenroot.fw.soatest.file.FileTestComponent;
-import org.archenroot.fw.soatest.jms.JMSTestComponent;
-import org.archenroot.fw.soatest.ftp.FTPTestComponent;
-import org.archenroot.fw.soatest.osbservicemanager.OSBServiceManagerTestComponent;
+import org.archenroot.fw.soatest.jms.JmsTestComponent;
+import org.archenroot.fw.soatest.ftp.FtpTestComponent;
+import org.archenroot.fw.soatest.osbservicemanager.OsbTestComponent;
 import org.archenroot.fw.soatest.soap.SoapTestComponent;
-import org.archenroot.fw.soatest.xml.XMLTestComponent;
+import org.archenroot.fw.soatest.xml.XmlTestComponent;
 
 /**
  *
  * @author zANGETSu
  */
-public class SoaTestingFramework {
+public abstract class SoaTestingFrameworkComponent {
     
-   
     
 }

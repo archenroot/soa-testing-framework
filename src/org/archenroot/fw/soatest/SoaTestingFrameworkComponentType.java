@@ -3,7 +3,7 @@ package org.archenroot.fw.soatest;
 import java.util.EnumSet;
 import java.util.Set;
 
-public enum SoaTestingFrameworkType {
+public enum SoaTestingFrameworkComponentType {
 
     DATABASE("Database Testing Framework Type Domain"),
     FILE("File Testing Framework Type Domain"),
@@ -17,7 +17,7 @@ public enum SoaTestingFrameworkType {
 
     private final String displayName;
 
-    private SoaTestingFrameworkType(final String displayDescription) {
+    private SoaTestingFrameworkComponentType(final String displayDescription) {
         this.displayName = displayDescription;
     }
 
@@ -28,17 +28,18 @@ public enum SoaTestingFrameworkType {
     public enum FrameworkOperation {
 
         // Database related framework operations
+        // Database related framework operations
         DATABASE_OPERATIONS_DEFINITION_BEGIN("Dummy constant for database enumset EnumSet.range() begining"),
-        CHECK_NUMBER_OF_ROWS_IN_DATABASE(SoaTestingFrameworkType.DATABASE, "Check number of records in the database and log the result"),
-        EXECUTE_INSERT_FROM_FILE(SoaTestingFrameworkType.DATABASE, "Execute INSERT statement over database from provided SQL script file"),
-        EXECUTE_INSERT_DYNAMIC(SoaTestingFrameworkType.DATABASE, "Execute INSERT statement over database dynamically generated from database object structure"),
-        EXECUTE_SELECT_AND_EXPORT_TO_CSV(SoaTestingFrameworkType.DATABASE, "Execute SELECT statement over database by provided SQL script"),
-        EXECUTE_UPDATE_FROM_FILE(SoaTestingFrameworkType.DATABASE, "Execute UPDATE statement over database from provided SQL script file"),
-        GENERATE_INSERT_DYNAMICALLY_ONE_ROW(SoaTestingFrameworkType.DATABASE, "Generate dynamicaly one row of INSERT sql statement for provided database object object"),
-        GENRATE_INSERT_ALL_EXISTING_ROWS(SoaTestingFrameworkType.DATABASE, "Generate INSERT statement for all rows in provided database object"),
-        GENERATE_SELECT(SoaTestingFrameworkType.DATABASE, "Generate SELECT statement for provided object in database"),
-        UPDATE_DYNAMIC_ONE_ROW(SoaTestingFrameworkType.DATABASE, "Database insert operation"),
-        UPDATE_DYNAMIC(SoaTestingFrameworkType.DATABASE, "Database insert operation"),
+        CHECK_NUMBER_OF_ROWS_IN_DATABASE(SoaTestingFrameworkComponentType.DATABASE, "Check number of records in the database and log the result"),
+        EXECUTE_INSERT_FROM_FILE(SoaTestingFrameworkComponentType.DATABASE, "Execute INSERT statement over database from provided SQL script file"),
+        EXECUTE_INSERT_DYNAMIC(SoaTestingFrameworkComponentType.DATABASE, "Execute INSERT statement over database dynamically generated from database object structure"),
+        EXECUTE_SELECT_AND_EXPORT_TO_CSV(SoaTestingFrameworkComponentType.DATABASE, "Execute SELECT statement over database by provided SQL script"),
+        EXECUTE_UPDATE_FROM_FILE(SoaTestingFrameworkComponentType.DATABASE, "Execute UPDATE statement over database from provided SQL script file"),
+        GENERATE_INSERT_DYNAMICALLY_ONE_ROW(SoaTestingFrameworkComponentType.DATABASE, "Generate dynamicaly one row of INSERT sql statement for provided database object object"),
+        GENRATE_INSERT_ALL_EXISTING_ROWS(SoaTestingFrameworkComponentType.DATABASE, "Generate INSERT statement for all rows in provided database object"),
+        GENERATE_SELECT(SoaTestingFrameworkComponentType.DATABASE, "Generate SELECT statement for provided object in database"),
+        UPDATE_DYNAMIC_ONE_ROW(SoaTestingFrameworkComponentType.DATABASE, "Database insert operation"),
+        UPDATE_DYNAMIC(SoaTestingFrameworkComponentType.DATABASE, "Database insert operation"),
         DATABASE_OPERATIONS_DEFINITION_END("Dummy constant for database operations EnumSet.range() end"),
         
         // FILE related framework operations
@@ -53,18 +54,18 @@ public enum SoaTestingFrameworkType {
         
         // JMS related freamework operations
         JMS_OPERATIONS_DEFINITION_BEGIN("Dummy constant for JMS enumset EnumSet.range() begining"),
-        READ_MESSAGE_IN_QUEUE(SoaTestingFrameworkType.JMS, "Read message in queue by provided id - the message will not be dropped from the queue"),
-        READ_ALL_MASSAGES_IN_QUEUE(SoaTestingFrameworkType.JMS, "Read all messages in queue - the message will not be dropped from the queue"),
-        CHECK_NUMBER_OF_MESSAGES_IN_QUEUE(SoaTestingFrameworkType.JMS, "Get number of messages in queue and log it"),
-        CHECK_NUMBER_OF_MESSAGES_IN_TOPIC(SoaTestingFrameworkType.JMS, "Get number of messages in topic and log it"),
+        READ_MESSAGE_IN_QUEUE(SoaTestingFrameworkComponentType.JMS, "Read message in queue by provided id - the message will not be dropped from the queue"),
+        READ_ALL_MASSAGES_IN_QUEUE(SoaTestingFrameworkComponentType.JMS, "Read all messages in queue - the message will not be dropped from the queue"),
+        CHECK_NUMBER_OF_MESSAGES_IN_QUEUE(SoaTestingFrameworkComponentType.JMS, "Get number of messages in queue and log it"),
+        CHECK_NUMBER_OF_MESSAGES_IN_TOPIC(SoaTestingFrameworkComponentType.JMS, "Get number of messages in topic and log it"),
         JMS_OPERATIONS_DEFINITION_END("Dummy constant for JMS operations EnumSet.range() end"),
         
         // OSB related framework operations
         OSB_OPERATIONS_DEFINITION_BEGIN("Dummy constant for OSB enumset EnumSet.range() begining"),
-        ENABLE_BUSINESS_SERVICE(SoaTestingFrameworkType.OSB,"Access the OSB cluster provided via configuration file and enable business service"),
-        ENABLE_PROXY_SERVICE(SoaTestingFrameworkType.OSB,"Access the OSB cluster provided via configuration file and enable proxy service"),
-        DISABLE_BUSINESS_SERVICE(SoaTestingFrameworkType.OSB,"Access the OSB cluster provided via configuration file and disable business service"),
-        DISABLE_PROXY_SERVICE(SoaTestingFrameworkType.OSB, "Access the OSB cluster provided via configuration file and disable business service"),
+        ENABLE_BUSINESS_SERVICE(SoaTestingFrameworkComponentType.OSB,"Access the OSB cluster provided via configuration file and enable business service"),
+        ENABLE_PROXY_SERVICE(SoaTestingFrameworkComponentType.OSB,"Access the OSB cluster provided via configuration file and enable proxy service"),
+        DISABLE_BUSINESS_SERVICE(SoaTestingFrameworkComponentType.OSB,"Access the OSB cluster provided via configuration file and disable business service"),
+        DISABLE_PROXY_SERVICE(SoaTestingFrameworkComponentType.OSB, "Access the OSB cluster provided via configuration file and disable business service"),
         OSB_OPERATIONS_DEFINITION_END("Dummy constant for OSB operations EnumSet.range() end"),
         
         // REST related framework operations
@@ -73,15 +74,15 @@ public enum SoaTestingFrameworkType {
         
         // SOAP related framework operations
         SOAP_OPERATIONS_DEFINITION_BEGIN("Dummy constant for SOAP enumset EnumSet.range() begining"),
-        GENERATE_DYNAMICALLY_SOAP_REQUEST_TO_FILE(SoaTestingFrameworkType.SOAP, "Read WSDL from service, generate default SOAP Envelope message and save it to file."),
-        INVOKE_SERVICE_WITH_PROVIDED_ENVELOPE(SoaTestingFrameworkType.SOAP, "Read SOAP envelope message and use it for proxy/business or any WSDL based service invokation"),
-        VALIDATE_SOAP_REQUEST_FILE(SoaTestingFrameworkType.SOAP, "Validate SOAP Envelope request message file"),
-        VALIDATE_SOAP_RESPONSE_FILE(SoaTestingFrameworkType.SOAP, "Validate SOAP Envelope response message file"),
+        GENERATE_DYNAMICALLY_SOAP_REQUEST_TO_FILE(SoaTestingFrameworkComponentType.SOAP, "Read WSDL from service, generate default SOAP Envelope message and save it to file."),
+        INVOKE_SERVICE_WITH_PROVIDED_ENVELOPE(SoaTestingFrameworkComponentType.SOAP, "Read SOAP envelope message and use it for proxy/business or any WSDL based service invokation"),
+        VALIDATE_SOAP_REQUEST_FILE(SoaTestingFrameworkComponentType.SOAP, "Validate SOAP Envelope request message file"),
+        VALIDATE_SOAP_RESPONSE_FILE(SoaTestingFrameworkComponentType.SOAP, "Validate SOAP Envelope response message file"),
         SOAP_OPERATIONS_DEFINITION_END("Dummy constant for SOAP operations EnumSet.range() end"),
         
         // TOOL related framework operations
         TOOL_OPERATIONS_DEFINITION_BEGIN("Dummy constant for TOOL enumset EnumSet.range() begining"),
-        CHECK_XML_FILE_AGAINST_DATABASE_ROW_SIMPLE_MAPPING(SoaTestingFrameworkType.TOOL, "Check xml file against row in database using 1:1 simple mapping"),
+        CHECK_XML_FILE_AGAINST_DATABASE_ROW_SIMPLE_MAPPING(SoaTestingFrameworkComponentType.TOOL, "Check xml file against row in database using 1:1 simple mapping"),
         TOOL_OPERATIONS_DEFINITION_END("Dummy constant for TOOL operations EnumSet.range() end"),
         
         // XML related framework operations
@@ -105,7 +106,7 @@ public enum SoaTestingFrameworkType {
             this.frameworkOperationDesription = operationDescription;
         }
 
-        private FrameworkOperation(SoaTestingFrameworkType type, String operationDescription) {
+        private FrameworkOperation(SoaTestingFrameworkComponentType type, String operationDescription) {
             this.soaTestingFrameworkTypeDescription = type.getDisplayName();
             this.frameworkOperationDesription = operationDescription;
         }

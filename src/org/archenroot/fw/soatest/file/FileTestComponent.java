@@ -17,10 +17,12 @@
  */
 package org.archenroot.fw.soatest.file;
 
+import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
+
 /**
  *
  * @author zANGETSu
  */
-public class FileTestComponent {
+public class FileTestComponent extends SoaTestingFrameworkComponent {
     
 }

@@ -27,13 +27,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
 import org.archenroot.fw.soatest.configuration.DatabaseType;
 
 /**
  *
  * @author zANGETSu
  */
-public class DatabaseTestComponent {
+public class DatabaseTestComponent extends SoaTestingFrameworkComponent {
 
     private String databaseType;
     private String jdbcDriverClass;

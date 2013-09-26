@@ -58,13 +58,14 @@ import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument;
 import org.apache.xmlbeans.impl.xb.xsdschema.SchemaDocument.Schema;
+import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
 import org.archenroot.fw.soatest.xml.XMLValidator;
 
 /**
  *
  * @author zANGETSu
  */
-public class SoapTestComponent {
+public class SoapTestComponent extends SoaTestingFrameworkComponent {
 
     // Variables coming from configuration xml file
     private String soapServiceName = "";

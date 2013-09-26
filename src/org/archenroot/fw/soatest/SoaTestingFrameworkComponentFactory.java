@@ -21,11 +21,11 @@ package org.archenroot.fw.soatest;
  *
  * @author zANGETSu
  */
-public class SoaTestingFrameworkFactory {
+public class SoaTestingFrameworkComponentFactory {
 
-    public static SoaTestingFramework buildSoaTestingFramework(SoaTestingFrameworkType soaTestingFrameworkType) {
-        SoaTestingFramework soaTestingFramework = null;
-        switch (soaTestingFrameworkType) {
+    public static SoaTestingFrameworkComponent buildSoaTestingFramework(SoaTestingFrameworkComponentType soaTestingFrameworkComponentType) {
+        SoaTestingFrameworkComponent soaTestingFrameworkComponent = null;
+        switch (soaTestingFrameworkComponentType) {
             case DATABASE:
                 
                 break;
@@ -55,7 +55,7 @@ public class SoaTestingFrameworkFactory {
                 break;
         }
 
-        return soaTestingFramework;
+        return soaTestingFrameworkComponent;
 
     }
 }
