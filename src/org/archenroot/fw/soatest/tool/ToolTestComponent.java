@@ -18,11 +18,20 @@
 package org.archenroot.fw.soatest.tool;
 
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
+import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType;
 
 /**
  *
  * @author zANGETSu
  */
 public class ToolTestComponent extends SoaTestingFrameworkComponent {
-    
+     ToolTestComponent(){
+        super(SoaTestingFrameworkComponentType.TOOL);
+        constructComponent();
+    }
+  
+    @Override
+    protected void constructComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

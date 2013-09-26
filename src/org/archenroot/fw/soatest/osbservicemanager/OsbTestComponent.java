@@ -18,11 +18,20 @@
 package org.archenroot.fw.soatest.osbservicemanager;
 
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
+import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType;
 
 /**
  *
  * @author zANGETSu
  */
 public class OsbTestComponent extends SoaTestingFrameworkComponent {
-    
+    OsbTestComponent(){
+        super(SoaTestingFrameworkComponentType.OSB);
+        constructComponent();
+    }
+  
+    @Override
+    protected void constructComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

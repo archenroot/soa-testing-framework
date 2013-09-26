@@ -15,7 +15,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-package org.archenroot.fw.soatest.file;
+package org.archenroot.fw.soatest.ftp;
 
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType;
@@ -24,9 +24,9 @@ import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType;
  *
  * @author zANGETSu
  */
-public class FileTestComponent extends SoaTestingFrameworkComponent {
-    FileTestComponent(){
-        super(SoaTestingFrameworkComponentType.FILE);
+public class FtpTestComponent extends SoaTestingFrameworkComponent {
+    FtpTestComponent(){
+        super(SoaTestingFrameworkComponentType.FTP);
         constructComponent();
     }
   

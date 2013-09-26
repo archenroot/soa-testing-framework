@@ -20,6 +20,19 @@ import org.archenroot.fw.soatest.xml.XmlTestComponent;
  * @author zANGETSu
  */
 public abstract class SoaTestingFrameworkComponent {
+    private SoaTestingFrameworkComponentType componentType = null;
     
+    public SoaTestingFrameworkComponent(SoaTestingFrameworkComponentType componentType){
+        this.componentType = componentType;
+    }
     
+    protected abstract void constructComponent();
+    
+    public SoaTestingFrameworkComponentType getComponentType(){
+        return this.componentType;
+    }
+    
+    public void setComponentType(SoaTestingFrameworkComponentType componentType){
+        this.componentType = componentType;
+    }
 }

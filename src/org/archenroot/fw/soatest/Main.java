@@ -96,7 +96,8 @@ public class Main {
         // Write a WSDL 1.1 or 2.0 (depend of desc version)
         //Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(desc);
         //String s= doc.getTextContent();
-        SoapTestComponent stc = new SoapTestComponent("SendJMSQueue",
+       
+        /*SoapTestComponent stc = new SoapTestComponent("SendJMSQueue",
                 // "http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue", 
                 "http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue",
                 "sendJMSMessage",
@@ -121,7 +122,7 @@ public class Main {
 ;        System.out.println( stc.getWsdlContext().hasSchemaTypes());
         SchemaTypeSystem sts = stc.getWsdlContext().getSchemaTypeSystem();
         SchemaType st[] = sts.documentTypes();
-        
+        /*
        List allSeenTypes = new ArrayList();
  allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
  //allSeenTypes.addAll(Arrays.asList(sts.attributeTypes()));
@@ -137,7 +138,7 @@ public class Main {
         
         
         System.exit(0);
-        
+        */
         
     }
 }

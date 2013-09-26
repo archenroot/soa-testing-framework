@@ -23,7 +23,7 @@ package org.archenroot.fw.soatest;
  */
 public class SoaTestingFrameworkComponentFactory {
 
-    public static SoaTestingFrameworkComponent buildSoaTestingFramework(SoaTestingFrameworkComponentType soaTestingFrameworkComponentType) {
+    public static SoaTestingFrameworkComponent buildSoaTestingFrameworkComponent(SoaTestingFrameworkComponentType soaTestingFrameworkComponentType) {
         SoaTestingFrameworkComponent soaTestingFrameworkComponent = null;
         switch (soaTestingFrameworkComponentType) {
             case DATABASE:
