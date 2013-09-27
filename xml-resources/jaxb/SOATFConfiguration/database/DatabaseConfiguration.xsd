@@ -22,7 +22,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
-           elementFormDefault="qualified">
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:include schemaLocation="ConnectionIdentification.xsd"/>
     <xs:complexType name="DatabaseConfiguration">
         <xs:annotation>
             <xs:documentation>
@@ -36,29 +37,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="databaseType" type="DatabaseTypeEnum" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="databaseDriverClassName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="port" type="xs:integer" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="serviceId" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="connectAs" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="objectName" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="insertSQLScriptFileName" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="selectSQLScriptFileName" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="updateSQLScriptFileName" type="xs:string" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="deleteSQLScriptFileName" type="xs:string" minOccurs="0" maxOccurs="1"/>
+            <element name="connectionIdentification" type="ConnectionIdentification" minOccurs="1" maxOccurs="unbounded">
+           
         </xs:sequence>
     </xs:complexType>
-    <xs:simpleType name="DatabaseTypeEnum">
-        <xs:restriction base="xs:normalizedString">
-            <xs:enumeration value="Oracle"/>
-            <!-- 
-            <xs:enumeration value="Microsoft"/>
-            <xs:enumeration value="MySql"/>
-            <xs:enumeration value="H2"/>
-            -->
-        </xs:restriction>
-    </xs:simpleType>
 </xs:schema>
