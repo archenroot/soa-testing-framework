@@ -18,20 +18,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
-           xmlns="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
+           xmlns="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
+           xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:include schemaLocation="Server.xsd"/>
-    <xs:complexType name="JmsConfiguration">
+    <xs:complexType name="Queue">
         <xs:annotation>
             <xs:documentation>
-            
+                
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="server" type="Server" minOccurs="1" maxOccurs="unbounded"/>
-        </xs:sequence>
+            <xs:element name="queueName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="queueJndiName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        </xs:sequence>    
     </xs:complexType>
 </xs:schema>

@@ -18,20 +18,25 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
-           xmlns="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
+           xmlns="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
+           xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:include schemaLocation="Server.xsd"/>
-    <xs:complexType name="JmsConfiguration">
+    <xs:include schemaLocation="Queue.xsd"/>
+    <xs:include schemaLocation="Topic.xsd"/>
+    <xs:complexType name="Server">
         <xs:annotation>
-            <xs:documentation>
+            <xs:documentation xml:lang="en">
             
+                Currently supporting only one module and connection factory per JMS server.
+                
             </xs:documentation>
         </xs:annotation>
-        <xs:sequence>
-            <xs:element name="server" type="Server" minOccurs="1" maxOccurs="unbounded"/>
-        </xs:sequence>
+        <xs:element name="serverName" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="moduleName" type="xs:string" minOccurs="1" maxOccurs="1"/> 
+        <xs:element name="connectionFactoryJndi" type="xs:string" minOccurs="1" maxOccurs="1"/>
+        <xs:element name="queue" type="Queue" minOccurs="0" maxOccurs="unbounded"/>
+        <xs:element name="topic" type="Topic" minOccurs="0" maxOccurs="unbounded"/>
     </xs:complexType>
 </xs:schema>
