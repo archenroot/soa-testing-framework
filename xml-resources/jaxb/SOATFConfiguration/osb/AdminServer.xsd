@@ -19,20 +19,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <xs:schema version="1.0"
            xmlns="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
-           xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:include schemaLocation="AdminServer.xsd"/>
-    <xs:include schemaLocation="Cluster.xsd"/>
     <xs:annotation>
         <xs:documentation></xs:documentation>
     </xs:annotation>
-    <xs:complexType name="OsbConfiguration">
+    <xs:complexType name="AdminServer">
         <xs:sequence>
-            <xs:element name="adminServer" type="AdminServer" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="cluster" type="Cluster" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="connectionProtocol" type="xs:string" minOccurs="1" maxOccurs="1" default="t3"/>>
-        </xs:sequence>    
+            <xs:element name="managementMBeanServer" type="xs:string"  minOccurs="1" maxOccurs="unbounded" default="weblogic.management.mbeanservers.domainruntime"/>
+            <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="managementMBeanService" type="xs:string"  minOccurs="1" maxOccurs="unbounded" default="com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean"/>
+        </xs:sequence>
     </xs:complexType>
 </xs:schema>
