@@ -11,19 +11,19 @@
     <target name="jaxb-code-generation" depends="xjc-typedef-target,-do-init,-init-macrodef-javac">
         <mkdir dir="${build.generated.sources.dir}/jaxb" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
         <mkdir dir="build/generated/jaxbCache" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
-        <mkdir dir="build/generated/jaxbCache/SOATFConfiguration"/>
-        <xjc package="org.archenroot.fw.soatest.configuration" destdir="build/generated/jaxbCache/SOATFConfiguration" catalog="catalog.xml">
+        <mkdir dir="build/generated/jaxbCache/SoaTestingFrameworkConfigurationBinding"/>
+        <xjc package="org.archenroot.fw.soatest.configuration" destdir="build/generated/jaxbCache/SoaTestingFrameworkConfigurationBinding" catalog="catalog.xml">
             <classpath>
                 <pathelement location="${src.dir}"/>
                 <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
             </classpath>
             <arg value="-xmlschema"/>
-            <schema file="xml-resources/jaxb/SOATFConfiguration/EndPointType.xsd"/>
-            <depends file="xml-resources/jaxb/SOATFConfiguration/EndPointType.xsd"/>
-            <produces dir="build/generated/jaxbCache/SOATFConfiguration"/>
+            <schema file="xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/SoaTestingFramework.xsd"/>
+            <depends file="xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/SoaTestingFramework.xsd"/>
+            <produces dir="build/generated/jaxbCache/SoaTestingFrameworkConfigurationBinding"/>
         </xjc>
         <copy todir="${build.generated.sources.dir}/jaxb">
-            <fileset dir="build/generated/jaxbCache/SOATFConfiguration"/>
+            <fileset dir="build/generated/jaxbCache/SoaTestingFrameworkConfigurationBinding"/>
         </copy>
     </target>
 </project>

@@ -18,20 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
-           xmlns="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguation"
+           xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:complexType name="Topic">
-        <xs:annotation>
-            <xs:documentation>
-            
-            </xs:documentation>
-        </xs:annotation>
-        <xs:sequence>
-            <xs:element name="topicName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="topicJndiName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>    
+    <xs:complexType name="ToolConfiguration">
+        
     </xs:complexType>
 </xs:schema>
