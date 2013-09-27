@@ -23,12 +23,24 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
            xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/Common"
            elementFormDefault="qualified">
-    <xs:include schemaLocation="EmailAddress.xsd"/>
-    <xs:include schemaLocation="Ipv4Address.xsd"/>
-    <xs:include schemaLocation="Iso3166ContryCode.xsd"/>
-    <xs:include schemaLocation="Percentage.xsd"/>
-    <xs:include schemaLocation="PhoneNumber.xsd"/>
-    <xs:include schemaLocation="Rfc822DateTime.xsd"/>  
-    <xs:include schemaLocation="UsStateCode.xsd"/>  
+<xs:annotation>
+    <xs:documentation>
+     
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:simpleType name="RFC822DateTime">
+    <xs:annotation>
+      <xs:documentation>
+        Date and time formatted according to the RFC822, Section 5.
+        Using the regex definition of RFC822 date by Sam Ruby at
+        http://www.intertwingly.net/blog/1360.html.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:pattern value="(((Mon)|(Tue)|(Wed)|(Thu)|(Fri)|(Sat)|(Sun)), *)?\d\d? +((Jan)|(Feb)|(Mar)|(Apr)|(May)|(Jun)|(Jul)|(Aug)|(Sep)|(Oct)|(Nov)|(Dec)) +\d\d(\d\d)? +\d\d:\d\d(:\d\d)? +(([+\-]?\d\d\d\d)|(UT)|(GMT)|(EST)|(EDT)|(CST)|(CDT)|(MST)|(MDT)|(PST)|(PDT)|\w)"/>
+    </xs:restriction>
+  </xs:simpleType>
 
 </xs:schema>

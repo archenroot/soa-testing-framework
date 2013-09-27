@@ -18,10 +18,28 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
+           xmlns="http://www.archenroot.org/SoaTestingFramework/Common"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/XmlConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/XmlConfiguration"
-           elementFormDefault="qualified" attributeFormDefault="unqualified">
-<xs:complexType name="xmlconf:XmlConfigurationType">
-</xs:complexType>
+           xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/Common"
+           elementFormDefault="qualified">
+<xs:annotation>
+    <xs:documentation>
+      
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:simpleType name="Percentage">
+    <xs:annotation>
+      <xs:documentation>
+        Percent value in the range [0, 100].
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:unsignedShort">
+      <xs:minInclusive value="0"/>
+      <xs:maxInclusive value="100"/>
+    </xs:restriction>
+  </xs:simpleType>
+
 </xs:schema>

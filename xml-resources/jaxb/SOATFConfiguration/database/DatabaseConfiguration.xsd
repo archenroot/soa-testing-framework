@@ -19,9 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <xs:schema version="1.0"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
-           elementFormDefault="qualified" attributeFormDefault="unqualified">
-<xs:complexType name="soapconf:SoapConfigurationType">
-</xs:complexType>
+           xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
+           elementFormDefault="qualified">
+    <xs:complexType name="dbconf:DatabaseConfiguration">
+    </xs:complexType>
+
 </xs:schema>

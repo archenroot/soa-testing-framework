@@ -18,11 +18,27 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
+           xmlns="http://www.archenroot.org/SoaTestingFramework/Common"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
+           xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/Common"
            elementFormDefault="qualified">
-    <xs:complexType name="dbconf:DatabaseConfigurationType">
-    </xs:complexType>
+    <xs:annotation>
+        <xs:documentation>
+            
+        </xs:documentation>
+    </xs:annotation>
+
+    <xs:simpleType name="EmailAddress">
+        <xs:annotation>
+            <xs:documentation>
+                Email address.
+            </xs:documentation>
+        </xs:annotation>
+
+        <xs:restriction base="xs:string">
+            <xs:pattern value="([a-zA-Z0-9_\-])([a-zA-Z0-9_\-\.]*)@(\[((25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.){3}|((([a-zA-Z0-9\-]+)\.)+))([a-zA-Z]{2,}|(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\])"/>
+        </xs:restriction>
+    </xs:simpleType>
 
 </xs:schema>

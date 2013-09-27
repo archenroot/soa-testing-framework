@@ -19,11 +19,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
 <xs:schema version="1.0"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
+           xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-<xs:complexType name="OsbConfigurationType">
-    <xs:sequence>
+    <xs:complexType name="ToolConfiguration">
         
-</xs:complexType>
+    </xs:complexType>
 </xs:schema>

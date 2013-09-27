@@ -18,17 +18,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
-           xmlns="http://www.archenroot.org/SoaTestingFramework/Common"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/Common"
-           elementFormDefault="qualified">
-    <xs:include schemaLocation="EmailAddress.xsd"/>
-    <xs:include schemaLocation="Ipv4Address.xsd"/>
-    <xs:include schemaLocation="Iso3166ContryCode.xsd"/>
-    <xs:include schemaLocation="Percentage.xsd"/>
-    <xs:include schemaLocation="PhoneNumber.xsd"/>
-    <xs:include schemaLocation="Rfc822DateTime.xsd"/>  
-    <xs:include schemaLocation="UsStateCode.xsd"/>  
+           xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/FileConfiguation"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/FileConfiguation"
+           elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:complexType name="fileconf:FileConfiguation">
+    </xs:complexType>
 
 </xs:schema>

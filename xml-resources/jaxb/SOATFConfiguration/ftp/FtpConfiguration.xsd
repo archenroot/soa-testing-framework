@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
            xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/FtpConfiguation"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/FtpConfiguation"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:complexType name="ftpconf:FtpConfigurationType">
+    <xs:complexType name="ftpconf:FtpConfiguration">
     </xs:complexType>
 
 </xs:schema>
