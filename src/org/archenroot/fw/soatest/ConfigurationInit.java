@@ -17,10 +17,26 @@
  */
 package org.archenroot.fw.soatest;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Properties;
+
 /**
  *
  * @author zANGETSu
  */
-public class EndPointType {
+public class ConfigurationInit {
     
+    
+    public static Properties getCoinfigurationInit(){
+        Properties configurationInit = new Properties();
+        
+        try {
+            configurationInit.load(new FileInputStream("/conf/soa-testing-framework-config-init.properties"));
+            
+        } catch (IOException ex){
+            
+        }
+        return configurationInit;
+    }
 }
