@@ -18,10 +18,10 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
-           xmlns="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
-           elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:complexType name="ToolConfiguration"/>
+           xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
+           elementFormDefault="qualified">
+<xs:complexType name="globconf:GlobalConfiguration">
+</xs:complexType>
 </xs:schema>

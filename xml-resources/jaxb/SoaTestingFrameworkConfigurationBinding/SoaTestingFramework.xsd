@@ -18,6 +18,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
+           xmlns="http://www.archenroot.org/SoaTestingFramework"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
            xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
@@ -39,7 +40,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/FtpConfiguration" schemaLocation="ftp/FtpConfiguration.xsd"/>
     <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration" schemaLocation="global/GlobalConfiguration.xsd"/>
     <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration" schemaLocation="jms/JmsConfiguration.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration" schemaLocation="mappping/MappingConfiguration.xsd"/>
+    <!-- <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration" schemaLocation="mappping/MappingConfiguration.xsd"/> -->
     <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration" schemaLocation="osb/OsbConfiguration.xsd"/>
     <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration" schemaLocation="soap/SoapConfiguration.xsd"/>
     <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration" schemaLocation="tool/ToolConfiguration.xsd"/>
@@ -58,7 +59,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             <xs:element name="fileConfiguation" type="fileconf:FileConfiguation" minOccurs="0" maxOccurs="1"/>
             <xs:element name="ftpConfiguration" type="ftpconf:FtpConfiguration" minOccurs="0" maxOccurs="1"/>
             <xs:element name="jmsConfiguration" type="jmsconf:JmsConfiguration" minOccurs="0" maxOccurs="1"/>
-            <xs:element name="mappingConfiguration" type="mapconf:MappingConfiguration" minOccurs="0" maxOccurs="1"/>
+            <!-- <xs:element name="mappingConfiguration" type="mapconf:MappingConfiguration" minOccurs="0" maxOccurs="1"/> -->
             <xs:element name="osbConfiguration" type="osbconf:OsbConfiguration" minOccurs="0" maxOccurs="1"/>
             <xs:element name="soapConfiguration" type="soapconf:SoapConfiguration" minOccurs="0" maxOccurs="1"/>
             <xs:element name="toolConfiguration" type="toolconf:ToolConfiguration" minOccurs="0" maxOccurs="1"/>

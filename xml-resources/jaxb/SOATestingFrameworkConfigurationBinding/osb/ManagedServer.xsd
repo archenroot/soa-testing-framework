@@ -18,10 +18,19 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
-           xmlns="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
+           xmlns="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
+           xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:complexType name="ToolConfiguration"/>
+    <xs:annotation>
+        <xs:documentation></xs:documentation>
+    </xs:annotation>
+    <xs:complexType name="ManagedServer">
+        <xs:sequence>
+            <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>
