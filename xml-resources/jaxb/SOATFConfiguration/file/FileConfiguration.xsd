@@ -18,11 +18,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
+           xmlns="http://www.archenroot.org/SoaTestingFramework/FileConfiguation"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/FileConfiguation"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/FileConfiguation"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:complexType name="fileconf:FileConfiguation">
+    <xs:complexType name="FileConfiguation">
+        <xs:annotation>
+            <xs:documentation>
+                
+                File framework component is not implemented yet!.
+                
+            </xs:documentation>
+        </xs:annotation>
     </xs:complexType>
-
 </xs:schema>

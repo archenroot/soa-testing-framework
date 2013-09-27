@@ -18,11 +18,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
+           xmlns="http://www.archenroot.org/SoaTestingFramework/FtpConfiguation"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/FtpConfiguation"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/FtpConfiguation"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:complexType name="ftpconf:FtpConfiguration">
+    <xs:complexType name="FtpConfiguration">
+        <xs:annotation>
+            <xs:documentation>
+                
+                Ftp framework component is not implemented yet!.
+                
+            </xs:documentation>
     </xs:complexType>
 
 </xs:schema>
