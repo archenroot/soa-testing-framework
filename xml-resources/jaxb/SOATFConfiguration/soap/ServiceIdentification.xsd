@@ -22,7 +22,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
            xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:complexType name="SoapConfiguration">
+    <xs:complexType name="ServiceIdentification">
         <xs:annotation>
             <xs:documentation>
                 
@@ -34,6 +34,12 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                 
             </xs:documentation>
         </xs:annotation>
-        <xs:element name="serviceIdentification" type="ServiceIdentification"/>
-    </xs:complexType>
+        <xs:element name="serviceName" type="xs:string"/>
+        <xs:element name="endPointUri" type="xs:string"/>
+        <xs:element name="wsdlUriSuffix" type="xs:string" default="?wsdl"/>
+        <xs:element name="operationName" type="xs:string"/>
+        <xs:element name="requestName" type="xs:string"/>
+        <xs:element name="requestMessageXmlFile" type="xs:string"/>
+        <xs:element name="responseMessageXmlFile" type="xs:string"/>
+    </xs:complexType>  
 </xs:schema>
