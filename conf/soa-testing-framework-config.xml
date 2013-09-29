@@ -33,6 +33,7 @@
             <dbconf:deleteSqlScriptFileName>test/db/delete.sql</dbconf:deleteSqlScriptFileName>
         </dbconf:connectionIdentification>
     </stf:databaseConfiguration>
+ 
     <stf:fileConfiguation/>
     <stf:ftpConfiguration/>
     <stf:jmsConfiguration>
@@ -86,29 +87,29 @@
     <stf:osbConfiguration>
         <osbconf:adminServer>
             <osbconf:managementMBeanServer>weblogic.management.mbeanservers.domainruntime</osbconf:managementMBeanServer>
-            <osbconf:hostName>_vN</osbconf:hostName>
-            <osbconf:userName>Pym75CsQ</osbconf:userName>
-            <osbconf:password>hiQO9Qr1KtenCK.aulwPgI0DWzP</osbconf:password>
+            <osbconf:hostName>prometheus</osbconf:hostName>
+            <osbconf:userName>weblogic</osbconf:userName>
+            <osbconf:password>Weblogic123</osbconf:password>
             <osbconf:managementMBeanService>com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean</osbconf:managementMBeanService>
         </osbconf:adminServer>
         <osbconf:cluster>
             <osbconf:managedServer>
-                <osbconf:hostName>lUF.GimsBXG2qK8a9gF</osbconf:hostName>
-                <osbconf:userName>ElCyRPJNGiXwM7OULWPSOXkrU</osbconf:userName>
-                <osbconf:password>W</osbconf:password>
+                <osbconf:hostName>prometheus</osbconf:hostName>
+                <osbconf:userName>weblogic</osbconf:userName>
+                <osbconf:password>Weblogic123</osbconf:password>
             </osbconf:managedServer>
         </osbconf:cluster>
         <osbconf:connectionProtocol>t3</osbconf:connectionProtocol>
     </stf:osbConfiguration>
     <stf:soapConfiguration>
         <soapconf:serviceIdentification>
-            <soapconf:serviceName>evUh9mFn0vatS</soapconf:serviceName>
-            <soapconf:endPointUri>ag4etH-yt</soapconf:endPointUri>
+            <soapconf:serviceName>JMSListener</soapconf:serviceName>
+            <soapconf:endPointUri>HudsonDemo/proxy/JMSListener</soapconf:endPointUri>
             <soapconf:wsdlUriSuffix>?wsdl</soapconf:wsdlUriSuffix>
-            <soapconf:operationName>w0.5p8ZtrcREnY1JIEZRbt9J</soapconf:operationName>
-            <soapconf:requestName>icRNpk8YRs-</soapconf:requestName>
-            <soapconf:requestMessageXmlFile>IN</soapconf:requestMessageXmlFile>
-            <soapconf:responseMessageXmlFile>WpZIm16oq51pJ1A</soapconf:responseMessageXmlFile>
+            <soapconf:operationName></soapconf:operationName>
+            <soapconf:requestName>Default</soapconf:requestName>
+            <soapconf:requestMessageXmlFile></soapconf:requestMessageXmlFile>
+            <soapconf:responseMessageXmlFile></soapconf:responseMessageXmlFile>
         </soapconf:serviceIdentification>
     </stf:soapConfiguration>
     <stf:toolConfiguration/>

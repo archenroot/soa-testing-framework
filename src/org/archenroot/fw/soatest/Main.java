@@ -26,7 +26,8 @@ public class Main {
     public static void main(String[] args)  {
         
         
-        TestDatabaseComponent.testDatabaseComponent();
+        //TestDatabaseComponent.testDatabaseComponent();
+        TestOsbComponent.testDatabaseComponent();
         
         
         

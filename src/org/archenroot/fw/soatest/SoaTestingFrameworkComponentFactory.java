@@ -31,9 +31,8 @@ import org.archenroot.fw.soatest.configuration.SoaTestingFramework;
 import org.archenroot.fw.soatest.database.DatabaseComponent;
 import org.archenroot.fw.soatest.file.FileComponent;
 import org.archenroot.fw.soatest.ftp.FtpComponent;
-
 import org.archenroot.fw.soatest.jms.JmsComponent;
-import org.archenroot.fw.soatest.osbservicemanager.OsbComponent;
+import org.archenroot.fw.soatest.osb.OsbComponent;
 import org.archenroot.fw.soatest.rest.RestComponent;
 import org.archenroot.fw.soatest.soap.SoapComponent;
 import org.archenroot.fw.soatest.tool.ToolComponent;
@@ -75,7 +74,6 @@ public class SoaTestingFrameworkComponentFactory {
         
         switch (soaTestingFrameworkComponentType) {
             case DATABASE:
-                
                 soaTestingFrameworkComponent = new DatabaseComponent(getUnmarshalledConfiguration().getDatabaseConfiguration());
                 break;
             case FILE:
@@ -88,7 +86,7 @@ public class SoaTestingFrameworkComponentFactory {
                 soaTestingFrameworkComponent = new JmsComponent();
                 break;
             case OSB:
-                soaTestingFrameworkComponent = new OsbComponent();
+                soaTestingFrameworkComponent = new OsbComponent(getUnmarshalledConfiguration().getOsbConfiguration());
                 break;
             case REST:
                 soaTestingFrameworkComponent = new RestComponent();

@@ -16,27 +16,22 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 
-package org.archenroot.fw.soatest;
+package org.archenroot.fw.soatest.osb;
 
-import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.*;
-import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation.*;
-import org.archenroot.fw.soatest.database.*;
-
+import java.util.List;
 
 /**
  *
  * @author Ladislav Jech <archenroot@gmail.com>
  */
-public class TestDatabaseComponent {
+class Cluster {
     
-    public static void testDatabaseComponent(){
-        DatabaseComponent databaseComponent = 
-                (DatabaseComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(DATABASE);
-        databaseComponent.executeOperation(GENERATE_INSERT_DYNAMICALLY_ONE_ROW);
-        databaseComponent.executeOperation(EXECUTE_INSERT_FROM_FILE);
-        
-        
-        
+    private String clusterName = null; //need to be implemented
+    private List<ManagedServer> managedServers = null;
+    ManagedServer managedServer = null;
+   
+    public Cluster(org.archenroot.fw.soatest.configuration.Cluster cluster){
+        //this.managedServer = cluster.getManagedServer();
         
     }
     
