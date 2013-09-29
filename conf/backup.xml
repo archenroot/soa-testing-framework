@@ -1,38 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<stf:soaTestingFramework 
-    
- xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
- xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
- xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
- xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
- xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/FileConfiguation"
- xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/FtpConfiguration"
- xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
- xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration"
- xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
- xmlns:stf="http://www.archenroot.org/SoaTestingFramework"
- xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
- xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/XmlConfiguration"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://www.archenroot.org/SoaTestingFramework file:/home/zangetsu/NetBeansProjects/soa-testing-framework/schema/SoaTestingFramework.xsd">
-    <stf:databaseConfiguration>
-        <dbconf:connectionIdentification>
-            <dbconf:connectionName>Local DB - HudsonDemo</dbconf:connectionName>
-            <dbconf:databaseType>Oracle</dbconf:databaseType>
-            <dbconf:driverClassName>oracle.jdbc.driver.OracleDriver</dbconf:driverClassName>
-            <dbconf:hostName>prometheus</dbconf:hostName>
-            <dbconf:port>1521</dbconf:port>
-            <dbconf:userName>HUDSON_DEMO</dbconf:userName>
-            <dbconf:password>HUDSON_DEMO</dbconf:password>
-            <dbconf:serviceId>xe</dbconf:serviceId>
-            <dbconf:connectAs>normal</dbconf:connectAs>
-            <dbconf:objectName>MESSAGE_STORE</dbconf:objectName>
-            <dbconf:insertSqlScriptFileName>test/db/insert.sql</dbconf:insertSqlScriptFileName>
-            <dbconf:selectSqlScriptFileName>test/db/select.sql</dbconf:selectSqlScriptFileName>
-            <dbconf:updateSqlScriptFileName>test/db/update.sql</dbconf:updateSqlScriptFileName>
-            <dbconf:deleteSqlScriptFileName>test/db/delete.sql</dbconf:deleteSqlScriptFileName>
-        </dbconf:connectionIdentification>
-    </stf:databaseConfiguration>
     <stf:fileConfiguation/>
     <stf:ftpConfiguration/>
     <stf:jmsConfiguration>
@@ -113,4 +78,16 @@
     </stf:soapConfiguration>
     <stf:toolConfiguration/>
     <stf:xmlConfiguration/>
-</stf:soaTestingFramework>
+    
+    <!-- xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common" -->
+    <!-- xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/FileConfiguation" -->
+    <!-- xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/FtpConfiguration" -->
+    <!-- xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration" -->
+    <!-- xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration" -->
+    <!-- xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration" -->
+    <!-- xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration" -->
+    <!-- xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration" -->
+    <!-- xmlns:stf="http://www.archenroot.org/SoaTestingFramework" -->
+    <!-- xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration" -->
+    <!-- xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/XmlConfiguration" -->
+    

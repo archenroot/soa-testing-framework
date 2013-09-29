@@ -18,7 +18,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0"
-           xmlns="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            xmlns:xs="http://www.w3.org/2001/XMLSchema"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
@@ -30,8 +29,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     </xs:annotation>
     <xs:complexType name="OsbConfiguration">
         <xs:sequence>
-            <xs:element name="adminServer" type="AdminServer" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="cluster" type="Cluster" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="adminServer" type="osbconf:AdminServer" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="cluster" type="osbconf:Cluster" minOccurs="1" maxOccurs="1"/>
             <xs:element name="connectionProtocol" type="xs:string" minOccurs="1" maxOccurs="1" default="t3"/>
         </xs:sequence>    
     </xs:complexType>

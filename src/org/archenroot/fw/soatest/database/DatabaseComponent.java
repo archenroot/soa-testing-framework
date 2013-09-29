@@ -30,9 +30,10 @@ import java.util.logging.Logger;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation;
-import org.archenroot.fw.soatest.jaxbconfig.ConnectionIdentification;
-import org.archenroot.fw.soatest.jaxbconfig.DatabaseConfiguration;
-import org.archenroot.fw.soatest.jaxbconfig.DatabaseTypeEnum;
+import org.archenroot.fw.soatest.configuration.ConnectionIdentification;
+import org.archenroot.fw.soatest.configuration.DatabaseConfiguration;
+import org.archenroot.fw.soatest.configuration.DatabaseTypeEnum;
+
 
 /**
  *
@@ -44,6 +45,7 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
 
     private ComponentOperation databaseOperation = null;
     private DatabaseConfiguration databaseConfiguration = null;
+    private ConnectionIdentification connectionIdentification = null;
 
     private String connectionName;
     private String databaseType;
@@ -65,28 +67,31 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
 
     public DatabaseComponent(DatabaseConfiguration databaseConfiguration) {
         super(SoaTestingFrameworkComponentType.DATABASE);
-        this.
-                constructComponent();
+        this.databaseConfiguration = databaseConfiguration;
+        this.connectionIdentification = this.databaseConfiguration.getConnectionIdentification();
+        constructComponent();
     }
 
     @Override
-    protected void constructComponent() {
-        ConnectionIdentification ci = (ConnectionIdentification) this.databaseConfiguration.getConnectionIdentification();
+    protected final void constructComponent() {
+        
+        
+       
 
-        connectionName = ci.getConnectionName();
+        connectionName = this.databaseConfiguration.getConnectionIdentification().getConnectionName();
         databaseType = DatabaseTypeEnum.ORACLE.value();
-        driverClassName = ci.getDriverClassName();
-        hostName = ci.getHostName();
-        port = ci.getPort();
-        userName = ci.getUserName();
-        password = ci.getPassword();
-        serviceId = ci.getServiceId();
-        connectAs = ci.getConnectAs();
-        objectName = ci.getObjectName();
-        insertSqlScriptFileName = ci.getInsertSqlScriptFileName();
-        selectSqlScriptFileName = ci.getSelectSqlScriptFileName();
-        updateSqlScriptFileName = ci.getUpdateSqlScriptFileName();
-        deleteSqlScriptFileName = ci.getDeleteSqlScriptFileName();
+        driverClassName = this.connectionIdentification.getDriverClassName();
+        hostName = this.connectionIdentification.getHostName();
+        port = this.connectionIdentification.getPort();
+        userName = this.connectionIdentification.getUserName();
+        password = this.connectionIdentification.getPassword();
+        serviceId = this.connectionIdentification.getServiceId();
+        connectAs = this.connectionIdentification.getConnectAs();
+        objectName = this.connectionIdentification.getObjectName();
+        insertSqlScriptFileName = this.connectionIdentification.getInsertSqlScriptFileName();
+        selectSqlScriptFileName = this.connectionIdentification.getSelectSqlScriptFileName();
+        updateSqlScriptFileName = this.connectionIdentification.getUpdateSqlScriptFileName();
+        deleteSqlScriptFileName = this.connectionIdentification.getDeleteSqlScriptFileName();
         
         jdbcUrl = constructJdbcUrl(this.hostName, this.port, this.serviceId);
         try {
@@ -116,6 +121,7 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
         
         switch (componentOperation){
             case GENERATE_INSERT_DYNAMICALLY_ONE_ROW:
+                
         }
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
@@ -145,5 +151,8 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
         }
 
     }
+     
+     
+     
 
 }

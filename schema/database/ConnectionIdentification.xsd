@@ -17,7 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0" xmlns="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
+<xs:schema version="1.0" 
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
     targetNamespace="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
@@ -32,7 +32,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         </xs:annotation>
         <xs:sequence>
             <xs:element name="connectionName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="databaseType" type="DatabaseTypeEnum" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="databaseType" type="dbconf:DatabaseTypeEnum" minOccurs="1" maxOccurs="1"/>
             <xs:element name="driverClassName" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1"/>
             <xs:element name="port" type="xs:integer" minOccurs="1" maxOccurs="1"/>

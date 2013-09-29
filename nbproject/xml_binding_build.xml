@@ -11,19 +11,5 @@
     <target name="jaxb-code-generation" depends="xjc-typedef-target,-do-init,-init-macrodef-javac">
         <mkdir dir="${build.generated.sources.dir}/jaxb" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
         <mkdir dir="build/generated/jaxbCache" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
-        <mkdir dir="build/generated/jaxbCache/ConfigurationBinding"/>
-        <xjc package="org.archenroot.fw.soatest.jaxbconfig" destdir="build/generated/jaxbCache/ConfigurationBinding" catalog="catalog.xml">
-            <classpath>
-                <pathelement location="${src.dir}"/>
-                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
-            </classpath>
-            <arg value="-xmlschema"/>
-            <schema file="xml-resources/jaxb/ConfigurationBinding/SoaTestingFramework.xsd"/>
-            <depends file="xml-resources/jaxb/ConfigurationBinding/SoaTestingFramework.xsd"/>
-            <produces dir="build/generated/jaxbCache/ConfigurationBinding"/>
-        </xjc>
-        <copy todir="${build.generated.sources.dir}/jaxb">
-            <fileset dir="build/generated/jaxbCache/ConfigurationBinding"/>
-        </copy>
     </target>
 </project>

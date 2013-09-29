@@ -20,25 +20,25 @@ package org.archenroot.fw.soatest;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
-import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.archenroot.fw.soatest.configuration.SoaTestingFramework;
 
 
 import org.archenroot.fw.soatest.database.DatabaseComponent;
 import org.archenroot.fw.soatest.file.FileComponent;
 import org.archenroot.fw.soatest.ftp.FtpComponent;
-import org.archenroot.fw.soatest.jaxbconfig.SoaTestingFramework;
+
 import org.archenroot.fw.soatest.jms.JmsComponent;
 import org.archenroot.fw.soatest.osbservicemanager.OsbComponent;
 import org.archenroot.fw.soatest.rest.RestComponent;
 import org.archenroot.fw.soatest.soap.SoapComponent;
 import org.archenroot.fw.soatest.tool.ToolComponent;
 import org.archenroot.fw.soatest.xml.XmlComponent;
+
 
 /**
  *
@@ -75,8 +75,8 @@ public class SoaTestingFrameworkComponentFactory {
         
         switch (soaTestingFrameworkComponentType) {
             case DATABASE:
-                SoaTestingFramework sf = getUnmarshalledConfiguration();
-                //soaTestingFrameworkComponent = new DatabaseComponent(getUnmarshalledConfiguration().getDatabaseConfiguration());
+                
+                soaTestingFrameworkComponent = new DatabaseComponent(getUnmarshalledConfiguration().getDatabaseConfiguration());
                 break;
             case FILE:
                 soaTestingFrameworkComponent = new FileComponent();
@@ -112,7 +112,9 @@ public class SoaTestingFrameworkComponentFactory {
     private static SoaTestingFramework getUnmarshalledConfiguration(){
         try {
             JAXBContext jaxbContext = JAXBContext.newInstance(SoaTestingFramework.class);
+            
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
+            
             SoaTestingFramework myJAXBObject;            
             
 

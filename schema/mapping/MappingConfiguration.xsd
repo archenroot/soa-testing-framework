@@ -17,14 +17,13 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0" xmlns="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration"
-xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
 xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration"
 targetNamespace="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration"
 elementFormDefault="qualified" attributeFormDefault="unqualified">
 <xs:complexType name="MappingConfiguration">
 <xs:sequence>
-<xs:element name="map"></xs:element>
+<xs:element name="map"/>
 </xs:sequence>
 </xs:complexType>
 </xs:schema>
