@@ -17,40 +17,21 @@
  */
 package org.archenroot.fw.soatest;
 
-import com.eviware.soapui.impl.wsdl.support.UrlSchemaLoader;
-import com.eviware.soapui.impl.wsdl.support.wsdl.AbstractWsdlDefinitionLoader;
-import com.eviware.soapui.impl.wsdl.support.wsdl.CachedWsdlLoader;
-import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlDefinitionLoader;
-import com.eviware.soapui.impl.wsdl.support.wsdl.WsdlLoader;
-import com.eviware.soapui.model.iface.Request;
-import com.eviware.soapui.support.SoapUIException;
-import com.eviware.x.dialogs.XProgressMonitor;
-import java.io.File;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import javax.wsdl.WSDLException;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.SchemaTypeSystem;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.archenroot.fw.soatest.database.UnknownCRUDTypeException;
-import org.archenroot.fw.soatest.soap.JAXPProcessor;
-import org.archenroot.fw.soatest.soap.SoapTestComponent;
-import org.archenroot.fw.soatest.soap.UnknownFlowDirectionTypeException;
-import org.ow2.easywsdl.schema.api.SchemaException;
-import org.xml.sax.InputSource;
-
 /**
  *
  * @author zANGETSu
  */
 public class Main {
 
-    public static void main(String[] args) throws IOException, UnknownCRUDTypeException, WSDLException, Request.SubmitException, SoapUIException, XmlException, UnknownFlowDirectionTypeException, org.ow2.easywsdl.wsdl.api.WSDLException, URISyntaxException, SchemaException, Exception {
+    public static void main(String[] args)  {
+        
+        
+        TestDatabaseComponent.testDatabaseComponent();
+        
+        
+        
+        /*
+        
         String path = new File(".").getCanonicalPath().toString()
                 + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml";
         boolean fileExists = new File(path).exists();
@@ -61,6 +42,9 @@ public class Main {
                 = new SoaTestingFrameworkConfiguration(
                 new File(".").getCanonicalPath().toString()
                 + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
+        
+        */
+        
         //soaTFConfig.getDatabaseType();
         //DatabaseTestComponent dtc = new DatabaseTestComponent(soaTFConfig.getDatabaseType());
         //dtc.generateSQLStatement(CRUDType.INSERT);
@@ -97,7 +81,7 @@ public class Main {
         //Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(desc);
         //String s= doc.getTextContent();
        
-        /*SoapTestComponent stc = new SoapTestComponent("SendJMSQueue",
+        /*SoapComponent stc = new SoapComponent("SendJMSQueue",
                 // "http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue", 
                 "http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue",
                 "sendJMSMessage",
@@ -110,8 +94,8 @@ public class Main {
         
         
         stc.isSoapRequestEnvelopeValid();
-        stc.validateMessage(SoapTestComponent.FlowDirectionType.INBOUND);
-        stc.validateMessage(SoapTestComponent.FlowDirectionType.OUTBOUND);
+        stc.validateMessage(SoapComponent.FlowDirectionType.INBOUND);
+        stc.validateMessage(SoapComponent.FlowDirectionType.OUTBOUND);
         System.out.println("completed.");
         UrlSchemaLoader sl = new UrlSchemaLoader(stc.getSoapEndPointUri());
         XmlObject xo = sl.loadXmlObject(stc.getSoapEndPointUri() + "?wsdl", null);

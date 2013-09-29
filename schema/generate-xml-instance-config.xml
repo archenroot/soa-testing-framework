@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+    <schemaSystemId>file:/devel/ibm-dev/proj/SOATestingFramework/soa-testing-framework/xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/SoaTestingFramework.xsd</schemaSystemId>
+    <documentRoot></documentRoot>
+    <outputFolder>/devel/ibm-dev/proj/SOATestingFramework/soa-testing-framework/xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding</outputFolder>
+    <filenamePrefix>instance</filenamePrefix>
+    <filenameExtension>xml</filenameExtension>
+    <noOfInstances>1</noOfInstances>
+    <openFirstInstance>true</openFirstInstance>
+    <defaultNamespace>http://www.archenroot.org/SoaTestingFramework</defaultNamespace>
+    <valuesMaxLength>30</valuesMaxLength>
+    <isUseIncrementalNamesForValues>true</isUseIncrementalNamesForValues>
+    <discardOptionalElementsAfterNestedLevel>6</discardOptionalElementsAfterNestedLevel>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration" proxy="mapconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration" proxy="globconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/FtpConfiguration" proxy="ftpconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework" proxy="stf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration" proxy="jmsconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration" proxy="soapconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration" proxy="toolconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration" proxy="dbconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration" proxy="osbconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/FileConfiguation" proxy="fileconf"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/Common" proxy="common"/>
+    <namespaceMapping ns="http://www.archenroot.org/SoaTestingFramework/XmlConfiguration" proxy="xmlconf"/>
+    <element namespace="&lt;ANY>" name="&lt;ANY>">
+        <generateOptionalElements>true</generateOptionalElements>
+        <generateOptionalAttributes>true</generateOptionalAttributes>
+        <valuesForContentType>RANDOM</valuesForContentType>
+        <preferredNumberOfRepetitions>2</preferredNumberOfRepetitions>
+        <maximumRecursivityLevel>3</maximumRecursivityLevel>
+        <alternativeStrategy>FIRST</alternativeStrategy>
+        <choicesAndSubstitutions strategy="RANDOM" generateOthersAsComments="true"/>
+        <attribute namespace="&lt;ANY>" name="&lt;ANY>">
+        </attribute>
+    </element>
+</settings>

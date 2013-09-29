@@ -29,7 +29,7 @@ import javax.swing.ImageIcon;
 import javax.wsdl.WSDLException;
 import org.apache.xmlbeans.XmlError;
 import org.apache.xmlbeans.XmlException;
-import org.archenroot.fw.soatest.soap.SoapTestComponent;
+import org.archenroot.fw.soatest.soap.SoapComponent;
 import org.archenroot.fw.soatest.soap.UnknownFlowDirectionTypeException;
 import org.archenroot.fw.soatest.xml.XMLValidator;
 

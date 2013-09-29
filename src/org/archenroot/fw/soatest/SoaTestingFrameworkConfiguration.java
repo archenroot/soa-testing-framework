@@ -25,77 +25,40 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
-import org.archenroot.fw.soatest.configuration.AdminServerType;
-import org.archenroot.fw.soatest.configuration.DatabaseType;
-import org.archenroot.fw.soatest.configuration.DatabaseTypeEnumType;
-import org.archenroot.fw.soatest.configuration.EndPointType;
-import org.archenroot.fw.soatest.configuration.HostsType;
-import org.archenroot.fw.soatest.configuration.JMSServerType;
-import org.archenroot.fw.soatest.configuration.JMSType;
-import org.archenroot.fw.soatest.configuration.ManagedServerType;
-import org.archenroot.fw.soatest.configuration.SOAPType;
+import org.archenroot.fw.soatest.jaxbconfig.SoaTestingFramework;
 
 /**
  *
  * @author zANGETSu
  */
-class SoaTestingFrameworkConfiguration {
-    private File SOATFXMLConfigFile;
+public abstract class SoaTestingFrameworkConfiguration {
+    private String soaTestingFrameworkXmlConfigFileName;
     
-    SoaTestingFrameworkConfiguration(){
-        // dummy constructor, dont' use it
+    public SoaTestingFrameworkConfiguration (String soaTestingFrameworkXmlConfigFile){
+        this.soaTestingFrameworkXmlConfigFileName = soaTestingFrameworkXmlConfigFile;
     }
     
-    public SoaTestingFrameworkConfiguration(String xmlConfigFile){
-        this.SOATFXMLConfigFile = new File(xmlConfigFile);
-     }
+    protected abstract void loadConfiguration(String soaTestingFrameworkXmlConfigFile);
     
-    public SoaTestingFrameworkConfiguration (File xmlConfigFile){
-        this.SOATFXMLConfigFile = xmlConfigFile;
-    }
     
-    public EndPointType getEndPointType() throws IOException{
+    /*
+    
+    public SoaTestingFramework getSoaTestingFramework() throws IOException{
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(EndPointType.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(SoaTestingFramework.class);
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            File xmlFile = this.SOATFXMLConfigFile;
+            File xmlFile = this.soaTestingFrameworkXmlConfigFileName;
             System.out.println("Current dir: " + new File(".").getCanonicalPath());
             boolean fileExists = xmlFile.exists();
-            EndPointType endPointType = (EndPointType) jaxbUnmarshaller.unmarshal(xmlFile);
+            SoaTestingFramework soaTestingFramework = (SoaTestingFramework) jaxbUnmarshaller.unmarshal(xmlFile);
            
-            return endPointType;
+            return soaTestingFramework;
             
         } catch (JAXBException ex) {
             Logger.getLogger(SoaTestingFrameworkConfiguration.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
-    
-    public DatabaseType getDatabaseType() throws IOException{
-        return this.getEndPointType().getDatabase();   
-    }
- 
-    public AdminServerType getAdminServerType() throws IOException{
-        return this.getEndPointType().getJMS().getAdminServer();
-    }
-    
-    public DatabaseTypeEnumType getDatabaseTypeEnumType() throws IOException{
-        return this.getEndPointType().getDatabase().getDatabaseType();
-    }
-    
-    public JMSServerType getJMSServerType() throws IOException{
-        return this.getEndPointType().getJMS().getJmsServer();
-    }
-    
-    public JMSType getJMSType() throws IOException{
-        return this.getEndPointType().getJMS();
-    }
-    
-    public List<ManagedServerType> getManagedServerType() throws IOException{
-        return this.getEndPointType().getJMS().getManagedServer();
-    }
-    
-    public SOAPType getSOAPType() throws IOException{
-        return this.getEndPointType().getSOAP();
-    }
+   */
+
 }

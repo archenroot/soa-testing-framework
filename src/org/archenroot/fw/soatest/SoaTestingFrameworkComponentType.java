@@ -25,7 +25,7 @@ public enum SoaTestingFrameworkComponentType {
         return displayName;
     }
 
-    public enum FrameworkOperation {
+    public enum ComponentOperation {
 
         // Database related framework operations
         // Database related framework operations
@@ -89,24 +89,24 @@ public enum SoaTestingFrameworkComponentType {
         XML_OPERATIONS_DEFINITION_BEGIN("Dummy constant for XML enumset EnumSet.range() begining"),
         XML_OPERATIONS_DEFINITION_END("Dummy constant for XML operations EnumSet.range() end");
 
-        public static Set<FrameworkOperation> databaseOperations = EnumSet.of(DATABASE_OPERATIONS_DEFINITION_BEGIN, DATABASE_OPERATIONS_DEFINITION_END);
-        public static Set<FrameworkOperation> fileOperations = EnumSet.of(FILE_OPERATIONS_DEFINITION_BEGIN, FILE_OPERATIONS_DEFINITION_END);
-        public static Set<FrameworkOperation> ftpOperations = EnumSet.of(FTP_OPERATIONS_DEFINITION_BEGIN, FTP_OPERATIONS_DEFINITION_END);
-        public static Set<FrameworkOperation> jmsOperations = EnumSet.of(JMS_OPERATIONS_DEFINITION_BEGIN, JMS_OPERATIONS_DEFINITION_END);
-        public static Set<FrameworkOperation> osbOperations = EnumSet.of(OSB_OPERATIONS_DEFINITION_BEGIN, SOAP_OPERATIONS_DEFINITION_END);
-        public static Set<FrameworkOperation> restOperations = EnumSet.of(REST_OPERATIONS_DEFINITION_BEGIN, REST_OPERATIONS_DEFINITION_END);
-        public static Set<FrameworkOperation> soapOperations = EnumSet.of(SOAP_OPERATIONS_DEFINITION_BEGIN, SOAP_OPERATIONS_DEFINITION_END);
-        public static Set<FrameworkOperation> xmlOperations = EnumSet.of(XML_OPERATIONS_DEFINITION_BEGIN, XML_OPERATIONS_DEFINITION_END);
+        public static Set<ComponentOperation> databaseOperations = EnumSet.of(DATABASE_OPERATIONS_DEFINITION_BEGIN, DATABASE_OPERATIONS_DEFINITION_END);
+        public static Set<ComponentOperation> fileOperations = EnumSet.of(FILE_OPERATIONS_DEFINITION_BEGIN, FILE_OPERATIONS_DEFINITION_END);
+        public static Set<ComponentOperation> ftpOperations = EnumSet.of(FTP_OPERATIONS_DEFINITION_BEGIN, FTP_OPERATIONS_DEFINITION_END);
+        public static Set<ComponentOperation> jmsOperations = EnumSet.of(JMS_OPERATIONS_DEFINITION_BEGIN, JMS_OPERATIONS_DEFINITION_END);
+        public static Set<ComponentOperation> osbOperations = EnumSet.of(OSB_OPERATIONS_DEFINITION_BEGIN, SOAP_OPERATIONS_DEFINITION_END);
+        public static Set<ComponentOperation> restOperations = EnumSet.of(REST_OPERATIONS_DEFINITION_BEGIN, REST_OPERATIONS_DEFINITION_END);
+        public static Set<ComponentOperation> soapOperations = EnumSet.of(SOAP_OPERATIONS_DEFINITION_BEGIN, SOAP_OPERATIONS_DEFINITION_END);
+        public static Set<ComponentOperation> xmlOperations = EnumSet.of(XML_OPERATIONS_DEFINITION_BEGIN, XML_OPERATIONS_DEFINITION_END);
 
         //public static Set<FrameworkOperation> fileOperations = EnumSet.range();
         private String soaTestingFrameworkTypeDescription;
         private String frameworkOperationDesription;
 
-        private FrameworkOperation(String operationDescription) {
+        private ComponentOperation(String operationDescription) {
             this.frameworkOperationDesription = operationDescription;
         }
 
-        private FrameworkOperation(SoaTestingFrameworkComponentType type, String operationDescription) {
+        private ComponentOperation(SoaTestingFrameworkComponentType type, String operationDescription) {
             this.soaTestingFrameworkTypeDescription = type.getDisplayName();
             this.frameworkOperationDesription = operationDescription;
         }

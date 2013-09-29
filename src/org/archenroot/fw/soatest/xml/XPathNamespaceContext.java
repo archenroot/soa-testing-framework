@@ -15,8 +15,8 @@ public final class XPathNamespaceContext implements NamespaceContext {
   private Map<String, Set> prefixesByURI;
 
   public XPathNamespaceContext() {
-        this.prefixesByURI = new HashMap<>();
-        this.urisByPrefix = new HashMap<>();
+        this.prefixesByURI = new HashMap<String, Set>();
+        this.urisByPrefix = new HashMap<String, String>();
     addNamespace(XMLConstants.XML_NS_PREFIX, XMLConstants.XML_NS_URI);
     addNamespace(XMLConstants.XMLNS_ATTRIBUTE, XMLConstants.XMLNS_ATTRIBUTE_NS_URI);
   }
@@ -26,7 +26,7 @@ public final class XPathNamespaceContext implements NamespaceContext {
     if (prefixesByURI.containsKey(namespaceURI)) {
       (prefixesByURI.get(namespaceURI)).add(prefix);
     } else {
-      Set<String> set = new HashSet<>();
+      Set<String> set = new HashSet<String>();
       set.add(prefix);
       prefixesByURI.put(namespaceURI, set);
     }

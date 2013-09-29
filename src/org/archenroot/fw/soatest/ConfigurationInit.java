@@ -17,9 +17,12 @@
  */
 package org.archenroot.fw.soatest;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Properties;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -27,16 +30,35 @@ import java.util.Properties;
  */
 public class ConfigurationInit {
     
+    private static final Logger logger = LogManager.getLogger(ConfigurationInit.class.getName());
+    public static String configurationDefaultFile = "conf/soa-testing-framework-config-init.properties";
+    
     
     public static Properties getCoinfigurationInit(){
+        
         Properties configurationInit = new Properties();
         
         try {
-            configurationInit.load(new FileInputStream("/conf/soa-testing-framework-config-init.properties"));
+            if (!new File(configurationDefaultFile).exists()){
+                logger.error("Initialization properties file cannot be found on default location");
+                throw new IOException();
+            }
+            configurationInit.load(new FileInputStream(configurationDefaultFile));
+            logger.info("Initial confgiruation sucessfully loaded.");
             
         } catch (IOException ex){
             
         }
         return configurationInit;
     }
+
+    public static String getConfigurationDefaultFile() {
+        return configurationDefaultFile;
+    }
+
+    public static void setConfigurationDefaultFile(String configurationDefaultFile) {
+        ConfigurationInit.configurationDefaultFile = configurationDefaultFile;
+    }
+    
+    
 }

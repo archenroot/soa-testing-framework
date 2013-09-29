@@ -1,10 +1,10 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='SOATestingFramework' version='1.0'>
-	<schema type='-xmlschema' package='org.archenroot.fw.soatest.configuration' name='SoaTestingFrameworkConfigurationBinding'>
+	<schema type='-xmlschema' package='org.archenroot.fw.soatest.jaxbconfig' name='ConfigurationBinding'>
 		<xjc-options>
 		</xjc-options>
 		<schema-sources>
-			<schema-source location='xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/SoaTestingFramework.xsd' origLocation='schema/SoaTestingFramework.xsd'/>
+			<schema-source location='xml-resources/jaxb/ConfigurationBinding/SoaTestingFramework.xsd' origLocation='schema/SoaTestingFramework.xsd'/>
 		</schema-sources>
 		<bindings>
 		</bindings>
