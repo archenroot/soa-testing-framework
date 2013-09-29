@@ -40,7 +40,7 @@ public final class RandomGenerator {
         char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
-        for (int i = 0; i < length; i++) {
+        for (int i = 0; i < 20 /*length */; i++) {
             char c = chars[random.nextInt(chars.length)];
             sb.append(c);
         }

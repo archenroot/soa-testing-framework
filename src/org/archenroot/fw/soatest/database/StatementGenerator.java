@@ -6,7 +6,7 @@ import java.sql.*;
 import java.text.SimpleDateFormat;
 import org.archenroot.fw.soatest.tool.RandomGenerator;
 
-public final class SqlStatementGenerator {
+public final class StatementGenerator {
 
     private static final SimpleDateFormat dateFormat
             = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
@@ -14,10 +14,10 @@ public final class SqlStatementGenerator {
     private Connection conn;
     private String outputSQLScriptFileName;
 
-    private SqlStatementGenerator() {
+    private StatementGenerator() {
     }
 
-    public SqlStatementGenerator(
+    public StatementGenerator(
             Connection conn, String objectName, String outputSQLScriptFileName) {
         this.conn = conn;
         this.objectName = objectName;
@@ -43,9 +43,9 @@ public final class SqlStatementGenerator {
 
         java.util.Date d = null;
         PrintWriter p = new PrintWriter(new FileWriter(objectName + "_insert.sql"));
-        p.println("set sqlt off");
-        p.println("set sqlblanklines on");
-        p.println("set define off");
+        p.println("set sqlt off;");
+        p.println("set sqlblanklines on;");
+        p.println("set define off;");
         while (rs.next()) {
             String columnValues = "";
             for (int i = 0; i < numColumns; i++) {
@@ -100,7 +100,8 @@ public final class SqlStatementGenerator {
             p.println(String.format("INSERT INTO %s (%s) values (%s)\n/",
                     objectName,
                     columnNames,
-                    columnValues));
+                    columnValues,
+                    ";"));
         }
         p.close();
     }
@@ -159,6 +160,7 @@ public final class SqlStatementGenerator {
                         break;
                     */
                     default:
+                        //columnValues += "'" + RandomGenerator.getRandomAlphabetical(rsmd.getPrecision(i + 1)) + "'";
                         columnValues += "'" + RandomGenerator.getRandomAlphabetical(rsmd.getPrecision(i + 1)) + "'";
                         break;
                 }
@@ -172,12 +174,12 @@ public final class SqlStatementGenerator {
             outFile = this.outputSQLScriptFileName;
         }
         PrintWriter p = new PrintWriter(new FileWriter(outFile));
-        p.println("set sqlt off");
-        p.println("set sqlblanklines on");
-        p.println("set define off");
+        //p.println("set sqlt off;");
+        //p.println("set sqlblanklines on;");
+        //p.println("set define off;");
         
         
-        p.println(String.format("INSERT INTO %s (%s) values (%s)\n/",
+        p.println(String.format("INSERT INTO %s (%s) values (%s);",
                     objectName,
                     columnNames,
                     columnValues));

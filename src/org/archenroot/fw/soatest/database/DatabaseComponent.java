@@ -18,8 +18,11 @@
 package org.archenroot.fw.soatest.database;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -33,7 +36,6 @@ import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOpera
 import org.archenroot.fw.soatest.configuration.ConnectionIdentification;
 import org.archenroot.fw.soatest.configuration.DatabaseConfiguration;
 import org.archenroot.fw.soatest.configuration.DatabaseTypeEnum;
-
 
 /**
  *
@@ -74,9 +76,6 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
 
     @Override
     protected final void constructComponent() {
-        
-        
-       
 
         connectionName = this.databaseConfiguration.getConnectionIdentification().getConnectionName();
         databaseType = DatabaseTypeEnum.ORACLE.value();
@@ -92,7 +91,7 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
         selectSqlScriptFileName = this.connectionIdentification.getSelectSqlScriptFileName();
         updateSqlScriptFileName = this.connectionIdentification.getUpdateSqlScriptFileName();
         deleteSqlScriptFileName = this.connectionIdentification.getDeleteSqlScriptFileName();
-        
+
         jdbcUrl = constructJdbcUrl(this.hostName, this.port, this.serviceId);
         try {
             Class.forName(this.driverClassName);
@@ -110,30 +109,55 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
     @Override
     public void executeOperation(ComponentOperation componentOperation) {
         Set<ComponentOperation> supportedOperations = SoaTestingFrameworkComponentType.ComponentOperation.databaseOperations;
-        
-        if (supportedOperations.contains(componentOperation)){
+
+        if (supportedOperations.contains(componentOperation)) {
             try {
                 throw new UnsupportedComponentOperation();
             } catch (UnsupportedComponentOperation ex) {
                 Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
-        switch (componentOperation){
+
+        switch (componentOperation) {
             case GENERATE_INSERT_DYNAMICALLY_ONE_ROW:
-                
+                generateInsertDynamicallyOneRow();
+                break;
+            case EXECUTE_INSERT_FROM_FILE:
+        try {
+            executeInsertFromFile();
+        } catch (IOException ex) {
+            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (SQLException ex) {
+            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
         }
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+                break;
+            default:
+        }
     }
-    
+
+    private void generateInsertDynamicallyOneRow() {
+        try {
+            StatementGenerator sg = new StatementGenerator(conn, objectName, insertSqlScriptFileName);
+            sg.generateOneRowSampleInsertStatement();
+        } catch (Exception ex) {
+            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void executeInsertFromFile() throws FileNotFoundException, IOException, SQLException {
+        StatementExecutor se = new StatementExecutor(conn, false, true);
+        Reader r = new FileReader(new File(this.insertSqlScriptFileName));
+        se.runScript(r);
+    }
+
     private static String constructJdbcUrl(String hostName, BigInteger port, String serviceId) {
         return "jdbc:oracle:thin:@"
                 + hostName + ":"
                 + port.toString() + ":"
                 + serviceId;
     }
-    
-     protected static void writeStatementToFile(String statement, String pathToFile) {
+
+    protected static void writeStatementToFile(String statement, String pathToFile) {
         FileWriter fw = null;
         try {
             fw = new FileWriter(new File(pathToFile));
@@ -151,8 +175,5 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
         }
 
     }
-     
-     
-     
 
 }
