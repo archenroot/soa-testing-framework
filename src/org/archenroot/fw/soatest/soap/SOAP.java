@@ -238,7 +238,7 @@ class SOAP{
     public boolean validateMessage(FlowDirectionType fdt) throws UnknownFlowDirectionTypeException {
         switch (fdt) {
             case INBOUND:
-                XMLValidator.validateXMLFile(this.requestMessageXmlFile, "schema.xsd");
+                //XMLValidator.validateXMLFile(this.requestMessageXmlFile, "schema.xsd");
                 break;
             case OUTBOUND:
                 break;

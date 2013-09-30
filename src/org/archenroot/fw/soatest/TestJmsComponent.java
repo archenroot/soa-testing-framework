@@ -17,10 +17,17 @@
  */
 package org.archenroot.fw.soatest;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
 import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation.READ_NEW_MESSAGE_IN_QUEUE;
 import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation.READ_ALL_MASSAGES_IN_QUEUE;
 import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.JMS;
 import org.archenroot.fw.soatest.jms.JmsComponent;
+import org.archenroot.fw.soatest.tool.ValidateTransferedValues;
+import org.archenroot.fw.soatest.xml.XMLValidator;
+import org.gibello.zql.ParseException;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -29,11 +36,20 @@ import org.archenroot.fw.soatest.jms.JmsComponent;
  */
 public class TestJmsComponent {
 
-    public static void testJmsComponent() {
+    public static void testJmsComponent() throws SAXException, ParserConfigurationException, IOException, FileNotFoundException, ParseException {
         JmsComponent jmsComponent
                 = (JmsComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(JMS);
         
-        jmsComponent.executeOperation(READ_ALL_MASSAGES_IN_QUEUE);
-        jmsComponent.executeOperation(READ_NEW_MESSAGE_IN_QUEUE);
+        //jmsComponent.executeOperation(READ_ALL_MASSAGES_IN_QUEUE);
+       // jmsComponent.executeOperation(READ_NEW_MESSAGE_IN_QUEUE);
+        
+        //XMLValidator xmlValidator = new XMLValidator();
+        //boolean validateXMLFiles = xmlValidator.validateXMLFiles("test/jms", "test/jms/JMSMessage.xsd");
+        
+        
+        ValidateTransferedValues vtv = new ValidateTransferedValues();
+        vtv.validateValuesFromFile("test/db/insert.sql", "test/jms/message_9.xml");
+        
+        
     }
 }

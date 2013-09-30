@@ -17,26 +17,62 @@
  */
 package org.archenroot.fw.soatest.jms;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType;
+import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation;
+import org.archenroot.fw.soatest.configuration.DatabaseConfiguration;
+import org.archenroot.fw.soatest.configuration.JmsConfiguration;
 
 /**
  *
  * @author zANGETSu
  */
 public class JmsComponent extends SoaTestingFrameworkComponent {
+    private JmsConfiguration jmsConfiguration = null;
+    
+    
+    private ComponentOperation componentOperation = null;
     public JmsComponent(){
         super(SoaTestingFrameworkComponentType.JMS);
         constructComponent();
     }
-  
+    public JmsComponent(JmsConfiguration jmsConfiguration) {
+        super(SoaTestingFrameworkComponentType.JMS);
+        this.jmsConfiguration = jmsConfiguration;
+        
+        constructComponent();
+    }
     @Override
     protected void constructComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
     }
 
     @Override
     public void executeOperation(SoaTestingFrameworkComponentType.ComponentOperation componentOperation) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        this.componentOperation = componentOperation;
+        switch (componentOperation){
+            case READ_ALL_MASSAGES_IN_QUEUE:
+        try {
+            readAllMessagesInQueue();
+        } catch (Exception ex) {
+            Logger.getLogger(JmsComponent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+                break;
+            default:
+                break;
+                
+        }
     }
+
+    private void readAllMessagesInQueue() throws Exception {
+         
+                 DistribuedQueueBrowser dqb = new DistribuedQueueBrowser("t3://prometheus:7001",
+                    "t3://prometheus:11001",
+                    "OSBWriteQueue", "weblogic", "Weblogic123");;
+            dqb.printQueueMessages();
+    }
+    
+    
 }

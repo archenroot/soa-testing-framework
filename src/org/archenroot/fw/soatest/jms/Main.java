@@ -78,7 +78,6 @@ public class Main {
        Iterator jmsConnectedHosts = bp.getJMSConnectedHosts().iterator();
        while(jmsConnectedHosts.hasNext()){System.out.println("JMSConnectedHosts: " + jmsConnectedHosts.next());}
      */
-       QueueBrowser qb = new QueueBrowser();
-       qb.printQueueMessages();
+      
     }
 }

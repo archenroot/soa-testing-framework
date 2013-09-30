@@ -31,17 +31,17 @@ public class Main {
             
             ZStatement zs = zqlParser.readStatement();
             System.out.println("Input statement: " + zs.toString());
-            
-            if(zs instanceof ZQuery){
-                
+
+            if (zs instanceof ZQuery) {
+
                 System.out.println("Je to select statement");
-            } else if (zs instanceof ZInsert){
-            System.out.println("Je to insert statement");
-            ZInsert zi = (ZInsert) zs;
-            Vector columns = zi.getColumns();
-            Enumeration colEnum = columns.elements();
-            while (colEnum.hasMoreElements()){
-                System.out.println("Column: " + colEnum.nextElement());
+            } else if (zs instanceof ZInsert) {
+                System.out.println("Je to insert statement");
+                ZInsert zi = (ZInsert) zs;
+                Vector columns = zi.getColumns();
+                Enumeration colEnum = columns.elements();
+                while (colEnum.hasMoreElements()) {
+                    System.out.println("Column: " + colEnum.nextElement());
             }
             
             

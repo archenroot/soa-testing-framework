@@ -1,11 +1,15 @@
 package org.archenroot.fw.soatest.jms;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -13,11 +17,15 @@ import javax.jms.Message;
 import javax.jms.ObjectMessage;
 import javax.jms.Queue;
 import javax.jms.Session;
+import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.archenroot.fw.soatest.database.DatabaseComponent;
 
 
 
@@ -26,9 +34,35 @@ public class DistribuedQueueBrowser {
   private final Session session;
   private final InitialContext ctx;
   private final Iterable<String> queueNames;
+  
+  Logger logger = LogManager.getLogger(DistribuedQueueBrowser.class.getName());
+  
+    private final String hostName = "prometheus";
+    private final int port = 7001;
+    private final String userName = "weblogic";
+    private final String password = "Weblogic123";
 
-  public DistribuedQueueBrowser(String adminUrl, String providerUrl,
-      String distributedDestinationName, String userName, String password) throws Exception {
+    /*
+     There exists 3 MBean servers accessible trough JMX, well even one can
+     connect directly to the managed server, Oracle suppose to connect to the 
+     admin server trough the "Domain Runtime MBean Server" server bean and
+     manage other nodes from this point. Here is list of supported MBean servers:
+     MBean Server                 JNDI Name
+     Domain Runtime MBean Server  weblogic.management.mbeanservers.domainruntime
+     Runtime MBean Server         weblogic.management.mbeanservers.runtime
+     Edit MBean Server            weblogic.management.mbeanservers.edit 
+     */
+    private String messageBeanServer = "weblogic.management.mbeanservers.domainruntime";
+
+    
+    
+
+  public DistribuedQueueBrowser(
+          String adminUrl, 
+          String providerUrl,
+          String distributedDestinationName, 
+          String userName, 
+          String password) throws Exception {
     ctx = getInitialContext(providerUrl, userName, password);
     WeblogicMBeanHelper factory = null;
 
@@ -49,6 +83,43 @@ public class DistribuedQueueBrowser {
     session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
   }
 
+  
+  public void printQueueMessages() {
+        try {
+            // Note that the first argument is the admin url and the second is the
+            // managed server url.
+            
+          
+          
+            Enumeration<ServerLocatedMessage> sli = this.getServerLocatedEnumeration();
+            int i = 0;
+            while (sli.hasMoreElements()) {
+                i++;
+                ServerLocatedMessage m = sli.nextElement();
+                TextMessage mes = (TextMessage) m.getMessage();
+                /*
+                for (Enumeration<String> e = mes.getPropertyNames(); e.hasMoreElements();)
+                        System.out.println("enum" + e.nextElement().toString());
+                
+              
+                System.out.println("Correlation id:" + mes.getJMSCorrelationID());
+                System.out.println("Message id:" + mes.getJMSCorrelationID());
+                System.out.println("JMS Type:" + mes.getJMSType());
+                System.out.println("Content: " + mes.getText());
+                */
+                
+                this.writeStatementToFile(mes.getText(), "test/jms/message_" + i + ".xml");
+                System.out.println(m);
+            }
+        } catch (JMSException ex) {
+            
+        } catch (NamingException ex) {
+            
+        } catch (Exception ex) {
+            
+        }
+    }
+  
   private InitialContext getInitialContext(String providerUrl, String userName, String password) throws Exception {
     Hashtable<String, String> ht = new Hashtable<String, String>();
 
@@ -174,4 +245,22 @@ public class DistribuedQueueBrowser {
     catch (NamingException ignored) {
     }
   }
+  
+   private void writeStatementToFile(String statement, String pathToFile) {
+        FileWriter fw = null;
+        try {
+            fw = new FileWriter(new File(pathToFile));
+            fw.write(statement);
+            fw.flush();
+            fw.close();
+        } catch (IOException ex) {
+            java.util.logging.Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+        } finally {
+            try {
+                fw.close();
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+   }
 }

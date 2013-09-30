@@ -17,17 +17,28 @@
  */
 package org.archenroot.fw.soatest;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import javax.xml.parsers.ParserConfigurationException;
+import org.archenroot.fw.soatest.xml.XMLValidator;
+import org.gibello.zql.ParseException;
+import org.xml.sax.SAXException;
+
 /**
  *
  * @author zANGETSu
  */
 public class Main {
 
-    public static void main(String[] args)  {
+    public static void main(String[] args) throws SAXException, ParserConfigurationException, IOException, FileNotFoundException, ParseException  {
         
         
-        //TestDatabaseComponent.testDatabaseComponent();
-        TestOsbComponent.testDatabaseComponent();
+        TestDatabaseComponent.testDatabaseComponent();
+        //TestOsbComponent.testDatabaseComponent();
+        //TestJmsComponent.testJmsComponent();
+        
+        
+        
         
         
         
