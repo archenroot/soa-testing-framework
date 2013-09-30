@@ -33,10 +33,10 @@ public class Main {
     public static void main(String[] args) throws SAXException, ParserConfigurationException, IOException, FileNotFoundException, ParseException  {
         
         
-        TestDatabaseComponent.testDatabaseComponent();
+        //TestDatabaseComponent.testDatabaseComponent();
         //TestOsbComponent.testDatabaseComponent();
         //TestJmsComponent.testJmsComponent();
-        
+        TestSoapComponent.testDatabaseComponent();
         
         
         

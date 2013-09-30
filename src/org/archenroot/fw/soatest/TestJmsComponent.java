@@ -37,8 +37,7 @@ import org.xml.sax.SAXException;
 public class TestJmsComponent {
 
     public static void testJmsComponent() throws SAXException, ParserConfigurationException, IOException, FileNotFoundException, ParseException {
-        JmsComponent jmsComponent
-                = (JmsComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(JMS);
+        //JmsComponent jmsComponent = (JmsComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(JMS);
         
         //jmsComponent.executeOperation(READ_ALL_MASSAGES_IN_QUEUE);
        // jmsComponent.executeOperation(READ_NEW_MESSAGE_IN_QUEUE);
@@ -47,8 +46,8 @@ public class TestJmsComponent {
         //boolean validateXMLFiles = xmlValidator.validateXMLFiles("test/jms", "test/jms/JMSMessage.xsd");
         
         
-        ValidateTransferedValues vtv = new ValidateTransferedValues();
-        vtv.validateValuesFromFile("test/db/insert.sql", "test/jms/message_9.xml");
+        //ValidateTransferedValues vtv = new ValidateTransferedValues();
+        //vtv.validateValuesFromFile("test/db/insert.sql", "test/jms/message_1.xml");
         
         
     }

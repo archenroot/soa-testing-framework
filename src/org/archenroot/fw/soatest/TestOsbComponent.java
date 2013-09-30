@@ -31,7 +31,7 @@ public class TestOsbComponent {
     public static void testDatabaseComponent() {
         OsbComponent osbComponent
                 = (OsbComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(OSB);
-        osbComponent.executeOperation(DISABLE_PROXY_SERVICE);
-        osbComponent.executeOperation(ENABLE_PROXY_SERVICE);
+        //osbComponent.executeOperation(DISABLE_PROXY_SERVICE);
+        //osbComponent.executeOperation(ENABLE_PROXY_SERVICE);
     }
 }
