@@ -23,7 +23,7 @@ public class Main {
 
     @SuppressWarnings("empty-statement")
     public static void main(String[] args) throws Exception {
-        
+        /*
         System.out.println("JMSQueueBrowser executed...");
         String hostName = "prometheus";
         int port = 7001;
@@ -34,7 +34,7 @@ public class Main {
                 "com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean");
         JMXConnector jmxConnector = new JMXConnector(hostName, port, userName, password, messageBeanServer);
         MBeanServerConnection mbServerConn = jmxConnector.getConnection();
-
+        
         System.out.println("Default domain: " + mbServerConn.getDefaultDomain());
         
         // Working with beans
@@ -77,7 +77,7 @@ public class Main {
         
        Iterator jmsConnectedHosts = bp.getJMSConnectedHosts().iterator();
        while(jmsConnectedHosts.hasNext()){System.out.println("JMSConnectedHosts: " + jmsConnectedHosts.next());}
-     
+     */
        QueueBrowser qb = new QueueBrowser();
        qb.printQueueMessages();
     }

@@ -54,7 +54,7 @@ public enum SoaTestingFrameworkComponentType {
         
         // JMS related freamework operations
         JMS_OPERATIONS_DEFINITION_BEGIN("Dummy constant for JMS enumset EnumSet.range() begining"),
-        READ_MESSAGE_IN_QUEUE(SoaTestingFrameworkComponentType.JMS, "Read message in queue by provided id - the message will not be dropped from the queue"),
+        READ_NEW_MESSAGE_IN_QUEUE(SoaTestingFrameworkComponentType.JMS, "Read message in queue by provided id - the message will not be dropped from the queue"),
         READ_ALL_MASSAGES_IN_QUEUE(SoaTestingFrameworkComponentType.JMS, "Read all messages in queue - the message will not be dropped from the queue"),
         CHECK_NUMBER_OF_MESSAGES_IN_QUEUE(SoaTestingFrameworkComponentType.JMS, "Get number of messages in queue and log it"),
         CHECK_NUMBER_OF_MESSAGES_IN_TOPIC(SoaTestingFrameworkComponentType.JMS, "Get number of messages in topic and log it"),

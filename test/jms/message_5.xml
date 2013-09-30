@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pool:MessageStoreCollection xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/" xmlns:pool="http://xmlns.oracle.com/pcbpel/adapter/db/top/PoolFromDatabase"><pool:MessageStore><pool:id>4433</pool:id><pool:msgCont>adsfasdf</pool:msgCont></pool:MessageStore></pool:MessageStoreCollection>

@@ -69,9 +69,9 @@ public class DistribuedQueueBrowser {
     Map<String, Enumeration<Message>> serverMessageMap = new HashMap<String, Enumeration<Message>>();
 
     for (String queueName : queueNames) {
-        if ("OSBSamplesJMSServer@OSBListenQueue".equals(queueName)){
+        if ("OSBSamplesJMSServer@OSBWriteQueue".equals(queueName)){
             String serverDq[] = StringUtils.split(queueName, "@");
-            queueName = "jms.OSBListenQueue";
+            queueName = "jms.OSBWriteQueue";
             Queue queue = (Queue) ctx.lookup(queueName);
             javax.jms.QueueBrowser qb = session.createBrowser(queue);
             serverMessageMap.put(serverDq[0], qb.getEnumeration());
