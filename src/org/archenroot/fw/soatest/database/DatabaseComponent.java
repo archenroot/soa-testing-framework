@@ -27,13 +27,15 @@ import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.archenroot.fw.soatest.ConfigurationInit;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponent;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType;
 import org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation;
-import org.archenroot.fw.soatest.configuration.ConnectionIdentification;
+import org.archenroot.fw.soatest.configuration.Database;
 import org.archenroot.fw.soatest.configuration.DatabaseConfiguration;
 import org.archenroot.fw.soatest.configuration.DatabaseTypeEnum;
 
@@ -43,12 +45,16 @@ import org.archenroot.fw.soatest.configuration.DatabaseTypeEnum;
  */
 public class DatabaseComponent extends SoaTestingFrameworkComponent {
 
-    public static Set<SoaTestingFrameworkComponentType.ComponentOperation> supportedOperations = ComponentOperation.databaseOperations;
-
+    private static final Logger logger = LogManager.getLogger(DatabaseComponent.class.getName());
+    
+    public static Set<SoaTestingFrameworkComponentType.ComponentOperation> supportedOperations 
+           = ComponentOperation.databaseOperations;
+        
     private ComponentOperation databaseOperation = null;
     private DatabaseConfiguration databaseConfiguration = null;
-    private ConnectionIdentification connectionIdentification = null;
-
+    private List<Database> databaseList = null;
+    private Database database = null;
+    
     private String connectionName;
     private String databaseType;
     private String driverClassName;
@@ -70,40 +76,46 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
     public DatabaseComponent(DatabaseConfiguration databaseConfiguration) {
         super(SoaTestingFrameworkComponentType.DATABASE);
         this.databaseConfiguration = databaseConfiguration;
-        this.connectionIdentification = this.databaseConfiguration.getConnectionIdentification();
+        databaseList = this.databaseConfiguration.getDatabase();
+        database = databaseList.get(0);
         constructComponent();
     }
 
     @Override
     protected final void constructComponent() {
-
-        connectionName = this.databaseConfiguration.getConnectionIdentification().getConnectionName();
-        databaseType = DatabaseTypeEnum.ORACLE.value();
-        driverClassName = this.connectionIdentification.getDriverClassName();
-        hostName = this.connectionIdentification.getHostName();
-        port = this.connectionIdentification.getPort();
-        userName = this.connectionIdentification.getUserName();
-        password = this.connectionIdentification.getPassword();
-        serviceId = this.connectionIdentification.getServiceId();
-        connectAs = this.connectionIdentification.getConnectAs();
-        objectName = this.connectionIdentification.getObjectName();
-        insertSqlScriptFileName = this.connectionIdentification.getInsertSqlScriptFileName();
-        selectSqlScriptFileName = this.connectionIdentification.getSelectSqlScriptFileName();
-        updateSqlScriptFileName = this.connectionIdentification.getUpdateSqlScriptFileName();
-        deleteSqlScriptFileName = this.connectionIdentification.getDeleteSqlScriptFileName();
-
-        jdbcUrl = constructJdbcUrl(this.hostName, this.port, this.serviceId);
         try {
+            logger.debug("Constructing DatabaseComponent object.");
+            this.connectionName = database.getIdentificator();
+            this.databaseType = DatabaseTypeEnum.ORACLE.value();
+            this.driverClassName = database.getDriverClassName();
+            this.hostName = database.getHostName();
+            this.port = database.getPort();
+            this.userName = database.getUserName();
+            this.password = database.getPassword();
+            serviceId = database.getServiceId();
+            connectAs = database.getConnectAs();
+            objectName = database.getObjectName();
+            insertSqlScriptFileName = database.getInsertSqlScriptFileName();
+            selectSqlScriptFileName = database.getSelectSqlScriptFileName();
+            updateSqlScriptFileName = database.getUpdateSqlScriptFileName();
+            deleteSqlScriptFileName = database.getDeleteSqlScriptFileName();
+            
+            jdbcUrl = constructJdbcUrl(this.hostName, this.port, this.serviceId);
+            
             Class.forName(this.driverClassName);
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
+            
+            
             this.conn = DriverManager.getConnection(
                     this.jdbcUrl, this.userName, this.password);
+        
+            
+        } catch (ClassNotFoundException ex) {
+            logger.error("Database driver class cannot be found: " + ex.getMessage());
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error("DriverManager cannot get the connection: " + ex.getMessage());
         }
+        logger.debug("Constructing DatabaseComponent finished.");
+        
     }
 
     @Override
@@ -114,7 +126,7 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
             try {
                 throw new UnsupportedComponentOperation();
             } catch (UnsupportedComponentOperation ex) {
-                Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error("Component operation is not supported.");
             }
         }
 
@@ -126,9 +138,9 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
         try {
             executeInsertFromFile();
         } catch (IOException ex) {
-            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getLocalizedMessage());
         } catch (SQLException ex) {
-            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getLocalizedMessage());
         }
                 break;
             default:
@@ -140,7 +152,7 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
             StatementGenerator sg = new StatementGenerator(conn, objectName, insertSqlScriptFileName);
             sg.generateOneRowSampleInsertStatement();
         } catch (Exception ex) {
-            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getLocalizedMessage());
         }
     }
 
@@ -165,12 +177,12 @@ public class DatabaseComponent extends SoaTestingFrameworkComponent {
             fw.flush();
             fw.close();
         } catch (IOException ex) {
-            Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex.getLocalizedMessage());
         } finally {
             try {
                 fw.close();
             } catch (IOException ex) {
-                Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+                logger.error(ex.getLocalizedMessage());
             }
         }
 

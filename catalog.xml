@@ -4,8 +4,6 @@
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/DatabaseType.xsd" uri="xml-resources/jaxb/SOATFConfiguration/DatabaseType.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/JMSType.xsd" uri="xml-resources/jaxb/SOATFConfiguration/JMSType.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SOAPType.xsd" uri="xml-resources/jaxb/SOATFConfiguration/SOAPType.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SoaTestingFramework.xsd" uri="xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/SoaTestingFramework.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/tool/ToolConfiguration.xsd" uri="xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/tool/ToolConfiguration.xsd"/>
     <system systemId="file:/home/zangetsu/NetBeansProjects/soa-testing-framework/../../devel/ibm-dev/proj/SOATestingFramework/soa-testing-framework/schema/SoaTestingFramework.xsd" uri="xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/SoaTestingFramework.xsd"/>
     <system systemId="file:/home/zangetsu/devel/ibm-dev/proj/SOATestingFramework/soa-testing-framework/schema/common/CommonTypes.xsd" uri="xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/common/CommonTypes.xsd"/>
     <system systemId="file:/home/zangetsu/devel/ibm-dev/proj/SOATestingFramework/soa-testing-framework/schema/database/DatabaseConfiguration.xsd" uri="xml-resources/jaxb/SoaTestingFrameworkConfigurationBinding/database/DatabaseConfiguration.xsd"/>
@@ -46,4 +44,17 @@
     <system systemId="file:/home/zangetsu/NetBeansProjects/soa-testing-framework/schema/jms/Queue.xsd" uri="xml-resources/jaxb/TestBinding/jms/Queue.xsd"/>
     <system systemId="file:/home/zangetsu/NetBeansProjects/soa-testing-framework/schema/jms/Topic.xsd" uri="xml-resources/jaxb/TestBinding/jms/Topic.xsd"/>
     <system systemId="file:/home/zangetsu/NetBeansProjects/soa-testing-framework/schema/osb/ManagedServer.xsd" uri="xml-resources/jaxb/TestBinding/osb/ManagedServer.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SoaTestingFramework.xsd" uri="xml-resources/jaxb/aa/SoaTestingFramework.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/common/CommonTypes.xsd" uri="xml-resources/jaxb/aa/common/CommonTypes.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/database/DatabaseConfiguration.xsd" uri="xml-resources/jaxb/aa/database/DatabaseConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/file/FileConfiguration.xsd" uri="xml-resources/jaxb/aa/file/FileConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/ftp/FtpConfiguration.xsd" uri="xml-resources/jaxb/aa/ftp/FtpConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/global/GlobalConfiguration.xsd" uri="xml-resources/jaxb/aa/global/GlobalConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/jms/JmsConfiguration.xsd" uri="xml-resources/jaxb/aa/jms/JmsConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/mapping/MappingConfiguration.xsd" uri="xml-resources/jaxb/aa/mapping/MappingConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/osb/OsbConfiguration.xsd" uri="xml-resources/jaxb/aa/osb/OsbConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/soap/SoapConfiguration.xsd" uri="xml-resources/jaxb/aa/soap/SoapConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/tool/ToolConfiguration.xsd" uri="xml-resources/jaxb/aa/tool/ToolConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/xml/XmlConfiguration.xsd" uri="xml-resources/jaxb/aa/xml/XmlConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/soap/ServiceIdentification.xsd" uri="xml-resources/jaxb/aa/soap/ServiceIdentification.xsd"/>
 </catalog>

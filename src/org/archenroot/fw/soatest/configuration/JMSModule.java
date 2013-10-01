@@ -15,26 +15,16 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- *                 
- *                 SOAP protocol configuration.
- * 
- *                 Currently only transport over HTTP protocol supported!
- *                 
- *                 SMTP and JMS protocol should be supported in future.
- *                 
- *             
- * 
- * <p>Java class for SoapConfiguration complex type.
+ * <p>Java class for JMSModule complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="SoapConfiguration">
+ * &lt;complexType name="JMSModule">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="serviceIdentification" type="{http://www.archenroot.org/SoaTestingFramework/SoapConfiguration}ServiceIdentification"/>
+ *         &lt;element name="resources" type="{http://www.archenroot.org/SoaTestingFramework/JmsConfiguration}Resources"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -44,36 +34,36 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "SoapConfiguration", namespace = "http://www.archenroot.org/SoaTestingFramework/SoapConfiguration", propOrder = {
-    "serviceIdentification"
+@XmlType(name = "JMSModule", propOrder = {
+    "resources"
 })
-public class SoapConfiguration {
+public class JMSModule {
 
     @XmlElement(required = true)
-    protected ServiceIdentification serviceIdentification;
+    protected Resources resources;
 
     /**
-     * Gets the value of the serviceIdentification property.
+     * Gets the value of the resources property.
      * 
      * @return
      *     possible object is
-     *     {@link ServiceIdentification }
+     *     {@link Resources }
      *     
      */
-    public ServiceIdentification getServiceIdentification() {
-        return serviceIdentification;
+    public Resources getResources() {
+        return resources;
     }
 
     /**
-     * Sets the value of the serviceIdentification property.
+     * Sets the value of the resources property.
      * 
      * @param value
      *     allowed object is
-     *     {@link ServiceIdentification }
+     *     {@link Resources }
      *     
      */
-    public void setServiceIdentification(ServiceIdentification value) {
-        this.serviceIdentification = value;
+    public void setResources(Resources value) {
+        this.resources = value;
     }
 
 }

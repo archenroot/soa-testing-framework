@@ -2,9 +2,14 @@ package org.archenroot.fw.soatest;
 
 import java.util.EnumSet;
 import java.util.Set;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.archenroot.fw.soatest.database.DatabaseComponent;
 
 public enum SoaTestingFrameworkComponentType {
-
+    
+    
+    
     DATABASE("Database Testing Framework Type Domain"),
     FILE("File Testing Framework Type Domain"),
     FTP("FTP Testing Framework Type Domain"),
@@ -15,6 +20,8 @@ public enum SoaTestingFrameworkComponentType {
     TOOL("TOOL Testing Framework Type Domain"),
     XML("XML Testing Framework Type Domain");
 
+    private static final Logger logger = LogManager.getLogger(DatabaseComponent.class.getName());
+    
     private final String displayName;
 
     private SoaTestingFrameworkComponentType(final String displayDescription) {

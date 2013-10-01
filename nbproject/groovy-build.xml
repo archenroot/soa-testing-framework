@@ -32,7 +32,7 @@
                     <classpath>
                         <path path="@{classpath}"/>
                     </classpath>
-                    <javac debug="@{debug}" deprecation="${javac.deprecation}" encoding="${source.encoding}" source="${javac.source}" target="${javac.target}">
+                    <javac debug="@{debug}" deprecation="${javac.deprecation}" encoding="${source.encoding}" source="${javac.source}" target="${javac.target}" fork="yes" executable="${platform.javac}" tempdir="${java.io.tmpdir}">
                         <compilerarg line="${javac.compilerargs} ${javac.compilerargs.jaxws}"/>
                         <customize/>
                     </javac>

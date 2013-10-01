@@ -58,11 +58,11 @@ public class OsbComponent extends SoaTestingFrameworkComponent {
     @Override
     protected void constructComponent() {
         this.adminServer = new AdminServer(this.osbConfiguration.getAdminServer());
-        this.managedServer = new ManagedServer(this.osbConfiguration.getCluster().getManagedServer());
+        //this.managedServer = new ManagedServer(this.osbConfiguration.getCluster().getManagedServer());
         this.serviceURI = "HudsonDemo/proxy/JMSListener";
-        this.host = this.osbConfiguration.getAdminServer().getHostName();
-        this.username = this.osbConfiguration.getAdminServer().getUserName();
-        this.password = this.osbConfiguration.getAdminServer().getPassword();
+        //this.host = this.osbConfiguration.getAdminServer().getHostName();
+        //this.username = this.osbConfiguration.getAdminServer().getUserName();
+        //this.password = this.osbConfiguration.getAdminServer().getPassword();
 
     }
 

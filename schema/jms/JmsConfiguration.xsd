@@ -21,7 +21,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
     targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
     elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:include schemaLocation="Server.xsd"/>
+
     <xs:complexType name="JmsConfiguration">
         <xs:annotation>
             <xs:documentation xml:lang="en">JMS messaging related configuration type.
@@ -29,7 +29,100 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="server" type="jmsconf:Server" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="server" type="jmsconf:JMSServer" minOccurs="1" maxOccurs="unbounded"/>
+            <xs:element name="module" minOccurs="1" maxOccurs="unbounded" type="jmsconf:JMSModule">
+                <xs:annotation>
+                    <xs:documentation>JMS module name visible in Weblogic server administration console.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="JMSModule">
+        <xs:sequence>
+            <xs:element name="resources" type="jmsconf:Resources"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Resources">
+        <xs:sequence>
+            <xs:element name="connectionFactory" type="jmsconf:ConnectionFactory"
+                maxOccurs="unbounded" minOccurs="1"/>
+            <xs:element name="queue" type="jmsconf:Queue" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="topic" type="jmsconf:Topic" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="JMSServer">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">
+                
+                Currently supporting only one module and connection factory per JMS server.
+                
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="serverName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Server name visible in Weblogic server administration console.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command. In case of JMS this can be the same as "serverName" element.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="Queue">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Queue type.
+                
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="queueName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Queue name registered within application server.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="JNDIName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">JNDI queue name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command. Usually this will be the same as queue name.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="Topic">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Topic type.
+                
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="topicName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Topic name registered within application server.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="JNDIName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>JNDI topic name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command. Usually this will be the same as queue name.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="ConnectionFactory">
+        <xs:sequence>
+            <xs:element default="" name="connectionFactoryName" type="xs:string"/>
+            <xs:element name="JNDIName" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

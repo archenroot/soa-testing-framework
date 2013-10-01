@@ -12,27 +12,29 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Queue type.
+ * 
+ *                 
+ *                 Currently supporting only one module and connection factory per JMS server.
  *                 
  *             
  * 
- * <p>Java class for Queue complex type.
+ * <p>Java class for JMSServer complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Queue">
+ * &lt;complexType name="JMSServer">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="queueName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="JNDIName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="serverName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
- *       &lt;attribute name="identificator" type="{http://www.w3.org/2001/XMLSchema}string" />
+ *       &lt;attribute name="identificator" type="{http://www.w3.org/2001/XMLSchema}anySimpleType" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -41,65 +43,39 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Queue", propOrder = {
-    "queueName",
-    "jndiName"
+@XmlType(name = "JMSServer", propOrder = {
+    "serverName"
 })
-public class Queue {
+public class JMSServer {
 
     @XmlElement(required = true)
-    protected String queueName;
-    @XmlElement(name = "JNDIName", required = true)
-    protected String jndiName;
+    protected String serverName;
     @XmlAttribute(name = "identificator")
+    @XmlSchemaType(name = "anySimpleType")
     protected String identificator;
 
     /**
-     * Gets the value of the queueName property.
+     * Gets the value of the serverName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getQueueName() {
-        return queueName;
+    public String getServerName() {
+        return serverName;
     }
 
     /**
-     * Sets the value of the queueName property.
+     * Sets the value of the serverName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setQueueName(String value) {
-        this.queueName = value;
-    }
-
-    /**
-     * Gets the value of the jndiName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getJNDIName() {
-        return jndiName;
-    }
-
-    /**
-     * Sets the value of the jndiName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setJNDIName(String value) {
-        this.jndiName = value;
+    public void setServerName(String value) {
+        this.serverName = value;
     }
 
     /**

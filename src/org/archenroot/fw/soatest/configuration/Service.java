@@ -16,21 +16,26 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Queue type.
- *                 
- *             
+ * Element serviceType is to let the management API which service is going to be managed. Currently two types of services are supported: "ProxyService" and "BusinessService".
  * 
- * <p>Java class for Queue complex type.
+ * <p>Java class for Service complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Queue">
+ * &lt;complexType name="Service">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="queueName" type="{http://www.w3.org/2001/XMLSchema}string"/>
- *         &lt;element name="JNDIName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="serviceURI" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="serviceType">
+ *           &lt;simpleType>
+ *             &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
+ *               &lt;enumeration value="ProxyService"/>
+ *               &lt;enumeration value="BusinessService"/>
+ *             &lt;/restriction>
+ *           &lt;/simpleType>
+ *         &lt;/element>
  *       &lt;/sequence>
  *       &lt;attribute name="identificator" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
@@ -41,65 +46,65 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Queue", propOrder = {
-    "queueName",
-    "jndiName"
+@XmlType(name = "Service", namespace = "http://www.archenroot.org/SoaTestingFramework/OsbConfiguration", propOrder = {
+    "serviceURI",
+    "serviceType"
 })
-public class Queue {
+public class Service {
 
     @XmlElement(required = true)
-    protected String queueName;
-    @XmlElement(name = "JNDIName", required = true)
-    protected String jndiName;
+    protected String serviceURI;
+    @XmlElement(required = true)
+    protected String serviceType;
     @XmlAttribute(name = "identificator")
     protected String identificator;
 
     /**
-     * Gets the value of the queueName property.
+     * Gets the value of the serviceURI property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getQueueName() {
-        return queueName;
+    public String getServiceURI() {
+        return serviceURI;
     }
 
     /**
-     * Sets the value of the queueName property.
+     * Sets the value of the serviceURI property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setQueueName(String value) {
-        this.queueName = value;
+    public void setServiceURI(String value) {
+        this.serviceURI = value;
     }
 
     /**
-     * Gets the value of the jndiName property.
+     * Gets the value of the serviceType property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getJNDIName() {
-        return jndiName;
+    public String getServiceType() {
+        return serviceType;
     }
 
     /**
-     * Sets the value of the jndiName property.
+     * Sets the value of the serviceType property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setJNDIName(String value) {
-        this.jndiName = value;
+    public void setServiceType(String value) {
+        this.serviceType = value;
     }
 
     /**

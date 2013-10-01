@@ -17,11 +17,18 @@
  */
 package org.archenroot.fw.soatest;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.archenroot.fw.soatest.database.DatabaseComponent;
+
 /**
  *
  * @author zANGETSu
  */
 public abstract class SoaTestingFrameworkConfiguration {
+    
+    private static final Logger logger = LogManager.getLogger(DatabaseComponent.class.getName());
+    
     private String soaTestingFrameworkXmlConfigFileName;
     
     public SoaTestingFrameworkConfiguration (String soaTestingFrameworkXmlConfigFile){

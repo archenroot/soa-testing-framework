@@ -17,26 +17,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
+ * List of services running on OSB which can be managed trough server API.
  * 
- * 
- * 		Configuration related to DatabaseComponent part of the framework.
- *                 
- *                 Supported databases: Oracle
- *                 
- *                 Planned support for any database with generic JDBC interface available.
- *                 
- *             
- * 
- * <p>Java class for DatabaseConfiguration complex type.
+ * <p>Java class for Services complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="DatabaseConfiguration">
+ * &lt;complexType name="Services">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="database" type="{http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration}Database" maxOccurs="unbounded"/>
+ *         &lt;element name="service" type="{http://www.archenroot.org/SoaTestingFramework/OsbConfiguration}Service" maxOccurs="unbounded"/>
  *       &lt;/sequence>
  *     &lt;/restriction>
  *   &lt;/complexContent>
@@ -46,41 +38,41 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "DatabaseConfiguration", namespace = "http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration", propOrder = {
-    "database"
+@XmlType(name = "Services", namespace = "http://www.archenroot.org/SoaTestingFramework/OsbConfiguration", propOrder = {
+    "service"
 })
-public class DatabaseConfiguration {
+public class Services {
 
     @XmlElement(required = true)
-    protected List<Database> database;
+    protected List<Service> service;
 
     /**
-     * Gets the value of the database property.
+     * Gets the value of the service property.
      * 
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the database property.
+     * This is why there is not a <CODE>set</CODE> method for the service property.
      * 
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getDatabase().add(newItem);
+     *    getService().add(newItem);
      * </pre>
      * 
      * 
      * <p>
      * Objects of the following type(s) are allowed in the list
-     * {@link Database }
+     * {@link Service }
      * 
      * 
      */
-    public List<Database> getDatabase() {
-        if (database == null) {
-            database = new ArrayList<Database>();
+    public List<Service> getService() {
+        if (service == null) {
+            service = new ArrayList<Service>();
         }
-        return this.database;
+        return this.service;
     }
 
 }

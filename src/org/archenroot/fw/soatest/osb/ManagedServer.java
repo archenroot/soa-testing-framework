@@ -30,8 +30,8 @@ public class ManagedServer {
     
     ManagedServer(org.archenroot.fw.soatest.configuration.ManagedServer managedServer){
         this.hostName = managedServer.getHostName();
-        this.userName = managedServer.getUserName();
-        this.password = managedServer.getPassword();
+        //this.userName = managedServer.getUserName();
+        //this.password = managedServer.getPassword();
         
     }
 

@@ -18,9 +18,12 @@
 
 package org.archenroot.fw.soatest;
 
-import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.*;
-import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation.*;
-import org.archenroot.fw.soatest.database.*;
+import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation.EXECUTE_INSERT_FROM_FILE;
+import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.ComponentOperation.GENERATE_INSERT_DYNAMICALLY_ONE_ROW;
+import static org.archenroot.fw.soatest.SoaTestingFrameworkComponentType.DATABASE;
+import org.archenroot.fw.soatest.database.DatabaseComponent;
+
+
 
 
 /**
@@ -31,12 +34,9 @@ public class TestDatabaseComponent {
     
     public static void testDatabaseComponent(){
         DatabaseComponent databaseComponent =  (DatabaseComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(DATABASE);
-        //databaseComponent.executeOperation(GENERATE_INSERT_DYNAMICALLY_ONE_ROW);
-        //databaseComponent.executeOperation(EXECUTE_INSERT_FROM_FILE);
-        
-        
-        
-        
+        databaseComponent.executeOperation(GENERATE_INSERT_DYNAMICALLY_ONE_ROW);
+        databaseComponent.executeOperation(EXECUTE_INSERT_FROM_FILE);
+          
     }
     
 }

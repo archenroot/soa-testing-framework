@@ -46,9 +46,9 @@ public class AdminServer {
     public AdminServer(org.archenroot.fw.soatest.configuration.AdminServer adminServer){
         this.managementMBeanServer = adminServer.getManagementMBeanServer();
         this.managementMBeanService = adminServer.getManagementMBeanService();
-        this.hostName = adminServer.getHostName();
-        this.userName = adminServer.getUserName();
-        this.password = adminServer.getPassword();
+        //this.hostName = adminServer.getHostName();
+        //this.userName = adminServer.getUserName();
+        //this.password = adminServer.getPassword();
         //this.jmxConnector = this.initConnection();
         
     }

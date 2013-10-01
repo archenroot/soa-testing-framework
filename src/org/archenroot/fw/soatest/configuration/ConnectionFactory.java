@@ -10,29 +10,23 @@ package org.archenroot.fw.soatest.configuration;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * Queue type.
- *                 
- *             
- * 
- * <p>Java class for Queue complex type.
+ * <p>Java class for ConnectionFactory complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="Queue">
+ * &lt;complexType name="ConnectionFactory">
  *   &lt;complexContent>
  *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType">
  *       &lt;sequence>
- *         &lt;element name="queueName" type="{http://www.w3.org/2001/XMLSchema}string"/>
+ *         &lt;element name="connectionFactoryName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *         &lt;element name="JNDIName" type="{http://www.w3.org/2001/XMLSchema}string"/>
  *       &lt;/sequence>
- *       &lt;attribute name="identificator" type="{http://www.w3.org/2001/XMLSchema}string" />
  *     &lt;/restriction>
  *   &lt;/complexContent>
  * &lt;/complexType>
@@ -41,41 +35,39 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "Queue", propOrder = {
-    "queueName",
+@XmlType(name = "ConnectionFactory", propOrder = {
+    "connectionFactoryName",
     "jndiName"
 })
-public class Queue {
+public class ConnectionFactory {
 
-    @XmlElement(required = true)
-    protected String queueName;
+    @XmlElement(required = true, defaultValue = "")
+    protected String connectionFactoryName;
     @XmlElement(name = "JNDIName", required = true)
     protected String jndiName;
-    @XmlAttribute(name = "identificator")
-    protected String identificator;
 
     /**
-     * Gets the value of the queueName property.
+     * Gets the value of the connectionFactoryName property.
      * 
      * @return
      *     possible object is
      *     {@link String }
      *     
      */
-    public String getQueueName() {
-        return queueName;
+    public String getConnectionFactoryName() {
+        return connectionFactoryName;
     }
 
     /**
-     * Sets the value of the queueName property.
+     * Sets the value of the connectionFactoryName property.
      * 
      * @param value
      *     allowed object is
      *     {@link String }
      *     
      */
-    public void setQueueName(String value) {
-        this.queueName = value;
+    public void setConnectionFactoryName(String value) {
+        this.connectionFactoryName = value;
     }
 
     /**
@@ -100,30 +92,6 @@ public class Queue {
      */
     public void setJNDIName(String value) {
         this.jndiName = value;
-    }
-
-    /**
-     * Gets the value of the identificator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
-     */
-    public String getIdentificator() {
-        return identificator;
-    }
-
-    /**
-     * Sets the value of the identificator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
-     */
-    public void setIdentificator(String value) {
-        this.identificator = value;
     }
 
 }
