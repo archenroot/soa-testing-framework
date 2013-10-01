@@ -17,21 +17,93 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
            xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            targetNamespace="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
            elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:annotation>
-        <xs:documentation></xs:documentation>
+        <xs:documentation>Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command.</xs:documentation>
     </xs:annotation>
     <xs:complexType name="AdminServer">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Configuration of OSB admin server connection used by JMXServiceURL. Primary purpose is for OSB management and JMS related stuff.</xs:documentation>
+            <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="managementMBeanServer" type="xs:string"  minOccurs="1" maxOccurs="1" default="weblogic.management.mbeanservers.domainruntime"/>
-            <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="managementMBeanService" type="xs:string"  minOccurs="1" maxOccurs="1" default="com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean"/>
+            <xs:element name="managementMBeanServer" type="xs:string" minOccurs="1" maxOccurs="1"
+                        default="weblogic.management.mbeanservers.domainruntime">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">
+                        There exists 3 MBean servers accessible trough JMX, well even one can
+                        connect directly to the managed server, Oracle suppose to connect to the 
+                        admin server trough the "Domain Runtime MBean Server" server bean and
+                        manage other nodes from this point. Here is list of supported MBean servers:
+                        MBean Server                 JNDI Name
+                        Domain Runtime MBean Server  weblogic.management.mbeanservers.domainruntime
+                        Runtime MBean Server         weblogic.management.mbeanservers.runtime
+                        Edit MBean Server            weblogic.management.mbeanservers.edit
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="managementMBeanService" type="xs:string" minOccurs="1" maxOccurs="1"
+                        default="com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean">
+                <xs:annotation>
+                    <xs:documentation>management service defaulting to DomainRuntimeService of type DomainRuntimeServiceMBean.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element default="weblogic.jndi.WLInitialContextFactory" name="initialContextFactory"
+                        type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Used to get initial weblogic context.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element default="weblogic.management.remote" name="jmxProtocolProviderPackages"
+                        type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>JMXConnector related context attribute.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element default="/jndi/" name="jmxServiceJNDIConstant" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation>Constant used to construct the JNDI name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element default="SoaTestingFramework" minOccurs="1" name="seesionNamePrefix"
+                        type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Prefix for naming session when accessing OSB management.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element default="t3" name="jmxProtocol" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Default protocol used for communicatio with OSB cluster.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="host" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="xs:int">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="securityPrincipal" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">User name for log onto OSB cluster.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="securityCredentials" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Password used to login onto OSB cluster.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Admin server identification information. This is not supported fully yet as soon as only 1 instance of admin server is expected.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

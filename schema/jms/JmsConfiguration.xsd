@@ -17,15 +17,14 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
-           elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
+    targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:include schemaLocation="Server.xsd"/>
     <xs:complexType name="JmsConfiguration">
         <xs:annotation>
-            <xs:documentation>
+            <xs:documentation xml:lang="en">JMS messaging related configuration type.
             
             </xs:documentation>
         </xs:annotation>

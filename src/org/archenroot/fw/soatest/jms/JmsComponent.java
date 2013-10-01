@@ -70,7 +70,7 @@ public class JmsComponent extends SoaTestingFrameworkComponent {
          
                  DistribuedQueueBrowser dqb = new DistribuedQueueBrowser("t3://prometheus:7001",
                     "t3://prometheus:11001",
-                    "OSBWriteQueue", "weblogic", "Weblogic123");;
+                    "OSBWriteQueue", "weblogic", "Weblogic123");
             dqb.printQueueMessages();
     }
     

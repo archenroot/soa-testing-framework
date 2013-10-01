@@ -17,11 +17,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
-           elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
+    targetNamespace="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:complexType name="Queue">
         <xs:annotation>
             <xs:documentation>
@@ -29,8 +28,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="queueName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="queueJndiName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-        </xs:sequence>    
+            <xs:element name="queueName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Queue name registered within application server.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="JNDIName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">JNDI queue name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string">
+            <xs:annotation>
+                <xs:documentation>Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command. Usually this will be the same as queue name.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

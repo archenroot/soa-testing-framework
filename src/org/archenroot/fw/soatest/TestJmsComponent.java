@@ -37,9 +37,9 @@ import org.xml.sax.SAXException;
 public class TestJmsComponent {
 
     public static void testJmsComponent() throws SAXException, ParserConfigurationException, IOException, FileNotFoundException, ParseException {
-        //JmsComponent jmsComponent = (JmsComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(JMS);
+        JmsComponent jmsComponent = (JmsComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(JMS);
         
-        //jmsComponent.executeOperation(READ_ALL_MASSAGES_IN_QUEUE);
+        jmsComponent.executeOperation(READ_ALL_MASSAGES_IN_QUEUE);
        // jmsComponent.executeOperation(READ_NEW_MESSAGE_IN_QUEUE);
         
         //XMLValidator xmlValidator = new XMLValidator();

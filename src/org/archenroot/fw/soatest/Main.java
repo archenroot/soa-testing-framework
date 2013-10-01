@@ -35,8 +35,63 @@ public class Main {
         
         //TestDatabaseComponent.testDatabaseComponent();
         //TestOsbComponent.testDatabaseComponent();
-        //TestJmsComponent.testJmsComponent();
-        TestSoapComponent.testDatabaseComponent();
+        TestJmsComponent.testJmsComponent();
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//TestSoapComponent.testDatabaseComponent();
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
         
         
         

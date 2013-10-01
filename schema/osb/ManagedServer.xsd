@@ -17,19 +17,33 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
-           elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
+    targetNamespace="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:annotation>
-        <xs:documentation></xs:documentation>
+        <xs:documentation/>
     </xs:annotation>
     <xs:complexType name="ManagedServer">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Managed server configuration.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="1"/>
-            <xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">IPv4 or hostname.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">The port here is required due to supporting distributed JMS queue browser. In future this should be replaced/removed by get all distributed queue/topic connections from/trough admin server as soon as getting everything trough admin server is Oracle proposed way.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
         </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Should be managed server name, for example "osb_server_1".</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

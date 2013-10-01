@@ -17,17 +17,15 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
-           elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:include schemaLocation="ConnectionIdentification.xsd"/>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
+    targetNamespace="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:complexType name="DatabaseConfiguration">
         <xs:annotation>
-            <xs:documentation>
-                
-                Configuration related to DatabaseComponent part of the framework.
+            <xs:documentation xml:lang="en">
+
+		Configuration related to DatabaseComponent part of the framework.
                 
                 Supported databases: Oracle
                 
@@ -36,7 +34,99 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="connectionIdentification" type="dbconf:ConnectionIdentification" minOccurs="1" maxOccurs="1"/>
+            <xs:element name="database" minOccurs="1" maxOccurs="unbounded" type="dbconf:Database">
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
+    <xs:complexType name="Database">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Database configuration element node.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="databaseType" type="dbconf:DatabaseTypeEnum" minOccurs="1"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Supported database type.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="driverClassName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">JDBC driver class name, for example: "oracle.jdbc.driver.OracleDriver".</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="port" type="xs:integer" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Database user name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Password.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="serviceId" type="xs:string" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Service Id. Will be extended to support different connect configuration in future versions.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="connectAs" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Not implemented yet. For future supported tasks there might be reuqired to connect as database admin, etc.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="objectName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Currently tables, views and materialized views are supported.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="insertSqlScriptFileName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Relative path and file name used by framework to generate, read or execute database INSERT only statements.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="selectSqlScriptFileName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Relative path and file name used by framework to generate, read or execute database SELECT only statements.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="updateSqlScriptFileName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Relative path and file name used by framework to generate, read or execute database UPDATE only statements.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="deleteSqlScriptFileName" type="xs:string" minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Relative path and file name used by framework to generate, read or execute database DELETE only statements.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="DatabaseTypeEnum">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Enumeration of supported databases.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Oracle"/>
+            <!-- 
+            <xs:enumeration value="Microsoft"/>
+            <xs:enumeration value="MySql"/>
+            <xs:enumeration value="H2"/>
+            -->
+        </xs:restriction>
+    </xs:simpleType>
 </xs:schema>

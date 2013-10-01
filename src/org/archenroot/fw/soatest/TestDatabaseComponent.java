@@ -30,8 +30,7 @@ import org.archenroot.fw.soatest.database.*;
 public class TestDatabaseComponent {
     
     public static void testDatabaseComponent(){
-        DatabaseComponent databaseComponent = 
-                (DatabaseComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(DATABASE);
+        DatabaseComponent databaseComponent =  (DatabaseComponent) SoaTestingFrameworkComponentFactory.buildSoaTestingFrameworkComponent(DATABASE);
         //databaseComponent.executeOperation(GENERATE_INSERT_DYNAMICALLY_ONE_ROW);
         //databaseComponent.executeOperation(EXECUTE_INSERT_FROM_FILE);
         

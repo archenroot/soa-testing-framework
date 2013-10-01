@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<tns:message xmlns:tns="http://www.archenroot.org/JMSMessage" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/"><tns:id>6284972745</tns:id><tns:msgCnt>iPXRYaJgKwhFQNvRflWE</tns:msgCnt></tns:message>
+<tns:message xmlns:tns="http://www.archenroot.org/JMSMessage" 
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+             xmlns:soap-env="http://schemas.xmlsoap.org/soap/envelope/">
+    <tns:id>9776839267</tns:id>
+    <tns:msgCnt>RrcVNCTpOTbZyJnzCwjZ</tns:msgCnt>
+</tns:message>
