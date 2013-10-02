@@ -1,8 +1,0 @@
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/">
-   <soapenv:Header xmlns:sen="http://www.example.org/SendJMS"/>
-   <soapenv:Body>
-      <sen:sendJMSMessageResponse xmlns:sen="http://www.example.org/SendJMS">
-         <sen:messageContent>?</sen:messageContent>
-      </sen:sendJMSMessageResponse>
-   </soapenv:Body>
-</soapenv:Envelope>
