@@ -91,7 +91,7 @@
             </osbconf:managedServer>
         </osbconf:cluster>
         <osbconf:services>
-            <osbconf:service>
+            <osbconf:service identificator="QueueListerne">
                 <osbconf:serviceURI>HudsonDemo/proxy/JMSListener</osbconf:serviceURI>
                 <osbconf:serviceType>ProxyService</osbconf:serviceType>
             </osbconf:service>

@@ -1,0 +1,7 @@
+Status: OK
+Time Taken: 0
+Size: 0
+Timestamp: Wed Oct 02 16:32:33 BST 2013
+TestStep: OSB_DISABLE_PROXY_SERVICE
+
+----------------- Messages ------------------------------
