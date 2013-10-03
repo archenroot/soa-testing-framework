@@ -21,9 +21,9 @@ import ibm.soatest.CompOperResult;
 import ibm.soatest.SOATFComponent;
 import ibm.soatest.SOATFCompType;
 import ibm.soatest.CompOperType;
-import ibm.soatest.config.Database;
-import ibm.soatest.config.DatabaseConfiguration;
-import ibm.soatest.config.DatabaseTypeEnum;
+import ibm.soatest.config.databaseconfiguration.Database;
+import ibm.soatest.config.databaseconfiguration.DatabaseConfiguration;
+import ibm.soatest.config.databaseconfiguration.DatabaseTypeEnum;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -96,10 +96,10 @@ public class DatabaseComponent extends SOATFComponent {
             serviceId = database.getServiceId();
             connectAs = database.getConnectAs();
             objectName = database.getObjectName();
-            insertSqlScriptFileName = database.getInsertSqlScriptFileName();
-            selectSqlScriptFileName = database.getSelectSqlScriptFileName();
-            updateSqlScriptFileName = database.getUpdateSqlScriptFileName();
-            deleteSqlScriptFileName = database.getDeleteSqlScriptFileName();
+            //insertSqlScriptFileName = database.getInsertSqlScriptFileName();
+            //selectSqlScriptFileName = database.getSelectSqlScriptFileName();
+            //updateSqlScriptFileName = database.getUpdateSqlScriptFileName();
+            //deleteSqlScriptFileName = database.getDeleteSqlScriptFileName();
             
             jdbcUrl = constructJdbcUrl(this.hostName, this.port, this.serviceId);
             

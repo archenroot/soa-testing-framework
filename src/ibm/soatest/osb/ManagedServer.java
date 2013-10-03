@@ -28,7 +28,7 @@ public class ManagedServer {
     private String userName = null;
     private String password = null;
     
-    ManagedServer(ibm.soatest.config.ManagedServer managedServer){
+    ManagedServer(ibm.soatest.config.osbconfiguration.ManagedServer managedServer){
         this.hostName = managedServer.getHostName();
         //this.userName = managedServer.getUserName();
         //this.password = managedServer.getPassword();

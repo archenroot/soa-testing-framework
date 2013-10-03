@@ -43,7 +43,7 @@ public class AdminServer {
     private JMXConnector jmxConnector = null;
               
     
-    public AdminServer(ibm.soatest.config.AdminServer adminServer){
+    public AdminServer(ibm.soatest.config.osbconfiguration.AdminServer adminServer){
         this.managementMBeanServer = adminServer.getManagementMBeanServer();
         this.managementMBeanService = adminServer.getManagementMBeanService();
         //this.hostName = adminServer.getHostName();

@@ -21,7 +21,7 @@ import ibm.soatest.CompOperResult;
 import ibm.soatest.CompOperType;
 import ibm.soatest.SOATFCompType;
 import ibm.soatest.SOATFComponent;
-import ibm.soatest.config.OsbConfiguration;
+import ibm.soatest.config.osbconfiguration.OsbConfiguration;
 import ibm.soatest.database.UnsupportedComponentOperation;
 import java.io.IOException;
 import java.math.BigInteger;
