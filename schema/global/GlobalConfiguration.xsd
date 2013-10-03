@@ -17,11 +17,56 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
-           elementFormDefault="qualified">
-    <xs:complexType name="GlobalConfiguration">
-    </xs:complexType>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+       xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
+       targetNamespace="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
+       elementFormDefault="qualified">
+       <xs:complexType name="GlobalConfiguration">
+              <xs:sequence>
+                     <xs:element name="fileSystemStructure" type="globconf:FileSystemStructure"/>
+              </xs:sequence>
+       </xs:complexType>
+       <xs:complexType name="FileSystemStructure">
+              <xs:sequence>
+                     <xs:element name="rootFolder">
+                            <xs:complexType>
+                                   <xs:sequence>
+                                          <xs:element name="reportFolder">
+                                                 <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element name="jUnitFolder">
+                                                  <xs:complexType>
+                                                  <xs:attribute default="junit" name="name"
+                                                  type="xs:string"/>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="httpFolder">
+                                                  <xs:complexType>
+                                                  <xs:attribute default="http" name="name"
+                                                  type="xs:string"/>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="pdfFolder">
+                                                  <xs:complexType>
+                                                  <xs:attribute default="pdf" name="name"
+                                                  type="xs:string"/>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  <xs:element name="xmlFolder">
+                                                  <xs:complexType>
+                                                  <xs:attribute default="xml" name="name"
+                                                  type="xs:string"/>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  <xs:attribute default="report" name="name"
+                                                  type="xs:string"/>
+                                                 </xs:complexType>
+                                          </xs:element>
+                                   </xs:sequence>
+                                   <xs:attribute default="root" name="name" type="xs:string"/>
+                            </xs:complexType>
+                     </xs:element>
+              </xs:sequence>
+       </xs:complexType>
 </xs:schema>

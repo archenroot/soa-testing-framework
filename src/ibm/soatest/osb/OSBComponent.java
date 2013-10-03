@@ -19,17 +19,15 @@ package ibm.soatest.osb;
 
 import ibm.soatest.CompOperResult;
 import ibm.soatest.CompOperType;
+import ibm.soatest.SOATFCompType;
 import ibm.soatest.SOATFComponent;
+import ibm.soatest.config.OsbConfiguration;
+import ibm.soatest.database.UnsupportedComponentOperation;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
-import ibm.soatest.SOATFCompType;
-import ibm.soatest.config.OsbConfiguration;
-import ibm.soatest.database.DatabaseComponent;
-import ibm.soatest.database.UnsupportedComponentOperation;
 
 /**
  *

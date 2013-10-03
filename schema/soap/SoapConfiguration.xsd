@@ -17,12 +17,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
-<xs:schema version="1.0"
-           xmlns:xs="http://www.w3.org/2001/XMLSchema"
-           xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
-           targetNamespace="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
-           elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:include schemaLocation="ServiceIdentification.xsd"/>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
+    targetNamespace="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:complexType name="SoapConfiguration">
         <xs:annotation>
             <xs:documentation>
@@ -36,7 +34,85 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="serviceIdentification" type="soapconf:ServiceIdentification"/>
+            <xs:element name="service" type="soapconf:Service"> </xs:element>
+            <xs:element name="fileSystemStructure"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Service">
+        <xs:annotation>
+            <xs:documentation>
+                
+                SOAP protocol configuration.
+                
+                Currently only transport over HTTP protocol supported!
+                
+                SMTP and JMS protocol should be supported in future.
+                
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="serviceName" type="xs:string"/>
+            <xs:element name="endPointUri" type="xs:string"/>
+            <xs:element name="wsdlUriSuffix" type="xs:string" default="?wsdl"/>
+            <xs:element name="operationName" type="xs:string"/>
+            <xs:element name="requestName" type="xs:string" default="request"/>
+        </xs:sequence>
+        <xs:attribute default="User identification name of the service" name="identificator"
+            type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType mixed="false" name="FileSystemStructure">
+        <xs:sequence>
+            <xs:element name="rootFolder">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="schemaFolder">
+                            <xs:complexType>
+                                <xs:attribute default="schema" name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="requestEnvelopeFolder">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="requestEnvelopeFile">
+                                        <xs:complexType>
+                                            <xs:attribute default="request.xml" name="name"
+                                                type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute default="request" name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="responseEnvelopeFolder">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="responseEnvelopeFile">
+                                        <xs:complexType>
+                                            <xs:attribute default="response.xml" name="name"
+                                                type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute default="response" name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="deleteStatementFolder">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="deleteStatementFile">
+                                        <xs:complexType>
+                                            <xs:attribute default="delete.sql" name="name"
+                                                type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute default="delete" name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute default="soap" name="name" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>

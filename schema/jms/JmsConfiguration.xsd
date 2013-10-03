@@ -35,19 +35,44 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                     <xs:documentation>JMS module name visible in Weblogic server administration console.</xs:documentation>
                 </xs:annotation>
             </xs:element>
+            <xs:element name="fileSystemStructure" type="jmsconf:FileSystemStructure"/>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="JMSModule">
+        <xs:annotation>
+            <xs:documentation>JMS module resource.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
             <xs:element name="resources" type="jmsconf:Resources"/>
         </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
     <xs:complexType name="Resources">
         <xs:sequence>
-            <xs:element name="connectionFactory" type="jmsconf:ConnectionFactory"
-                maxOccurs="unbounded" minOccurs="1"/>
-            <xs:element name="queue" type="jmsconf:Queue" maxOccurs="unbounded" minOccurs="0"/>
-            <xs:element name="topic" type="jmsconf:Topic" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element name="connectionFactory" maxOccurs="unbounded" minOccurs="1">
+                <xs:complexType>
+                    <xs:attribute default="Custom user identification information"
+                        name="identificator" type="xs:string"/>
+                    <xs:attribute name="name" type="xs:string"/>
+                    <xs:attribute name="jndiName" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="queue" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                    <xs:attribute default="Custom user identification information"
+                        name="identificator" type="xs:string"/>
+                    <xs:attribute name="name" type="xs:string"/>
+                    <xs:attribute name="jndiName" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="topic" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                    <xs:attribute default="Custom user identification information"
+                        name="identificator" type="xs:string"/>
+                    <xs:attribute name="name" type="xs:string"/>
+                    <xs:attribute name="jndiName" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="JMSServer">
@@ -65,7 +90,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="identificator">
+        <xs:attribute name="identificator" default="User identification information"
+            type="xs:string">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command. In case of JMS this can be the same as "serverName" element.</xs:documentation>
             </xs:annotation>
@@ -73,31 +99,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
     </xs:complexType>
     <xs:complexType name="Queue">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Queue type.
+            <xs:documentation xml:lang="en">JMS Queue type.
                 
             </xs:documentation>
         </xs:annotation>
-        <xs:sequence>
-            <xs:element name="queueName" type="xs:string" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">Queue name registered within application server.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="JNDIName" type="xs:string" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">JNDI queue name.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-        </xs:sequence>
-        <xs:attribute name="identificator" type="xs:string">
-            <xs:annotation>
-                <xs:documentation>Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command. Usually this will be the same as queue name.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="Topic">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Topic type.
+            <xs:documentation xml:lang="en">JMS Topic type.
                 
             </xs:documentation>
         </xs:annotation>
@@ -113,16 +122,42 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="identificator">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command. Usually this will be the same as queue name.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
-    <xs:complexType name="ConnectionFactory">
+    <xs:complexType name="FileSystemStructure">
         <xs:sequence>
-            <xs:element default="" name="connectionFactoryName" type="xs:string"/>
-            <xs:element name="JNDIName" type="xs:string"/>
+            <xs:element name="rootFolder">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="schemaFolder">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="schemaFile">
+                                        <xs:complexType>
+                                            <xs:attribute default="schema.xsd" name="name"
+                                                type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute default="schema" name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="messageFolder">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="messageFile">
+                                        <xs:complexType>
+                                            <xs:attribute default="message.xml" name="name"
+                                                type="xs:string"/>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                                <xs:attribute default="message" name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute default="jms" name="name" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
     </xs:complexType>
 </xs:schema>
