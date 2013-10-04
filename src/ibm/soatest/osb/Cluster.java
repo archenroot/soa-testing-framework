@@ -30,7 +30,7 @@ class Cluster {
     private List<ManagedServer> managedServers = null;
     ManagedServer managedServer = null;
    
-    public Cluster(ibm.soatest.config.osbconfiguration.Cluster cluster){
+    public Cluster(ibm.soatest.config.osb.Cluster cluster){
         //this.managedServer = cluster.getManagedServer();
         
     }

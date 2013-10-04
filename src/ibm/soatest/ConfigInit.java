@@ -31,7 +31,7 @@ import org.apache.logging.log4j.Logger;
 public class ConfigInit {
     
     private static final Logger logger = LogManager.getLogger(ConfigInit.class.getName());
-    public static String configurationDefaultFile = "c:/Dev/proj/SOATestingFramework/soa-testing-framework/conf/soa-testing-framework-config-init.properties";
+    public static String configurationDefaultFile = "../conf/soa-testing-framework-config-init.properties";
     
     
     public static Properties getCoinfigurationInit(){

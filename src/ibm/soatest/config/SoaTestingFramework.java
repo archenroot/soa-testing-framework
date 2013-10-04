@@ -8,16 +8,16 @@
 
 package ibm.soatest.config;
 
-import ibm.soatest.config.databaseconfiguration.DatabaseConfiguration;
-import ibm.soatest.config.fileconfiguation.FileConfiguation;
-import ibm.soatest.config.ftpconfiguration.FtpConfiguration;
-import ibm.soatest.config.globalconfiguration.GlobalConfiguration;
-import ibm.soatest.config.jmsconfiguration.JmsConfiguration;
-import ibm.soatest.config.mappingconfiguration.MappingConfiguration;
-import ibm.soatest.config.osbconfiguration.OsbConfiguration;
-import ibm.soatest.config.soapconfiguration.SoapConfiguration;
-import ibm.soatest.config.toolconfiguration.ToolConfiguration;
-import ibm.soatest.config.xmlconfiguration.XmlConfiguration;
+import ibm.soatest.config.database.DatabaseConfiguration;
+import ibm.soatest.config.file.FileConfiguation;
+import ibm.soatest.config.ftp.FtpConfiguration;
+import ibm.soatest.config.global.GlobalConfiguration;
+import ibm.soatest.config.jms.JmsConfiguration;
+import ibm.soatest.config.mapping.MappingConfiguration;
+import ibm.soatest.config.osb.OsbConfiguration;
+import ibm.soatest.config.soap.SoapConfiguration;
+import ibm.soatest.config.tool.ToolConfiguration;
+import ibm.soatest.config.xml.XmlConfiguration;
 import javax.xml.bind.annotation.*;
 
 

@@ -23,8 +23,8 @@ import java.util.logging.Logger;
 import ibm.soatest.SOATFComponent;
 import ibm.soatest.SOATFCompType;
 import ibm.soatest.CompOperType;
-import ibm.soatest.config.databaseconfiguration.DatabaseConfiguration;
-import ibm.soatest.config.jmsconfiguration.JmsConfiguration;
+import ibm.soatest.config.database.DatabaseConfiguration;
+import ibm.soatest.config.jms.JmsConfiguration;
 
 /**
  *
