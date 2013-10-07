@@ -1,0 +1,285 @@
+<?xml version="1.0"?>
+<!--
+Copyright (C) 2013 zANGETSu
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<xs:schema version="1.0"
+           xmlns="http://www.archenroot.org/SoaTestingFramework/Common"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
+           targetNamespace="http://www.archenroot.org/SoaTestingFramework/Common"
+           elementFormDefault="qualified">
+<xs:annotation>
+    <xs:documentation>
+      
+    </xs:documentation>
+  </xs:annotation>
+
+  <xs:simpleType name="ISO3166CountyCode">
+    <xs:annotation>
+      <xs:documentation>
+        Two-letter (alpha-2) ISO 3166-1 code for one of the 243 countries.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="AF"/> <!-- AFGHANISTAN -->
+      <xs:enumeration value="AX"/> <!-- &Aring;LAND ISLANDS -->
+      <xs:enumeration value="AL"/> <!-- ALBANIA -->
+      <xs:enumeration value="DZ"/> <!-- ALGERIA -->
+      <xs:enumeration value="AS"/> <!-- AMERICAN SAMOA -->
+      <xs:enumeration value="AD"/> <!-- ANDORRA -->
+      <xs:enumeration value="AO"/> <!-- ANGOLA -->
+      <xs:enumeration value="AI"/> <!-- ANGUILLA -->
+      <xs:enumeration value="AQ"/> <!-- ANTARCTICA -->
+      <xs:enumeration value="AG"/> <!-- ANTIGUA AND BARBUDA -->
+      <xs:enumeration value="AR"/> <!-- ARGENTINA -->
+      <xs:enumeration value="AM"/> <!-- ARMENIA -->
+      <xs:enumeration value="AW"/> <!-- ARUBA -->
+      <xs:enumeration value="AU"/> <!-- AUSTRALIA -->
+      <xs:enumeration value="AT"/> <!-- AUSTRIA -->
+      <xs:enumeration value="AZ"/> <!-- AZERBAIJAN -->
+      <xs:enumeration value="BS"/> <!-- BAHAMAS -->
+      <xs:enumeration value="BH"/> <!-- BAHRAIN -->
+      <xs:enumeration value="BD"/> <!-- BANGLADESH -->
+      <xs:enumeration value="BB"/> <!-- BARBADOS -->
+      <xs:enumeration value="BY"/> <!-- BELARUS -->
+      <xs:enumeration value="BE"/> <!-- BELGIUM -->
+      <xs:enumeration value="BZ"/> <!-- BELIZE -->
+      <xs:enumeration value="BJ"/> <!-- BENIN -->
+      <xs:enumeration value="BM"/> <!-- BERMUDA -->
+      <xs:enumeration value="BT"/> <!-- BHUTAN -->
+      <xs:enumeration value="BO"/> <!-- BOLIVIA -->
+      <xs:enumeration value="BA"/> <!-- BOSNIA AND HERZEGOVINA -->
+      <xs:enumeration value="BW"/> <!-- BOTSWANA -->
+      <xs:enumeration value="BV"/> <!-- BOUVET ISLAND -->
+      <xs:enumeration value="BR"/> <!-- BRAZIL -->
+      <xs:enumeration value="IO"/> <!-- BRITISH INDIAN OCEAN TERRITORY -->
+      <xs:enumeration value="BN"/> <!-- BRUNEI DARUSSALAM -->
+      <xs:enumeration value="BG"/> <!-- BULGARIA -->
+      <xs:enumeration value="BF"/> <!-- BURKINA FASO -->
+      <xs:enumeration value="BI"/> <!-- BURUNDI -->
+      <xs:enumeration value="KH"/> <!-- CAMBODIA -->
+      <xs:enumeration value="CM"/> <!-- CAMEROON -->
+      <xs:enumeration value="CA"/> <!-- CANADA -->
+      <xs:enumeration value="CV"/> <!-- CAPE VERDE -->
+      <xs:enumeration value="KY"/> <!-- CAYMAN ISLANDS -->
+      <xs:enumeration value="CF"/> <!-- CENTRAL AFRICAN REPUBLIC -->
+      <xs:enumeration value="TD"/> <!-- CHAD -->
+      <xs:enumeration value="CL"/> <!-- CHILE -->
+      <xs:enumeration value="CN"/> <!-- CHINA -->
+      <xs:enumeration value="CX"/> <!-- CHRISTMAS ISLAND -->
+      <xs:enumeration value="CC"/> <!-- COCOS (KEELING) ISLANDS -->
+      <xs:enumeration value="CO"/> <!-- COLOMBIA -->
+      <xs:enumeration value="KM"/> <!-- COMOROS -->
+      <xs:enumeration value="CG"/> <!-- CONGO -->
+      <xs:enumeration value="CD"/> <!-- CONGO, THE DEMOCRATIC REPUBLIC OF THE -->
+      <xs:enumeration value="CK"/> <!-- COOK ISLANDS -->
+      <xs:enumeration value="CR"/> <!-- COSTA RICA -->
+      <xs:enumeration value="CI"/> <!-- COTE D'IVOIRE -->
+      <xs:enumeration value="HR"/> <!-- CROATIA -->
+      <xs:enumeration value="CU"/> <!-- CUBA -->
+      <xs:enumeration value="CY"/> <!-- CYPRUS -->
+      <xs:enumeration value="CZ"/> <!-- CZECH REPUBLIC -->
+      <xs:enumeration value="DK"/> <!-- DENMARK -->
+      <xs:enumeration value="DJ"/> <!-- DJIBOUTI -->
+      <xs:enumeration value="DM"/> <!-- DOMINICA -->
+      <xs:enumeration value="DO"/> <!-- DOMINICAN REPUBLIC -->
+      <xs:enumeration value="EC"/> <!-- ECUADOR -->
+      <xs:enumeration value="EG"/> <!-- EGYPT -->
+      <xs:enumeration value="SV"/> <!-- EL SALVADOR -->
+      <xs:enumeration value="GQ"/> <!-- EQUATORIAL GUINEA -->
+      <xs:enumeration value="ER"/> <!-- ERITREA -->
+      <xs:enumeration value="EE"/> <!-- ESTONIA -->
+      <xs:enumeration value="ET"/> <!-- ETHIOPIA -->
+      <xs:enumeration value="FK"/> <!-- FALKLAND ISLANDS (MALVINAS) -->
+      <xs:enumeration value="FO"/> <!-- FAROE ISLANDS -->
+      <xs:enumeration value="FJ"/> <!-- FIJI -->
+      <xs:enumeration value="FI"/> <!-- FINLAND -->
+      <xs:enumeration value="FR"/> <!-- FRANCE -->
+      <xs:enumeration value="GF"/> <!-- FRENCH GUIANA -->
+      <xs:enumeration value="PF"/> <!-- FRENCH POLYNESIA -->
+      <xs:enumeration value="TF"/> <!-- FRENCH SOUTHERN TERRITORIES -->
+      <xs:enumeration value="GA"/> <!-- GABON -->
+      <xs:enumeration value="GM"/> <!-- GAMBIA -->
+      <xs:enumeration value="GE"/> <!-- GEORGIA -->
+      <xs:enumeration value="DE"/> <!-- GERMANY -->
+      <xs:enumeration value="GH"/> <!-- GHANA -->
+      <xs:enumeration value="GI"/> <!-- GIBRALTAR -->
+      <xs:enumeration value="GR"/> <!-- GREECE -->
+      <xs:enumeration value="GL"/> <!-- GREENLAND -->
+      <xs:enumeration value="GD"/> <!-- GRENADA -->
+      <xs:enumeration value="GP"/> <!-- GUADELOUPE -->
+      <xs:enumeration value="GU"/> <!-- GUAM -->
+      <xs:enumeration value="GT"/> <!-- GUATEMALA -->
+      <xs:enumeration value="GG"/> <!-- GUERNSEY -->
+      <xs:enumeration value="GN"/> <!-- GUINEA -->
+      <xs:enumeration value="GW"/> <!-- GUINEA-BISSAU -->
+      <xs:enumeration value="GY"/> <!-- GUYANA -->
+      <xs:enumeration value="HT"/> <!-- HAITI -->
+      <xs:enumeration value="HM"/> <!-- HEARD ISLAND AND MCDONALD ISLANDS -->
+      <xs:enumeration value="VA"/> <!-- HOLY SEE (VATICAN CITY STATE) -->
+      <xs:enumeration value="HN"/> <!-- HONDURAS -->
+      <xs:enumeration value="HK"/> <!-- HONG KONG -->
+      <xs:enumeration value="HU"/> <!-- HUNGARY -->
+      <xs:enumeration value="IS"/> <!-- ICELAND -->
+      <xs:enumeration value="IN"/> <!-- INDIA -->
+      <xs:enumeration value="ID"/> <!-- INDONESIA -->
+      <xs:enumeration value="IR"/> <!-- IRAN, ISLAMIC REPUBLIC OF -->
+      <xs:enumeration value="IQ"/> <!-- IRAQ -->
+      <xs:enumeration value="IE"/> <!-- IRELAND -->
+      <xs:enumeration value="IM"/> <!-- ISLE OF MAN -->
+      <xs:enumeration value="IL"/> <!-- ISRAEL -->
+      <xs:enumeration value="IT"/> <!-- ITALY -->
+      <xs:enumeration value="JM"/> <!-- JAMAICA -->
+      <xs:enumeration value="JP"/> <!-- JAPAN -->
+      <xs:enumeration value="JE"/> <!-- JERSEY -->
+      <xs:enumeration value="JO"/> <!-- JORDAN -->
+      <xs:enumeration value="KZ"/> <!-- KAZAKHSTAN -->
+      <xs:enumeration value="KE"/> <!-- KENYA -->
+      <xs:enumeration value="KI"/> <!-- KIRIBATI -->
+      <xs:enumeration value="KP"/> <!-- KOREA, DEMOCRATIC PEOPLE'S REPUBLIC OF -->
+      <xs:enumeration value="KR"/> <!-- KOREA, REPUBLIC OF -->
+      <xs:enumeration value="KW"/> <!-- KUWAIT -->
+      <xs:enumeration value="KG"/> <!-- KYRGYZSTAN -->
+      <xs:enumeration value="LA"/> <!-- LAO PEOPLE'S DEMOCRATIC REPUBLIC -->
+      <xs:enumeration value="LV"/> <!-- LATVIA -->
+      <xs:enumeration value="LB"/> <!-- LEBANON -->
+      <xs:enumeration value="LS"/> <!-- LESOTHO -->
+      <xs:enumeration value="LR"/> <!-- LIBERIA -->
+      <xs:enumeration value="LY"/> <!-- LIBYAN ARAB JAMAHIRIYA -->
+      <xs:enumeration value="LI"/> <!-- LIECHTENSTEIN -->
+      <xs:enumeration value="LT"/> <!-- LITHUANIA -->
+      <xs:enumeration value="LU"/> <!-- LUXEMBOURG -->
+      <xs:enumeration value="MO"/> <!-- MACAO -->
+      <xs:enumeration value="MK"/> <!-- MACEDONIA, THE FORMER YUGOSLAV REPUBLIC OF -->
+      <xs:enumeration value="MG"/> <!-- MADAGASCAR -->
+      <xs:enumeration value="MW"/> <!-- MALAWI -->
+      <xs:enumeration value="MY"/> <!-- MALAYSIA -->
+      <xs:enumeration value="MV"/> <!-- MALDIVES -->
+      <xs:enumeration value="ML"/> <!-- MALI -->
+      <xs:enumeration value="MT"/> <!-- MALTA -->
+      <xs:enumeration value="MH"/> <!-- MARSHALL ISLANDS -->
+      <xs:enumeration value="MQ"/> <!-- MARTINIQUE -->
+      <xs:enumeration value="MR"/> <!-- MAURITANIA -->
+      <xs:enumeration value="MU"/> <!-- MAURITIUS -->
+      <xs:enumeration value="YT"/> <!-- MAYOTTE -->
+      <xs:enumeration value="MX"/> <!-- MEXICO -->
+      <xs:enumeration value="FM"/> <!-- MICRONESIA, FEDERATED STATES OF -->
+      <xs:enumeration value="MD"/> <!-- MOLDOVA, REPUBLIC OF -->
+      <xs:enumeration value="MC"/> <!-- MONACO -->
+      <xs:enumeration value="MN"/> <!-- MONGOLIA -->
+      <xs:enumeration value="MS"/> <!-- MONTSERRAT -->
+      <xs:enumeration value="MA"/> <!-- MOROCCO -->
+      <xs:enumeration value="MZ"/> <!-- MOZAMBIQUE -->
+      <xs:enumeration value="MM"/> <!-- MYANMAR -->
+      <xs:enumeration value="NA"/> <!-- NAMIBIA -->
+      <xs:enumeration value="NR"/> <!-- NAURU -->
+      <xs:enumeration value="NP"/> <!-- NEPAL -->
+      <xs:enumeration value="NL"/> <!-- NETHERLANDS -->
+      <xs:enumeration value="AN"/> <!-- NETHERLANDS ANTILLES -->
+      <xs:enumeration value="NC"/> <!-- NEW CALEDONIA -->
+      <xs:enumeration value="NZ"/> <!-- NEW ZEALAND -->
+      <xs:enumeration value="NI"/> <!-- NICARAGUA -->
+      <xs:enumeration value="NE"/> <!-- NIGER -->
+      <xs:enumeration value="NG"/> <!-- NIGERIA -->
+      <xs:enumeration value="NU"/> <!-- NIUE -->
+      <xs:enumeration value="NF"/> <!-- NORFOLK ISLAND -->
+      <xs:enumeration value="MP"/> <!-- NORTHERN MARIANA ISLANDS -->
+      <xs:enumeration value="NO"/> <!-- NORWAY -->
+      <xs:enumeration value="OM"/> <!-- OMAN -->
+      <xs:enumeration value="PK"/> <!-- PAKISTAN -->
+      <xs:enumeration value="PW"/> <!-- PALAU -->
+      <xs:enumeration value="PS"/> <!-- PALESTINIAN TERRITORY, OCCUPIED -->
+      <xs:enumeration value="PA"/> <!-- PANAMA -->
+      <xs:enumeration value="PG"/> <!-- PAPUA NEW GUINEA -->
+      <xs:enumeration value="PY"/> <!-- PARAGUAY -->
+      <xs:enumeration value="PE"/> <!-- PERU -->
+      <xs:enumeration value="PH"/> <!-- PHILIPPINES -->
+      <xs:enumeration value="PN"/> <!-- PITCAIRN -->
+      <xs:enumeration value="PL"/> <!-- POLAND -->
+      <xs:enumeration value="PT"/> <!-- PORTUGAL -->
+      <xs:enumeration value="PR"/> <!-- PUERTO RICO -->
+      <xs:enumeration value="QA"/> <!-- QATAR -->
+      <xs:enumeration value="RE"/> <!-- REUNION -->
+      <xs:enumeration value="RO"/> <!-- ROMANIA -->
+      <xs:enumeration value="RU"/> <!-- RUSSIAN FEDERATION -->
+      <xs:enumeration value="RW"/> <!-- RWANDA -->
+      <xs:enumeration value="SH"/> <!-- SAINT HELENA -->
+      <xs:enumeration value="KN"/> <!-- SAINT KITTS AND NEVIS -->
+      <xs:enumeration value="LC"/> <!-- SAINT LUCIA -->
+      <xs:enumeration value="PM"/> <!-- SAINT PIERRE AND MIQUELON -->
+      <xs:enumeration value="VC"/> <!-- SAINT VINCENT AND THE GRENADINES -->
+      <xs:enumeration value="WS"/> <!-- SAMOA -->
+      <xs:enumeration value="SM"/> <!-- SAN MARINO -->
+      <xs:enumeration value="ST"/> <!-- SAO TOME AND PRINCIPE -->
+      <xs:enumeration value="SA"/> <!-- SAUDI ARABIA -->
+      <xs:enumeration value="SN"/> <!-- SENEGAL -->
+      <xs:enumeration value="CS"/> <!-- SERBIA AND MONTENEGRO -->
+      <xs:enumeration value="SC"/> <!-- SEYCHELLES -->
+      <xs:enumeration value="SL"/> <!-- SIERRA LEONE -->
+      <xs:enumeration value="SG"/> <!-- SINGAPORE -->
+      <xs:enumeration value="SK"/> <!-- SLOVAKIA -->
+      <xs:enumeration value="SI"/> <!-- SLOVENIA -->
+      <xs:enumeration value="SB"/> <!-- SOLOMON ISLANDS -->
+      <xs:enumeration value="SO"/> <!-- SOMALIA -->
+      <xs:enumeration value="ZA"/> <!-- SOUTH AFRICA -->
+      <xs:enumeration value="GS"/> <!-- SOUTH GEORGIA AND THE SOUTH SANDWICH ISLANDS -->
+      <xs:enumeration value="ES"/> <!-- SPAIN -->
+      <xs:enumeration value="LK"/> <!-- SRI LANKA -->
+      <xs:enumeration value="SD"/> <!-- SUDAN -->
+      <xs:enumeration value="SR"/> <!-- SURINAME -->
+      <xs:enumeration value="SJ"/> <!-- SVALBARD AND JAN MAYEN -->
+      <xs:enumeration value="SZ"/> <!-- SWAZILAND -->
+      <xs:enumeration value="SE"/> <!-- SWEDEN -->
+      <xs:enumeration value="CH"/> <!-- SWITZERLAND -->
+      <xs:enumeration value="SY"/> <!-- SYRIAN ARAB REPUBLIC -->
+      <xs:enumeration value="TW"/> <!-- TAIWAN, PROVINCE OF CHINA -->
+      <xs:enumeration value="TJ"/> <!-- TAJIKISTAN -->
+      <xs:enumeration value="TZ"/> <!-- TANZANIA, UNITED REPUBLIC OF -->
+      <xs:enumeration value="TH"/> <!-- THAILAND -->
+      <xs:enumeration value="TL"/> <!-- TIMOR-LESTE -->
+      <xs:enumeration value="TG"/> <!-- TOGO -->
+      <xs:enumeration value="TK"/> <!-- TOKELAU -->
+      <xs:enumeration value="TO"/> <!-- TONGA -->
+      <xs:enumeration value="TT"/> <!-- TRINIDAD AND TOBAGO -->
+      <xs:enumeration value="TN"/> <!-- TUNISIA -->
+      <xs:enumeration value="TR"/> <!-- TURKEY -->
+      <xs:enumeration value="TM"/> <!-- TURKMENISTAN -->
+      <xs:enumeration value="TC"/> <!-- TURKS AND CAICOS ISLANDS -->
+      <xs:enumeration value="TV"/> <!-- TUVALU -->
+      <xs:enumeration value="UG"/> <!-- UGANDA -->
+      <xs:enumeration value="UA"/> <!-- UKRAINE -->
+      <xs:enumeration value="AE"/> <!-- UNITED ARAB EMIRATES -->
+      <xs:enumeration value="GB"/> <!-- UNITED KINGDOM -->
+      <xs:enumeration value="US"/> <!-- UNITED STATES -->
+      <xs:enumeration value="UM"/> <!-- UNITED STATES MINOR OUTLYING ISLANDS -->
+      <xs:enumeration value="UY"/> <!-- URUGUAY -->
+      <xs:enumeration value="UZ"/> <!-- UZBEKISTAN -->
+      <xs:enumeration value="VU"/> <!-- VANUATU -->
+      <xs:enumeration value="VE"/> <!-- VENEZUELA -->
+      <xs:enumeration value="VN"/> <!-- VIET NAM -->
+      <xs:enumeration value="VG"/> <!-- VIRGIN ISLANDS, BRITISH -->
+      <xs:enumeration value="VI"/> <!-- VIRGIN ISLANDS, U.S. -->
+      <xs:enumeration value="WF"/> <!-- WALLIS AND FUTUNA -->
+      <xs:enumeration value="EH"/> <!-- WESTERN SAHARA -->
+      <xs:enumeration value="YE"/> <!-- YEMEN -->
+      <xs:enumeration value="ZM"/> <!-- ZAMBIA -->
+      <xs:enumeration value="ZW"/> <!-- ZIMBABWE -->
+    </xs:restriction>
+  </xs:simpleType>
+</xs:schema>
