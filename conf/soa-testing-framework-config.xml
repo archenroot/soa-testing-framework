@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<stf:soaTestingFramework 
- xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
- xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
- xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
- xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
- xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
- xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration"
- xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
- xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/FtpConfiguration"
- xmlns:stf="http://www.archenroot.org/SoaTestingFramework"
- xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/FileConfiguation"
- xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
- xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/XmlConfiguration"
+<stfconf:soaTestingFrameworkConfiguration
+    xmlns:stfconf="http://www.archenroot.org/SoaTestingFramework"
+    xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/Config/Database"
+    xmlns:commonconf="http://www.archenroot.org/SoaTestingFramework/Config/Common"
+    xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/Config/File"
+    xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/Config/FTP"
+    xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/Config/Global"
+    xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/Config/JMS"
+    xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/Config/Mapping"
+    xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/Config/OSB"
+    xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/Config/SOAP"
+    xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/Config/Tool"
+    xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/Config/XML"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.archenroot.org/SoaTestingFramework file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SoaTestingFramework.xsd">
-    <stf:globalConfiguration/>
-    <stf:databaseConfiguration>
-        <dbconf:database identificator="HudsonDemoLocalXE">
+    <stfconf:global>
+        <globconf:fileSystemStructure>
+            <globconf:rootFolder name="test">
+                <globconf:reportFolder name="report">
+                    <globconf:jUnitFolder name="junit"/>
+                    <globconf:httpFolder name="http"/>
+                    <globconf:pdfFolder name="pdf"/>
+                    <globconf:xmlFolder name="xml"/>
+                </globconf:reportFolder>
+            </globconf:rootFolder>
+        </globconf:fileSystemStructure>
+    </stfconf:global>
+    <stfconf:database>
+        <dbconf:databaseConnection identificator="HudsonDemoLocalXE">
             <dbconf:databaseType>Oracle</dbconf:databaseType>
             <dbconf:driverClassName>oracle.jdbc.driver.OracleDriver</dbconf:driverClassName>
             <dbconf:hostName>prometheus</dbconf:hostName>
@@ -25,89 +36,78 @@
             <dbconf:password>HUDSON_DEMO</dbconf:password>
             <dbconf:serviceId>xe</dbconf:serviceId>
             <dbconf:connectAs>normal</dbconf:connectAs>
-            <dbconf:objectName>MESSAGE_STORE</dbconf:objectName>
-            <dbconf:insertSqlScriptFileName>c:/Dev/proj/SOATestingFramework/soa-testing-framework/test/db/insert.sql</dbconf:insertSqlScriptFileName>
-            <dbconf:selectSqlScriptFileName>c:/Dev/proj/SOATestingFramework/soa-testing-framework/test/db/select.sql</dbconf:selectSqlScriptFileName>
-            <dbconf:updateSqlScriptFileName>c:/Dev/proj/SOATestingFramework/soa-testing-framework/test/db/update.sql</dbconf:updateSqlScriptFileName>
-            <dbconf:deleteSqlScriptFileName>c:/Dev/proj/SOATestingFramework/soa-testing-framework/test/db/delete.sql</dbconf:deleteSqlScriptFileName>
-        </dbconf:database>
-        <dbconf:database identificator="identificator1">
-            <dbconf:databaseType>Oracle</dbconf:databaseType>
-            <dbconf:driverClassName>driverClassName1</dbconf:driverClassName>
-            <dbconf:hostName>hostName1</dbconf:hostName>
-            <dbconf:port>0</dbconf:port>
-            <dbconf:userName>userName1</dbconf:userName>
-            <dbconf:password>password1</dbconf:password>
-            <dbconf:serviceId>serviceId1</dbconf:serviceId>
-            <dbconf:connectAs>connectAs1</dbconf:connectAs>
-            <dbconf:objectName>objectName1</dbconf:objectName>
-            <dbconf:insertSqlScriptFileName>insertSqlScriptFileName1</dbconf:insertSqlScriptFileName>
-            <dbconf:selectSqlScriptFileName>selectSqlScriptFileName1</dbconf:selectSqlScriptFileName>
-            <dbconf:updateSqlScriptFileName>updateSqlScriptFileName1</dbconf:updateSqlScriptFileName>
-            <dbconf:deleteSqlScriptFileName>deleteSqlScriptFileName1</dbconf:deleteSqlScriptFileName>
-        </dbconf:database>
-    </stf:databaseConfiguration>
-    <stf:fileConfiguation/>
-    <stf:ftpConfiguration/>
-    <stf:jmsConfiguration>
+            <dbconf:objects>
+                <dbconf:object name="name6"/>
+                <dbconf:object name="name7"/>
+            </dbconf:objects>
+        </dbconf:databaseConnection>
+        <dbconf:fileSystemStructure>
+            <dbconf:rootFolder name="database">
+                <dbconf:selectStatementFolder name="select">
+                    <dbconf:selectStatementFile name="select.sql"/>
+                </dbconf:selectStatementFolder>
+                <dbconf:insertStatementFolder name="insert">
+                    <dbconf:insertStatementFile name="insert.sql"/>
+                </dbconf:insertStatementFolder>
+                <dbconf:updateStatementFolder name="update">
+                    <dbconf:updateStatementFile name="update.sql"/>
+                </dbconf:updateStatementFolder>
+                <dbconf:deleteStatementFolder name="delete">
+                    <dbconf:deleteStatementFile name="delete.sql"/>
+                </dbconf:deleteStatementFolder>
+            </dbconf:rootFolder>
+        </dbconf:fileSystemStructure>
+    </stfconf:database>
+    <stfconf:file/>
+    <stfconf:ftp/>
+    <stfconf:jms>
         <jmsconf:server identificator="demo_local_jms_server">
             <jmsconf:serverName>OSBSamplesJMSServer</jmsconf:serverName>
         </jmsconf:server>
-        <jmsconf:module>
+        <jmsconf:module name="my_module">
             <jmsconf:resources>
-                <jmsconf:connectionFactory>
-                    <jmsconf:connectionFactoryName>OSBSamplesJMSConnectionFactory</jmsconf:connectionFactoryName>
-                    <jmsconf:JNDIName>jms.OSBSamplesJMSConnectionFactory</jmsconf:JNDIName>
-                </jmsconf:connectionFactory>
-                <jmsconf:queue identificator="demo_local_testing_write_queue">
-                    <jmsconf:queueName>OSBWriteQueue</jmsconf:queueName>
-                    <jmsconf:JNDIName>jms.OSBWriteQueue</jmsconf:JNDIName>
-                </jmsconf:queue>
+                <jmsconf:connectionFactory identificator="my_jms_conn_factory" name="OSBSamplesJMSConnectionFactory" jndiName="jms.OSBSamplesJMSConnectionFactory"/>
+                <jmsconf:queue identificator="my_jms_queue" name="OSBWriteQueue" jndiName="jms.OSBWriteQueue"/>
             </jmsconf:resources>
         </jmsconf:module>
-    </stf:jmsConfiguration>
-    <stf:mappingConfiguration>
-        <mapconf:map>
-        </mapconf:map>
-    </stf:mappingConfiguration>
-    <stf:osbConfiguration>
-        <osbconf:adminServer identificator="admin_server">
-            <osbconf:managementMBeanServer>weblogic.management.mbeanservers.domainruntime</osbconf:managementMBeanServer>
-            <osbconf:managementMBeanService>com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean</osbconf:managementMBeanService>
-            <osbconf:initialContextFactory>weblogic.jndi.WLInitialContextFactory</osbconf:initialContextFactory>
-            <osbconf:jmxProtocolProviderPackages>weblogic.management.remote</osbconf:jmxProtocolProviderPackages>
-            <osbconf:jmxServiceJNDIConstant>/jndi/</osbconf:jmxServiceJNDIConstant>
-            <osbconf:seesionNamePrefix>SoaTestingFramework</osbconf:seesionNamePrefix>
-            <osbconf:jmxProtocol>t3</osbconf:jmxProtocol>
-            <osbconf:host>prometheus</osbconf:host>
-            <osbconf:port>7001</osbconf:port>
-            <osbconf:securityPrincipal>weblogic</osbconf:securityPrincipal>
-            <osbconf:securityCredentials>Weblogic123</osbconf:securityCredentials>
-        </osbconf:adminServer>
-        <osbconf:cluster identificator="osb_cluster">
-            <osbconf:managedServer identificator="osb_server_1">
-                <osbconf:hostName>prometheus</osbconf:hostName>
-                <osbconf:port>11001</osbconf:port>
-            </osbconf:managedServer>
-        </osbconf:cluster>
-        <osbconf:services>
-            <osbconf:service identificator="QueueListerne">
-                <osbconf:serviceURI>HudsonDemo/proxy/JMSListener</osbconf:serviceURI>
-                <osbconf:serviceType>ProxyService</osbconf:serviceType>
-            </osbconf:service>
-        </osbconf:services>
-    </stf:osbConfiguration>
-    <stf:soapConfiguration>
-        <soapconf:serviceIdentification>
-            <soapconf:serviceName>serviceName0</soapconf:serviceName>
-            <soapconf:endPointUri>endPointUri0</soapconf:endPointUri>
-            <soapconf:wsdlUriSuffix>?wsdl</soapconf:wsdlUriSuffix>
-            <soapconf:operationName>operationName0</soapconf:operationName>
-            <soapconf:requestName>requestName0</soapconf:requestName>
-            <soapconf:requestMessageXmlFile>requestMessageXmlFile0</soapconf:requestMessageXmlFile>
-            <soapconf:responseMessageXmlFile>responseMessageXmlFile0</soapconf:responseMessageXmlFile>
-        </soapconf:serviceIdentification>
-    </stf:soapConfiguration>
-    <stf:toolConfiguration/>
-    <stf:xmlConfiguration/>
-</stf:soaTestingFramework>
+        <jmsconf:fileSystemStructure>
+            <jmsconf:rootFolder name="jms">
+                <jmsconf:schemaFolder name="schema">
+                    <jmsconf:schemaFile name="schema.xsd"/>
+                </jmsconf:schemaFolder>
+                <jmsconf:messageFolder name="message">
+                    <jmsconf:messageFile name="message.xml"/>
+                </jmsconf:messageFolder>
+            </jmsconf:rootFolder>
+        </jmsconf:fileSystemStructure>
+    </stfconf:jms>
+   <stfconf:osb>
+       <osbconf:adminServer identificator="admin_server">
+           <osbconf:managementMBeanServer>weblogic.management.mbeanservers.domainruntime</osbconf:managementMBeanServer>
+           <osbconf:managementMBeanService>com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean</osbconf:managementMBeanService>
+           <osbconf:initialContextFactory>weblogic.jndi.WLInitialContextFactory</osbconf:initialContextFactory>
+           <osbconf:jmxProtocolProviderPackages>weblogic.management.remote</osbconf:jmxProtocolProviderPackages>
+           <osbconf:jmxServiceJNDIConstant>/jndi/</osbconf:jmxServiceJNDIConstant>
+           <osbconf:seesionNamePrefix>SoaTestingFramework</osbconf:seesionNamePrefix>
+           <osbconf:jmxProtocol>t3</osbconf:jmxProtocol>
+           <osbconf:host>prometheus</osbconf:host>
+           <osbconf:port>7001</osbconf:port>
+           <osbconf:securityPrincipal>weblogic</osbconf:securityPrincipal>
+           <osbconf:securityCredentials>Weblogic123</osbconf:securityCredentials>
+       </osbconf:adminServer>
+       <osbconf:cluster identificator="osb_cluster">
+           <osbconf:managedServer identificator="osb_server_1">
+               <osbconf:hostName>prometheus</osbconf:hostName>
+               <osbconf:port>11001</osbconf:port>
+           </osbconf:managedServer>
+       </osbconf:cluster>
+       <osbconf:services>
+           <osbconf:service identificator="hudson_jms_listener">
+               <osbconf:serviceURI>HudsonDemo/proxy/JMSListener</osbconf:serviceURI>
+               <osbconf:serviceType>ProxyService</osbconf:serviceType>
+           </osbconf:service>
+       </osbconf:services>
+    </stfconf:osb>
+    <stfconf:tool/>
+    <stfconf:xml/>
+</stfconf:soaTestingFrameworkConfiguration>

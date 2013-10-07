@@ -25,7 +25,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import ibm.soatest.config.SoaTestingFramework;
+import ibm.soatest.config.SOATestingFrameworkConfiguration;
 
 
 import ibm.soatest.database.DatabaseComponent;
@@ -76,7 +76,7 @@ public class SOATFCompFactory {
         
         switch (soaTestingFrameworkComponentType) {
             case DATABASE:
-                soaTestingFrameworkComponent = new DatabaseComponent(getUnmarshalledConfiguration().getDatabaseConfiguration());
+                soaTestingFrameworkComponent = new DatabaseComponent(getUnmarshalledConfiguration().getDatabase());
                 break;
             case FILE:
                 soaTestingFrameworkComponent = new FILEComponent();
@@ -85,10 +85,10 @@ public class SOATFCompFactory {
                 soaTestingFrameworkComponent = new FTPComponent();
                 break;
             case JMS:
-                soaTestingFrameworkComponent = new JMSComponent(getUnmarshalledConfiguration().getJmsConfiguration());
+                soaTestingFrameworkComponent = new JMSComponent(getUnmarshalledConfiguration().getJms());
                 break;
             case OSB:
-                soaTestingFrameworkComponent = new OSBComponent(getUnmarshalledConfiguration().getOsbConfiguration());
+                soaTestingFrameworkComponent = new OSBComponent(getUnmarshalledConfiguration().getOsb());
                 break;
             case REST:
                 soaTestingFrameworkComponent = new RESTComponent();
@@ -109,13 +109,13 @@ public class SOATFCompFactory {
     }
 
   
-    private static SoaTestingFramework getUnmarshalledConfiguration(){
+    private static SOATestingFrameworkConfiguration getUnmarshalledConfiguration(){
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(SoaTestingFramework.class);
+            JAXBContext jaxbContext = JAXBContext.newInstance(SOATestingFrameworkConfiguration.class);
             
             Unmarshaller jaxbUnmarshaller = jaxbContext.createUnmarshaller();
             
-            SoaTestingFramework myJAXBObject;            
+            SOATestingFrameworkConfiguration myJAXBObject;            
             
 
 
@@ -125,9 +125,10 @@ public class SOATFCompFactory {
             
             
             Object o = jaxbUnmarshaller.unmarshal(xmlConfigurationFileName);
-            SoaTestingFramework soaTestingFramework = (SoaTestingFramework) jaxbUnmarshaller.unmarshal(xmlConfigurationFileName);
+            SOATestingFrameworkConfiguration soaTestingFrameworkConfiguration
+                    = (SOATestingFrameworkConfiguration) jaxbUnmarshaller.unmarshal(xmlConfigurationFileName);
            
-            return soaTestingFramework;
+            return soaTestingFrameworkConfiguration;
             
         } catch (JAXBException ex) {
             ex.printStackTrace();

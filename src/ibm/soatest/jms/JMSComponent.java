@@ -24,14 +24,14 @@ import ibm.soatest.SOATFComponent;
 import ibm.soatest.SOATFCompType;
 import ibm.soatest.CompOperType;
 import ibm.soatest.config.database.DatabaseConfiguration;
-import ibm.soatest.config.jms.JmsConfiguration;
+import ibm.soatest.config.jms.JMSConfiguration;
 
 /**
  *
  * @author zANGETSu
  */
 public class JMSComponent extends SOATFComponent {
-    private JmsConfiguration jmsConfiguration;
+    private JMSConfiguration jmsConfiguration;
     
     private CompOperResult componentOperationResult;
       
@@ -40,7 +40,7 @@ public class JMSComponent extends SOATFComponent {
         super(SOATFCompType.JMS);
         constructComponent();
     }
-    public JMSComponent(JmsConfiguration jmsConfiguration) {
+    public JMSComponent(JMSConfiguration jmsConfiguration) {
         super(SOATFCompType.JMS);
         this.jmsConfiguration = jmsConfiguration;
         

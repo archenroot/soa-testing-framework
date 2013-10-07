@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-       xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
-       targetNamespace="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
+       xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/Config/Global"
+       targetNamespace="http://www.archenroot.org/SoaTestingFramework/Config/Global"
        elementFormDefault="qualified">
        <xs:complexType name="GlobalConfiguration">
               <xs:sequence>
@@ -64,7 +64,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                                                  </xs:complexType>
                                           </xs:element>
                                    </xs:sequence>
-                                   <xs:attribute default="root" name="name" type="xs:string"/>
+                                   <xs:attribute default="test" name="name" type="xs:string"/>
                             </xs:complexType>
                      </xs:element>
               </xs:sequence>

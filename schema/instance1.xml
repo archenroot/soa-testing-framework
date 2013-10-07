@@ -1,21 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<stf:soaTestingFramework xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/OsbConfiguration"
- xmlns:stf="http://www.archenroot.org/SoaTestingFramework"
- xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
- xmlns:common="http://www.archenroot.org/SoaTestingFramework/Common"
- xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/FileConfiguation"
- xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/FtpConfiguration"
- xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/GlobalConfiguration"
- xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/JmsConfiguration"
- xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/MappingConfiguration"
- xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/SoapConfiguration"
- xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/ToolConfiguration"
- xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/XmlConfiguration"
+<stfconf:soaTestingFrameworkConfiguration xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/Config/SOAP"
+ xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/Config/JMS"
+ xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/Config/OSB"
+ xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/Config/File"
+ xmlns:stfconf="http://www.archenroot.org/SoaTestingFramework"
+ xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/Config/Database"
+ xmlns:commonconf="http://www.archenroot.org/SoaTestingFramework/Config/Common"
+ xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/Config/FTP"
+ xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/Config/Global"
+ xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/Config/Mapping"
+ xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/Config/Tool"
+ xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/Config/XML"
  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
  xsi:schemaLocation="http://www.archenroot.org/SoaTestingFramework file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SoaTestingFramework.xsd">
-    <stf:globalConfiguration/>
-    <stf:databaseConfiguration>
-        <dbconf:database identificator="identificator0">
+    <stfconf:global>
+        <globconf:fileSystemStructure>
+            <globconf:rootFolder name="test">
+                <globconf:reportFolder name="report">
+                    <globconf:jUnitFolder name="junit"/>
+                    <globconf:httpFolder name="http"/>
+                    <globconf:pdfFolder name="pdf"/>
+                    <globconf:xmlFolder name="xml"/>
+                </globconf:reportFolder>
+            </globconf:rootFolder>
+        </globconf:fileSystemStructure>
+    </stfconf:global>
+    <stfconf:database>
+        <dbconf:databaseConnection identificator="identificator0">
             <dbconf:databaseType>Oracle</dbconf:databaseType>
             <dbconf:driverClassName>driverClassName0</dbconf:driverClassName>
             <dbconf:hostName>hostName0</dbconf:hostName>
@@ -24,13 +35,12 @@
             <dbconf:password>password0</dbconf:password>
             <dbconf:serviceId>serviceId0</dbconf:serviceId>
             <dbconf:connectAs>connectAs0</dbconf:connectAs>
-            <dbconf:objectName>objectName0</dbconf:objectName>
-            <dbconf:insertSqlScriptFileName>insertSqlScriptFileName0</dbconf:insertSqlScriptFileName>
-            <dbconf:selectSqlScriptFileName>selectSqlScriptFileName0</dbconf:selectSqlScriptFileName>
-            <dbconf:updateSqlScriptFileName>updateSqlScriptFileName0</dbconf:updateSqlScriptFileName>
-            <dbconf:deleteSqlScriptFileName>deleteSqlScriptFileName0</dbconf:deleteSqlScriptFileName>
-        </dbconf:database>
-        <dbconf:database identificator="identificator1">
+            <dbconf:objects>
+                <dbconf:object name="name6"/>
+                <dbconf:object name="name7"/>
+            </dbconf:objects>
+        </dbconf:databaseConnection>
+        <dbconf:databaseConnection identificator="identificator1">
             <dbconf:databaseType>Oracle</dbconf:databaseType>
             <dbconf:driverClassName>driverClassName1</dbconf:driverClassName>
             <dbconf:hostName>hostName1</dbconf:hostName>
@@ -39,57 +49,73 @@
             <dbconf:password>password1</dbconf:password>
             <dbconf:serviceId>serviceId1</dbconf:serviceId>
             <dbconf:connectAs>connectAs1</dbconf:connectAs>
-            <dbconf:objectName>objectName1</dbconf:objectName>
-            <dbconf:insertSqlScriptFileName>insertSqlScriptFileName1</dbconf:insertSqlScriptFileName>
-            <dbconf:selectSqlScriptFileName>selectSqlScriptFileName1</dbconf:selectSqlScriptFileName>
-            <dbconf:updateSqlScriptFileName>updateSqlScriptFileName1</dbconf:updateSqlScriptFileName>
-            <dbconf:deleteSqlScriptFileName>deleteSqlScriptFileName1</dbconf:deleteSqlScriptFileName>
-        </dbconf:database>
-    </stf:databaseConfiguration>
-    <stf:fileConfiguation/>
-    <stf:ftpConfiguration/>
-    <stf:jmsConfiguration>
-        <jmsconf:server identificator="identificator2">
+            <dbconf:objects>
+                <dbconf:object name="name8"/>
+                <dbconf:object name="name9"/>
+            </dbconf:objects>
+        </dbconf:databaseConnection>
+        <dbconf:fileSystemStructure>
+            <dbconf:rootFolder name="database">
+                <dbconf:selectStatementFolder name="select">
+                    <dbconf:selectStatementFile name="select.sql"/>
+                </dbconf:selectStatementFolder>
+                <dbconf:insertStatementFolder name="insert">
+                    <dbconf:insertStatementFile name="insert.sql"/>
+                </dbconf:insertStatementFolder>
+                <dbconf:updateStatementFolder name="update">
+                    <dbconf:updateStatementFile name="update.sql"/>
+                </dbconf:updateStatementFolder>
+                <dbconf:deleteStatementFolder name="delete">
+                    <dbconf:deleteStatementFile name="delete.sql"/>
+                </dbconf:deleteStatementFolder>
+            </dbconf:rootFolder>
+        </dbconf:fileSystemStructure>
+    </stfconf:database>
+    <stfconf:file/>
+    <stfconf:ftp/>
+    <stfconf:jms>
+        <jmsconf:server identificator="User identification information">
             <jmsconf:serverName>serverName0</jmsconf:serverName>
-            <jmsconf:module identificator="identificator3">
-                <jmsconf:resources>
-                    <jmsconf:connectionFactory>
-                        <jmsconf:connectionFactoryName></jmsconf:connectionFactoryName>
-                        <jmsconf:JNDIName>JNDIName0</jmsconf:JNDIName>
-                    </jmsconf:connectionFactory>
-                    <jmsconf:queue identificator="identificator4">
-                        <jmsconf:queueName>queueName0</jmsconf:queueName>
-                        <jmsconf:JNDIName>JNDIName1</jmsconf:JNDIName>
-                    </jmsconf:queue>
-                    <jmsconf:topic identificator="identificator5">
-                        <jmsconf:topicName>topicName0</jmsconf:topicName>
-                        <jmsconf:JNDIName>JNDIName2</jmsconf:JNDIName>
-                    </jmsconf:topic>
-                </jmsconf:resources>
-            </jmsconf:module>
-            <jmsconf:module identificator="identificator6">
-                <jmsconf:resources>
-                    <jmsconf:connectionFactory>
-                        <jmsconf:connectionFactoryName></jmsconf:connectionFactoryName>
-                        <jmsconf:JNDIName>JNDIName3</jmsconf:JNDIName>
-                    </jmsconf:connectionFactory>
-                    <jmsconf:queue identificator="identificator7">
-                        <jmsconf:queueName>queueName1</jmsconf:queueName>
-                        <jmsconf:JNDIName>JNDIName4</jmsconf:JNDIName>
-                    </jmsconf:queue>
-                    <jmsconf:topic identificator="identificator8">
-                        <jmsconf:topicName>topicName1</jmsconf:topicName>
-                        <jmsconf:JNDIName>JNDIName5</jmsconf:JNDIName>
-                    </jmsconf:topic>
-                </jmsconf:resources>
-            </jmsconf:module>
         </jmsconf:server>
-    </stf:jmsConfiguration>
-    <stf:mappingConfiguration>
+        <jmsconf:server identificator="User identification information">
+            <jmsconf:serverName>serverName1</jmsconf:serverName>
+        </jmsconf:server>
+        <jmsconf:module name="name19">
+            <jmsconf:resources>
+                <jmsconf:connectionFactory identificator="Custom user identification information" name="name20" jndiName="jndiName0"/>
+                <jmsconf:connectionFactory identificator="Custom user identification information" name="name21" jndiName="jndiName1"/>
+                <jmsconf:queue identificator="Custom user identification information" name="name22" jndiName="jndiName2"/>
+                <jmsconf:queue identificator="Custom user identification information" name="name23" jndiName="jndiName3"/>
+                <jmsconf:topic identificator="Custom user identification information" name="name24" jndiName="jndiName4"/>
+                <jmsconf:topic identificator="Custom user identification information" name="name25" jndiName="jndiName5"/>
+            </jmsconf:resources>
+        </jmsconf:module>
+        <jmsconf:module name="name26">
+            <jmsconf:resources>
+                <jmsconf:connectionFactory identificator="Custom user identification information" name="name27" jndiName="jndiName6"/>
+                <jmsconf:connectionFactory identificator="Custom user identification information" name="name28" jndiName="jndiName7"/>
+                <jmsconf:queue identificator="Custom user identification information" name="name29" jndiName="jndiName8"/>
+                <jmsconf:queue identificator="Custom user identification information" name="name30" jndiName="jndiName9"/>
+                <jmsconf:topic identificator="Custom user identification information" name="name31" jndiName="jndiName10"/>
+                <jmsconf:topic identificator="Custom user identification information" name="name32" jndiName="jndiName11"/>
+            </jmsconf:resources>
+        </jmsconf:module>
+        <jmsconf:fileSystemStructure>
+            <jmsconf:rootFolder name="jms">
+                <jmsconf:schemaFolder name="schema">
+                    <jmsconf:schemaFile name="schema.xsd"/>
+                </jmsconf:schemaFolder>
+                <jmsconf:messageFolder name="message">
+                    <jmsconf:messageFile name="message.xml"/>
+                </jmsconf:messageFolder>
+            </jmsconf:rootFolder>
+        </jmsconf:fileSystemStructure>
+    </stfconf:jms>
+    <stfconf:mapping>
         <mapconf:map>
         </mapconf:map>
-    </stf:mappingConfiguration>
-    <stf:osbConfiguration>
+    </stfconf:mapping>
+    <stfconf:osb>
         <osbconf:adminServer identificator="identificator16">
             <osbconf:managementMBeanServer>weblogic.management.mbeanservers.domainruntime</osbconf:managementMBeanServer>
             <osbconf:managementMBeanService>com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean</osbconf:managementMBeanService>
@@ -114,23 +140,27 @@
             </osbconf:managedServer>
         </osbconf:cluster>
         <osbconf:services>
-            <osbconf:service>
+            <osbconf:service identificator="identificator20">
+                <osbconf:serviceURI>serviceURI0</osbconf:serviceURI>
+                <osbconf:serviceType>ProxyService</osbconf:serviceType>
             </osbconf:service>
-            <osbconf:service>
+            <osbconf:service identificator="identificator21">
+                <osbconf:serviceURI>serviceURI1</osbconf:serviceURI>
+                <osbconf:serviceType>ProxyService</osbconf:serviceType>
             </osbconf:service>
         </osbconf:services>
-    </stf:osbConfiguration>
-    <stf:soapConfiguration>
-        <soapconf:serviceIdentification>
+    </stfconf:osb>
+    <stfconf:soap>
+        <soapconf:service identificator="User identification name of the service">
             <soapconf:serviceName>serviceName0</soapconf:serviceName>
             <soapconf:endPointUri>endPointUri0</soapconf:endPointUri>
             <soapconf:wsdlUriSuffix>?wsdl</soapconf:wsdlUriSuffix>
             <soapconf:operationName>operationName0</soapconf:operationName>
-            <soapconf:requestName>requestName0</soapconf:requestName>
-            <soapconf:requestMessageXmlFile>requestMessageXmlFile0</soapconf:requestMessageXmlFile>
-            <soapconf:responseMessageXmlFile>responseMessageXmlFile0</soapconf:responseMessageXmlFile>
-        </soapconf:serviceIdentification>
-    </stf:soapConfiguration>
-    <stf:toolConfiguration/>
-    <stf:xmlConfiguration/>
-</stf:soaTestingFramework>
+            <soapconf:requestName>request</soapconf:requestName>
+        </soapconf:service>
+        <soapconf:fileSystemStructure>
+        </soapconf:fileSystemStructure>
+    </stfconf:soap>
+    <stfconf:tool/>
+    <stfconf:xml/>
+</stfconf:soaTestingFrameworkConfiguration>

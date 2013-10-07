@@ -77,7 +77,7 @@ public class DatabaseComponent extends SOATFComponent {
     public DatabaseComponent(DatabaseConfiguration databaseConfiguration) {
         super(SOATFCompType.DATABASE);
         this.databaseConfiguration = databaseConfiguration;
-        databaseList = this.databaseConfiguration.getDatabase();
+        //databaseList = this.databaseConfiguration.getDatabase();
         database = databaseList.get(0);
         constructComponent();
     }
@@ -95,7 +95,7 @@ public class DatabaseComponent extends SOATFComponent {
             this.password = database.getPassword();
             serviceId = database.getServiceId();
             connectAs = database.getConnectAs();
-            objectName = database.getObjectName();
+            //objectName = database.getObjectName();
             //insertSqlScriptFileName = database.getInsertSqlScriptFileName();
             //selectSqlScriptFileName = database.getSelectSqlScriptFileName();
             //updateSqlScriptFileName = database.getUpdateSqlScriptFileName();

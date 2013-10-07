@@ -21,7 +21,7 @@ import ibm.soatest.CompOperResult;
 import ibm.soatest.CompOperType;
 import ibm.soatest.SOATFCompType;
 import ibm.soatest.SOATFComponent;
-import ibm.soatest.config.osb.OsbConfiguration;
+import ibm.soatest.config.osb.OSBConfiguration;
 import ibm.soatest.database.UnsupportedComponentOperation;
 import java.io.IOException;
 import java.math.BigInteger;
@@ -48,11 +48,11 @@ public class OSBComponent extends SOATFComponent {
     private Cluster cluster;
     private ManagedServer managedServer;;
     
-    private OsbConfiguration osbConfiguration;
+    private OSBConfiguration osbConfiguration;
 
     private CompOperResult componentOperationResult = new CompOperResult();
     
-    public OSBComponent(OsbConfiguration osbConfiguration) {
+    public OSBComponent(OSBConfiguration osbConfiguration) {
         super(SOATFCompType.OSB);
         this.osbConfiguration = osbConfiguration;
         constructComponent();

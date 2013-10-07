@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
-    targetNamespace="http://www.archenroot.org/SoaTestingFramework/DatabaseConfiguration"
+    xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/Config/Database"
+    targetNamespace="http://www.archenroot.org/SoaTestingFramework/Config/Database"
     elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:complexType name="DatabaseConfiguration">
         <xs:annotation>
@@ -34,7 +34,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="database" minOccurs="1" maxOccurs="unbounded" type="dbconf:Database"> </xs:element>
+            <xs:element name="databaseConnection" minOccurs="1" maxOccurs="unbounded"
+                type="dbconf:Database"> </xs:element>
             <xs:element name="fileSystemStructure" type="dbconf:FileSystemStructure"/>
         </xs:sequence>
     </xs:complexType>
@@ -84,7 +85,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                     <xs:documentation xml:lang="en">Not implemented yet. For future supported tasks there might be reuqired to connect as database admin, etc.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="objectName" type="xs:string" minOccurs="0" maxOccurs="1">
+            <xs:element name="objects" type="dbconf:Objects" minOccurs="1" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Currently tables, views and materialized views are supported.</xs:documentation>
                 </xs:annotation>
@@ -155,6 +156,15 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                         </xs:element>
                     </xs:sequence>
                     <xs:attribute default="database" name="name" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Objects">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="object">
+                <xs:complexType>
+                    <xs:attribute name="name"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
