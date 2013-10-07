@@ -1,0 +1,1 @@
+INSERT INTO MESSAGE_STORE (ID, MSG_CONT, REC_POOLED) values (2322132812, 'kkOzHHhagibtOQtpyzMg', 'fYeifVJomuFtsEAczVvC');

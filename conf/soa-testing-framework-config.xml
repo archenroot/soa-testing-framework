@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stfconf:soaTestingFrameworkConfiguration
+    xmlns:stfconf="http://www.archenroot.org/SoaTestingFramework"
+    xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/Config/Database"
+    xmlns:commonconf="http://www.archenroot.org/SoaTestingFramework/Config/Common"
+    xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/Config/File"
+    xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/Config/FTP"
+    xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/Config/Global"
+    xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/Config/JMS"
+    xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/Config/Mapping"
+    xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/Config/OSB"
+    xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/Config/SOAP"
+    xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/Config/Tool"
+    xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/Config/XML"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.archenroot.org/SoaTestingFramework file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SoaTestingFramework.xsd">
+    <stfconf:global>
+        <globconf:fileSystemStructure>
+            <globconf:rootFolder name="test">
+                <globconf:reportFolder name="report">
+                    <globconf:jUnitFolder name="junit"/>
+                    <globconf:httpFolder name="http"/>
+                    <globconf:pdfFolder name="pdf"/>
+                    <globconf:xmlFolder name="xml"/>
+                </globconf:reportFolder>
+            </globconf:rootFolder>
+        </globconf:fileSystemStructure>
+    </stfconf:global>
+    <stfconf:database>
+        <dbconf:databaseConnection identificator="HudsonDemoLocalXE">
+            <dbconf:databaseType>Oracle</dbconf:databaseType>
+            <dbconf:driverClassName>oracle.jdbc.driver.OracleDriver</dbconf:driverClassName>
+            <dbconf:hostName>prometheus</dbconf:hostName>
+            <dbconf:port>1521</dbconf:port>
+            <dbconf:userName>HUDSON_DEMO</dbconf:userName>
+            <dbconf:password>HUDSON_DEMO</dbconf:password>
+            <dbconf:serviceId>xe</dbconf:serviceId>
+            <dbconf:connectAs>normal</dbconf:connectAs>
+            <dbconf:objects>
+                <dbconf:object name="name6"/>
+                <dbconf:object name="name7"/>
+            </dbconf:objects>
+        </dbconf:databaseConnection>
+        <dbconf:fileSystemStructure>
+            <dbconf:rootFolder name="database">
+                <dbconf:selectStatementFolder name="select">
+                    <dbconf:selectStatementFile name="select.sql"/>
+                </dbconf:selectStatementFolder>
+                <dbconf:insertStatementFolder name="insert">
+                    <dbconf:insertStatementFile name="insert.sql"/>
+                </dbconf:insertStatementFolder>
+                <dbconf:updateStatementFolder name="update">
+                    <dbconf:updateStatementFile name="update.sql"/>
+                </dbconf:updateStatementFolder>
+                <dbconf:deleteStatementFolder name="delete">
+                    <dbconf:deleteStatementFile name="delete.sql"/>
+                </dbconf:deleteStatementFolder>
+            </dbconf:rootFolder>
+        </dbconf:fileSystemStructure>
+    </stfconf:database>
+    <stfconf:file/>
+    <stfconf:ftp/>
+    <stfconf:jms>
+        <jmsconf:server identificator="demo_local_jms_server">
+            <jmsconf:serverName>OSBSamplesJMSServer</jmsconf:serverName>
+        </jmsconf:server>
+        <jmsconf:module name="my_module">
+            <jmsconf:resources>
+                <jmsconf:connectionFactory identificator="my_jms_conn_factory" name="OSBSamplesJMSConnectionFactory" jndiName="jms.OSBSamplesJMSConnectionFactory"/>
+                <jmsconf:queue identificator="my_jms_queue" name="OSBWriteQueue" jndiName="jms.OSBWriteQueue"/>
+            </jmsconf:resources>
+        </jmsconf:module>
+        <jmsconf:fileSystemStructure>
+            <jmsconf:rootFolder name="jms">
+                <jmsconf:schemaFolder name="schema">
+                    <jmsconf:schemaFile name="schema.xsd"/>
+                </jmsconf:schemaFolder>
+                <jmsconf:messageFolder name="message">
+                    <jmsconf:messageFile name="message.xml"/>
+                </jmsconf:messageFolder>
+            </jmsconf:rootFolder>
+        </jmsconf:fileSystemStructure>
+    </stfconf:jms>
+   <stfconf:osb>
+       <osbconf:adminServer identificator="admin_server">
+           <osbconf:managementMBeanServer>weblogic.management.mbeanservers.domainruntime</osbconf:managementMBeanServer>
+           <osbconf:managementMBeanService>com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean</osbconf:managementMBeanService>
+           <osbconf:initialContextFactory>weblogic.jndi.WLInitialContextFactory</osbconf:initialContextFactory>
+           <osbconf:jmxProtocolProviderPackages>weblogic.management.remote</osbconf:jmxProtocolProviderPackages>
+           <osbconf:jmxServiceJNDIConstant>/jndi/</osbconf:jmxServiceJNDIConstant>
+           <osbconf:seesionNamePrefix>SoaTestingFramework</osbconf:seesionNamePrefix>
+           <osbconf:jmxProtocol>t3</osbconf:jmxProtocol>
+           <osbconf:host>prometheus</osbconf:host>
+           <osbconf:port>7001</osbconf:port>
+           <osbconf:securityPrincipal>weblogic</osbconf:securityPrincipal>
+           <osbconf:securityCredentials>Weblogic123</osbconf:securityCredentials>
+       </osbconf:adminServer>
+       <osbconf:cluster identificator="osb_cluster">
+           <osbconf:managedServer identificator="osb_server_1">
+               <osbconf:hostName>prometheus</osbconf:hostName>
+               <osbconf:port>11001</osbconf:port>
+           </osbconf:managedServer>
+       </osbconf:cluster>
+       <osbconf:services>
+           <osbconf:service identificator="hudson_jms_listener">
+               <osbconf:serviceURI>HudsonDemo/proxy/JMSListener</osbconf:serviceURI>
+               <osbconf:serviceType>ProxyService</osbconf:serviceType>
+           </osbconf:service>
+       </osbconf:services>
+    </stfconf:osb>
+    <stfconf:tool/>
+    <stfconf:xml/>
+</stfconf:soaTestingFrameworkConfiguration>

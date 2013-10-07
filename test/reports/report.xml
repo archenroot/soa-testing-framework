@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuites>
+  <testsuite name="SOA Testing Framework.Scenario DBQE: Pool Database -> Queue" tests="1" failures="1" errors="0" time="0.266" package="SOA Testing Framework" id="1">
+    <properties>
+      <property name="soapui.properties" value="soapui.properties"/>
+      <property name="java.runtime.name" value="Java(TM) SE Runtime Environment"/>
+      <property name="sun.boot.library.path" value="C:\Dev\tools\soapui-pro-4.6.0\jre\bin"/>
+      <property name="java.vm.version" value="23.7-b01"/>
+      <property name="soapui.ext.actions" value="C:\Dev\tools\soapui-pro-4.6.0\bin\actions"/>
+      <property name="com.apple.mrj.application.apple.menu.about.name" value="SoapUI"/>
+      <property name="soapui.ext.libraries" value="C:\Dev\tools\soapui-pro-4.6.0\bin\ext"/>
+      <property name="java.vm.vendor" value="Oracle Corporation"/>
+      <property name="java.vendor.url" value="http://java.oracle.com/"/>
+      <property name="path.separator" value=";"/>
+      <property name="java.vm.name" value="Java HotSpot(TM) Client VM"/>
+      <property name="file.encoding.pkg" value="sun.io"/>
+      <property name="user.country" value="US"/>
+      <property name="user.script" value=""/>
+      <property name="sun.java.launcher" value="SUN_STANDARD"/>
+      <property name="sun.os.patch.level" value="Service Pack 1"/>
+      <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+      <property name="user.dir" value="C:\Dev\tools\soapui-pro-4.6.0\bin"/>
+      <property name="java.runtime.version" value="1.7.0_15-b03"/>
+      <property name="java.awt.graphicsenv" value="sun.awt.Win32GraphicsEnvironment"/>
+      <property name="java.endorsed.dirs" value="C:\Dev\tools\soapui-pro-4.6.0\jre\lib\endorsed"/>
+      <property name="os.arch" value="x86"/>
+      <property name="java.io.tmpdir" value="C:\Users\IBM_AD~1\AppData\Local\Temp\"/>
+      <property name="line.separator" value="
+"/>
+      <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+      <property name="user.variant" value=""/>
+      <property name="os.name" value="Windows 7"/>
+      <property name="apple.laf.useScreenMenuBar" value="true"/>
+      <property name="sun.jnu.encoding" value="Cp1252"/>
+      <property name="java.library.path" value="C:\Dev\tools\soapui-pro-4.6.0\bin\"/>
+      <property name="soapui.home" value="C:\Dev\tools\soapui-pro-4.6.0\bin\"/>
+      <property name="sun.awt.enableExtraMouseButtons" value="true"/>
+      <property name="java.specification.name" value="Java Platform API Specification"/>
+      <property name="java.class.version" value="51.0"/>
+      <property name="sun.management.compiler" value="HotSpot Client Compiler"/>
+      <property name="os.version" value="6.1"/>
+      <property name="java.rmi.server.useCodebaseOnly" value="true"/>
+      <property name="user.home" value="C:\Users\IBM_ADMIN"/>
+      <property name="java.security.policy" value="server.policy"/>
+      <property name="user.timezone" value="Europe/London"/>
+      <property name="java.awt.printerjob" value="sun.awt.windows.WPrinterJob"/>
+      <property name="file.encoding" value="UTF8"/>
+      <property name="java.specification.version" value="1.7"/>
+      <property name="java.class.path" value="C:\Dev\tools\soapui-pro-4.6.0\bin\soapui-pro-4.6.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\activation-1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\activeQueryBuilder-activeQueryBuilder.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\axis-ant-protection.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\axis-protection.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\bcmail-jdk14-1.38.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\bcmail-jdk14-138.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\bcprov-jdk14-1.38.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\bcprov-jdk14-138.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\bcprov-jdk15-144.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\bctsp-jdk14-1.38.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\binding-2.0.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\cajo-1.142.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\comfyj-2.9.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-beanutils-1.7.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-cli-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-codec-1.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-collections-3.2.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-digester-1.7.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-discovery-0.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-httpclient-3.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-io-1.3.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-lang-2.4.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\commons-logging-1.1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\cssparser-0.9.5.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\dom4j-1.6.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\engine-gecko-3.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\engine-gecko15-3.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\engine-ie-3.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\engine-webkit-3.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\ezmorph-1.0.5.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\flex-messaging-common-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\flex-messaging-core-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\flex-messaging-opt-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\flex-messaging-proxy-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\flex-messaging-remoting-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\forms-1.0.7.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\groovy-all-1.8.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\guava-14.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\hamcrest-core-1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\hermes-1.14.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\htmlunit-2.7.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\htmlunit-core-js-2.7.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\httpclient-4.1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\httpclient-cache-4.1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\httpcore-4.1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\httpcore-nio-4.1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\httpmime-4.1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\idw-1.6.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\itext-2.1.7.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jasperreports-4.0.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jaxen-1.1-beta-8.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jaxrpc-protection.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jcalendar-1.3.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jcifs-1.2.9.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jcommon-1.0.15.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jdom-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jdtcore-3.1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jetty-6.1.26.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jetty-util-6.1.26.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jfreechart-1.0.12.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jhall-protection.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jms-1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jniwrap-3.8.4.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\joda-time-1.6.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\js-1.7R2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\json-lib-2.2.2-jdk15.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jsr173_api-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jtidy-r872-jdk15.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jug-protection.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\junit-4.10.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jxbrowser-3.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\jxl-2.6.12.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\l2fprod-common-directorychooser-7.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\l2fprod-common-fontchooser-7.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\license4j-1.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\log4j-1.2.14.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\looks-2.2.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\mail-1.4.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\maven-plugin-api-2.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\MozillaInterfaces-3.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\nekohtml-1.9.14.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\netcomponents-1.3.8a.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\not-yet-commons-ssl-0.3.11.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\opencsv-1.8.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\opensaml-2.4.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\openws-1.4.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\Protection-4.6.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\ProtectionHelp-4.6.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\ProtectionPriv-4.6.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\reports-1.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\rsyntaxtextarea-2.0.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\sac-1.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\saxon-9.1.0.8j.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\saxon-dom-9.1.0.8j.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\serializer-2.7.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\servlet-api-2.5-20081211.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\slf4j-api-1.6.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\soapui-4.6.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\swingx-soapui.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\winpack-3.8.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\ws-commons-util-1.0.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\wsdl4j-1.6.2-fixed.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\wss4j-1.6.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xalan-2.7.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xbean-fixed-2.4.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xbean_xpath-2.4.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xercesImpl-2.9.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xml-apis-1.0.b2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xml-apis-2.9.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xmlParserAPIs-2.6.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xmlpublic-2.4.0.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xmlsec-1.4.5.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xmltooling-1.3.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xmlunit-1.2.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xom-1.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xstream-1.3.1.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xulrunner-windows-3.3.jar;C:\Dev\tools\soapui-pro-4.6.0\bin\..\lib\xulrunner15-windows-3.3.jar;"/>
+      <property name="user.name" value="zANGETSu"/>
+      <property name="soapui.ext.listeners" value="C:\Dev\tools\soapui-pro-4.6.0\bin\listeners"/>
+      <property name="java.vm.specification.version" value="1.7"/>
+      <property name="sun.java.command" value="com.eviware.soapui.SoapUIPro"/>
+      <property name="java.home" value="C:\Dev\tools\soapui-pro-4.6.0\jre"/>
+      <property name="sun.arch.data.model" value="32"/>
+      <property name="groovy.source.encoding" value="iso-8859-1"/>
+      <property name="user.language" value="en"/>
+      <property name="wsi.dir" value="C:\Dev\tools\soapui-pro-4.6.0\bin\..\wsi-test-tools"/>
+      <property name="java.specification.vendor" value="Oracle Corporation"/>
+      <property name="awt.toolkit" value="sun.awt.windows.WToolkit"/>
+      <property name="java.vm.info" value="mixed mode"/>
+      <property name="java.version" value="1.7.0_15"/>
+      <property name="java.ext.dirs" value="C:\Dev\tools\soapui-pro-4.6.0\jre\lib\ext;C:\windows\Sun\Java\lib\ext"/>
+      <property name="sun.boot.class.path" value="C:\Dev\tools\soapui-pro-4.6.0\jre\lib\resources.jar;C:\Dev\tools\soapui-pro-4.6.0\jre\lib\rt.jar;C:\Dev\tools\soapui-pro-4.6.0\jre\lib\sunrsasign.jar;C:\Dev\tools\soapui-pro-4.6.0\jre\lib\jsse.jar;C:\Dev\tools\soapui-pro-4.6.0\jre\lib\jce.jar;C:\Dev\tools\soapui-pro-4.6.0\jre\lib\charsets.jar;C:\Dev\tools\soapui-pro-4.6.0\jre\lib\jfr.jar;C:\Dev\tools\soapui-pro-4.6.0\jre\classes"/>
+      <property name="java.vendor" value="Oracle Corporation"/>
+      <property name="file.separator" value="\"/>
+      <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+      <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+      <property name="sun.cpu.endian" value="little"/>
+      <property name="java.rmi.server.hostname" value="0.0.0.0"/>
+      <property name="sun.desktop" value="windows"/>
+      <property name="sun.cpu.isalist" value="pentium_pro+mmx pentium_pro pentium+mmx pentium i486 i386 i86"/>
+    </properties>
+    <testcase name="Phase 2: Execution" time="0.266">
+      <failure type="Cancelling due to failed test step" message="Cancelling due to failed test step"><![CDATA[<h3><b>DB_EXECUTE_INSERT_FROM_FILE Failed</b></h3><pre>org.codehaus.groovy.control.MultipleCompilationErrorsException: startup failed:
+Script2.groovy: 19: unable to resolve class com.ibm.fm.soatest.SoaTestingFrameworkComponentType.ComponentOperation
+ @ line 19, column 1.
+   import static com.ibm.fm.soatest.SoaTestingFrameworkComponentType.ComponentOperation.DB_EXECUTE_INSERT_FROM_FILE
+   ^
+org.codehaus.groovy.syntax.SyntaxException: unable to resolve class com.ibm.fm.soatest.SoaTestingFrameworkComponentType.ComponentOperation
+ @ line 19, column 1.
+	at org.codehaus.groovy.ast.ClassCodeVisitorSupport.addError(ClassCodeVisitorSupport.java:148)
+	at org.codehaus.groovy.control.ResolveVisitor.visitClass(ResolveVisitor.java:1259)
+	at org.codehaus.groovy.control.ResolveVisitor.startResolving(ResolveVisitor.java:148)
+	at org.codehaus.groovy.control.CompilationUnit$8.call(CompilationUnit.java:601)
+	at org.codehaus.groovy.control.CompilationUnit.applyToSourceUnits(CompilationUnit.java:839)
+	at org.codehaus.groovy.control.CompilationUnit.doPhaseOperation(CompilationUnit.java:544)
+	at org.codehaus.groovy.control.CompilationUnit.compile(CompilationUnit.java:493)
+	at groovy.lang.GroovyClassLoader.doParseClass(GroovyClassLoader.java:306)
+	at groovy.lang.GroovyClassLoader.parseClass(GroovyClassLoader.java:287)
+	at groovy.lang.GroovyShell.parseClass(GroovyShell.java:731)
+	at groovy.lang.GroovyShell.parse(GroovyShell.java:743)
+	at groovy.lang.GroovyShell.parse(GroovyShell.java:770)
+	at groovy.lang.GroovyShell.parse(GroovyShell.java:761)
+	at com.eviware.soapui.support.scripting.groovy.SoapUIGroovyScriptEngine.compile(SoapUIGroovyScriptEngine.java:148)
+	at com.eviware.soapui.support.scripting.groovy.SoapUIGroovyScriptEngine.run(SoapUIGroovyScriptEngine.java:93)
+	at com.eviware.soapui.support.scripting.groovy.SoapUIProGroovyScriptEngineFactory$SoapUIProGroovyScriptEngine.run(SourceFile:89)
+	at com.eviware.soapui.impl.wsdl.teststeps.WsdlGroovyScriptTestStep.run(WsdlGroovyScriptTestStep.java:149)
+	at com.eviware.soapui.impl.wsdl.support.AbstractTestCaseRunner.runTestStep(AbstractTestCaseRunner.java:239)
+	at com.eviware.soapui.impl.wsdl.testcase.WsdlTestCaseRunner.runCurrentTestStep(WsdlTestCaseRunner.java:48)
+	at com.eviware.soapui.impl.wsdl.support.AbstractTestCaseRunner.internalRun(AbstractTestCaseRunner.java:148)
+	at com.eviware.soapui.impl.wsdl.support.AbstractTestCaseRunner.internalRun(AbstractTestCaseRunner.java:43)
+	at com.eviware.soapui.impl.wsdl.support.AbstractTestRunner.run(AbstractTestRunner.java:135)
+	at java.util.concurrent.Executors$RunnableAdapter.call(Unknown Source)
+	at java.util.concurrent.FutureTask$Sync.innerRun(Unknown Source)
+	at java.util.concurrent.FutureTask.run(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.lang.Thread.run(Unknown Source)
+
+1 error
+
+</pre><hr/>]]></failure>
+    </testcase>
+  </testsuite>
+</testsuites>
