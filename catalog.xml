@@ -50,16 +50,16 @@
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/osb/OsbConfiguration.xsd" uri="xml-resources/jaxb/blabla/osb/OsbConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/soap/SoapConfiguration.xsd" uri="xml-resources/jaxb/blabla/soap/SoapConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/xml/XmlConfiguration.xsd" uri="xml-resources/jaxb/blabla/xml/XmlConfiguration.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SoaTestingFramework.xsd" uri="xml-resources/jaxb/mytempbinding/SoaTestingFramework.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/common/CommonTypes.xsd" uri="xml-resources/jaxb/mytempbinding/common/CommonTypes.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/database/DatabaseConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/database/DatabaseConfiguration.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/file/FileConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/file/FileConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/ftp/FTPConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/ftp/FTPConfiguration.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/global/GlobalConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/global/GlobalConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/jms/JMSConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/jms/JMSConfiguration.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/mapping/MappingConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/mapping/MappingConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/osb/OSBConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/osb/OSBConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/soap/SOAPConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/soap/SOAPConfiguration.xsd"/>
-    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/tool/ToolConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/tool/ToolConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/xml/XMLConfiguration.xsd" uri="xml-resources/jaxb/mytempbinding/xml/XMLConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/SoaTestingFramework.xsd" uri="xml-resources/jaxb/mybinding/SoaTestingFramework.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/common/CommonTypes.xsd" uri="xml-resources/jaxb/mybinding/common/CommonTypes.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/database/DatabaseConfiguration.xsd" uri="xml-resources/jaxb/mybinding/database/DatabaseConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/file/FileConfiguration.xsd" uri="xml-resources/jaxb/mybinding/file/FileConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/global/GlobalConfiguration.xsd" uri="xml-resources/jaxb/mybinding/global/GlobalConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/mapping/MappingConfiguration.xsd" uri="xml-resources/jaxb/mybinding/mapping/MappingConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/tool/ToolConfiguration.xsd" uri="xml-resources/jaxb/mybinding/tool/ToolConfiguration.xsd"/>
 </catalog>
