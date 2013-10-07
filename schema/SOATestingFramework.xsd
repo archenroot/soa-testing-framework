@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:stfconf="http://www.archenroot.org/SOATestingFramework"
+    xmlns:stfconf="http://www.archenroot.org/SOATestingFramework/Config"
     xmlns:dbconf="http://www.archenroot.org/SOATestingFramework/Config/Database"
     xmlns:commonconf="http://www.archenroot.org/SOATestingFramework/Config/Common"
     xmlns:fileconf="http://www.archenroot.org/SOATestingFramework/Config/File"
@@ -12,7 +12,7 @@
     xmlns:soapconf="http://www.archenroot.org/SOATestingFramework/Config/SOAP"
     xmlns:toolconf="http://www.archenroot.org/SOATestingFramework/Config/Tool"
     xmlns:xmlconf="http://www.archenroot.org/SOATestingFramework/Config/XML"
-    targetNamespace="http://www.archenroot.org/SOATestingFramework" elementFormDefault="qualified"
+    targetNamespace="http://www.archenroot.org/SOATestingFramework/Config" elementFormDefault="qualified"
     attributeFormDefault="unqualified">
     <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Common"
         schemaLocation="common/CommonTypes.xsd"/>

@@ -85,7 +85,7 @@ public class SOATFCompFactory {
                 soaTestingFrameworkComponent = new FTPComponent();
                 break;
             case JMS:
-                soaTestingFrameworkComponent = new JMSComponent(getUnmarshalledConfiguration()..getJms());
+                soaTestingFrameworkComponent = new JMSComponent(getUnmarshalledConfiguration().getJms());
                 break;
             case OSB:
                 soaTestingFrameworkComponent = new OSBComponent(getUnmarshalledConfiguration().getOsb());
