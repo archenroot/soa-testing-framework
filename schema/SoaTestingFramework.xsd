@@ -1,40 +1,40 @@
 <?xml version="1.0"?>
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:stfconf="http://www.archenroot.org/SoaTestingFramework"
-    xmlns:dbconf="http://www.archenroot.org/SoaTestingFramework/Config/Database"
-    xmlns:commonconf="http://www.archenroot.org/SoaTestingFramework/Config/Common"
-    xmlns:fileconf="http://www.archenroot.org/SoaTestingFramework/Config/File"
-    xmlns:ftpconf="http://www.archenroot.org/SoaTestingFramework/Config/FTP"
-    xmlns:globconf="http://www.archenroot.org/SoaTestingFramework/Config/Global"
-    xmlns:jmsconf="http://www.archenroot.org/SoaTestingFramework/Config/JMS"
-    xmlns:mapconf="http://www.archenroot.org/SoaTestingFramework/Config/Mapping"
-    xmlns:osbconf="http://www.archenroot.org/SoaTestingFramework/Config/OSB"
-    xmlns:soapconf="http://www.archenroot.org/SoaTestingFramework/Config/SOAP"
-    xmlns:toolconf="http://www.archenroot.org/SoaTestingFramework/Config/Tool"
-    xmlns:xmlconf="http://www.archenroot.org/SoaTestingFramework/Config/XML"
-    targetNamespace="http://www.archenroot.org/SoaTestingFramework" elementFormDefault="qualified"
+    xmlns:stfconf="http://www.archenroot.org/SOATestingFramework"
+    xmlns:dbconf="http://www.archenroot.org/SOATestingFramework/Config/Database"
+    xmlns:commonconf="http://www.archenroot.org/SOATestingFramework/Config/Common"
+    xmlns:fileconf="http://www.archenroot.org/SOATestingFramework/Config/File"
+    xmlns:ftpconf="http://www.archenroot.org/SOATestingFramework/Config/FTP"
+    xmlns:globconf="http://www.archenroot.org/SOATestingFramework/Config/Global"
+    xmlns:jmsconf="http://www.archenroot.org/SOATestingFramework/Config/JMS"
+    xmlns:mapconf="http://www.archenroot.org/SOATestingFramework/Config/Mapping"
+    xmlns:osbconf="http://www.archenroot.org/SOATestingFramework/Config/OSB"
+    xmlns:soapconf="http://www.archenroot.org/SOATestingFramework/Config/SOAP"
+    xmlns:toolconf="http://www.archenroot.org/SOATestingFramework/Config/Tool"
+    xmlns:xmlconf="http://www.archenroot.org/SOATestingFramework/Config/XML"
+    targetNamespace="http://www.archenroot.org/SOATestingFramework" elementFormDefault="qualified"
     attributeFormDefault="unqualified">
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/Common"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Common"
         schemaLocation="common/CommonTypes.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/Database"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Database"
         schemaLocation="database/DatabaseConfiguration.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/File"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/File"
         schemaLocation="file/FileConfiguration.xsd"/> 
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/FTP"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/FTP"
         schemaLocation="ftp/FTPConfiguration.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/Global"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Global"
         schemaLocation="global/GlobalConfiguration.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/JMS"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/JMS"
         schemaLocation="jms/JMSConfiguration.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/Mapping"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Mapping"
         schemaLocation="mapping/MappingConfiguration.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/OSB"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/OSB"
         schemaLocation="osb/OSBConfiguration.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/SOAP"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/SOAP"
         schemaLocation="soap/SOAPConfiguration.xsd"/>
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/Tool"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Tool"
         schemaLocation="tool/ToolConfiguration.xsd"/> 
-    <xs:import namespace="http://www.archenroot.org/SoaTestingFramework/Config/XML"
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/XML"
         schemaLocation="xml/XMLConfiguration.xsd"/>
 
     <xs:element name="soaTestingFrameworkConfiguration" type="stfconf:SOATestingFrameworkConfiguration">
