@@ -20,29 +20,76 @@ package ibm.soatest.tool;
 import ibm.soatest.database.DatabaseComponent;
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import static org.apache.commons.io.FileUtils.readFileToString;
+import static org.apache.commons.io.FileUtils.forceMkdir;
 import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author zANGETSu
  */
 public class FileSystem {
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(FileSystem.class);
+
+    public static final String PATH_DELIMITER ="/";
     
-    public static boolean writeContentToFile(String content, String fileName){
+    public static final String ROOT_DIR = PATH_DELIMITER + "test";
+    public static final String CURRENT_PATH = new File(".").toString();
+     
+     
+    public static final String DATABASE_DIR = ROOT_DIR + PATH_DELIMITER + "database";
+    public static final String DATABASE_SCRIPT_DIR = DATABASE_DIR + PATH_DELIMITER + "scripts";
+    
+    public static final String JMS_DIR = ROOT_DIR + PATH_DELIMITER + "jms";
+    public static final String JMS_SCHEMA_DIR = JMS_DIR + PATH_DELIMITER + "schema";
+    public static final String JMS_MESSAGE_DIR = JMS_DIR + PATH_DELIMITER + "message";
+    
+    public static final String REPORT_DIR = ROOT_DIR + PATH_DELIMITER + "report";
+    public static final String REPORT_JUNIT_DIR = REPORT_DIR + PATH_DELIMITER + "junit";
+    public static final String REPORT_HTML_DIR = REPORT_DIR + PATH_DELIMITER + "html";
+    public static final String REPORT_PDF_DIR = REPORT_DIR + PATH_DELIMITER + "pdf";
+    public static final String REPORT_XML_DIR = REPORT_DIR + PATH_DELIMITER + "xml";
+    
+   
+
+    private static final Logger logger = LogManager.getLogger(FileSystem.class.getName());
+
+    public static boolean writeContentToFile(String content, String fileName) {
         return false;
     }
-    
-    public static String readContentFromFile(String fileName){
+
+    public static String readContentFromFile(String fileName) {
         String content = null;
         try {
-            return readFileToString(new File(fileName));
+            content = readFileToString(new File(fileName));
         } catch (IOException ex) {
             logger.error("Error while trying read content of file: " + ex.getLocalizedMessage());
         }
         return content;
     }
+
+    public static void initializeFileSystemStructure(String path) {
+        try {
+
+            // Create root test directory
+            forceMkdir(new File(path + ROOT_DIR));
+            // Create database test directory
+            forceMkdir(new File(path + DATABASE_DIR));
+            forceMkdir(new File(path + DATABASE_SCRIPT_DIR));
+            // Create jms test directory
+            forceMkdir(new File(path + JMS_DIR));
+            forceMkdir(new File(path + JMS_SCHEMA_DIR));
+            forceMkdir(new File(path + JMS_MESSAGE_DIR));
+            // Create report test directory
+            forceMkdir(new File(path + REPORT_DIR));
+            forceMkdir(new File(path + REPORT_HTML_DIR));
+            forceMkdir(new File(path + REPORT_JUNIT_DIR));
+            forceMkdir(new File(path + REPORT_PDF_DIR));
+            forceMkdir(new File(path + REPORT_XML_DIR));
+
+        } catch (IOException ex) {
+            logger.error("Error when trying to initialize file system structure for testing framework: " + ex.getLocalizedMessage());
+        }
+    }
+    
 }

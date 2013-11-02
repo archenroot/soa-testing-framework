@@ -1,6 +1,7 @@
 package ibm.soatest;
 
 
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.Set;
 
@@ -37,22 +38,24 @@ public enum CompOperType {
         // JMS related freamework operations
         JMS_OPERATIONS_DEFINITION_BEGIN("Dummy constant for JMS enumset EnumSet.range() begining"),
         
+        JMS_GENERATE_MESSAGE_BY_XSD(SOATFCompType.JMS, "Generate sample message based on provided XML schema file."),
+        JMS_SEND_MESSAGE_TO_QUEUE(SOATFCompType.JMS, "Pickup the sample message/s and send them to queue."),
         JMS_READ_MESSAGE_IN_QUEUE_BY_ID(SOATFCompType.JMS, "Read message in queue by provided id - the message will not be dropped from the queue and save it to file."),
-        JMS_READ_ALL_MASSAGES_IN_QUEUE(SOATFCompType.JMS, "Read all messages in queue - the message will not be dropped from the queue and save them to files."),
+        JMS_READ_ALL_MESSAGES_IN_QUEUE(SOATFCompType.JMS, "Read all messages in queue - the message will not be dropped from the queue and save them to files."),
+        JMS_CHECK_ERROR_QUEUE_FOR_MESSAGES(SOATFCompType.JMS, "Check error queue against content of stored messages"),
         JMS_CHECK_NUMBER_OF_MESSAGES_IN_QUEUE(SOATFCompType.JMS, "Get number of messages in queue and log it."),
         JMS_CHECK_NUMBER_OF_MESSAGES_IN_TOPIC(SOATFCompType.JMS, "Get number of messages in topic and log it."),
         JMS_PURGE_QUEUE(SOATFCompType.JMS,"Delete all messages in queue."),
         JMS_PURGE_TOPIC(SOATFCompType.JMS,"Delete all messages in topic."),
+        JMS_VALIDATE_MESSAGE_FILES(SOATFCompType.JMS,"Validate message file against provided schema."),
         
         JMS_OPERATIONS_DEFINITION_END("Dummy constant for JMS operations EnumSet.range() end"),
         
         // OSB related framework operations
         OSB_OPERATIONS_DEFINITION_BEGIN("Dummy constant for OSB enumset EnumSet.range() begining"),
         
-        OSB_ENABLE_BUSINESS_SERVICE(SOATFCompType.OSB,"Access the OSB cluster provided via configuration file and enable business service"),
-        OSB_ENABLE_PROXY_SERVICE(SOATFCompType.OSB,"Access the OSB cluster provided via configuration file and enable proxy service"),
-        OSB_DISABLE_BUSINESS_SERVICE(SOATFCompType.OSB,"Access the OSB cluster provided via configuration file and disable business service"),
-        OSB_DISABLE_PROXY_SERVICE(SOATFCompType.OSB, "Access the OSB cluster provided via configuration file and disable business service"),
+        OSB_ENABLE_SERVICE(SOATFCompType.OSB,"Access the OSB cluster provided via configuration file and enable business or proxy service"),
+        OSB_DISABLE_SERVICE(SOATFCompType.OSB, "Access the OSB cluster provided via configuration file and disable business or proxy service"),
         
         OSB_OPERATIONS_DEFINITION_END("Dummy constant for OSB operations EnumSet.range() end"),
         
@@ -77,12 +80,15 @@ public enum CompOperType {
         
         // XML related framework operations
         XML_OPERATIONS_DEFINITION_BEGIN("Dummy constant for XML enumset EnumSet.range() begining."),
+        XML_OPERATIONS_DEFINITION_END("Dummy constant for XML operations EnumSet.range() end."),
         
-        XML_VALIDATE_FILE(SOATFCompType.TOOL,"Validate XML file against provided schema."),
+        MAPPING_OPERATIONS_DEFINITION_BEGIN("Dummy constant for MAPPING enumset EnumSet.range() begining."),
+        
+        MAPPING_VALIDATE_SCENARIO(SOATFCompType.TOOL, "Compare results of two given component outputs."),
                
-        XML_OPERATIONS_DEFINITION_END("Dummy constant for XML operations EnumSet.range() end.");
-
-        public static Set<CompOperType> databaseOperations = EnumSet.of(DB_OPERATIONS_DEFINITION_BEGIN, DB_OPERATIONS_DEFINITION_END);
+        MAPPING_OPERATIONS_DEFINITION_END("Dummy constant for MAPPING operations EnumSet.range() end.");
+        
+        public static final Set<CompOperType> DATABASE_OPERATIONS = getOperations(DB_OPERATIONS_DEFINITION_BEGIN, DB_OPERATIONS_DEFINITION_END);
         public static Set<CompOperType> fileOperations = EnumSet.of(FILE_OPERATIONS_DEFINITION_BEGIN, FILE_OPERATIONS_DEFINITION_END);
         public static Set<CompOperType> ftpOperations = EnumSet.of(FTP_OPERATIONS_DEFINITION_BEGIN, FTP_OPERATIONS_DEFINITION_END);
         public static Set<CompOperType> jmsOperations = EnumSet.of(JMS_OPERATIONS_DEFINITION_BEGIN, JMS_OPERATIONS_DEFINITION_END);
@@ -90,6 +96,7 @@ public enum CompOperType {
         public static Set<CompOperType> restOperations = EnumSet.of(REST_OPERATIONS_DEFINITION_BEGIN, REST_OPERATIONS_DEFINITION_END);
         public static Set<CompOperType> soapOperations = EnumSet.of(SOAP_OPERATIONS_DEFINITION_BEGIN, SOAP_OPERATIONS_DEFINITION_END);
         public static Set<CompOperType> xmlOperations = EnumSet.of(XML_OPERATIONS_DEFINITION_BEGIN, XML_OPERATIONS_DEFINITION_END);
+        public static Set<CompOperType> mappingOperations = EnumSet.of(MAPPING_OPERATIONS_DEFINITION_BEGIN, MAPPING_OPERATIONS_DEFINITION_END);
         
         //public static Set<FrameworkOperation> fileOperations = EnumSet.range();
         private String soaTestingFrameworkTypeDescription;
@@ -109,5 +116,21 @@ public enum CompOperType {
         }
         public String getFrameworkOperationDesription(){
             return this.frameworkOperationDesription;
+        }
+
+        /**
+         * Returns an unmodifiable set consisting of elements in range between <code>first</code> and
+         * <code>last</code> enum elements exclusive
+         * 
+         * @param first enum element defining the beginning of the range
+         * @param last enum element defining the end of the range
+         * @return unmodifiable set of elements in the specified range (excluding the <code>first</code> and
+         * <code>last</code>
+         */
+        private static Set<CompOperType> getOperations(CompOperType first, CompOperType last) {
+            Set<CompOperType> set = EnumSet.range(first, last);
+            set.remove(first);
+            set.remove(last);
+            return Collections.unmodifiableSet(set);
         }
     }

@@ -18,12 +18,13 @@
 
 package ibm.soatest;
 
-import static ibm.soatest.CompOperType.DB_EXECUTE_INSERT_FROM_FILE;
 import static ibm.soatest.CompOperType.DB_GENERATE_INSERT_ONE_ROW_RANDOM;
+import static ibm.soatest.CompOperType.DB_EXECUTE_INSERT_FROM_FILE;
 import static ibm.soatest.SOATFCompFactory
-        .builSOATFComponent;
+        .buildSOATFComponent;
 import static ibm.soatest.SOATFCompType.DATABASE;
-import ibm.soatest.database.DatabaseComponent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 
 
@@ -34,11 +35,15 @@ import ibm.soatest.database.DatabaseComponent;
  */
 public class TestDatabaseComponent {
     
+    private static final Logger logger = LogManager.getLogger(TestDatabaseComponent.class);
+    
     public static void testDatabaseComponent(){
-        DatabaseComponent databaseComponent =  (DatabaseComponent) builSOATFComponent(DATABASE);
-        databaseComponent.executeOperation(DB_GENERATE_INSERT_ONE_ROW_RANDOM);
-        //databaseComponent.executeOperation(DB_EXECUTE_INSERT_FROM_FILE);
-          
+        CompOperResult cor = new CompOperResult();
+        SOATFComponent c = buildSOATFComponent(DATABASE, "VendorMaintainFromEBS_Kroky", cor);
+        c.execute(DB_GENERATE_INSERT_ONE_ROW_RANDOM);
+        logger.info(cor);
+        c.execute(DB_EXECUTE_INSERT_FROM_FILE);
+        logger.info(cor);
     }
     
 }

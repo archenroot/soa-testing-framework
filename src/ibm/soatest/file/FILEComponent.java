@@ -26,11 +26,11 @@ import ibm.soatest.SOATFCompType;
  *
  * @author zANGETSu
  */
-public class FILEComponent extends SOATFComponent {
+public class FileComponent extends SOATFComponent {
     
     
-    public FILEComponent(){
-        super(SOATFCompType.FILE);
+    public FileComponent(CompOperResult componentOperationResult) {
+        super(SOATFCompType.FILE, componentOperationResult);
         constructComponent();
     }
   
@@ -40,7 +40,7 @@ public class FILEComponent extends SOATFComponent {
     }
 
     @Override
-    public CompOperResult executeOperation(CompOperType componentOperation) {
+    public void executeOperation(CompOperType componentOperation) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

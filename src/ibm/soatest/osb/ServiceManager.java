@@ -15,7 +15,6 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
-
 package ibm.soatest.osb;
 
 import com.bea.wli.config.Ref;
@@ -26,14 +25,14 @@ import com.bea.wli.sb.management.configuration.SessionManagementMBean;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.management.remote.JMXConnector;
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.naming.Context;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import weblogic.management.jmx.MBeanServerInvocationHandler;
 import weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean;
 
@@ -43,88 +42,95 @@ import weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean;
  */
 public class ServiceManager {
     
-    
-    
+    private static final Logger logger = LogManager.getLogger(OSBComponent.class.getName());
+
+    public static final String DEFAULT_PROTO = "t3";
+    public static final String DEFAULT_PROTO_PROVIDER_PACKAGES = "weblogic.management.remote";
+    public static final String URI_SEPARATOR = "/";
+    public static final String JNDI_PREFIX = "/jndi/";
+    public static final String SESSION_NAME = "mysession";
+
     private static Ref constructRef(String refType, String serviceuri) {
         Ref ref = null;
-        String[] uriData = serviceuri.split("/");
+        String[] uriData = serviceuri.split(URI_SEPARATOR);
         ref = new Ref(refType, uriData);
         return ref;
     }
-    
-    
-    public static JMXConnector initConnection(String hostName, String userName, String password) throws MalformedURLException, IOException  {
 
-            JMXServiceURL serviceUrl = new JMXServiceURL("t3", hostName, 7001, "/jndi/" + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME);
-            HashMap<String, String> h = new HashMap<String, String>();
-            h.put(Context.SECURITY_PRINCIPAL, userName);
-            h.put(Context.SECURITY_CREDENTIALS, password);
-            h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, "weblogic.management.remote");
-            return JMXConnectorFactory.connect(serviceUrl, h);
-        
+    public static JMXConnector initConnection(String hostName, int port, String userName, String password) throws MalformedURLException, IOException {
+
+        JMXServiceURL serviceUrl = new JMXServiceURL(DEFAULT_PROTO, hostName, port, JNDI_PREFIX + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME);
+        HashMap<String, String> h = new HashMap<String, String>();
+        h.put(Context.SECURITY_PRINCIPAL, userName);
+        h.put(Context.SECURITY_CREDENTIALS, password);
+        h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, DEFAULT_PROTO_PROVIDER_PACKAGES);
+        return JMXConnectorFactory.connect(serviceUrl, h);
+
     }
-     public static String changeProxyServiceStatus(String servicetype, boolean status, String serviceURI, String host, int port, String username, String password) throws IOException {
-        
+
+    public static boolean changeServiceStatus(String servicetype, boolean status, String serviceURI, String host, int port, String username, String password) {
+
         SessionManagementMBean sm = null;
-        String sessionName = "mysession";
-        String statusmsg = "";
-        JMXConnector conn = initConnection(host, username, password);
+        JMXConnector conn = null;
+        boolean result = true;
+        String statusMsg = "";
         try {
-        
+            conn = initConnection(host, port, username, password);
             MBeanServerConnection mbconn = conn.getMBeanServerConnection();
-            DomainRuntimeServiceMBean clusterService = (DomainRuntimeServiceMBean) MBeanServerInvocationHandler.
-                    newProxyInstance(mbconn, new ObjectName(DomainRuntimeServiceMBean.OBJECT_NAME));
+            DomainRuntimeServiceMBean clusterService = (DomainRuntimeServiceMBean) MBeanServerInvocationHandler.newProxyInstance(mbconn, new ObjectName(DomainRuntimeServiceMBean.OBJECT_NAME));
             sm = (SessionManagementMBean) clusterService.findService(SessionManagementMBean.NAME, SessionManagementMBean.TYPE, null);
-            sm.createSession(sessionName);
-            ALSBConfigurationMBean alsbSession = (ALSBConfigurationMBean) clusterService.
-                    findService(ALSBConfigurationMBean.NAME + "." + "mysession", ALSBConfigurationMBean.TYPE, null);
+            sm.createSession(SESSION_NAME);
+            ALSBConfigurationMBean alsbSession = (ALSBConfigurationMBean) clusterService.findService(ALSBConfigurationMBean.NAME + "." + SESSION_NAME, ALSBConfigurationMBean.TYPE, null);
 
             if (servicetype.equals("ProxyService")) {
                 Ref ref = constructRef("ProxyService", serviceURI);
-                ProxyServiceConfigurationMBean proxyConfigMBean = (ProxyServiceConfigurationMBean) clusterService.
-                        findService(ProxyServiceConfigurationMBean.NAME + "." + sessionName, ProxyServiceConfigurationMBean.TYPE, null);
+                ProxyServiceConfigurationMBean proxyConfigMBean = (ProxyServiceConfigurationMBean) clusterService.findService(ProxyServiceConfigurationMBean.NAME + "." + SESSION_NAME, ProxyServiceConfigurationMBean.TYPE, null);
                 if (status) {
                     proxyConfigMBean.enableService(ref);
-                    statusmsg = "Enabled the Service : " + serviceURI;
+                    statusMsg="Enable the ProxyService : " + serviceURI;
+                    logger.info(statusMsg);
                 } else {
                     proxyConfigMBean.disableService(ref);
-                    statusmsg = "Disabled the Service : " + serviceURI;
+                    statusMsg="Disable the ProxyService : " + serviceURI;
+                    logger.info(statusMsg);
                 }
             } else if (servicetype.equals("BusinessService")) {
                 Ref ref = constructRef("BusinessService", serviceURI);
                 BusinessServiceConfigurationMBean businessConfigMBean = (BusinessServiceConfigurationMBean) clusterService.
-                        findService(BusinessServiceConfigurationMBean.NAME + "." + sessionName, BusinessServiceConfigurationMBean.TYPE, null);
+                        findService(BusinessServiceConfigurationMBean.NAME + "." + SESSION_NAME, BusinessServiceConfigurationMBean.TYPE, null);
                 if (status) {
                     businessConfigMBean.enableService(ref);
-                    statusmsg = "Enabled the Service : " + serviceURI;
+                    statusMsg="Enable the BusinessService : " + serviceURI;
+                    logger.info(statusMsg);
                 } else {
                     businessConfigMBean.disableService(ref);
-                    statusmsg = "Disabled the Service : " + serviceURI;
+                    statusMsg="Disable the BusinessService : " + serviceURI;
+                    logger.info(statusMsg);
                 }
             }
-            sm.activateSession(sessionName, statusmsg);
+            sm.activateSession(SESSION_NAME, statusMsg);
             conn.close();
         } catch (Exception ex) {
             if (null != sm) {
                 try {
-                    sm.discardSession(sessionName);
+                    sm.discardSession(SESSION_NAME);
                 } catch (Exception e) {
-                    System.out.println("able to discard the session");
-
+                    logger.debug("Not able to discard the session. "+e.getLocalizedMessage());
                 }
             }
-            statusmsg = "Not able to perform the operation";
+            result = false;
+            logger.error("Error in MBean Server connection connection. "+ex.getLocalizedMessage());
             ex.printStackTrace();
         } finally {
             if (null != conn) {
                 try {
                     conn.close();
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    logger.debug("Not able to close the JMX connection. "+e.getLocalizedMessage());
                 }
             }
         }
 
-        return statusmsg;
+        return result;
     }
 }

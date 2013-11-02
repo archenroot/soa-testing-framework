@@ -18,12 +18,52 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-xmlns:mapconf="http://www.archenroot.org/SOATestingFramework/Config/Mapping"
-targetNamespace="http://www.archenroot.org/SOATestingFramework/Config/Mapping"
-elementFormDefault="qualified" attributeFormDefault="unqualified">
-<xs:complexType name="MappingConfiguration">
-<xs:sequence>
-<xs:element name="map"/>
-</xs:sequence>
-</xs:complexType>
+    xmlns:mapconf="http://www.archenroot.org/SOATestingFramework/Config/Mapping"
+    targetNamespace="http://www.archenroot.org/SOATestingFramework/Config/Mapping"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <!--xs:complexType name="MappingConfiguration">
+        <xs:sequence>
+            <xs:element name="map" type="mapconf:Map" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType-->
+    <xs:complexType name="MappingConfiguration">
+        <xs:sequence>
+            <xs:element maxOccurs="1" minOccurs="1" name="fromComponent" type="mapconf:component"> </xs:element>
+            <xs:element maxOccurs="1" minOccurs="1" name="toComponent" type="mapconf:component"> </xs:element>
+            <xs:element name="customMappings" maxOccurs="1" minOccurs="0"
+                type="mapconf:customMappings"> </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:simpleType name="ComponentTypeEnum">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Enumeration of component types.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Database"/>
+            <xs:enumeration value="JMS"/>
+            <xs:enumeration value="File"/>
+            <xs:enumeration value="Soap"/>
+            <!-- 
+        <xs:enumeration value="Microsoft"/>
+        <xs:enumeration value="MySql"/>
+        <xs:enumeration value="H2"/>
+        -->
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="customMappings">
+        <xs:sequence>
+            <xs:element name="mapping" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                    <xs:attribute name="fromName" use="required" type="xs:string"/>
+                    <xs:attribute name="toName" use="required" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="component">
+        <xs:attribute name="componentType" type="mapconf:ComponentTypeEnum" use="required"/>
+        <xs:attribute name="identificator" type="xs:string" use="required"/>
+        <xs:attribute name="object" type="xs:string"/>
+    </xs:complexType>
 </xs:schema>

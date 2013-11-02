@@ -1,0 +1,118 @@
+<?xml version="1.0"?>
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:stfconf="http://www.archenroot.org/SOATestingFramework/Config"
+    xmlns:dbconf="http://www.archenroot.org/SOATestingFramework/Config/Database"
+    xmlns:commonconf="http://www.archenroot.org/SOATestingFramework/Config/Common"
+    xmlns:fileconf="http://www.archenroot.org/SOATestingFramework/Config/File"
+    xmlns:ftpconf="http://www.archenroot.org/SOATestingFramework/Config/FTP"
+    xmlns:globconf="http://www.archenroot.org/SOATestingFramework/Config/Global"
+    xmlns:jmsconf="http://www.archenroot.org/SOATestingFramework/Config/JMS"
+    xmlns:mapconf="http://www.archenroot.org/SOATestingFramework/Config/Mapping"
+    xmlns:osbconf="http://www.archenroot.org/SOATestingFramework/Config/OSB"
+    xmlns:soapconf="http://www.archenroot.org/SOATestingFramework/Config/SOAP"
+    xmlns:toolconf="http://www.archenroot.org/SOATestingFramework/Config/Tool"
+    xmlns:xmlconf="http://www.archenroot.org/SOATestingFramework/Config/XML"
+    targetNamespace="http://www.archenroot.org/SOATestingFramework/Config" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Common"
+        schemaLocation="common/CommonTypes.xsd"/>
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Database"
+        schemaLocation="database/DatabaseConfiguration.xsd"/>
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/File"
+        schemaLocation="file/FileConfiguration.xsd"/> 
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/FTP"
+        schemaLocation="ftp/FTPConfiguration.xsd"/>
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Global"
+        schemaLocation="global/GlobalConfiguration.xsd"/>
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/JMS"
+        schemaLocation="jms/JMSConfiguration.xsd"/>
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Mapping"
+        schemaLocation="mapping/MappingConfiguration.xsd"/>
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/OSB"
+        schemaLocation="osb/OSBConfiguration.xsd"/>
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/SOAP"
+        schemaLocation="soap/SOAPConfiguration.xsd"/>
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/Tool"
+        schemaLocation="tool/ToolConfiguration.xsd"/> 
+    <xs:import namespace="http://www.archenroot.org/SOATestingFramework/Config/XML"
+        schemaLocation="xml/XMLConfiguration.xsd"/>
+
+    <xs:element name="soaTestingFrameworkConfiguration" type="stfconf:SOATestingFrameworkConfiguration">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">SOA Testing Framework configuration.</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+
+    <xs:complexType name="SOATestingFrameworkConfiguration">
+        <xs:sequence>
+            <xs:annotation>
+                <xs:appinfo/>
+                <xs:documentation/>
+            </xs:annotation>
+            <xs:element name="global" type="globconf:GlobalConfiguration" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">SOA Testing Framework global configuration - not implemented yet.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="database" type="dbconf:DatabaseConfiguration"
+                minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Database related configuration.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="file" type="fileconf:FileConfiguration" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">File protocol related configuration - not implemneted yet.
+Should support basic operations(CRUD + copy and move) with files and directories.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+           <xs:element name="ftp" type="ftpconf:FTPConfiguration" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">FTP protocol related configuration - not implemented yet.
+Should support: sending and receiving files, login onto server and execute custom commands, manage FTP server instances (startup/shutdown/suspend/restart).</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="jms" type="jmsconf:JMSConfiguration" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">JMS messaging system related configuration.
+Currently only queues are supported (NOT topics). Supported browsing of distributed queues.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="mapping" type="mapconf:MappingConfiguration"
+                minOccurs="0" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Mapping source target related configuration. - not implemented yet.
+In case of complex mapping between source and target systems. Should support JSON, db or text file, XQuery or XSLT.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="osb" type="osbconf:OSBConfiguration" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Oracle Service Bus configuration related configuration.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="soap" type="soapconf:SOAPConfiguration" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">SOAP over HTTP related configuration.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="tool" type="toolconf:ToolConfiguration" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Tooling related configuration.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="xml" type="xmlconf:XMLConfiguration" minOccurs="0"
+                maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">XML related configuration - not implemented yet.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>

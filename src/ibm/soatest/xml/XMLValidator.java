@@ -25,10 +25,10 @@ import org.xml.sax.SAXException;
  */
 public class XMLValidator {
 
-    private ValidatorResult validatorResult = null;
+    //private ValidatorResult validatorResult = null;
     //private List<ValidatorResult> validatorResults = null;
 
-    public boolean validateXMLFiles(String xmlFilesFolder, String xsdFileName) {
+    public static boolean validateXMLFiles(String xmlFilesFolder, String xsdFileName) {
         //List<ValidatorResult> lvr;
         //lvr = new List<ValidatorResult>() {};
         for (final File fileEntry : new File(xmlFilesFolder).listFiles()) {
@@ -86,8 +86,8 @@ public class XMLValidator {
 
     }
 
-    public ValidatorResult validateXMLFile(String xmlFileName, String xsdFileName) {
-
+    public static ValidatorResult validateXMLFile(String xmlFileName, String xsdFileName) {
+        ValidatorResult validatorResult = new ValidatorResult();
         try {
 
             SchemaFactory factory
@@ -110,35 +110,34 @@ public class XMLValidator {
             // Validate the DOM tree.
             validator.validate(new DOMSource(document));
             System.out.println("The XML file is valid.");
-            validatorResult.valid = true;
-            validatorResult.validatorMessage = "XML document "
+            validatorResult.setValid(true);
+            validatorResult.setValidatorMessage("XML document "
                     + xmlFileName
                     + " is valid when compared against "
                     + xsdFileName
-                    + " XML schema file.";
-            System.out.println("alfa");
+                    + " XML schema file.");
 
         } catch (ParserConfigurationException e) {
             // exception handling
-            validatorResult.valid = false;
-            validatorResult.validatorMessage = e.getLocalizedMessage();
+            validatorResult.setValid(false);
+            validatorResult.setValidatorMessage(e.getLocalizedMessage());
         } catch (SAXException e) {
             // exception handling - document not valid!
-            validatorResult.valid = false;
-            validatorResult.validatorMessage = e.getLocalizedMessage();
+            validatorResult.setValid(false);
+            validatorResult.setValidatorMessage(e.getLocalizedMessage());
         } catch (IOException e) {
             // exception handling
-            validatorResult.valid = false;
-            validatorResult.validatorMessage = e.getLocalizedMessage();
+            validatorResult.setValid(false);
+            validatorResult.setValidatorMessage(e.getLocalizedMessage());
         }
 
-        return this.validatorResult;
+        return validatorResult;
     }
 
     public void validateXMLMessage() {
     }
 
-    public class ValidatorResult {
+    /*public class ValidatorResult {
 
         private String messageFileName = null;
         private boolean valid = false;
@@ -182,5 +181,5 @@ public class XMLValidator {
             this.validatorMessage = validatorMessage;
         }
 
-    }
+    }*/
 }

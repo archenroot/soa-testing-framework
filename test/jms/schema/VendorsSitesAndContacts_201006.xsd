@@ -1,0 +1,17 @@
+<xsd:schema targetNamespace="http://bge.ie/mwp/common/VendorsSitesAndContacts/2010/06" elementFormDefault="qualified" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:vsc="http://bge.ie/mwp/common/VendorsSitesAndContacts/2010/06" xmlns:hdr="http://bge.ie/mwp/common/Header/2010/05" xmlns:ven="http://xmlns.oracle.com/pcbpel/adapter/db/top/Int047VendorsMaintainAdapterVendors" xmlns:sit="http://xmlns.oracle.com/pcbpel/adapter/db/top/Int047VendorsMaintainAdapterSites" xmlns:con="http://xmlns.oracle.com/pcbpel/adapter/db/top/Int047VendorsMaintainAdapterContacts">
+	
+	<xsd:import namespace="http://bge.ie/mwp/common/Header/2010/05" schemaLocation="../../../BGE%20Common%20OSB%20Project/Resources/Schemas/BGEHeader_201005.xsd"/>
+	<xsd:import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/Int047VendorsMaintainAdapterSites" schemaLocation="Int047VendorsMaintainAdapterSites_table.xsd"/>
+	<xsd:import namespace="http://xmlns.oracle.com/pcbpel/adapter/db/top/Int047VendorsMaintainAdapterContacts" schemaLocation="Int047VendorsMaintainAdapterContacts_table.xsd"/>
+
+	<xsd:element name="VendorsSitesAndContacts" type="vsc:VendorsSitesAndContactsType"/>
+	<xsd:complexType name="VendorsSitesAndContactsType">
+		<xsd:sequence>
+			<xsd:element ref="hdr:Header"/>
+			<xsd:choice>
+				<xsd:element ref="sit:XxbgeMwnPoVendorSitesExtCollection"/>
+				<xsd:element ref="con:XxbgeMwnPoVendorContsExtCollection"/>
+			</xsd:choice>
+		</xsd:sequence>
+	</xsd:complexType>
+</xsd:schema>

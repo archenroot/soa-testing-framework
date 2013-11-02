@@ -27,10 +27,11 @@ import ibm.soatest.SOATFCompType;
  * @author zANGETSu
  */
 public class RESTComponent extends SOATFComponent {
-    public RESTComponent(){
-        super(SOATFCompType.REST);
+    public RESTComponent(CompOperResult componentOperationResult){
+        super(SOATFCompType.REST, componentOperationResult);
         constructComponent();
     }
+
   
     @Override
     protected void constructComponent() {
@@ -38,7 +39,7 @@ public class RESTComponent extends SOATFComponent {
     }
 
     @Override
-    public CompOperResult executeOperation(CompOperType componentOperation) {
+    public void executeOperation(CompOperType componentOperation) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

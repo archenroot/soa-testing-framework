@@ -21,24 +21,94 @@ import ibm.soatest.CompOperResult;
 import ibm.soatest.CompOperType;
 import ibm.soatest.SOATFComponent;
 import ibm.soatest.SOATFCompType;
+import ibm.soatest.config.JMSConfiguration;
+import ibm.soatest.UnsupportedComponentOperation;
+import ibm.soatest.tool.FileSystem;
+import java.io.File;
+import java.util.Iterator;
+import java.util.Set;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author zANGETSu
  */
 public class XMLComponent extends SOATFComponent {
-     public XMLComponent(){
-        super(SOATFCompType.XML);
+    private static final Logger logger = LogManager.getLogger(XMLComponent.class.getName());
+    
+    public static Set<CompOperType> supportedOperations = CompOperType.xmlOperations;   
+    
+    private final JMSConfiguration jmsConfiguration;    
+    
+    public XMLComponent(JMSConfiguration jmsConfiguration, CompOperResult componentOperationResult, String identificator) {
+        super(SOATFCompType.XML, componentOperationResult, identificator);
+        this.jmsConfiguration = jmsConfiguration;
+        
         constructComponent();
-    }
-  
-    @Override
-    protected void constructComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public CompOperResult executeOperation(CompOperType componentOperation) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    protected void constructComponent() {
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
+    @Override
+    public void executeOperation(CompOperType componentOperation) {
+        this.getComponentOperationResult().setCompOperType(componentOperation);
+        if (supportedOperations.contains(componentOperation)) {
+            try {
+                throw new ibm.soatest.UnsupportedComponentOperation();
+            } catch (ibm.soatest.UnsupportedComponentOperation ex) {
+                logger.error("Component operation is not supported." + ex.getLocalizedMessage());
+                this.getComponentOperationResult().setOverallResultSuccess(false);
+                return; // this.getComponentOperationResult();
+            }
+        }
+        
+        switch (componentOperation){
+            /*case XML_VALIDATE_FILE:
+                try {
+                    validateMessageFiles();
+                } catch (Exception ex) {
+                    logger.fatal(ex);
+                }
+                break;*/
+            default:
+                try {
+                    throw new UnsupportedComponentOperation();
+                } catch (UnsupportedComponentOperation ex) {
+                    logger.fatal( ex);
+                }                
+                break;
+        }
+        logger.info("Operation " + componentOperation + " succesfully executed.");
+        this.getComponentOperationResult().setOverallResultSuccess(true);
+        this.getComponentOperationResult().setResultMessage("Opertaion succesfully executed.");
+        
+    }
+    
+    /*public Iterator getGeneratedFiles(String objectName) {
+        String pattern = "*";
+        if (objectName != null) pattern = objectName;
+        String filemask = new StringBuilder(jmsConfiguration.getQueue().getName()).append(NAME_DELIMITER).append(pattern).append(MESSAGE_SUFFIX).toString();
+        return FileUtils.iterateFiles(new File(FileSystem.JMS_MESSAGE_DIR), new WildcardFileFilter(filemask), TrueFileFilter.INSTANCE);
+    }
+
+    private void validateMessageFiles() {
+        Iterator iterateFiles = getGeneratedFiles(null);
+        while(iterateFiles.hasNext()) {
+            ValidatorResult result = XMLValidator.validateXMLFile(iterateFiles.next().toString(), jmsConfiguration.getMessageSchema().getRelativeURI());
+            if (!result.isValid()) {
+                componentOperationResult.setOverallResultSuccess(false);
+                componentOperationResult.setResultMessage("Message in queue " + jmsConfiguration.getQueue().getName() + " is not valid");
+                logger.info("Message in queue " + jmsConfiguration.getQueue().getName() + " is not valid.");
+                return;
+            }
+            logger.info("Message in queue " + jmsConfiguration.getQueue().getName() + " is valid.");
+        }
+    }*/
 }

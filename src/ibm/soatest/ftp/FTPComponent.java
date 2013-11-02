@@ -27,8 +27,8 @@ import ibm.soatest.SOATFCompType;
  * @author zANGETSu
  */
 public class FTPComponent extends SOATFComponent {
-    public FTPComponent(){
-        super(SOATFCompType.FTP);
+    public FTPComponent(CompOperResult componentOperationResult) {
+        super(SOATFCompType.FTP, componentOperationResult);
         constructComponent();
     }
   
@@ -38,7 +38,7 @@ public class FTPComponent extends SOATFComponent {
     }
 
     @Override
-    public CompOperResult executeOperation(CompOperType componentOperation) {
+    public void executeOperation(CompOperType componentOperation) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

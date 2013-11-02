@@ -26,46 +26,52 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import ibm.soatest.database.DatabaseComponent;
+import ibm.soatest.tool.FileSystem;
+import ibm.soatest.util.Utils;
+import utils.system;
 
 
 
-public class DistribuedQueueBrowser {
+public class DistribuedQueueBrowser {    
+  private static final String QUEUE_AT_SERVER_SIGN = "@";
+  private static final String INITIAL_CONTEXT_FACTORY = "weblogic.jndi.WLInitialContextFactory";
+  /*
+   There exists 3 MBean servers accessible trough JMX, well even one can
+   connect directly to the managed server, Oracle suppose to connect to the 
+   admin server trough the "Domain Runtime MBean Server" server bean and
+   manage other nodes from this point. Here is list of supported MBean servers:
+   MBean Server                 JNDI Name
+   Domain Runtime MBean Server  weblogic.management.mbeanservers.domainruntime
+   Runtime MBean Server         weblogic.management.mbeanservers.runtime
+   Edit MBean Server            weblogic.management.mbeanservers.edit 
+   */
+  private static final String messageBeanServer = "weblogic.management.mbeanservers.domainruntime";  
+  
+  private static final Logger logger = LogManager.getLogger(DistribuedQueueBrowser.class.getName());
+  
+  private final InitialContext ctx;  
   private final Connection connection;
   private final Session session;
-  private final InitialContext ctx;
   private final Iterable<String> queueNames;
   
-  Logger logger = LogManager.getLogger(DistribuedQueueBrowser.class.getName());
-  
-    private final String hostName = "prometheus";
-    private final int port = 7001;
-    private final String userName = "weblogic";
-    private final String password = "Weblogic123";
-
-    /*
-     There exists 3 MBean servers accessible trough JMX, well even one can
-     connect directly to the managed server, Oracle suppose to connect to the 
-     admin server trough the "Domain Runtime MBean Server" server bean and
-     manage other nodes from this point. Here is list of supported MBean servers:
-     MBean Server                 JNDI Name
-     Domain Runtime MBean Server  weblogic.management.mbeanservers.domainruntime
-     Runtime MBean Server         weblogic.management.mbeanservers.runtime
-     Edit MBean Server            weblogic.management.mbeanservers.edit 
-     */
-    private String messageBeanServer = "weblogic.management.mbeanservers.domainruntime";
-
-    
-    
+  private final String jmsServerName;
+  private final String distributedDestinationName;
+  private final String distributedDestinationJndi;
 
   public DistribuedQueueBrowser(
           String adminUrl, 
           String providerUrl,
+          String jmsServerName,
+          String connectionFactoryName,
           String distributedDestinationName, 
+          String distributedDestinationJndi, 
           String userName, 
-          String password) throws Exception {
-    ctx = getInitialContext(providerUrl, userName, password);
-    WeblogicMBeanHelper factory = null;
-
+          String password) throws Exception {   
+    this.jmsServerName = jmsServerName;
+    this.distributedDestinationName = distributedDestinationName;
+    this.distributedDestinationJndi = distributedDestinationJndi;
+    
+    WeblogicMBeanHelper factory = null;    
     try {
       factory = new WeblogicMBeanHelper(adminUrl, userName, password);
       queueNames = factory.getDistributedMemberJndiNames(distributedDestinationName);
@@ -75,55 +81,58 @@ public class DistribuedQueueBrowser {
         factory.close();
       }
     }
-
-    ConnectionFactory connFactory = (ConnectionFactory) ctx
-        .lookup("jms.OSBSamplesJMSConnectionFactory");
+        
+    ctx = getInitialContext(providerUrl, userName, password);    
+    ConnectionFactory connFactory = (ConnectionFactory) ctx.lookup(connectionFactoryName);
     connection = connFactory.createConnection();
     connection.start();
     session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
   }
+  
+  public int printQueueMessagesByContent(String content) throws NoMessageFoundException, JMSException, NamingException {
+        Enumeration<ServerLocatedMessage> sli = this.getServerLocatedEnumeration();
+        int i = 0;
+        if (!sli.hasMoreElements()) {
+            throw new NoMessageFoundException();
+        }
+        while (sli.hasMoreElements()) {
+            ServerLocatedMessage m = sli.nextElement();
+            TextMessage mes = (TextMessage) m.getMessage();
+            if (content != null) {
+                if (mes == null || mes.getText() == null || !mes.getText().contains(content)) {
+                    logger.debug("skipping" + mes);
+                    continue;
+                }
+            }
+            /*
+            for (Enumeration<String> e = mes.getPropertyNames(); e.hasMoreElements();)
+                    System.out.println("enum" + e.nextElement().toString());
+
+
+            System.out.println("Correlation id:" + mes.getJMSCorrelationID());
+            System.out.println("Message id:" + mes.getJMSCorrelationID());
+            System.out.println("JMS Type:" + mes.getJMSType());
+            System.out.println("Content: " + mes.getText());
+            */
+        
+            String filename = new StringBuilder(distributedDestinationName).append(JMSComponent.NAME_DELIMITER).append(i).append(JMSComponent.MESSAGE_SUFFIX).toString();
+            String path = Utils.getFullFilePathStr(FileSystem.CURRENT_PATH, FileSystem.JMS_MESSAGE_DIR, filename);
+            this.writeStatementToFile(mes.getText(), path);
+            System.out.println(m);
+            ++i;
+        }  
+        return i;
+  }
 
   
-  public void printQueueMessages() {
-        try {
-            // Note that the first argument is the admin url and the second is the
-            // managed server url.
-            
-          
-          
-            Enumeration<ServerLocatedMessage> sli = this.getServerLocatedEnumeration();
-            int i = 0;
-            while (sli.hasMoreElements()) {
-                i++;
-                ServerLocatedMessage m = sli.nextElement();
-                TextMessage mes = (TextMessage) m.getMessage();
-                /*
-                for (Enumeration<String> e = mes.getPropertyNames(); e.hasMoreElements();)
-                        System.out.println("enum" + e.nextElement().toString());
-                
-              
-                System.out.println("Correlation id:" + mes.getJMSCorrelationID());
-                System.out.println("Message id:" + mes.getJMSCorrelationID());
-                System.out.println("JMS Type:" + mes.getJMSType());
-                System.out.println("Content: " + mes.getText());
-                */
-                
-                this.writeStatementToFile(mes.getText(), "test/jms/message_" + i + ".xml");
-                System.out.println(m);
-            }
-        } catch (JMSException ex) {
-            
-        } catch (NamingException ex) {
-            
-        } catch (Exception ex) {
-            
-        }
-    }
+  public int printQueueMessages() throws NoMessageFoundException, JMSException, NamingException {
+      return printQueueMessagesByContent(null);
+  }
   
-  private InitialContext getInitialContext(String providerUrl, String userName, String password) throws Exception {
+  private InitialContext getInitialContext(String providerUrl, String userName, String password) throws NamingException {
     Hashtable<String, String> ht = new Hashtable<String, String>();
 
-    ht.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
+    ht.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
     ht.put(Context.PROVIDER_URL, providerUrl);
     ht.put(Context.SECURITY_PRINCIPAL, userName);
     ht.put(Context.SECURITY_CREDENTIALS, password);
@@ -135,15 +144,17 @@ public class DistribuedQueueBrowser {
     return new JmsMessageEnumeration(getMessageEnumeratorMap());
   }
 
-  @SuppressWarnings("unchecked") private Map<String, Enumeration<Message>> getMessageEnumeratorMap() throws JMSException,
-    NamingException {
+  @SuppressWarnings("unchecked") 
+  private Map<String, Enumeration<Message>> getMessageEnumeratorMap() throws JMSException, NamingException {
     Map<String, Enumeration<Message>> serverMessageMap = new HashMap<String, Enumeration<Message>>();
 
+    String queueAtServer = jmsServerName + QUEUE_AT_SERVER_SIGN  + distributedDestinationName;
     for (String queueName : queueNames) {
-        if ("OSBSamplesJMSServer@OSBWriteQueue".equals(queueName)){
-            String serverDq[] = StringUtils.split(queueName, "@");
-            queueName = "jms.OSBWriteQueue";
+        if (queueAtServer.equals(queueName)){
+            String serverDq[] = StringUtils.split(queueName, QUEUE_AT_SERVER_SIGN);
+            queueName = distributedDestinationJndi;
             Queue queue = (Queue) ctx.lookup(queueName);
+            logger.debug(queue);
             javax.jms.QueueBrowser qb = session.createBrowser(queue);
             serverMessageMap.put(serverDq[0], qb.getEnumeration());
         }
@@ -175,10 +186,12 @@ public class DistribuedQueueBrowser {
           ? current.getValue()
           : new Enumeration<Message>() {
 
+            @Override
             public boolean hasMoreElements() {
               return false;
             }
 
+            @Override
             public Message nextElement() {
               throw new NoSuchElementException();
             }

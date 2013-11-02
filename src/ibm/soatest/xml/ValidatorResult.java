@@ -30,6 +30,9 @@ public class ValidatorResult {
         this.validatorMessage = validatorMessage;
     }
 
+    public ValidatorResult() {
+    }
+
     public boolean isValid() {
         return valid;
     }

@@ -63,4 +63,9 @@
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/soap/SOAPConfiguration.xsd" uri="xml-resources/jaxb/mujbinding/soap/SOAPConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/tool/ToolConfiguration.xsd" uri="xml-resources/jaxb/mujbinding/tool/ToolConfiguration.xsd"/>
     <system systemId="file:/C:/Dev/proj/SOATestingFramework/soa-testing-framework/schema/xml/XMLConfiguration.xsd" uri="xml-resources/jaxb/mujbinding/xml/XMLConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/rep/ibm-m2/m2/trunk/soa_testing_framework/schema/SOATestingFramework.xsd" uri="xml-resources/jaxb/mydummybinding/SOATestingFramework.xsd"/>
+    <system systemId="file:/C:/Dev/rep/ibm-m2/m2/trunk/soa_testing_framework/schema/database/DatabaseConfiguration.xsd" uri="xml-resources/jaxb/mydummybinding/database/DatabaseConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/rep/ibm-m2/m2/trunk/soa_testing_framework/schema/jms/JMSConfiguration.xsd" uri="xml-resources/jaxb/mydummybinding/jms/JMSConfiguration.xsd"/>
+    <system systemId="file:/C:/Dev/rep/ibm-m2/m2/trunk/soa_testing_framework/schema/osb/OSBConfiguration.xsd" uri="xml-resources/jaxb/mydummybinding/osb/OSBConfiguration.xsd"/>
+    <system systemId="file:/C:/dev/rep/ibm-m2/m2/trunk/soa_testing_framework/schema/mapping/MappingConfiguration.xsd" uri="xml-resources/jaxb/map/MappingConfiguration.xsd"/>
 </catalog>

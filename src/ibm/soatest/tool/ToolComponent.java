@@ -27,18 +27,18 @@ import ibm.soatest.SOATFCompType;
  * @author zANGETSu
  */
 public class ToolComponent extends SOATFComponent {
-     public ToolComponent(){
-        super(SOATFCompType.TOOL);
+     public ToolComponent(CompOperResult componentOperationResult){
+        super(SOATFCompType.TOOL, componentOperationResult);
         constructComponent();
     }
   
     @Override
     protected void constructComponent() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // not implemented yet
     }
 
     @Override
-    public CompOperResult executeOperation(CompOperType componentOperation) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void executeOperation(CompOperType componentOperation) {
+         
     }
 }

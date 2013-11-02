@@ -30,9 +30,9 @@ import ibm.soatest.soap.SOAPComponent;
 public class TestSOAPComponent {
     
     public static void testDatabaseComponent(){
-        SOAPComponent soapComponent = 
-                (SOAPComponent) SOATFCompFactory.builSOATFComponent(SOAP);
-soapComponent.executeOperation(SOAP_GENERATE_DYNAMICALLY_SOAP_REQUEST_TO_FILE);
+        //SOAPComponent soapComponent = 
+                //(SOAPComponent) SOATFCompFactory.builSOATFComponent(SOAP);
+//soapComponent.executeOperation(SOAP_GENERATE_DYNAMICALLY_SOAP_REQUEST_TO_FILE);
 //databaseComponent.executeOperation(DB_GENERATE_INSERT_ONE_ROW_RANDOM);
         //databaseComponent.executeOperation(DB_EXECUTE_INSERT_FROM_FILE);
         

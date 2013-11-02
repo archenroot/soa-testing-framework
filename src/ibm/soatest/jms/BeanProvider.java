@@ -1,8 +1,6 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
+
+
 package ibm.soatest.jms;
 
 import java.io.IOException;
@@ -20,13 +18,14 @@ import javax.management.MBeanException;
 import javax.management.ObjectName;
 import javax.management.MBeanServerConnection;
 import javax.management.ReflectionException;
+import org.apache.logging.log4j.LogManager;
 
-/**
- *
- * @author zANGETSu
- */
+
+
 public class BeanProvider {
 
+    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(DistribuedQueueBrowser.class.getName());
+    
     private MBeanServerConnection connection;
     private ObjectName service;
 
@@ -34,6 +33,7 @@ public class BeanProvider {
     }
 
     BeanProvider(MBeanServerConnection connection, ObjectName service) {
+        logger.debug("");
         this.connection = connection;
         this.service = service;
     }

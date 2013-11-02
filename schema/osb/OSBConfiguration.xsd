@@ -17,8 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 
-<xs:schema version="1.0"
-    xmlns:osbconf="http://www.archenroot.org/SOATestingFramework/Config/OSB"
+<xs:schema version="1.0" xmlns:osbconf="http://www.archenroot.org/SOATestingFramework/Config/OSB"
     xmlns:xs="http://www.w3.org/2001/XMLSchema"
     targetNamespace="http://www.archenroot.org/SOATestingFramework/Config/OSB"
     elementFormDefault="qualified" attributeFormDefault="unqualified">
@@ -52,11 +51,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="identificator" type="xs:string">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Used to identificate the cluster when executing management related commands over OSB. Must be the OSB cluster name, for example "osb_cluster"</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="ManagedServer">
         <xs:annotation>
@@ -86,50 +80,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
             <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="managementMBeanServer" type="xs:string" minOccurs="1" maxOccurs="1"
-                default="weblogic.management.mbeanservers.domainruntime">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">
-                        There exists 3 MBean servers accessible trough JMX, well even one can
-                        connect directly to the managed server, Oracle suppose to connect to the
-                        admin server trough the "Domain Runtime MBean Server" server bean and
-                        manage other nodes from this point. Here is list of supported MBean servers:
-                        MBean Server JNDI Name
-                        Domain Runtime MBean Server weblogic.management.mbeanservers.domainruntime
-                        Runtime MBean Server weblogic.management.mbeanservers.runtime
-                        Edit MBean Server weblogic.management.mbeanservers.edit
-                    </xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="managementMBeanService" type="xs:string" minOccurs="1" maxOccurs="1"
-                default="com.bea:Name=DomainRuntimeService,Type=weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean">
-                <xs:annotation>
-                    <xs:documentation>management service defaulting to DomainRuntimeService of type DomainRuntimeServiceMBean.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element default="weblogic.jndi.WLInitialContextFactory" name="initialContextFactory"
-                type="xs:string">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">Used to get initial weblogic context.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element default="weblogic.management.remote" name="jmxProtocolProviderPackages"
-                type="xs:string">
-                <xs:annotation>
-                    <xs:documentation>JMXConnector related context attribute.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element default="/jndi/" name="jmxServiceJNDIConstant" type="xs:string">
-                <xs:annotation>
-                    <xs:documentation>Constant used to construct the JNDI name.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element default="SOATestingFramework" minOccurs="1" name="seesionNamePrefix"
-                type="xs:string">
-                <xs:annotation>
-                    <xs:documentation xml:lang="en">Prefix for naming session when accessing OSB management.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
             <xs:element default="t3" name="jmxProtocol" type="xs:string">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Default protocol used for communicatio with OSB cluster.</xs:documentation>
@@ -156,11 +106,6 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="identificator" type="xs:string">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Admin server identification information. This is not supported fully yet as soon as only 1 instance of admin server is expected.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="Services">
         <xs:annotation>

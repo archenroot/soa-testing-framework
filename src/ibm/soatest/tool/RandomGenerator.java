@@ -28,7 +28,7 @@ public final class RandomGenerator {
     public final static String getRandomAlphabetical() {
         char[] chars = "abcdefghijklmnopqrstuvwxyz".toCharArray();
         StringBuilder sb = new StringBuilder();
-        Random random = new Random();
+        Random random = new Random(System.nanoTime());
         for (int i = 0; i < 20; i++) {
             char c = chars[random.nextInt(chars.length)];
             sb.append(c);
@@ -39,23 +39,28 @@ public final class RandomGenerator {
     public final static String getRandomAlphabetical(int length) {
         char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ".toCharArray();
         StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        for (int i = 0; i < 20 /*length */; i++) {
+        Random random = new Random(System.nanoTime());
+        for (int i = 0; i < length; i++) {
             char c = chars[random.nextInt(chars.length)];
             sb.append(c);
         }
         return sb.toString();
     }
 
-    public final static String getNumeric(int length) {
-        char[] chars = "1232456789".toCharArray();
-        StringBuilder sb = new StringBuilder();
-        Random random = new Random();
-        for (int i = 0; i < length; i++) {
-            char c = chars[random.nextInt(chars.length)];
-            sb.append(c);
+    /**
+     * 
+     * @param length if greater than 9 return only a number between 0 and Integer.MAX_VALUE value due to constraint in XSD (xs:int upper boundary is Integer.MAX_VALUE)
+     * @return 
+     */
+    public static int getNumeric(int length) {
+        Random random = new Random(System.nanoTime());
+        int maxValue;
+        if(length > 9) {
+            maxValue = Integer.MAX_VALUE;
+        } else {
+            maxValue = (int) Math.pow(10, length);
         }
-        return sb.toString();
+        return random.nextInt(maxValue);
     }
 
     public final static int RandomInt() {
@@ -87,7 +92,7 @@ public final class RandomGenerator {
     }
 
     public static String getRandomAlphaNumeric(int length) {
-        char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01232456789".toCharArray();
+        char[] chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789".toCharArray();
         StringBuilder sb = new StringBuilder();
         Random random = new Random();
         for (int i = 0; i < length; i++) {

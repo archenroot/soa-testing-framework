@@ -17,10 +17,12 @@
  */
 package ibm.soatest;
 
-import static ibm.soatest.CompOperType.OSB_DISABLE_PROXY_SERVICE;
-import static ibm.soatest.CompOperType.OSB_ENABLE_PROXY_SERVICE;
+import static ibm.soatest.CompOperType.OSB_DISABLE_SERVICE;
+import static ibm.soatest.CompOperType.OSB_ENABLE_SERVICE;
 import static ibm.soatest.SOATFCompType.OSB;
 import ibm.soatest.osb.OSBComponent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -28,35 +30,18 @@ import ibm.soatest.osb.OSBComponent;
  */
 public class TestOSBComponent {
 
-    public static void testDatabaseComponent() {
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        
-        OSBComponent osbComponent = (OSBComponent) SOATFCompFactory.builSOATFComponent(OSB);
-        osbComponent.executeOperation(OSB_DISABLE_PROXY_SERVICE);
-        //osbComponent.executeOperation(OSB_ENABLE_PROXY_SERVICE);
+    public static void testOSBComponent() {
+        CompOperResult cor = new CompOperResult();
+        boolean overallResult = false;
+        OSBComponent osbComponent = (OSBComponent) SOATFCompFactory.buildSOATFComponent(OSB, "test_service", cor);
+        //OSBComponent osbComponent2 = (OSBComponent) SOATFCompFactory.buildSOATFComponent(OSB,"test_service2");
+        osbComponent.executeOperation(OSB_DISABLE_SERVICE);
+        overallResult = osbComponent.componentOperationResult.isOverallResultSuccess();
+        try {
+            Thread.sleep(40000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(TestOSBComponent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        osbComponent.executeOperation(OSB_ENABLE_SERVICE);
     }
 }

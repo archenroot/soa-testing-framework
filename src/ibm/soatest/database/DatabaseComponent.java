@@ -21,21 +21,28 @@ import ibm.soatest.CompOperResult;
 import ibm.soatest.SOATFComponent;
 import ibm.soatest.SOATFCompType;
 import ibm.soatest.CompOperType;
-import ibm.soatest.config.database.Database;
-import ibm.soatest.config.database.DatabaseConfiguration;
-import ibm.soatest.config.database.DatabaseTypeEnum;
+import static ibm.soatest.CompOperType.DATABASE_OPERATIONS;
+import static ibm.soatest.CompOperType.DB_EXECUTE_INSERT_FROM_FILE;
+import static ibm.soatest.CompOperType.DB_GENERATE_INSERT_ONE_ROW_RANDOM;
+import ibm.soatest.config.DatabaseConfiguration;
+import ibm.soatest.config.DatabaseTypeEnum;
+import ibm.soatest.config.DbObject;
+import ibm.soatest.mapping.IMappingEndpoint;
+import ibm.soatest.tool.FileSystem;
+import ibm.soatest.util.Utils;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.Reader;
+
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.filefilter.TrueFileFilter;
+import org.apache.commons.io.filefilter.WildcardFileFilter;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -43,42 +50,31 @@ import org.apache.logging.log4j.Logger;
  *
  * @author zANGETSu
  */
-public class DatabaseComponent extends SOATFComponent {
+public class DatabaseComponent extends SOATFComponent implements IMappingEndpoint {
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");    
+
     private static final Logger logger = LogManager.getLogger(DatabaseComponent.class);
     
-    public static Set<CompOperType> supportedOperations 
-           = CompOperType.databaseOperations;
-        
-    private CompOperType databaseOperation = null;
     private DatabaseConfiguration databaseConfiguration = null;
-    private List<Database> databaseList = null;
-    private Database database = null;
-    
-    private String connectionName;
-    private String databaseType;
-    private String driverClassName;
+    private DatabaseTypeEnum databaseType;
+    // Only oracle database is supported now
+    private final String driverClassName = "oracle.jdbc.driver.OracleDriver";
     private String hostName;
     private BigInteger port;
     private String userName;
     private String password;
     private String serviceId;
-    private String connectAs;
-    private String objectName;
-    private String insertSqlScriptFileName;
-    private String selectSqlScriptFileName;
-    private String updateSqlScriptFileName;
-    private String deleteSqlScriptFileName;
-
+    // Not implemented yet
+    //private String connectAs
+    private List<DbObject> objects = new ArrayList<DbObject>();
     private String jdbcUrl;
-    private Connection conn;
-    
-    private CompOperResult componentOperationResult = new CompOperResult();
+    public static final String INSERT_FILE_SUFFIX = "_insert.sql";
+    public static final String NAME_DELIMITER = "_";
 
-    public DatabaseComponent(DatabaseConfiguration databaseConfiguration) {
-        super(SOATFCompType.DATABASE);
+    public DatabaseComponent(DatabaseConfiguration databaseConfiguration, CompOperResult componentOperationResult) {
+        super(SOATFCompType.DATABASE, componentOperationResult);
         this.databaseConfiguration = databaseConfiguration;
-        //databaseList = this.databaseConfiguration.getDatabase();
-        database = databaseList.get(0);
         constructComponent();
     }
 
@@ -86,113 +82,121 @@ public class DatabaseComponent extends SOATFComponent {
     protected final void constructComponent() {
         try {
             logger.debug("Constructing DatabaseComponent object.");
-            this.connectionName = database.getIdentificator();
-            this.databaseType = DatabaseTypeEnum.ORACLE.value();
-            this.driverClassName = database.getDriverClassName();
-            this.hostName = database.getHostName();
-            this.port = database.getPort();
-            this.userName = database.getUserName();
-            this.password = database.getPassword();
-            serviceId = database.getServiceId();
-            connectAs = database.getConnectAs();
-            //objectName = database.getObjectName();
-            //insertSqlScriptFileName = database.getInsertSqlScriptFileName();
-            //selectSqlScriptFileName = database.getSelectSqlScriptFileName();
-            //updateSqlScriptFileName = database.getUpdateSqlScriptFileName();
-            //deleteSqlScriptFileName = database.getDeleteSqlScriptFileName();
-            
-            jdbcUrl = constructJdbcUrl(this.hostName, this.port, this.serviceId);
-            
+
+            this.identificator = this.databaseConfiguration.getIdentificator();
+            this.databaseType = DatabaseTypeEnum.ORACLE;
+            this.hostName = this.databaseConfiguration.getHostName();
+            this.port = this.databaseConfiguration.getPort();
+            this.userName = this.databaseConfiguration.getUserName();
+            this.password = this.databaseConfiguration.getPassword();
+            this.serviceId = this.databaseConfiguration.getServiceId();
+            for (DbObject object : this.databaseConfiguration.getDbObjects().getDbObject()) {
+                this.objects.add(object);
+            }
+
+            this.jdbcUrl = constructJdbcUrl(this.hostName, this.port, this.serviceId);
+
             Class.forName(this.driverClassName);
-            
-            
-            this.conn = DriverManager.getConnection(
-                    this.jdbcUrl, this.userName, this.password);
-        
-            
         } catch (ClassNotFoundException ex) {
             logger.error("Database driver class cannot be found: " + ex.getMessage());
-        } catch (SQLException ex) {
-            logger.error("DriverManager cannot get the connection: " + ex.getMessage());
         }
         logger.debug("Constructing DatabaseComponent finished.");
-        
+    }
+    
+    @Override
+    public Iterator<File> getGeneratedFiles(String objectName) {
+        String pattern = "*";
+        if (objectName != null) pattern = objectName;
+        String filemask = new StringBuilder(identificator).append(NAME_DELIMITER).append(pattern).append(INSERT_FILE_SUFFIX).toString();
+        return FileUtils.iterateFiles(new File(Utils.getFullFilePathStr(FileSystem.CURRENT_PATH, FileSystem.DATABASE_SCRIPT_DIR)), new WildcardFileFilter(filemask), TrueFileFilter.INSTANCE);
     }
 
     @Override
-    public CompOperResult executeOperation(CompOperType componentOperation) {
-        
-        Set<CompOperType> supportedOperations = CompOperType.databaseOperations;
-
-        if (supportedOperations.contains(componentOperation)) {
-            try {
-                throw new UnsupportedComponentOperation();
-            } catch (UnsupportedComponentOperation ex) {
-                logger.error("Component operation is not supported.");
+    protected void executeOperation(CompOperType componentOperation) {
+        if (!DATABASE_OPERATIONS.contains(componentOperation)) {
+            final String msg = "Unsupported operation: " + componentOperation + ". Valid operations are: " + DATABASE_OPERATIONS;
+            logger.error(msg);
+            componentOperationResult.setResultMessage(msg);
+            componentOperationResult.setOverallResultSuccess(false);
+        } else {
+            for (DbObject object : objects) {
+                String filename = new StringBuilder(identificator).append(NAME_DELIMITER).append(object.getName()).append(INSERT_FILE_SUFFIX).toString();
+                String path = Utils.getFullFilePathStr(FileSystem.CURRENT_PATH, FileSystem.DATABASE_SCRIPT_DIR, filename);
+                switch (componentOperation) {
+                    case DB_GENERATE_INSERT_ONE_ROW_RANDOM:
+                        generateInsertStatement(object, path);
+                        break;
+                    case DB_EXECUTE_INSERT_FROM_FILE:
+                        executeInsertFromFile(path);
+                        break;
+                    default:
+                        logger.info("Operation execution not yet implemented: " + componentOperation);
+                        componentOperationResult.setResultMessage("Operation: " + componentOperation + " is valid, but not yet implemented");
+                        componentOperationResult.setOverallResultSuccess(false);
+                }
             }
         }
-
-        switch (componentOperation) {
-            case DB_GENERATE_INSERT_ONE_ROW_RANDOM:
-                generateInsertDynamicallyOneRow();
-                break;
-            case DB_EXECUTE_INSERT_FROM_FILE:
-        try {
-            executeInsertFromFile();
-        } catch (IOException ex) {
-            logger.error(ex.getLocalizedMessage());
-        } catch (SQLException ex) {
-            logger.error(ex.getLocalizedMessage());
-        }
-                break;
-            default:
-        }
-        this.componentOperationResult.setOverallResult(true);
-        this.componentOperationResult.setResultMessage("Database operation finished sucessfully");
-        return this.componentOperationResult;
     }
 
-    private void generateInsertDynamicallyOneRow() {
+    private void generateInsertStatement(DbObject object, String insertSqlScriptFileName) {
+        Connection conn = null;
         try {
-            StatementGenerator sg = new StatementGenerator(conn, objectName, insertSqlScriptFileName);
-            sg.generateOneRowSampleInsertStatement();
-        } catch (Exception ex) {
-            logger.error(ex.getLocalizedMessage());
+            conn = getConnection();
+            StatementGenerator.generateInsertStatement(conn, object, insertSqlScriptFileName, componentOperationResult);
+            componentOperationResult.setOverallResultSuccess(true);
+        } catch (SQLException e) {
+            String sqlExMsg = e.getErrorCode() + ": " + e.getMessage();
+            String msg = String.format("Could not get database connection: %s, %s/%s SQLException is: %s", jdbcUrl, userName, "********", sqlExMsg);
+            logger.error(msg);
+            componentOperationResult.addMsg(msg);
+            componentOperationResult.setOverallResultSuccess(false);
+        } catch (StatementGeneratorException e) {
+            String msg = String.format("Statement generator failure: %s", e.getMessage());
+            this.logger.error(msg);
+            this.componentOperationResult.addMsg(msg);
+            componentOperationResult.setOverallResultSuccess(false);
+        } finally {
+            closeConnection(conn);
         }
     }
 
-    private void executeInsertFromFile() throws FileNotFoundException, IOException, SQLException {
-        StatementExecutor se = new StatementExecutor(conn, false, true);
-        Reader r = new FileReader(new File(this.insertSqlScriptFileName));
-        se.runScript(r);
+    private void executeInsertFromFile(String insertSQLScriptFile) {
+        Connection conn = null;
+        try {
+            conn = getConnection();
+            StatementExecutor.runScript(conn, componentOperationResult, insertSQLScriptFile);
+            componentOperationResult.setOverallResultSuccess(true);
+        } catch (SQLException e) {
+            String sqlExMsg = e.getErrorCode() + ": " + e.getMessage();
+            String msg = String.format("Could not get database connection: %s, %s/%s SQLException is: %s", jdbcUrl, userName, "********", sqlExMsg);
+            logger.error(msg);
+            componentOperationResult.addMsg(msg);
+            componentOperationResult.setOverallResultSuccess(false);
+        } catch (StatementExecutorException e) {
+            String msg = String.format("Statement executor failure: %s", e.getMessage());
+            logger.error(msg);
+            componentOperationResult.addMsg(msg);
+            componentOperationResult.setOverallResultSuccess(false);
+        } finally {
+            closeConnection(conn);
+        }
     }
 
     private static String constructJdbcUrl(String hostName, BigInteger port, String serviceId) {
-        return "jdbc:oracle:thin:@"
-                + hostName + ":"
-                + port.toString() + ":"
-                + serviceId;
+        return String.format("jdbc:oracle:thin:@%s:%s:%s", hostName, port.toString(), serviceId);
     }
 
-    protected static void writeStatementToFile(String statement, String pathToFile) {
-        FileWriter fw = null;
+    private void closeConnection(Connection conn) {
         try {
-            fw = new FileWriter(new File(pathToFile));
-            fw.write(statement);
-            fw.flush();
-            fw.close();
-        } catch (IOException ex) {
-            logger.error(ex.getLocalizedMessage());
-        } finally {
-            try {
-                fw.close();
-            } catch (IOException ex) {
-                logger.error(ex.getLocalizedMessage());
+            if(conn != null) {
+                conn.close();
             }
+        } catch (SQLException ex) {
+            //nothing to do
         }
-
     }
 
-    
-
+    private Connection getConnection() throws SQLException {
+        return DriverManager.getConnection(jdbcUrl, userName, password);
+    }
 }

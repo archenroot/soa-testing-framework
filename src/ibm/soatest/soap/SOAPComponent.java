@@ -70,8 +70,8 @@ import ibm.soatest.xml.XMLValidator;
  */
 public class SOAPComponent extends SOATFComponent {
 
-    public SOAPComponent() {
-        super(SOATFCompType.SOAP);
+    public SOAPComponent(CompOperResult componentOperationResult) {
+        super(SOATFCompType.SOAP, componentOperationResult);
         constructComponent();
     }
 
@@ -81,7 +81,7 @@ public class SOAPComponent extends SOATFComponent {
     }
 
     @Override
-    public CompOperResult executeOperation(CompOperType componentOperation) {
+    public void executeOperation(CompOperType componentOperation) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -31,34 +31,27 @@ import org.apache.logging.log4j.Logger;
 public class ConfigInit {
     
     private static final Logger logger = LogManager.getLogger(ConfigInit.class.getName());
-    public static String configurationDefaultFile = "../conf/soa-testing-framework-config-init.properties";
-    
+    public static File propertiesFile;
     
     public static Properties getCoinfigurationInit(){
         
         Properties configurationInit = new Properties();
         
         try {
-            if (!new File(configurationDefaultFile).exists()){
+           final String path = new File(".").getCanonicalPath() + "/conf/soa-testing-framework-config-init.properties";
+           propertiesFile = new File(path);
+            if (!propertiesFile.exists()){
                 logger.error("Initialization properties file cannot be found on default location");
+                logger.error(path);
                 throw new IOException();
             }
-            configurationInit.load(new FileInputStream(configurationDefaultFile));
-            logger.info("Initial confgiruation sucessfully loaded.");
+            configurationInit.load(new FileInputStream(propertiesFile));
+            logger.info("Initial configuration sucessfully loaded.");
             
         } catch (IOException ex){
-            
+            logger.error(ex.getLocalizedMessage());
         }
         return configurationInit;
     }
 
-    public static String getConfigurationDefaultFile() {
-        return configurationDefaultFile;
-    }
-
-    public static void setConfigurationDefaultFile(String configurationDefaultFile) {
-        ConfigInit.configurationDefaultFile = configurationDefaultFile;
-    }
-    
-    
 }

@@ -15,9 +15,13 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
+
+
 package ibm.soatest;
 
 import ibm.soatest.tool.UniqueIdGenerator;
+import java.util.ArrayList;
+import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -25,42 +29,99 @@ import org.apache.logging.log4j.Logger;
  *
  * @author zANGETSu
  */
-public class CompOperResult {
+public final class CompOperResult {
 
     Logger logger = LogManager.getLogger(CompOperResult.class.getName());
 
     private String resultId;
+
     private boolean overallResultSuccess;
     private String resultMessage;
-//private List<String> messages = null;
+    
+    private SOATFCompType soaTFCompType;
+    private CompOperType compOperType;
+    
+    private List<String> messages = new ArrayList<String>();
 
     public CompOperResult() {
-        this.resultId = UniqueIdGenerator.generateUniqueId();
+        this(false, null, null, null);
     }
-
-    public CompOperResult(boolean overallResult, String resultMessage) {
-        this.overallResultSuccess = overallResult;
-        this.resultMessage = resultMessage;
+    
+    private CompOperResult(boolean overallResultSuccess, String resultMessage, SOATFCompType soaTFCompType, CompOperType compOpertype) {
+        setResultId(UniqueIdGenerator.generateUniqueId());
+        setSoaTFCompType(soaTFCompType);
+        setCompOperType(compOpertype);
+        setOverallResultSuccess(overallResultSuccess);
+        setResultMessage(resultMessage);
     }
-
-   
-
-    public boolean getOverallResult() {
-        return this.overallResultSuccess;
-    }
-
+    
     public String getResultId() {
-        return this.resultId;
-    }
-    public String getResultMessage(){
-        return this.resultMessage;
+        return resultId;
     }
 
-    public void setOverallResult(boolean overallResultSuccess) {
+    private void setResultId(String resultId) {
+        this.resultId = resultId;
+    }
+
+    public boolean isOverallResultSuccess() {
+        return overallResultSuccess;
+    }
+
+    public void setOverallResultSuccess(boolean overallResultSuccess) {
         this.overallResultSuccess = overallResultSuccess;
     }
-    public void setResultMessage(String resultMessage){
+
+    public String getResultMessage() {
+        return resultMessage;
+    }
+
+    public void setResultMessage(String resultMessage) {
         this.resultMessage = resultMessage;
     }
 
+    public SOATFCompType getSoaTFCompType() {
+        return soaTFCompType;
+    }
+
+    public void setSoaTFCompType(SOATFCompType soaTFCompType) {
+        this.soaTFCompType = soaTFCompType;
+    }
+
+    public CompOperType getCompOperType() {
+        return compOperType;
+    }
+
+    public void setCompOperType(CompOperType compOperType) {
+        this.compOperType = compOperType;
+    }
+    
+    public void addMsg(String msg) {
+        Exception exception = new Exception();
+        StackTraceElement[] stackTrace = exception.getStackTrace();
+        String className = stackTrace[1].getClassName();
+        int idx = className.lastIndexOf(".");
+        className = idx != -1 ? className.substring(idx +1) : className;
+        messages.add("[" + className + "] " + msg);
+    }
+    
+    public List<String> getMessages() {
+        return messages;
+    }
+
+    @Override
+    public String toString() {
+        return "CompOperResult:\n"
+                + "resultId=" + resultId + "\n"
+                + "overallResultSuccess=" + overallResultSuccess + "\n"
+                + "resultMessage=" + resultMessage + "\n"
+                + "soaTFCompType=" + soaTFCompType + "\n"
+                + "compOperType=" + compOperType + "\n"
+                + "messages=" + messages;
+    }
+
+    void merge(CompOperResult cor) {
+        this.messages.addAll(cor.getMessages());
+        this.overallResultSuccess = cor.isOverallResultSuccess();
+    }   
+    
 }
