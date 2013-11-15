@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stfconf:soaTestingFrameworkInterfaceConfiguration xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Interface/FTP"
+ xmlns:mapconf="http://www.ibm.com/SOATF/Config/Interface/Mapping"
+ xmlns:soapconf="http://www.ibm.com/SOATF/Config/Interface/SOAP"
+ xmlns:stfconf="http://www.ibm.com/SOATF/Config/Interface"
+ xmlns:dbconf="http://www.ibm.com/SOATF/Config/Interface/Database"
+ xmlns:jmsconf="http://www.ibm.com/SOATF/Config/Interface/JMS"
+ xmlns:osbconf="http://www.ibm.com/SOATF/Config/Interface/OSB"
+ xmlns:globconf="http://www.ibm.com/SOATF/Config/Interface/Global"
+ xmlns:scenconf="http://www.ibm.com/SOATF/Config/Interface/Scenario"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.ibm.com/SOATF/Config/Interface file:/C:/Dev/rep/trunk/soa_testing_framework/schema/SOATestingFrameworkInterfaceConfiguration/SOATestingFrameworkInterfaceConfiguration.xsd">
+    <stfconf:interface>
+        <stfconf:interfaceSource identificator="identificator0"/>
+    </stfconf:interface>
+    <stfconf:flowPattern referenceName="referenceName0">
+        <stfconf:testCaseScenario referenceName="referenceName1">
+            <stfconf:executionBlock referenceName="referenceName2">
+                <stfconf:source>
+                    <stfconf:database identificator="identificator1">
+                        <dbconf:dbObjects>
+                            <dbconf:dbObject name="name0">
+                            </dbconf:dbObject>
+                        </dbconf:dbObjects>
+                    </stfconf:database>
+                    <stfconf:ftpServer identificator="identificator2">
+                        <ftpconf:fileName>fileName0</ftpconf:fileName>
+                    </stfconf:ftpServer>
+                    <stfconf:jmsSubsystem identificator="User identification information">
+                        <jmsconf:jmsServer name="name1"/>
+                        <jmsconf:connectionFactory name="name2" jndiName="jndiName0"/>
+                        <jmsconf:queue name="name3" jndiName="jndiName1"/>
+                        <jmsconf:messageSchema path="path0"/>
+                    </stfconf:jmsSubsystem>
+                    <stfconf:soap identificator="identificator4">
+                        <soapconf:serviceName>serviceName0</soapconf:serviceName>
+                        <soapconf:endPointUri>endPointUri0</soapconf:endPointUri>
+                        <soapconf:operationName>operationName0</soapconf:operationName>
+                    </stfconf:soap>
+                </stfconf:source>
+                <stfconf:target>
+                    <stfconf:database identificator="identificator5">
+                        <dbconf:dbObjects>
+                            <dbconf:dbObject name="name4">
+                            </dbconf:dbObject>
+                        </dbconf:dbObjects>
+                    </stfconf:database>
+                    <stfconf:ftpServer identificator="identificator6">
+                        <ftpconf:fileName>fileName1</ftpconf:fileName>
+                    </stfconf:ftpServer>
+                    <stfconf:jmsSubsystem identificator="User identification information">
+                        <jmsconf:jmsServer name="name5"/>
+                        <jmsconf:connectionFactory name="name6" jndiName="jndiName2"/>
+                        <jmsconf:queue name="name7" jndiName="jndiName3"/>
+                        <jmsconf:messageSchema path="path1"/>
+                    </stfconf:jmsSubsystem>
+                    <stfconf:soap identificator="identificator8">
+                        <soapconf:serviceName>serviceName1</soapconf:serviceName>
+                        <soapconf:endPointUri>endPointUri1</soapconf:endPointUri>
+                        <soapconf:operationName>operationName1</soapconf:operationName>
+                    </stfconf:soap>
+                </stfconf:target>
+            </stfconf:executionBlock>
+        </stfconf:testCaseScenario>
+    </stfconf:flowPattern>
+</stfconf:soaTestingFrameworkInterfaceConfiguration>

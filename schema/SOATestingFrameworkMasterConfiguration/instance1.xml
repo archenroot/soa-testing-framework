@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soaTestingFrameworkMasterConfiguration xmlns="http://www.ibm.com/SOATF/Config/Master"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.ibm.com/SOATF/Config/Master file:/C:/Dev/rep/trunk/soa_testing_framework/schema/SOATestingFrameworkMasterConfiguration/SOATestingFrameworkMasterConfiguration.xsd">
+    <interfaces>
+        <interface name="name1">
+            <projects>
+                <project name="name3"/>
+            </projects>
+            <flowPatterns>
+                <flowPattern name="name5" occurrence="0"/>
+            </flowPatterns>
+        </interface>
+    </interfaces>
+    <environments>
+        <oracleFusionMiddleware>
+            <oracleFusionMiddlewareEnvironment environment="dev" environmentType="system" name="name7">
+                <adminServer>
+                    <jmxProtocol>t3</jmxProtocol>
+                    <host>host0</host>
+                    <port>0</port>
+                    <securityPrincipal>securityPrincipal0</securityPrincipal>
+                    <securityCredentials>securityCredentials0</securityCredentials>
+                </adminServer>
+                <cluster>
+                    <managedServer name="name9">
+                        <hostName>hostName0</hostName>
+                        <port>port0</port>
+                    </managedServer>
+                </cluster>
+            </oracleFusionMiddlewareEnvironment>
+        </oracleFusionMiddleware>
+        <databases>
+            <database identificator="identificator1">
+                <databaseInstance environment="dev" environmentType="system" name="name11">
+                    <hostName>hostName1</hostName>
+                    <port>0</port>
+                    <userName>userName0</userName>
+                    <password>password0</password>
+                    <serviceId>serviceId0</serviceId>
+                </databaseInstance>
+            </database>
+        </databases>
+        <ftpServers>
+            <ftpServer identificator="identificator3">
+                <ftpEnvironment environment="dev" environmentType="system" name="name13">
+                    <hostName>hostName2</hostName>
+                    <port>port1</port>
+                    <user>user0</user>
+                    <password>password1</password>
+                    <security>None</security>
+                    <stageDirectory>stageDirectory0</stageDirectory>
+                    <archiveDirectory>archiveDirectory0</archiveDirectory>
+                    <errorDirectory>errorDirectory0</errorDirectory>
+                </ftpEnvironment>
+            </ftpServer>
+        </ftpServers>
+    </environments>
+    <fileSystemStructure>
+        <root name="name15">
+            <temporary name="name17">
+                <database name="database"/>
+                <jms name="jms"/>
+                <ftp name="ftp"/>
+                <mapping name="mapping"/>
+                <soap name="soap"/>
+            </temporary>
+            <current-test name="name29">
+                <database name="database"/>
+                <jms name="jms"/>
+                <ftp name="ftp"/>
+                <mapping name="mapping"/>
+                <soap name="soap"/>
+            </current-test>
+            <reference-test name="name41">
+                <database name="database"/>
+                <jms name="jms"/>
+                <ftp name="ftp"/>
+                <mapping name="mapping"/>
+                <soap name="soap"/>
+            </reference-test>
+            <reporting name="name53"/>
+        </root>
+    </fileSystemStructure>
+    <flowPatterns>
+        <flowPattern name="name55" testCasePatternCount="0">
+            <testCaseScenario name="name57" executionBlockCount="0" type="positive">
+                <preExecutionBlock>
+                </preExecutionBlock>
+                <executionBlock name="name59" testCaseScenarioSequenceId="0">
+                    <operation name="DB_GENERATE_INSERT" executeOn="source"/>
+                </executionBlock>
+                <postExecution>
+                </postExecution>
+            </testCaseScenario>
+        </flowPattern>
+    </flowPatterns>
+</soaTestingFrameworkMasterConfiguration>

@@ -1,0 +1,126 @@
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:stfconf="http://www.ibm.com/SOATF/Config/Interface"
+    xmlns:dbconf="http://www.ibm.com/SOATF/Config/Interface/Database"
+    xmlns:jmsconf="http://www.ibm.com/SOATF/Config/Interface/JMS"
+    xmlns:osbconf="http://www.ibm.com/SOATF/Config/Interface/OSB"
+    xmlns:mapconf="http://www.ibm.com/SOATF/Config/Interface/Mapping"
+    xmlns:soapconf="http://www.ibm.com/SOATF/Config/Interface/SOAP"
+    xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Interface/FTP"
+    xmlns:globconf="http://www.ibm.com/SOATF/Config/Interface/Global"
+    targetNamespace="http://www.ibm.com/SOATF/Config/Interface" elementFormDefault="qualified"
+    attributeFormDefault="unqualified"
+    xmlns:scenconf="http://www.ibm.com/SOATF/Config/Interface/Scenario">
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/Database"
+        schemaLocation="database/DatabaseConfiguration.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/FTP"
+        schemaLocation="ftp/FTPConfiguration.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/JMS"
+        schemaLocation="jms/JMSConfiguration.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/Mapping"
+        schemaLocation="mapping/MappingConfiguration.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/SOAP"
+        schemaLocation="soap/SOAPConfiguration.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/OSB"
+        schemaLocation="osb/OSBConfiguration.xsd"/>
+    <xs:element name="soaTestingFrameworkInterfaceConfiguration"
+        type="stfconf:SOATestingFrameworkInterfaceConfiguration">
+
+        <xs:annotation>
+            <xs:documentation xml:lang="en">SOA Testing Framework configuration.</xs:documentation>
+        </xs:annotation>
+
+    </xs:element>
+
+    <xs:complexType name="SOATestingFrameworkInterfaceConfiguration">
+        <xs:sequence>
+            <xs:annotation>
+                <xs:appinfo/>
+                <xs:documentation/>
+            </xs:annotation>
+            <xs:element name="interface">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Global project configuration.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="interfaceSource">
+                            <xs:complexType>
+                                <xs:attribute name="identificator"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" name="referencedFlowPattern"
+                type="stfconf:ReferencedFlowPattern"> </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="ScenarioTargeting">
+        <xs:complexContent>
+            <xs:extension base="stfconf:AbstractScenarioTargeting">
+                <xs:sequence>
+                    <xs:element name="database" type="dbconf:DatabaseConfiguration" minOccurs="0"
+                        maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Database related configuration.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="1" name="ftpServer" type="ftpconf:FTPConfiguration"
+                        minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">FTP server configuration.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="jmsSubsystem" type="jmsconf:JMSConfiguration" minOccurs="0"
+                        maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">JMS messaging system related configuration.
+                        Currently only queues are supported (NOT topics). Supported browsing of distributed queues.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="soap" type="soapconf:SOAPConfiguration" maxOccurs="1"
+                        minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Web services based on SOAP protocol configuration.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="osb" type="osbconf:OSBConfiguration" minOccurs="0"/>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType abstract="true" name="AbstractScenarioTargeting"/>
+    <xs:complexType name="ReferencedFlowPattern">
+        <xs:sequence>
+            <xs:element name="referencedTestScenario" type="stfconf:ReferencedTestScenario"
+                maxOccurs="unbounded"> </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="ReferencedTestScenario">
+        <xs:sequence>
+            <xs:element name="referencedExecutionBlock" maxOccurs="unbounded"
+                type="stfconf:ReferencedExecutionBlock"> </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="ReferencedExecutionBlock">
+        <xs:sequence>
+            <xs:element name="source" minOccurs="0">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="stfconf:ScenarioTargeting"/>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="target" minOccurs="0">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="stfconf:ScenarioTargeting"/>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string"/>
+    </xs:complexType>
+</xs:schema>

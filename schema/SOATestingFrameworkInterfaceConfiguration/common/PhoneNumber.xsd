@@ -1,0 +1,132 @@
+<?xml version="1.0"?>
+<!--
+Copyright (C) 2013 zANGETSu
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+-->
+
+<xs:schema version="1.0"
+           xmlns="http://www.ibm.com/SOATF/Project/Common"
+           xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:common="http://www.ibm.com/SOATF/Project/Common"
+           targetNamespace="http://www.ibm.com/SOATF/Project/Common"
+           elementFormDefault="qualified">
+<xs:annotation>
+    <xs:documentation>
+      
+    </xs:documentation>
+  </xs:annotation>
+
+
+  <xs:simpleType name="PhoneNumber">
+    <xs:annotation>
+      <xs:documentation>
+        Full international telephone number is up to 15 digits long.
+        The country code is up to 3 digits long. The area code is
+        country-dependent and is not used for some countries. If
+        used, it seems to be from 1 to 5 digits long. This leaves
+        the subscriber number up to 14 digits. Plus there is the
+        optional extension. Putting this all together, we get:
+
+        country-area-subscriber-extension
+
+        The area code and extension are optional. Here are a few
+        examples:
+
+        1-800-1234567    (country-area-subscriber)
+        1-800-1234567-89 (country-area-subscriber-extension)
+        34-912345678     (country-subscriber)
+        34-912345678-9   (country-subscriber-extension)
+
+        See also http://en.wikipedia.org/wiki/Area_code
+                 http://en.wikipedia.org/wiki/E.164
+
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:string">
+      <xs:pattern value="([1-9][0-9]{0,2})(-[1-9][0-9]{0,4})?(-[1-9][0-9]{0,13})(-[0-9]+)?"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="PhoneCountryCode">
+    <xs:annotation>
+      <xs:documentation>
+        Telephone country code. Up to 3 digits long.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:unsignedShort">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="999"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="PhoneAreaCode">
+    <xs:annotation>
+      <xs:documentation>
+        Telephone area code. Up to 5 digits long.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:unsignedInt">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="99999"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="PhoneSubscriberNumber">
+    <xs:annotation>
+      <xs:documentation>
+        Telephone subscriber number. Up to 14 digits long.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:unsignedLong">
+      <xs:minInclusive value="1"/>
+      <xs:maxInclusive value="99999999999999"/>
+    </xs:restriction>
+  </xs:simpleType>
+
+
+  <xs:simpleType name="PhoneExtensionNumber">
+    <xs:annotation>
+      <xs:documentation>
+        Telephone extension number. Theoretically of arbitrary length.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:restriction base="xs:unsignedLong"/>
+  </xs:simpleType>
+
+
+  <xs:complexType name="PhoneNumberStruct">
+    <xs:annotation>
+      <xs:documentation>
+        Structured full international telephone number.
+      </xs:documentation>
+    </xs:annotation>
+
+    <xs:sequence>
+      <xs:element name="country" type="stl:PhoneCountryCode"/>
+      <xs:element name="area" type="stl:PhoneAreaCode" minOccurs="0"/>
+      <xs:element name="subscriber" type="stl:PhoneSubscriberNumber"/>
+      <xs:element name="extension" type="stl:PhoneExtensionNumber" minOccurs="0"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>

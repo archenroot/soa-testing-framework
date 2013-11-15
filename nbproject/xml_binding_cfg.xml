@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='SOATestingFramework' version='1.0'>
+	<schema type='-xmlschema' package='' name='SOATestingFrameworkReportingConfiguration'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/SOATestingFrameworkReportingConfiguration/SOATestingFrameworkReportingConfiguration.xsd' origLocation='schema/SOATestingFrameworkReportingConfiguration/SOATestingFrameworkReportingConfiguration.xsd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+	<schema type='-xmlschema' package='' name='SOATestingFrameworkInterfaceConfiguration'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/SOATestingFrameworkInterfaceConfiguration/SOATestingFrameworkInterfaceConfiguration.xsd' origLocation='schema/SOATestingFrameworkInterfaceConfiguration/SOATestingFrameworkInterfaceConfiguration.xsd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+	<schema type='-xmlschema' package='' name='SOATestingFrameworkMasterConfiguration'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/SOATestingFrameworkMasterConfiguration/SOATestingFrameworkMasterConfiguration.xsd' origLocation='schema/SOATestingFrameworkMasterConfiguration/SOATestingFrameworkMasterConfiguration.xsd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+</schemas>

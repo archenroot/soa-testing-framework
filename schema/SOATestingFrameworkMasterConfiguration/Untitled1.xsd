@@ -1,0 +1,25 @@
+<interface identificator="A" pattern=db-queueh></interface>
+<interface identificator="B" db-queue-lada-jech></interface>
+<interface identificator="B" pattern=beta></interface>
+<paterns>
+    <patern db-queueh>
+        <sekvence name="db-to-prequeu>
+            krok 1
+            krok 2
+            <sekvence db-to-prequeu>
+                krok 1
+                krok 2
+                <sekvence db-to-prequeu>
+                    krok 1
+                    krok 2 - check error queue
+                </sekvence>
+    </patern>
+    <patern db-queue-lada-jech>
+        <step OSB_DISABLE_SERVICE></step>
+        <step FTP_SEND_FILE></step>
+    </patern>
+    <patern beta>
+        <step OSB_DISABLE_SERVICE></step>
+        <step FTP_SEND_FILE></step>
+    </patern>
+</paterns>
