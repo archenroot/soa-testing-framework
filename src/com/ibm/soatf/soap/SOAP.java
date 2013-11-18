@@ -62,14 +62,6 @@ class SOAP{
     private String responseMessageContent = "";
     private List<XmlError> validatorErrors = null;
 
-    public enum FlowDirectionType {
-
-        INBOUND, OUTBOUND
-    };
-
-    private SOAP() {
-    }
-
     public SOAP(
             String serviceName,
             String endPointUri,
@@ -241,7 +233,8 @@ class SOAP{
         }*/
     }
 
-    public boolean validateMessage(FlowDirectionType fdt) throws UnknownFlowDirectionTypeException {
+    //public boolean validateMessage(FlowDirectionType fdt) throws UnknownFlowDirectionTypeException {
+        /*
         switch (fdt) {
             case INBOUND:
                 //XMLValidator.validateXMLFile(this.requestMessageXmlFile, "schema.xsd");
@@ -257,6 +250,8 @@ class SOAP{
 
         return true;
     }
+                */
+    
 
     private void saveContentToFile(String content, String fileName) throws IOException {
         FileWriter fw = new FileWriter(new File(fileName));

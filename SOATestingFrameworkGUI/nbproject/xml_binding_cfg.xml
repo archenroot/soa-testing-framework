@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<schemas xmlns='http://xml.netbeans.org/schema/JAXBWizConfig' destdir='build/generated-sources/jaxb' projectName='SOATestingFrameworkGUI' version='1.0'>
+	<schema type='-xmlschema' package='' name='SOATestingFrameworkMasterConfiguration'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/SOATestingFrameworkMasterConfiguration/SOATestingFrameworkMasterConfiguration.xsd' origLocation='../../soa_testing_framework/schema/SOATestingFrameworkMasterConfiguration/SOATestingFrameworkMasterConfiguration.xsd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+	<schema type='-xmlschema' package='' name='SOATestingFrameworkInterfaceConfiguration'>
+		<xjc-options>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/SOATestingFrameworkInterfaceConfiguration/SOATestingFrameworkInterfaceConfiguration.xsd' origLocation='../../../../../SOATestingFramework/schema/SOATestingFrameworkInterfaceConfiguration/SOATestingFrameworkInterfaceConfiguration.xsd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+</schemas>

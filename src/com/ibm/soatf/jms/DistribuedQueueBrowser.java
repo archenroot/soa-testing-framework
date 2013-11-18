@@ -96,6 +96,10 @@ public class DistribuedQueueBrowser {
         while (sli.hasMoreElements()) {
             ServerLocatedMessage m = sli.nextElement();
             TextMessage mes = (TextMessage) m.getMessage();
+            //
+            
+            m.getMessage().getJMSMessageID();
+            
             if (content != null) {
                 if (mes == null || mes.getText() == null || !mes.getText().contains(content)) {
                     logger.debug("skipping" + mes);

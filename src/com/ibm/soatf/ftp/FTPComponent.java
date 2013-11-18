@@ -20,11 +20,13 @@ package com.ibm.soatf.ftp;
 import com.ibm.soatf.ComponentResult;
 import com.ibm.soatf.CompOperType;
 import static com.ibm.soatf.CompOperType.FTP_OPERATIONS;
+import com.ibm.soatf.FlowPatternCompositeKey;
 import com.ibm.soatf.SOATFComponent;
 import com.ibm.soatf.SOATFCompType;
 import com.ibm.soatf.config._interface.ftp.FTPConfiguration;
 import com.ibm.soatf.config._interface.ftp.Security;
 import com.ibm.soatf.config.master.FTPServers.FtpServer;
+import com.ibm.soatf.config.master.FTPServers.FtpServer.FtpServerInstance;
 import it.sauronsoftware.ftp4j.FTPClient;
 import it.sauronsoftware.ftp4j.FTPException;
 import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
@@ -52,9 +54,10 @@ public class FTPComponent extends SOATFComponent {
     private String file;
 
     public FTPComponent(
-            FtpServer ftpMasterConfig, 
+            FtpServerInstance ftpMasterConfig, 
             FTPConfiguration ftpInterfaceConfig,
-            ComponentResult componentOperationResult) {
+            ComponentResult componentOperationResult,
+            FlowPatternCompositeKey ifaceFlowPatternCompositeKey) {
         super(SOATFCompType.FTP, componentOperationResult);
         this.ftpConfiguration = ftpConfiguration;
         constructComponent();

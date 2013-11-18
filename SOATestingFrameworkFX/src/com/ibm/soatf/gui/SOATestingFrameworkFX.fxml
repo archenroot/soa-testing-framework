@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+
+<AnchorPane id="AnchorPane" prefHeight="845.0" prefWidth="1328.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/2.2" fx:controller="com.ibm.soatf.gui.SOATestingFrameworkFXController">
+  <children>
+    <Label fx:id="label" layoutX="126.0" layoutY="120.0" minHeight="16.0" minWidth="69.0" />
+    <MenuBar layoutY="0.0" prefWidth="1328.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0">
+      <menus>
+        <Menu mnemonicParsing="false" text="File">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Close" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Edit">
+          <items>
+            <MenuItem mnemonicParsing="false" text="Delete" />
+          </items>
+        </Menu>
+        <Menu mnemonicParsing="false" text="Help">
+          <items>
+            <MenuItem mnemonicParsing="false" text="About" />
+          </items>
+        </Menu>
+      </menus>
+    </MenuBar>
+    <AnchorPane prefHeight="820.0" prefWidth="1328.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="25.0">
+      <children>
+        <Label fx:id="environmentLabel" layoutX="666.0" layoutY="787.0" prefWidth="83.0" text="Environment:">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </Label>
+        <Label layoutX="312.0" layoutY="-2.0" prefWidth="99.0" text="Flow patterns:">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </Label>
+        <ComboBox fx:id="environmentsComboBox" layoutX="749.0" layoutY="785.0" prefHeight="21.0" prefWidth="307.0" />
+        <ListView fx:id="interfacesView" blendMode="SRC_OVER" focusTraversable="true" layoutX="2.0" layoutY="13.0" maxHeight="-1.0" prefHeight="330.0" prefWidth="307.0">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </ListView>
+        <ListView fx:id="testScenarioExecutionBlocksView" blendMode="SRC_OVER" layoutX="312.0" layoutY="95.0" prefHeight="100.0" prefWidth="993.0">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </ListView>
+        <ListView fx:id="flowPatternsView" blendMode="SRC_OVER" layoutX="311.0" layoutY="13.0" prefHeight="55.0" prefWidth="247.0">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </ListView>
+        <Label fx:id="interfacesLabel" layoutX="5.0" layoutY="-3.0" prefWidth="294.0" text="Interfaces:">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </Label>
+        <ListView fx:id="projectsView" layoutX="566.0" layoutY="14.0" prefHeight="54.0" prefWidth="263.0">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </ListView>
+        <Label layoutX="566.0" layoutY="-4.0" prefWidth="235.0" text="Interface related projects:">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </Label>
+        <Label layoutX="314.0" layoutY="74.0" prefWidth="271.0" text="Pattern Test Scenarios:">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </Label>
+        <TextArea fx:id="loggerTextArea" mouseTransparent="true" prefHeight="404.0" prefWidth="1328.0" AnchorPane.bottomAnchor="44.0" AnchorPane.rightAnchor="-2.0">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </TextArea>
+        <Label layoutX="2.0" layoutY="354.0" prefWidth="112.0" text="Logger:">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </Label>
+        <Button fx:id="buttonRunTest" layoutX="1072.0" layoutY="785.0" mnemonicParsing="false" onAction="#executeRun" prefWidth="247.0" text="Test Interface">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </Button>
+        <ListView fx:id="executionBlocksView" layoutY="212.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="130.0" prefWidth="993.0" AnchorPane.leftAnchor="312.0" AnchorPane.rightAnchor="23.0">
+          <effect>
+            <InnerShadow />
+          </effect>
+        </ListView>
+        <Label layoutX="315.0" layoutY="196.0" prefWidth="133.0" text="Execution Blocks:" />
+      </children>
+    </AnchorPane>
+  </children>
+</AnchorPane>

@@ -60,11 +60,5 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="identificator" default="User identification information"
-            type="xs:string">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command. In case of JMS this can be the same as "serverName" element.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
 </xs:schema>

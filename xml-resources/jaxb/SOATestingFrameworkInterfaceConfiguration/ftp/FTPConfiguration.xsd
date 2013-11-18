@@ -25,7 +25,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
         <xs:sequence>
             <xs:element name="fileName" type="xs:string" maxOccurs="unbounded"/>
         </xs:sequence>
-        <xs:attribute name="referenceIdentificator" type="xs:string" use="required">
+        <xs:attribute name="identificator" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation>Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command.</xs:documentation>
             </xs:annotation>

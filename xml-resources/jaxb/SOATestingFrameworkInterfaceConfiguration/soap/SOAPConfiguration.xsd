@@ -50,10 +50,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="identificator" type="xs:string">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">SOAP configuration instance identificator. One instance is related to one service.</xs:documentation>
-            </xs:annotation>
+        <xs:attribute name="type">
+            <xs:simpleType >
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="internal"/>
+                    <xs:enumeration value="external"/>
+                </xs:restriction>
+            </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
 </xs:schema>

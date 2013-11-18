@@ -17,7 +17,11 @@
  */
 package com.ibm.soatf;
 
+import static com.ibm.soatf.MasterConfiguration.getSOATestingFrameworkMasterConfiguration;
+import com.ibm.soatf.config._interface.InterfaceFlowPattern;
+import com.ibm.soatf.config._interface.InterfaceTestScenario;
 import com.ibm.soatf.config.master.FileSystemProjectStructure;
+import com.ibm.soatf.config.master.FileSystemProjectStructure.TestRoot.Directory;
 import com.ibm.soatf.config.master.Interface;
 import com.ibm.soatf.config.master.Project;
 import com.ibm.soatf.config.master.SOATestingFrameworkMasterConfiguration;
@@ -26,13 +30,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ListIterator;
 import java.util.Map;
-import javax.xml.bind.JAXBContext;
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import java.util.logging.Level;
+import javax.xml.namespace.QName;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.stream.StreamResult;
+import jlibs.xml.sax.XMLDocument;
+import jlibs.xml.xsd.XSInstance;
+import jlibs.xml.xsd.XSParser;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.helpers.FileUtils;
+import org.apache.xerces.xs.XSModel;
+
 
 /**
  *
@@ -50,23 +59,30 @@ public class FrameworkConfiguration {
     public static final String JAXB_CONTEXT_PACKAGE = "com.ibm.soatf.config.master";
 
     public static final String SOATF_PARRENT_CONFIGURATION_FILE = "SOATestingFrameworkMasterConfiguration.xml";
-    
+
     public static final String SOATF_CONFIGURATION_FILE = SOA_TEST_HOME + SOATF_PARRENT_CONFIGURATION_FILE;
-    public static String INTERFACE;
-    public static String SOATF_CURRENT_INTERFACE_FILE = SOA_TEST_HOME + INTERFACE + "\\" + INTERFACE + ".xml";
+    public static final String PATTERN_DIRECTORY_PREFIX = "FlowPattern - ";
 
     public static SOATestingFrameworkMasterConfiguration soaTFMasterConfig;
     public static FileSystemProjectStructure fsps;
 
     public static void init() {
-        checkConfiguration();
+        try {
+            soaTFMasterConfig = getSOATestingFrameworkMasterConfiguration();
+            if (soaTFMasterConfig == null) {
+                throw new FrameworkConfigurationException("Looks like master XML configuration file is corrupted or not in required format and therefore the object is null.");
+            }
+            fsps = soaTFMasterConfig.getFileSystemStructure();
+            if (fsps == null) {
+                throw new FrameworkConfigurationException("Looks like the default soa testing framework filesystem structure definition is missing in the master XML configuration file.");
+            }
+            
+        } catch (FrameworkConfigurationException ex) {
+            java.util.logging.Logger.getLogger(FrameworkConfiguration.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
-    public static void createFileSystemStructure() {
-
-    }
-
-    private static void checkConfiguration() {
+    public static void checkConfiguration() {
         printJavaEnvironment();
         checkEnvironment();
         checkFrameworkFileSystemStructure();
@@ -145,14 +161,7 @@ public class FrameworkConfiguration {
 
     private static void checkFrameworkFileSystemStructure() {
         try {
-            soaTFMasterConfig = getSOATFMasterConfiguration();
-            if (soaTFMasterConfig == null) {
-                throw new FrameworkConfigurationException("Looks like master XML configuration file is corrupted or not in required format and therefore the object is null.");
-            }
-            fsps = soaTFMasterConfig.getFileSystemStructure();
-            if (fsps == null) {
-                throw new FrameworkConfigurationException("Looks like the default soa testing framework filesystem structure definition is missing in the master XML configuration file.");
-            }
+            
             ListIterator<Interface> interfaces = soaTFMasterConfig.getInterfaces().getInterface().listIterator();
             Interface projectInterface;
             while (interfaces.hasNext()) {
@@ -163,62 +172,47 @@ public class FrameworkConfiguration {
         }
     }
 
-    private static void validateInterfaceStructure(Interface projectInterface) throws FrameworkConfigurationException {
+    public static void validateInterfaceStructure(Interface _interface) throws FrameworkConfigurationException {
 
-        /*
         // create master interface folder
-        createFolder(SOA_TEST_HOME + projectInterface.getName());
+        createFolder(SOA_TEST_HOME + _interface.getName());
         /*
          * Create interface dummy projects folders. There will be nothing saved under those folders.
          * Main purpose is just to have the user view on all projects under the interface, because there doesn't exist 
          * one general naming interace convention, which is wrong!!!
          */
-        
-        /*
-        ListIterator<Project> projects = projectInterface.getProject().listIterator();
-        while (projects.hasNext()) {
-            createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + projects.next().getName());
+
+        ListIterator<Project> projectIt = _interface.getProjects().getProject().listIterator();
+        while (projectIt.hasNext()) {
+            createFolder(SOA_TEST_HOME + _interface.getName() + "\\" + "OSB reference project - " + projectIt.next().getName());
         }
-
-        // Create endpoint testing folders
-        // Root folder
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName());
-        
-        // Current test folder
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getCurrentTest().getName());
-        // Database
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getCurrentTest().getName() + "\\" + fsps.getRoot().getDatabase().getName());
-        // JMS
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getCurrentTest().getName() + "\\" + fsps.getRoot().getJms().getName());
-        // FTP
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getCurrentTest().getName() + "\\" + fsps.getRoot().getFtp().getName());
-        // SOAP
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getCurrentTest().getName() + "\\" + fsps.getRoot().getSoap().getName());
-        // Mapping
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getCurrentTest().getName() + "\\" + fsps.getRoot().getMapping().getName());
-        // Reporting
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getCurrentTest().getName() + "\\" + fsps.getRoot().getReporting().getName());
-        // Reporting
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getCurrentTest().getName() + "\\" + fsps.getRoot().getTemporary().getName());
-
-        // Previous test folder
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getPreviousTest().getName());
-        
-        // Database
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getPreviousTest().getName() + "\\" + fsps.getRoot().getDatabase().getName());
-        // JMS
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getPreviousTest().getName() + "\\" + fsps.getRoot().getJms().getName());
-        // FTP
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getPreviousTest().getName() + "\\" + fsps.getRoot().getFtp().getName());
-        // SOAP
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getPreviousTest().getName() + "\\" + fsps.getRoot().getSoap().getName());
-        // Mapping
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getPreviousTest().getName() + "\\" + fsps.getRoot().getMapping().getName());
-        // Reporting
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getPreviousTest().getName() + "\\" + fsps.getRoot().getReporting().getName());
-        // Reporting
-        createFolder(SOA_TEST_HOME + projectInterface.getName() + "\\" + fsps.getRoot().getName() + "\\" + fsps.getRoot().getPreviousTest().getName() + "\\" + fsps.getRoot().getTemporary().getName());
-        */
+        File interfaceConfigFile = new File(SOA_TEST_HOME + _interface.getName() + "\\" + _interface.getName() + ".xml");
+        if (interfaceConfigFile.exists()) {
+            InterfaceConfiguration ic = new InterfaceConfiguration(interfaceConfigFile);
+            ListIterator<InterfaceFlowPattern> ifaceFlowPatternIterator = ic.getInterfaceFlowPatterns().listIterator();
+            InterfaceFlowPattern ifaceFlowPattern;
+            while (ifaceFlowPatternIterator.hasNext()){
+                ifaceFlowPattern = ifaceFlowPatternIterator.next();
+                String patternDirectory = SOA_TEST_HOME + _interface.getName() + "\\" + PATTERN_DIRECTORY_PREFIX + ifaceFlowPattern.getIdentificator();
+                createFolder(patternDirectory);
+                String testScenarioNameDirectory = patternDirectory + "\\" + ifaceFlowPattern.getTestName();
+                createFolder(testScenarioNameDirectory);
+                
+                ListIterator<InterfaceTestScenario> ifaceTCIterator = ifaceFlowPattern.getInterfaceTestScenario().listIterator();
+                InterfaceTestScenario interfaceTestScenario;
+                while (ifaceTCIterator.hasNext() ){
+                    interfaceTestScenario = ifaceTCIterator.next();
+                    String testScenario = testScenarioNameDirectory + "\\" + interfaceTestScenario.getIdentificator();
+                    createFolder(testScenario);
+                    ListIterator<Directory> foldersIterator = fsps.getTestRoot().getDirectory().listIterator();
+                    while (foldersIterator.hasNext()){
+                        createFolder(testScenario + "\\" + foldersIterator.next().getName());
+                    }
+                }
+            }
+        } else {
+            generateSampleIfaceConfigFile(interfaceConfigFile);
+        }
     }
 
     private static void createFolder(String folder) throws FrameworkConfigurationException {
@@ -229,31 +223,43 @@ public class FrameworkConfiguration {
         }
     }
 
-    public static SOATestingFrameworkMasterConfiguration getSOATFMasterConfiguration() {
-        JAXBContext jaxbContext;
-        Unmarshaller jaxbUnmarshaller;
-        JAXBElement<SOATestingFrameworkMasterConfiguration> allMasterJAXBConfig = null;
-        SOATestingFrameworkMasterConfiguration soatfmc = null;
+    private static void generateSampleIfaceConfigFile(File interfaceConfigFile) {
         try {
-
-            jaxbContext = JAXBContext.newInstance(FrameworkConfiguration.JAXB_CONTEXT_PACKAGE);
-            jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            allMasterJAXBConfig = (JAXBElement<SOATestingFrameworkMasterConfiguration>) jaxbUnmarshaller.unmarshal(
-                    new File(FrameworkConfiguration.SOA_TEST_HOME + FrameworkConfiguration.SOATF_PARRENT_CONFIGURATION_FILE));
-            soatfmc = allMasterJAXBConfig.getValue();
-
-        } catch (JAXBException jaxbex) {
-            logger.fatal("Error on unmarshalling master configuration.", jaxbex);
-        } finally {
-
+            XSInstance xsInstance = new XSInstance();
+            xsInstance.minimumElementsGenerated = 2;
+            xsInstance.maximumElementsGenerated = 4;
+            xsInstance.generateOptionalElements = Boolean.TRUE; // null means random
+            
+            XSModel xsModel = new XSParser().parse(SOATF_HOME + "\\schema\\SOATestingFrameworkInterfaceConfiguration\\SOATestingFrameworkInterfaceConfiguration.xsd");
+           
+            
+            QName rootElement = new QName("http://www.ibm.com/SOATF/Config/Interface", "soaTestingFrameworkInterfaceConfiguration", "stfconf");
+            XMLDocument sampleXml = new XMLDocument(new StreamResult(System.out), true, 4, null);
+            xsInstance.generate(xsModel, rootElement, sampleXml);
+            
+            /*try {
+            /*
+            JAXBContext jaxbContext = JAXBContext.newInstance("com.ibm.soatf.config._interface");
+            Marshaller jaxbMarshaller = jaxbContext.createMarshaller();
+            jaxbMarshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+            SOATestingFrameworkInterfaceConfiguration soaTFIC = new SOATestingFrameworkInterfaceConfiguration();
+            
+            JAXBElement jaxbElement = new JAXBElement(QName.valueOf("com.ibm.soatf.config._interface"));
+            jaxbMarshaller.marshal(soaTFIC, interfaceConfigFile);
+            } catch (JAXBException ex) {
+            java.util.logging.Logger.getLogger(FrameworkConfiguration.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            */
+        } catch (TransformerConfigurationException ex) {
+            java.util.logging.Logger.getLogger(FrameworkConfiguration.class.getName()).log(Level.SEVERE, null, ex);
         }
-        return soatfmc;
     }
-    
-    private void checkConfigurationConsistency(){
-        
+
+    private void checkConfigurationConsistency() {
+
     }
-    private void prepareConfigurationFiles(){
+
+    private void prepareConfigurationFiles() {
         //vem xsd -> vygeneruj -> instanci XML
     }
 }

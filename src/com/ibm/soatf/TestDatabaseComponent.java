@@ -18,11 +18,6 @@
 
 package com.ibm.soatf;
 
-import static com.ibm.soatf.CompOperType.DB_GENERATE_INSERT_ONE_ROW_RANDOM;
-import static com.ibm.soatf.CompOperType.DB_EXECUTE_INSERT_FROM_FILE;
-import static com.ibm.soatf.SOATFCompFactory
-        .buildSOATFComponent;
-import static com.ibm.soatf.SOATFCompType.DATABASE;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

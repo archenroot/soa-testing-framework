@@ -20,11 +20,13 @@ package com.ibm.soatf.soap;
 import com.ibm.soatf.ComponentResult;
 import com.ibm.soatf.CompOperType;
 import static com.ibm.soatf.CompOperType.SOAP_OPERATIONS;
+import com.ibm.soatf.FlowPatternCompositeKey;
 import com.ibm.soatf.SOATFComponent;
 import com.ibm.soatf.SOATFCompType;
 import com.ibm.soatf.config._interface.jms.JMSConfiguration;
 import com.ibm.soatf.config._interface.soap.SOAPConfiguration;
 import com.ibm.soatf.config.master.OracleFusionMiddleware;
+import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -35,29 +37,33 @@ import org.apache.logging.log4j.Logger;
 public class SOAPComponent extends SOATFComponent {
 
     private static final Logger logger = LogManager.getLogger(SOAPComponent.class);
-
-    private SOAPConfiguration soapConfiguration;
-
+    private OracleFusionMiddlewareInstance soapMasterConfig;
+    private SOAPConfiguration soapInterfaceConfig;
+    
     private String identificator;
     private String serviceName;
     private String operationName;
     private String endPointURI;
 
     public SOAPComponent(
-            OracleFusionMiddleware.OracleFusionMiddlewareInstance soapMasterConfig,
-            JMSConfiguration soapInterfaceConfig,
-            ComponentResult componentOperationResult) {
+            OracleFusionMiddlewareInstance soapMasterConfig,
+            SOAPConfiguration soapInterfaceConfig,
+            ComponentResult componentOperationResult,
+            FlowPatternCompositeKey ifaceFlowPatternCompositeKey) {
         super(SOATFCompType.SOAP, componentOperationResult);
-        this.soapConfiguration = soapConfiguration;
+        this.soapMasterConfig = soapMasterConfig;
+        this.soapInterfaceConfig = soapInterfaceConfig;
         constructComponent();
     }
 
     @Override
     protected void constructComponent() {
+        /*
         this.identificator = this.soapConfiguration.getIdentificator();
         this.serviceName = this.soapConfiguration.getServiceName();
         this.operationName = this.soapConfiguration.getOperationName();
         this.endPointURI = this.soapConfiguration.getEndPointUri();
+                */
     }
 
     @Override

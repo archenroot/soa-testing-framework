@@ -34,12 +34,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                     <xs:documentation xml:lang="en">Service/Services to disable.</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" use="required"/>
                     <xs:attribute name="uri" type="xs:string" use="required"/>
                     <xs:attribute name="type" use="required">
                         <xs:simpleType>
                             <xs:restriction base="xs:string">
-                                <xs:enumeration value="Business Service"/>
-                                <xs:enumeration value="Proxy Service"/>
+                                <xs:enumeration value="BusinessService"/>
+                                <xs:enumeration value="ProxyService"/>
                             </xs:restriction>
                         </xs:simpleType>
                     </xs:attribute>

@@ -1,7 +1,7 @@
 package com.ibm.soatf.database;
 
 import com.ibm.soatf.ComponentResult;
-import com.ibm.soatf.config._interface.database.DbObject;
+import com.ibm.soatf.config._interface.db.DbObject;
 import java.io.*;
 import java.sql.*;
 import com.ibm.soatf.tool.RandomGenerator;

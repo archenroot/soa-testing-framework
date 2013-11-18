@@ -55,11 +55,11 @@ public class UniqueIdGenerator {
 
             uniqueId = hexEncode(result);
 
-            logger.info("Random number: " + randomNum);
-            logger.info("Message digest: " + hexEncode(result));
+            logger.trace("Random number: " + randomNum);
+            logger.trace("Message digest: " + hexEncode(result));
 
         } catch (NoSuchAlgorithmException ex) {
-            logger.error(ex.getLocalizedMessage());
+            logger.error("Error while generating unique id.",ex);
         }
         return uniqueId;
     }

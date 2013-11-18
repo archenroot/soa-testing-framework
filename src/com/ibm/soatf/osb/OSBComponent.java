@@ -19,6 +19,7 @@ package com.ibm.soatf.osb;
 
 import com.ibm.soatf.ComponentResult;
 import com.ibm.soatf.CompOperType;
+import com.ibm.soatf.FlowPatternCompositeKey;
 import com.ibm.soatf.SOATFCompType;
 import com.ibm.soatf.SOATFComponent;
 import com.ibm.soatf.UnsupportedComponentOperationException;
@@ -64,7 +65,9 @@ public class OSBComponent extends SOATFComponent {
     
     public OSBComponent(
             OracleFusionMiddlewareInstance masterOFMConfig,
-            OSBConfiguration osbConfiguration, ComponentResult componentOperationResutlt) {
+            OSBConfiguration osbConfiguration, 
+            ComponentResult componentOperationResutlt,
+            FlowPatternCompositeKey ifaceFlowPatternCompositeKey) {
         
         super(SOATFCompType.OSB, componentOperationResutlt);
         this.masterOFMConfig = masterOFMConfig;

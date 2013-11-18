@@ -21,6 +21,7 @@ import com.ibm.soatf.ComponentResult;
 import com.ibm.soatf.SOATFComponent;
 import com.ibm.soatf.SOATFCompType;
 import com.ibm.soatf.CompOperType;
+import com.ibm.soatf.FlowPatternCompositeKey;
 import com.ibm.soatf.config._interface.jms.JMSConfiguration;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.AdminServer;
@@ -34,8 +35,16 @@ import com.ibm.soatf.xml.ValidatorResult;
 import com.ibm.soatf.xml.XMLValidator;
 import java.io.File;
 import java.text.SimpleDateFormat;
+import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Set;
+import java.util.logging.Level;
+import javax.jms.Destination;
+import javax.jms.JMSException;
+import javax.jms.Queue;
+import javax.naming.Context;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -67,7 +76,8 @@ public class JMSComponent extends SOATFComponent implements IMappingEndpoint {
     public JMSComponent(
             OracleFusionMiddlewareInstance jmsMasterConfig,
             JMSConfiguration jmsInterfaceConfig,
-            ComponentResult componentOperationResult) {
+            ComponentResult componentOperationResult,
+            FlowPatternCompositeKey ifaceFlowPatternCompositeKey) {
         super(SOATFCompType.JMS, componentOperationResult);
         
         this.jmsMasterConfig = jmsMasterConfig;
@@ -211,4 +221,49 @@ public class JMSComponent extends SOATFComponent implements IMappingEndpoint {
         componentOperationResult.addMsg("There are no messages in Error Queue related to queue " + jmsInterfaceConfig.getQueue().getName() + ".");
         logger.info("There are no messages in Error Queue related to queue " + jmsInterfaceConfig.getQueue().getName() + ".");        
     }
-}
+    
+    private void pauseQueueConsumption(){
+        try {
+            queueName = "destiantion JNDI name";
+            InitialContext ctx = getInitialContext(queueName, queueName, queueName);
+            //Queue queue = (Queue) ctx.lookup(queueName);
+            Destination queue = (Destination) ctx.lookup("destiantion JNDI name");
+            
+            weblogic.management.runtime.JMSDestinationRuntimeMBean destMBean = weblogic.jms.extensions.JMSRuntimeHelper.getJMSDestinationRuntimeMBean(ctx, queue);
+            destMBean.pauseConsumption();
+        } catch (NamingException ex) {
+            java.util.logging.Logger.getLogger(JMSComponent.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JMSException ex) {
+            java.util.logging.Logger.getLogger(JMSComponent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+     private void resumeQueueConsumption(){
+        try {
+            queueName = "destiantion JNDI name";
+            InitialContext ctx = getInitialContext(queueName, queueName, queueName);
+            //Queue queue = (Queue) ctx.lookup(queueName);
+            Destination queue = (Destination) ctx.lookup("destiantion JNDI name");
+            
+            weblogic.management.runtime.JMSDestinationRuntimeMBean destMBean = weblogic.jms.extensions.JMSRuntimeHelper.getJMSDestinationRuntimeMBean(ctx, queue);
+            destMBean.resumeConsumption();
+        } catch (NamingException ex) {
+            java.util.logging.Logger.getLogger(JMSComponent.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (JMSException ex) {
+            java.util.logging.Logger.getLogger(JMSComponent.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+
+
+    private InitialContext getInitialContext(String providerUrl, String userName, String password) throws NamingException {
+        Hashtable<String, String> ht = new Hashtable<String, String>();
+
+        ht.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
+        ht.put(Context.PROVIDER_URL, providerUrl);
+        ht.put(Context.SECURITY_PRINCIPAL, userName);
+        ht.put(Context.SECURITY_CREDENTIALS, password);
+
+        return new InitialContext(ht);
+  }
+    }
+

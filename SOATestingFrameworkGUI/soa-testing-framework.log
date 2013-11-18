@@ -1,0 +1,402 @@
+[2013-11-13 14:10:10,779] [main] ERROR com.ibm.soatf.FrameworkConfiguration:checkFrameworkFileSystemStructure() - There is something wrong with the framework file system structure configuration.
+com.ibm.soatf.FrameworkConfigurationException: Looks like master XML configuration file is corrupted or not in required format and therefore the object is null.
+	at com.ibm.soatf.FrameworkConfiguration.checkFrameworkFileSystemStructure(FrameworkConfiguration.java:150) [SOATestingFramework.jar:?]
+	at com.ibm.soatf.FrameworkConfiguration.checkConfiguration(FrameworkConfiguration.java:72) [SOATestingFramework.jar:?]
+	at com.ibm.soatf.FrameworkConfiguration.init(FrameworkConfiguration.java:62) [SOATestingFramework.jar:?]
+	at com.ibm.soatf.Main.main(Main.java:36) [SOATestingFramework.jar:?]
+[2013-11-13 21:29:01,952] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 21:29:01,954] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 21:29:01,954] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 21:29:01,955] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 21:29:01,955] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 21:29:01,955] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 21:29:01,955] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-13 21:29:01,956] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-13 21:29:01,956] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-13 21:29:01,956] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-13 21:29:01,957] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-13 21:29:01,957] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-13 21:29:01,957] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-13 21:29:01,957] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-13 21:29:01,957] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-13 21:29:01,958] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-13 21:29:01,958] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-13 21:29:01,958] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-13 21:29:01,958] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-13 21:29:01,958] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-13 21:29:01,959] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-13 21:29:01,959] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-13 21:29:01,959] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-13 21:29:01,959] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-13 21:29:01,959] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-13 21:29:01,960] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-13 21:29:01,960] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-13 21:29:01,960] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-13 21:29:01,960] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-13 21:29:01,960] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-13 21:29:01,961] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-13 21:29:01,968] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-13 21:29:01,968] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-13 21:29:01,969] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-13 21:29:01,969] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-13 21:29:01,969] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-13 21:29:01,969] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-13 21:29:01,969] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-13 21:29:01,970] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-13 21:29:01,970] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-13 21:29:01,970] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-13 21:29:01,971] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-13 21:29:01,971] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.
+[2013-11-13 22:15:30,624] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:15:30,626] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:15:30,626] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:15:30,626] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:15:30,627] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:15:30,627] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:15:30,628] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-13 22:15:30,629] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-13 22:15:30,629] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-13 22:15:30,629] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-13 22:15:30,630] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-13 22:15:30,630] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-13 22:15:30,630] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-13 22:15:30,631] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-13 22:15:30,631] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-13 22:15:30,631] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-13 22:15:30,632] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-13 22:15:30,632] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-13 22:15:30,632] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-13 22:15:30,632] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-13 22:15:30,633] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-13 22:15:30,633] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-13 22:15:30,633] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-13 22:15:30,634] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-13 22:15:30,634] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-13 22:15:30,634] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-13 22:15:30,635] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-13 22:15:30,635] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-13 22:15:30,636] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-13 22:15:30,636] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-13 22:15:30,637] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-13 22:15:30,638] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-13 22:15:30,638] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-13 22:15:30,638] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-13 22:15:30,638] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-13 22:15:30,639] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-13 22:15:30,639] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-13 22:15:30,639] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-13 22:15:30,640] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-13 22:15:30,641] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-13 22:15:30,641] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-13 22:15:30,641] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-13 22:15:30,642] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.
+[2013-11-13 22:16:36,886] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:16:36,887] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:16:36,888] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:16:36,888] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:16:36,888] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:16:36,889] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:16:36,889] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-13 22:16:36,890] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-13 22:16:36,890] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-13 22:16:36,890] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-13 22:16:36,890] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-13 22:16:36,891] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-13 22:16:36,891] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-13 22:16:36,891] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-13 22:16:36,892] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-13 22:16:36,892] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-13 22:16:36,892] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-13 22:16:36,892] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-13 22:16:36,892] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-13 22:16:36,893] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-13 22:16:36,893] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-13 22:16:36,893] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-13 22:16:36,894] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-13 22:16:36,894] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-13 22:16:36,894] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-13 22:16:36,894] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-13 22:16:36,894] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-13 22:16:36,895] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-13 22:16:36,895] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-13 22:16:36,895] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-13 22:16:36,895] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-13 22:16:36,896] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-13 22:16:36,896] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-13 22:16:36,896] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-13 22:16:36,897] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-13 22:16:36,897] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-13 22:16:36,897] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-13 22:16:36,898] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-13 22:16:36,899] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-13 22:16:36,899] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-13 22:16:36,899] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-13 22:16:36,900] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-13 22:16:36,900] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.
+[2013-11-13 22:17:46,299] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:17:46,301] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:17:46,301] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:17:46,302] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:17:46,302] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:17:46,302] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:17:46,302] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-13 22:17:46,303] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-13 22:17:46,303] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-13 22:17:46,303] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-13 22:17:46,303] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-13 22:17:46,303] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-13 22:17:46,303] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-13 22:17:46,304] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-13 22:17:46,304] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-13 22:17:46,304] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-13 22:17:46,304] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-13 22:17:46,304] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-13 22:17:46,305] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-13 22:17:46,305] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-13 22:17:46,305] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-13 22:17:46,305] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-13 22:17:46,305] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-13 22:17:46,306] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-13 22:17:46,306] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-13 22:17:46,306] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-13 22:17:46,306] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-13 22:17:46,306] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-13 22:17:46,307] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-13 22:17:46,307] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-13 22:17:46,307] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-13 22:17:46,308] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-13 22:17:46,308] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-13 22:17:46,308] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-13 22:17:46,308] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-13 22:17:46,309] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-13 22:17:46,309] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-13 22:17:46,309] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-13 22:17:46,310] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-13 22:17:46,310] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-13 22:17:46,311] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-13 22:17:46,311] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-13 22:17:46,311] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.
+[2013-11-13 22:18:11,780] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:18:11,782] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:18:11,782] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:18:11,783] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:18:11,783] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:18:11,783] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:18:11,784] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-13 22:18:11,784] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-13 22:18:11,784] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-13 22:18:11,785] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-13 22:18:11,785] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-13 22:18:11,785] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-13 22:18:11,786] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-13 22:18:11,786] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-13 22:18:11,786] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-13 22:18:11,786] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-13 22:18:11,786] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-13 22:18:11,787] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-13 22:18:11,787] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-13 22:18:11,787] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-13 22:18:11,788] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-13 22:18:11,788] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-13 22:18:11,788] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-13 22:18:11,788] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-13 22:18:11,789] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-13 22:18:11,789] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-13 22:18:11,789] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-13 22:18:11,789] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-13 22:18:11,790] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-13 22:18:11,790] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-13 22:18:11,790] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-13 22:18:11,791] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-13 22:18:11,791] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-13 22:18:11,791] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-13 22:18:11,791] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-13 22:18:11,792] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-13 22:18:11,792] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-13 22:18:11,792] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-13 22:18:11,793] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-13 22:18:11,793] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-13 22:18:11,794] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-13 22:18:11,794] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-13 22:18:11,794] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.
+[2013-11-13 22:19:12,074] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:19:12,076] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:19:12,076] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:19:12,076] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 22:19:12,076] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 22:19:12,076] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 22:19:12,077] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-13 22:19:12,077] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-13 22:19:12,077] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-13 22:19:12,077] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-13 22:19:12,078] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-13 22:19:12,078] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-13 22:19:12,078] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-13 22:19:12,078] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-13 22:19:12,079] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-13 22:19:12,079] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-13 22:19:12,079] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-13 22:19:12,079] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-13 22:19:12,079] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-13 22:19:12,080] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-13 22:19:12,080] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-13 22:19:12,080] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-13 22:19:12,080] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-13 22:19:12,081] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-13 22:19:12,081] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-13 22:19:12,081] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-13 22:19:12,081] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-13 22:19:12,082] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-13 22:19:12,082] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-13 22:19:12,082] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-13 22:19:12,082] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-13 22:19:12,083] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-13 22:19:12,083] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-13 22:19:12,083] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-13 22:19:12,083] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-13 22:19:12,084] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-13 22:19:12,084] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-13 22:19:12,084] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-13 22:19:12,085] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-13 22:19:12,085] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-13 22:19:12,086] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-13 22:19:12,086] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-13 22:19:12,086] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.
+[2013-11-13 23:44:28,177] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 23:44:28,178] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 23:44:28,179] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 23:44:28,179] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-13 23:44:28,179] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-13 23:44:28,180] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-13 23:44:28,180] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-13 23:44:28,180] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-13 23:44:28,180] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-13 23:44:28,181] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-13 23:44:28,181] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-13 23:44:28,181] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-13 23:44:28,181] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-13 23:44:28,182] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-13 23:44:28,182] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-13 23:44:28,182] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-13 23:44:28,182] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-13 23:44:28,182] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-13 23:44:28,182] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-13 23:44:28,183] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-13 23:44:28,183] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-13 23:44:28,183] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-13 23:44:28,183] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-13 23:44:28,184] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-13 23:44:28,184] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-13 23:44:28,184] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-13 23:44:28,185] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-13 23:44:28,185] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-13 23:44:28,185] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-13 23:44:28,185] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-13 23:44:28,186] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-13 23:44:28,186] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-13 23:44:28,186] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-13 23:44:28,187] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-13 23:44:28,187] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-13 23:44:28,187] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-13 23:44:28,187] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-13 23:44:28,188] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-13 23:44:28,188] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-13 23:44:28,189] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-13 23:44:28,189] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-13 23:44:28,190] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-13 23:44:28,190] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.
+[2013-11-14 11:36:36,706] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-14 11:36:36,709] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-14 11:36:36,709] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-14 11:36:36,709] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-14 11:36:36,710] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-14 11:36:36,710] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-14 11:36:36,710] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-14 11:36:36,711] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-14 11:36:36,711] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-14 11:36:36,711] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-14 11:36:36,711] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-14 11:36:36,711] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-14 11:36:36,712] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-14 11:36:36,712] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-14 11:36:36,712] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-14 11:36:36,712] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-14 11:36:36,713] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-14 11:36:36,713] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-14 11:36:36,713] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-14 11:36:36,713] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-14 11:36:36,714] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-14 11:36:36,714] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-14 11:36:36,714] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-14 11:36:36,714] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-14 11:36:36,715] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-14 11:36:36,715] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-14 11:36:36,715] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-14 11:36:36,715] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-14 11:36:36,716] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-14 11:36:36,716] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-14 11:36:36,716] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-14 11:36:36,716] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-14 11:36:36,717] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-14 11:36:36,717] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-14 11:36:36,717] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-14 11:36:36,717] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-14 11:36:36,718] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-14 11:36:36,718] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-14 11:36:36,719] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-14 11:36:36,719] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-14 11:36:36,719] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-14 11:36:36,720] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-14 11:36:36,720] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.
+[2013-11-14 13:29:32,120] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-14 13:29:32,122] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-14 13:29:32,122] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-14 13:29:32,122] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMajorVersion() - Java major version: 1
+[2013-11-14 13:29:32,123] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMMinorVersion() - Java minor version: 
+[2013-11-14 13:29:32,123] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:getJVMUpdateVersion() - Java update version: 0
+[2013-11-14 13:29:32,123] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Print JVM runtime environment.
+[2013-11-14 13:29:32,124] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class path (java.class.path): c:\SOATestingFramework\dist\SOATestingFramework.jar.
+[2013-11-14 13:29:32,124] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's account name (user.name): zANGETSu.
+[2013-11-14 13:29:32,124] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path of extension directory or directories (java.ext.dirs): c:\Dev\sdk\jdk7u25\jre\lib\ext;C:\windows\Sun\Java\lib\ext.
+[2013-11-14 13:29:32,125] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment vendor (java.vendor): Oracle Corporation.
+[2013-11-14 13:29:32,125] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification version (java.specification.version): 1.7.
+[2013-11-14 13:29:32,125] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Line separator ("\n" on UNIX) (line.separator): 
+.
+[2013-11-14 13:29:32,125] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java class format version number (java.class.version): 51.0.
+[2013-11-14 13:29:32,125] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification name (java.specification.name): Java Platform API Specification.
+[2013-11-14 13:29:32,126] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java vendor URL (java.vendor.url): http://java.oracle.com/.
+[2013-11-14 13:29:32,126] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system architecture (os.arch): amd64.
+[2013-11-14 13:29:32,126] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system name (os.name): Windows 7.
+[2013-11-14 13:29:32,126] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation version (java.vm.version): 23.25-b01.
+[2013-11-14 13:29:32,127] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java installation directory (java.home): c:\Dev\sdk\jdk7u25\jre.
+[2013-11-14 13:29:32,127] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Operating system version (os.version): 6.1.
+[2013-11-14 13:29:32,127] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Name of JIT compiler to use (java.compiler): null.
+[2013-11-14 13:29:32,127] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment version (java.version): 1.7.0_25.
+[2013-11-14 13:29:32,127] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification version (java.vm.specification.version): 1.7.
+[2013-11-14 13:29:32,128] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's current working directory (user.dir): C:\Dev\rep\trunk\wat\SOATestingFrameworkGUI.
+[2013-11-14 13:29:32,128] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification name (java.vm.specification.name): Java Virtual Machine Specification.
+[2013-11-14 13:29:32,128] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Runtime Environment specification vendor (java.specification.vendor): Oracle Corporation.
+[2013-11-14 13:29:32,128] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation vendor (java.vm.vendor): Oracle Corporation.
+[2013-11-14 13:29:32,129] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - File separator ("/" on UNIX) (file.separator): \.
+[2013-11-14 13:29:32,129] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Path separator (":" on UNIX) (path.separator): ;.
+[2013-11-14 13:29:32,129] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - List of paths to search when loading libraries (java.library.path): c:\Dev\sdk\jdk7u25\bin;C:\windows\Sun\Java\bin;C:\windows\system32;C:\windows;C:\Python33\;C:\Python33\Scripts;C:\Dev\server\oraclexe\app\oracle\product\11.2.0\server\bin;;C:\windows\system32;C:\windows;C:\windows\System32\Wbem;C:\windows\System32\WindowsPowerShell\v1.0\;C:\Program Files\IBM\Infoprint Select;C:\Program Files\ThinkPad\Bluetooth Software\;C:\Program Files\ThinkPad\Bluetooth Software\syswow64;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;C:\Program Files (x86)\Lenovo\Access Connections\;C:\Program Files\TortoiseSVN\bin;%APPDATA%\Python\Scripts;C:\Program Files\Intel\WiFi\bin\;C:\Program Files\Common Files\Intel\WirelessCommon\;c:\Dev\sdk\jdk6u45\bin\;C:\Program Files (x86)\Nmap;c:\Dev\tool;c:\Dev\tool\apache-ant-1.9.2\bin\;..
+[2013-11-14 13:29:32,129] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - User's home directory (user.home): C:\Users\IBM_ADMIN.
+[2013-11-14 13:29:32,130] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine specification vendor (java.vm.specification.vendor): Oracle Corporation.
+[2013-11-14 13:29:32,130] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Java Virtual Machine implementation name (java.vm.name): Java HotSpot(TM) 64-Bit Server VM.
+[2013-11-14 13:29:32,130] [main] DEBUG com.ibm.soatf.FrameworkConfigurationException:printJavaEnvironment() - Default temp file path (java.io.tmpdir): C:\Users\IBM_AD~1\AppData\Local\Temp\.
+[2013-11-14 13:29:32,130] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Checking environment.
+[2013-11-14 13:29:32,131] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOA_TEST_HOME is set to: c:\soa_test\
+[2013-11-14 13:29:32,131] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Environemnt variable SOATF_HOME is set to: c:\soatf\
+[2013-11-14 13:29:32,131] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ exists.
+[2013-11-14 13:29:32,132] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Root testing file system object c:\soa_test\ is directory.
+[2013-11-14 13:29:32,132] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml exists.
+[2013-11-14 13:29:32,132] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework parrent configuration object c:\soa_test\SOATestingFrameworkMasterConfiguration.xml is file.
+[2013-11-14 13:29:32,132] [main] DEBUG com.ibm.soatf.FrameworkConfiguration:checkEnvironment() - Framework environment configuration is ok.

@@ -22,10 +22,11 @@ import com.ibm.soatf.SOATFComponent;
 import com.ibm.soatf.SOATFCompType;
 import com.ibm.soatf.CompOperType;
 import static com.ibm.soatf.CompOperType.DATABASE_OPERATIONS;
-import static com.ibm.soatf.CompOperType.DB_EXECUTE_INSERT_FROM_FILE;
 import static com.ibm.soatf.CompOperType.DB_GENERATE_INSERT_ONE_ROW_RANDOM;
-import com.ibm.soatf.config._interface.database.DatabaseConfiguration;
-import com.ibm.soatf.config._interface.database.DbObject;
+import com.ibm.soatf.FlowPatternCompositeKey;
+import com.ibm.soatf.FrameworkConfiguration;
+import com.ibm.soatf.config._interface.db.DatabaseConfiguration;
+import com.ibm.soatf.config._interface.db.DbObject;
 import com.ibm.soatf.config.master.Databases.Database.DatabaseInstance;
 import com.ibm.soatf.mapping.IMappingEndpoint;
 import com.ibm.soatf.tool.FileSystem;
@@ -75,7 +76,7 @@ public class DatabaseComponent extends SOATFComponent implements IMappingEndpoin
      */
     public static final String NAME_DELIMITER = "_";
     
-    private final DatabaseConfiguration databaseInterfaceConfiguration;
+    private final DatabaseConfiguration dbIfaceConfig;
     // Only oracle database is supported now
     private final String driverClassName = "oracle.jdbc.driver.OracleDriver";
     private String hostName;
@@ -88,14 +89,19 @@ public class DatabaseComponent extends SOATFComponent implements IMappingEndpoin
     private final List<DbObject> dbObjects = new ArrayList<>();
     private String jdbcUrl;
     private final DatabaseInstance databaseMasterConfig;
+    private String workingDirectoryPath;
+    private FlowPatternCompositeKey fpck;
     
     public DatabaseComponent(
             DatabaseInstance databaseMasterConfig,
             DatabaseConfiguration databaseInterfaceConfiguration, 
-            ComponentResult componentOperationResult) {
+            ComponentResult componentOperationResult,
+            FlowPatternCompositeKey ifaceFlowPatternCompositeKey) {
         super(SOATFCompType.DATABASE, componentOperationResult);
         this.databaseMasterConfig = databaseMasterConfig;
-        this.databaseInterfaceConfiguration = databaseInterfaceConfiguration;
+        this.dbIfaceConfig = databaseInterfaceConfiguration;
+        this.fpck = ifaceFlowPatternCompositeKey;
+        
         constructComponent();
     }
 
@@ -112,10 +118,18 @@ public class DatabaseComponent extends SOATFComponent implements IMappingEndpoin
             userName = databaseMasterConfig.getUserName();
             password = databaseMasterConfig.getPassword();
             serviceId = databaseMasterConfig.getServiceId();
-            for (DbObject object : databaseInterfaceConfiguration.getDbObjects().getDbObject()) {
+            for (DbObject object : dbIfaceConfig.getDbObjects().getDbObject()) {
                 dbObjects.add(object);
             }
-
+            /*
+            * Need to be refactorized!!!
+            */
+            workingDirectoryPath = FrameworkConfiguration.SOA_TEST_HOME + "\\" +
+                    fpck.getInterfaceName() + "\\" +
+                    FrameworkConfiguration.PATTERN_DIRECTORY_PREFIX + fpck.getFlowPatternIdentificator() + "\\" +
+                    fpck.getTestName() + "\\" +
+                    fpck.getTestScenarioIdentificator() + "\\db\\";
+            
             jdbcUrl = constructJdbcUrl(hostName, port, serviceId);
 
             Class.forName(driverClassName);
@@ -152,13 +166,13 @@ public class DatabaseComponent extends SOATFComponent implements IMappingEndpoin
             componentOperationResult.setOverallResultSuccess(false);
         } else {
             for (DbObject object : dbObjects) {
-                String filename = new StringBuilder(identificator).append(NAME_DELIMITER).append(object.getName()).append(INSERT_FILE_SUFFIX).toString();
-                String path = Utils.getFullFilePathStr(FileSystem.CURRENT_PATH, FileSystem.DATABASE_SCRIPT_DIR, filename);
+                String filename = new StringBuilder(dbIfaceConfig.getIdentificator().replace("/", "_")).append(NAME_DELIMITER).append(object.getName()).append(INSERT_FILE_SUFFIX).toString();
+                String path = Utils.getFullFilePathStr(workingDirectoryPath, filename);
                 switch (componentOperation) {
                     case DB_GENERATE_INSERT_ONE_ROW_RANDOM:
                         generateInsertStatement(object, path);
                         break;
-                    case DB_EXECUTE_INSERT_FROM_FILE:
+                    case DB_EXECUTE_INSERT:
                         executeInsertFromFile(path);
                         break;
                     default:

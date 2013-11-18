@@ -21,7 +21,7 @@ public enum CompOperType {
     /**
      * Check number of records in the database and log the result.
      */
-    DB_EXECUTE_INSERT_FROM_FILE(SOATFCompType.DATABASE, "Execute INSERT statement over database from provided SQL script file."),
+    DB_EXECUTE_INSERT(SOATFCompType.DATABASE, "Execute INSERT statement over database from provided SQL script file."),
     /**
      * Execute INSERT statement over database from provided SQL script file.
      */

@@ -1,27 +1,28 @@
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
     xmlns:stfconf="http://www.ibm.com/SOATF/Config/Interface"
-    xmlns:dbconf="http://www.ibm.com/SOATF/Config/Interface/Database"
+    xmlns:dbconf="http://www.ibm.com/SOATF/Config/Interface/DB"
     xmlns:jmsconf="http://www.ibm.com/SOATF/Config/Interface/JMS"
     xmlns:osbconf="http://www.ibm.com/SOATF/Config/Interface/OSB"
-    xmlns:mapconf="http://www.ibm.com/SOATF/Config/Interface/Mapping"
     xmlns:soapconf="http://www.ibm.com/SOATF/Config/Interface/SOAP"
     xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Interface/FTP"
-    xmlns:globconf="http://www.ibm.com/SOATF/Config/Interface/Global"
+    xmlns:utilconf="http://www.ibm.com/SOATF/Config/Interface/UTIL"
     targetNamespace="http://www.ibm.com/SOATF/Config/Interface" elementFormDefault="qualified"
-    attributeFormDefault="unqualified"
-    xmlns:scenconf="http://www.ibm.com/SOATF/Config/Interface/Scenario">
-    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/Database"
+    attributeFormDefault="unqualified">
+
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/DB"
         schemaLocation="database/DatabaseConfiguration.xsd"/>
     <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/FTP"
         schemaLocation="ftp/FTPConfiguration.xsd"/>
     <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/JMS"
         schemaLocation="jms/JMSConfiguration.xsd"/>
-    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/Mapping"
-        schemaLocation="mapping/MappingConfiguration.xsd"/>
     <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/SOAP"
         schemaLocation="soap/SOAPConfiguration.xsd"/>
     <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/OSB"
         schemaLocation="osb/OSBConfiguration.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/UTIL"
+        schemaLocation="util/UTILConfiguration.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Interface/Mapping"
+        schemaLocation="mapping/MappingConfiguration.xsd"/>
     <xs:element name="soaTestingFrameworkInterfaceConfiguration"
         type="stfconf:SOATestingFrameworkInterfaceConfiguration">
 
@@ -45,14 +46,14 @@
                     <xs:sequence>
                         <xs:element name="interfaceSource">
                             <xs:complexType>
-                                <xs:attribute name="identificator"/>
+                                <xs:attribute name="identificator" use="required"/>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
-            <xs:element maxOccurs="unbounded" name="referencedFlowPattern"
-                type="stfconf:ReferencedFlowPattern"> </xs:element>
+            <xs:element maxOccurs="unbounded" name="interfaceFlowPattern"
+                type="stfconf:InterfaceFlowPattern"> </xs:element>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="ScenarioTargeting">
@@ -90,21 +91,22 @@
         </xs:complexContent>
     </xs:complexType>
     <xs:complexType abstract="true" name="AbstractScenarioTargeting"/>
-    <xs:complexType name="ReferencedFlowPattern" final="">
+    <xs:complexType name="InterfaceFlowPattern">
         <xs:sequence>
-            <xs:element name="referencedTestScenario" type="stfconf:ReferencedTestScenario"
+            <xs:element name="interfaceTestScenario" type="stfconf:InterfaceTestScenario"
                 maxOccurs="unbounded"> </xs:element>
         </xs:sequence>
-        <xs:attribute name="identificator" type="xs:string"/>
+        <xs:attribute name="identificator" type="xs:string" use="required"/>
+        <xs:attribute name="testName" type="xs:string" use="required"/>
     </xs:complexType>
-    <xs:complexType name="ReferencedTestScenario">
+    <xs:complexType name="InterfaceTestScenario">
         <xs:sequence>
-            <xs:element name="referencedExecutionBlock" maxOccurs="unbounded"
-                type="stfconf:ReferencedExecutionBlock"> </xs:element>
+            <xs:element name="interfaceExecutionBlock" maxOccurs="unbounded"
+                type="stfconf:InterfaceExecutionBlock"> </xs:element>
         </xs:sequence>
-        <xs:attribute name="identificator" type="xs:string"/>
+        <xs:attribute name="identificator" type="xs:string" use="required"/>
     </xs:complexType>
-    <xs:complexType name="ReferencedExecutionBlock">
+    <xs:complexType name="InterfaceExecutionBlock">
         <xs:sequence>
             <xs:element name="source" minOccurs="0">
                 <xs:complexType>
@@ -120,7 +122,8 @@
                     </xs:complexContent>
                 </xs:complexType>
             </xs:element>
+            <xs:element minOccurs="0" name="util" type="utilconf:UtilConfiguration"/>
         </xs:sequence>
-        <xs:attribute name="identificator" type="xs:string"/>
+        <xs:attribute name="identificator" type="xs:string" use="required"/>
     </xs:complexType>
 </xs:schema>

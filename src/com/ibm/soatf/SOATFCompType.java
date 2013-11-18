@@ -14,6 +14,7 @@ public enum SOATFCompType {
     REST("REST Testing Framework Type Domain"),
     SOAP("SOAP Testing Framework Type Domain"),
     TOOL("TOOL Testing Framework Type Domain"),
+    UTIL("UTIL Testing Framework Type Domain"),
     XML("XML Testing Framework Type Domain"),
     MAPPING("Mapping Testing Framework Type Domain");
 

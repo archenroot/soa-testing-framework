@@ -1,5 +1,4 @@
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns="http://www.ibm.com/SOATF/Config/Master"
     xmlns:master="http://www.ibm.com/SOATF/Config/Master"
     targetNamespace="http://www.ibm.com/SOATF/Config/Master" elementFormDefault="qualified"
     attributeFormDefault="unqualified">
@@ -22,19 +21,20 @@
     </xs:complexType>
     <xs:complexType name="FileSystemProjectStructure">
         <xs:sequence>
-            <xs:element name="root">
+            <xs:element name="testRoot">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="temporary" type="master:CommonFileSystemStructure"> </xs:element>
-                        <xs:element name="current-test" type="master:CommonFileSystemStructure"> </xs:element>
-                        <xs:element name="reference-test" type="master:CommonFileSystemStructure"> </xs:element>
-                        <xs:element name="reporting">
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="directory">
                             <xs:complexType>
                                 <xs:attribute name="name" type="xs:string"/>
                             </xs:complexType>
                         </xs:element>
+                        <xs:element name="referenceDirectory">
+                            <xs:complexType>
+                                <xs:attribute name="name" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
                     </xs:sequence>
-                    <xs:attribute name="name" type="xs:string"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -85,7 +85,7 @@
                         <xs:element maxOccurs="unbounded" name="referencedFlowPattern">
                             <xs:complexType>
                                 <xs:attribute name="identificator" type="xs:string" use="required"/>
-                                <xs:attribute name="occurrence" type="xs:integer" use="required"/>
+                                <xs:attribute name="occurrence" type="xs:int" use="required"/>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
@@ -101,7 +101,7 @@
 
     <xs:complexType name="Environments">
         <xs:sequence>
-            <xs:element maxOccurs="1" name="oracleFusionMiddleware" minOccurs="1"
+            <xs:element maxOccurs="1" name="oracleFusionMiddleware" minOccurs="0"
                 type="master:OracleFusionMiddleware"> </xs:element>
             <xs:element name="databases" type="master:Databases" minOccurs="0"> </xs:element>
             <xs:element name="ftpServers" type="master:FTPServers" minOccurs="0"/>
@@ -114,10 +114,10 @@
             <xs:documentation xml:lang="en">This part is related to OSB environment configuration which the framework will communicate to, so it includes AdminServer and related message bean classes plus JMX related stuff. On top of this it includes list of services running on OSB which can be managed trough weblogic management API.</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="oracleFusionMiddlewareInstance">
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="oracleFusionMiddlewareInstance">
                 <xs:complexType>
                     <xs:complexContent>
-                        <xs:extension base="AbstractMasterConfigEnvironmentInstance">
+                        <xs:extension base="master:AbstractMasterConfigEnvironmentInstance">
                             <xs:sequence>
                                 <xs:element name="adminServer" minOccurs="1" maxOccurs="1">
                                     <xs:annotation>
@@ -189,8 +189,9 @@
                                     </xs:complexType>
                                 </xs:element>
                             </xs:sequence>
-                            <xs:attribute name="environment" type="Environment" use="required"/>
-                            <xs:attribute name="environmentType" type="EnvironmentType"
+                            <xs:attribute name="environment" type="master:Environment"
+                                use="required"/>
+                            <xs:attribute name="environmentType" type="master:EnvironmentType"
                                 use="required"/>
                             <xs:attribute name="name" type="xs:string"/>
                         </xs:extension>
@@ -268,7 +269,8 @@
                         <xs:element maxOccurs="unbounded" minOccurs="1" name="databaseInstance">
                             <xs:complexType>
                                 <xs:complexContent>
-                                    <xs:extension base="AbstractMasterConfigEnvironmentInstance">
+                                    <xs:extension
+                                        base="master:AbstractMasterConfigEnvironmentInstance">
 
                                         <xs:sequence>
                                             <xs:element name="hostName" type="xs:string"
@@ -302,10 +304,10 @@
                                                 </xs:annotation>
                                             </xs:element>
                                         </xs:sequence>
-                                        <xs:attribute name="environment" type="Environment"
+                                        <xs:attribute name="environment" type="master:Environment"
                                             use="required"/>
-                                        <xs:attribute name="environmentType" type="EnvironmentType"
-                                            use="required"/>
+                                        <xs:attribute name="environmentType"
+                                            type="master:EnvironmentType" use="required"/>
                                         <xs:attribute name="name" type="xs:string"/>
 
 
@@ -314,7 +316,7 @@
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
-                    <xs:attribute name="identificator" type="xs:string">
+                    <xs:attribute name="identificator" type="xs:string" use="required">
                         <xs:annotation>
                             <xs:documentation xml:lang="en">JCA name.</xs:documentation>
                         </xs:annotation>
@@ -344,7 +346,8 @@
                         <xs:element name="ftpServerInstance" maxOccurs="unbounded">
                             <xs:complexType>
                                 <xs:complexContent>
-                                    <xs:extension base="AbstractMasterConfigEnvironmentInstance">
+                                    <xs:extension
+                                        base="master:AbstractMasterConfigEnvironmentInstance">
 
                                         <xs:annotation>
                                             <xs:documentation>
@@ -400,10 +403,10 @@
                                             <xs:element name="archiveDirectory" type="xs:string"/>
                                             <xs:element name="errorDirectory" type="xs:string"/>
                                         </xs:sequence>
-                                        <xs:attribute name="environment" type="Environment"
+                                        <xs:attribute name="environment" type="master:Environment"
                                             use="required"/>
-                                        <xs:attribute name="environmentType" type="EnvironmentType"
-                                            use="required"/>
+                                        <xs:attribute name="environmentType"
+                                            type="master:EnvironmentType" use="required"/>
                                         <xs:attribute name="name" type="xs:string"/>
 
                                     </xs:extension>
@@ -411,7 +414,7 @@
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
-                    <xs:attribute name="identificator"/>
+                    <xs:attribute name="identificator" use="required"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
@@ -420,10 +423,21 @@
 
     <xs:complexType name="FlowPatterns">
         <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="flowPattern" type="FlowPattern">
-            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="flowPattern"
+                type="master:FlowPattern"> </xs:element>
         </xs:sequence>
     </xs:complexType>
+
+    <xs:simpleType name="Component">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DB"/>
+            <xs:enumeration value="FILE"/>
+            <xs:enumeration value="FTP"/>
+            <xs:enumeration value="OSB"/>
+            <xs:enumeration value="SOAP"/>
+            <xs:enumeration value="UTIL"/>
+        </xs:restriction>
+    </xs:simpleType>
 
     <xs:complexType name="Operation">
         <xs:attribute name="name" use="required">
@@ -471,17 +485,17 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
-        <xs:attribute name="executeOn" use="required">
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="source"/>
-                    <xs:enumeration value="target"/>
-                    <xs:enumeration value="na"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
-    </xs:complexType>
+        <xs:attribute name="executeOn" use="required" type="master:ExecuteOn"/>
 
+
+    </xs:complexType>
+    <xs:simpleType name="ExecuteOn">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="source"/>
+            <xs:enumeration value="target"/>
+            <xs:enumeration value="na"/>
+        </xs:restriction>
+    </xs:simpleType>
     <xs:simpleType name="Environment">
         <xs:restriction base="xs:string">
             <xs:enumeration value="dev"/>
@@ -503,7 +517,8 @@
     </xs:simpleType>
     <xs:complexType name="FlowPattern">
         <xs:sequence>
-            <xs:element name="testScenario" maxOccurs="unbounded" type="TestScenario"> </xs:element>
+            <xs:element name="testScenario" maxOccurs="unbounded" type="master:TestScenario">
+            </xs:element>
         </xs:sequence>
         <xs:attribute name="identificator" type="xs:string" use="required"/>
         <xs:attribute name="testCasePatternCount" type="xs:integer" use="optional"/>
@@ -512,11 +527,11 @@
         <xs:sequence>
             <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1"/>
             <xs:element name="executionBlock" minOccurs="1" maxOccurs="unbounded"
-                type="ExecutionBlock"> </xs:element>
+                type="master:ExecutionBlock"> </xs:element>
             <xs:element name="postExecution" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
         <xs:attribute name="identificator" type="xs:string" use="required"/>
-        <xs:attribute name="executionBlockCount" type="xs:integer" use="optional"/>
+        <xs:attribute name="executionBlockCount" type="xs:int" use="required"/>
         <xs:attribute name="type">
             <xs:simpleType>
                 <xs:restriction base="xs:string">
@@ -525,14 +540,60 @@
                 </xs:restriction>
             </xs:simpleType>
         </xs:attribute>
+        <xs:attribute name="sequenceId" type="xs:int" use="required"/>
     </xs:complexType>
     <xs:complexType name="ExecutionBlock">
         <xs:sequence maxOccurs="unbounded">
             <xs:choice maxOccurs="1">
-                <xs:element name="operation" type="Operation" minOccurs="1" maxOccurs="1"/>
+                <xs:element name="operation" type="master:Operation" minOccurs="1" maxOccurs="1"/>
             </xs:choice>
         </xs:sequence>
         <xs:attribute name="identificator" type="xs:string" use="required"/>
-        <xs:attribute name="testCaseScenarioSequenceId" type="xs:integer" use="optional"/>
+        <xs:attribute name="sequenceId" type="xs:int" use="required"/>
+        <xs:attribute name="direction" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="INBOUND"/>
+                    <xs:enumeration value="OUTBOUND"/>
+                    <xs:enumeration value="OTHER"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
     </xs:complexType>
+
+    <xs:element name="SOATestingFrameworkComponent" abstract="true"
+        type="master:SOATestingFrameworkComponent"/>
+
+    <xs:complexType name="SOATestingFrameworkComponent"> </xs:complexType>
+    <xs:element name="SOATestingFrameworkComponentOperation" abstract="true"/>
+    <xs:complexType name="SOATestingFrameworkComponentOperation" abstract="true"/>
+
+
+    <xs:element name="OSBComponent" substitutionGroup="master:SOATestingFrameworkComponent"
+        type="master:OSBComponent"/>
+
+
+    <xs:complexType name="OSBComponent">
+        <xs:complexContent>
+            <xs:extension base="master:SOATestingFrameworkComponent">
+                <xs:sequence>
+                    <xs:element name="operation" maxOccurs="1" minOccurs="1">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="DISABLE_SERVICE"/>
+                                <xs:enumeration value="ENABLE_SERVICE"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="OSBComponentOperation" type="master:OSBComponent"/>
+
+
+
+
+
 </xs:schema>

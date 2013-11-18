@@ -18,22 +18,16 @@
 package com.ibm.soatf;
 
 
-import static com.ibm.soatf.FrameworkConfiguration.init;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.parsers.ParserConfigurationException;
-import org.gibello.zql.ParseException;
-import static org.junit.Assert.assertEquals;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
-import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
 import org.kohsuke.args4j.spi.BooleanOptionHandler;
-import org.xml.sax.SAXException;
 
 /**
  *
@@ -75,120 +69,127 @@ public class SOATestingFramework {
     properties.put(arr[0], arr[1]);
   }
     
-    public static void main(String[] args) throws SAXException, ParserConfigurationException, IOException, FileNotFoundException, ParseException, CmdLineException {
-     final String[] argv = { "-D", "key=value", "-env", "custom",
-                            "-D", "key2=value2", "-gui", "install" };
-    final SOATestingFramework options = new SOATestingFramework();
-    final CmdLineParser parser = new CmdLineParser(options);
-    parser.parseArgument(argv);
- 
-    // print usage
-    parser.setUsageWidth(Integer.MAX_VALUE);
-    parser.printUsage(System.err);
- 
-    // check the options have been set correctly
-    assertEquals("custom", options.environment);
-    assertEquals(2, options.soaInterfaces.size());
-    assertEquals(2, options.properties.size());        
-        
-        init();
-       
-        //FileSystem.initializeFileSystemStructure(new File(".").getCanonicalPath());
-        //TestDatabaseComponent.testDatabaseComponent();
-        //TestOSBComponent.testOSBComponent();
-        //TestJMSComponent.testJmsComponent();
-        //TestSoapComponent.testDatabaseComponent();
-
-        /*
-        
-         String path = new File(".").getCanonicalPath().toString()
-         + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml";
-         boolean fileExists = new File(path).exists();
-         System.out.println(new File(new File(".").getCanonicalPath().toString()
-         + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml").exists());
-         //SoaTestingFramework soaTF = new SoaTestingFramework("\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
-         SoaTestingFrameworkConfiguration soaTFConfig
-         = new SoaTestingFrameworkConfiguration(
-         new File(".").getCanonicalPath().toString()
-         + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
-        
-         */
-        //soaTFConfig.getDatabaseType();
-        //DatabaseTestComponent dtc = new DatabaseTestComponent(soaTFConfig.getDatabaseType());
-        //dtc.generateSQLStatement(CRUDType.INSERT);
-        /*
-         WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
-        
-         WSDLReaderImpl r = new WSDLReaderImpl();
-         //Description mydesc = r.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
-         Description desc = r.read(new URL("http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue"));
-        
-         SchemaReader sreader = r.getSchemaReader();
-         //Listmydesc.getImports()
-         Schema schema = sreader.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
-         NamespaceMapperImpl impl = schema.getAllNamespaces();
-         URI uri = schema.getDocumentURI();
-         ListIterator types = schema.getTypes().listIterator();
-         while (types.hasNext()){
-         Object type = types.next();
-         System.out.println(((Type) type).toString());
-         }
-         */
-        /*
-        
-         ListIterator elements = schema.getElements().listIterator();
-         int i = 0;
-         List mylist = schema.getElements();
-         while (elements.hasNext()) {
-         Object element = elements.next();
-         System.out.println(((Element) element).toString());
-         }
-         */
-        //Description desc = reader.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
-        // Write a WSDL 1.1 or 2.0 (depend of desc version)
-        //Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(desc);
-        //String s= doc.getTextContent();
-        /*SoapComponent stc = new SoapComponent("SendJMSQueue",
-         // "http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue", 
-         "http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue",
-         "sendJMSMessage",
-         "soapRequest.xml",
-         "soapResponse.xml");
-         //stc.getAndSaveXmlSchemaFromWsdl();
-         //stc.getAndSaveSoapEnvelopeRequest();
-         //stc.invokeService();
-         JAXPProcessor.getSoapBodyContent("soapRequest.xml");
-        
-        
-         stc.isSoapRequestEnvelopeValid();
-         stc.validateMessage(SoapComponent.FlowDirectionType.INBOUND);
-         stc.validateMessage(SoapComponent.FlowDirectionType.OUTBOUND);
-         System.out.println("completed.");
-         UrlSchemaLoader sl = new UrlSchemaLoader(stc.getSoapEndPointUri());
-         XmlObject xo = sl.loadXmlObject(stc.getSoapEndPointUri() + "?wsdl", null);
-         xo.save(new File("testXMLOject.xml"));
-         CachedWsdlLoader cwl = new CachedWsdlLoader(stc.getWsdlInterface());
-         cwl.saveDefinition(".");
-         System.out.println("Latest import: " + cwl.getLatestImportURI());
-         ;        System.out.println( stc.getWsdlContext().hasSchemaTypes());
-         SchemaTypeSystem sts = stc.getWsdlContext().getSchemaTypeSystem();
-         SchemaType st[] = sts.documentTypes();
-         /*
-         List allSeenTypes = new ArrayList();
-         allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
-         //allSeenTypes.addAll(Arrays.asList(sts.attributeTypes()));
-         //allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
-         for (int i = 0; i < allSeenTypes.size(); i++)
-         {
-         SchemaType sType = (SchemaType)allSeenTypes.get(i);
-         System.out.println("Visiting " + sType.toString());
-     
-         allSeenTypes.addAll(Arrays.asList(sType.getAnonymousTypes()));
-         }
-        
-        
-        
-         System.exit(0);
-         */
+    public static void main(String[] args) {
+        try {
+            //FrameworkConfiguration.init();
+            FlowManager.executeInterfaceTest("Vendors", "Ladislav Jech LocalHost");
+            
+            /*  final String[] argv = { "-D", "key=value", "-env", "custom",
+            "-D", "key2=value2", "-gui", "install" };
+            final SOATestingFramework options = new SOATestingFramework();
+            final CmdLineParser parser = new CmdLineParser(options);
+            parser.parseArgument(argv);
+            
+            // print usage
+            parser.setUsageWidth(Integer.MAX_VALUE);
+            parser.printUsage(System.err);
+            
+            // check the options have been set correctly
+            assertEquals("custom", options.environment);
+            assertEquals(2, options.soaInterfaces.size());
+            assertEquals(2, options.properties.size());
+            
+            init();
+            */
+            //FileSystem.initializeFileSystemStructure(new File(".").getCanonicalPath());
+            //TestDatabaseComponent.testDatabaseComponent();
+            //TestOSBComponent.testOSBComponent();
+            //TestJMSComponent.testJmsComponent();
+            //TestSoapComponent.testDatabaseComponent();
+            
+            /*
+            
+            String path = new File(".").getCanonicalPath().toString()
+            + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml";
+            boolean fileExists = new File(path).exists();
+            System.out.println(new File(new File(".").getCanonicalPath().toString()
+            + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml").exists());
+            //SoaTestingFramework soaTF = new SoaTestingFramework("\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
+            SoaTestingFrameworkConfiguration soaTFConfig
+            = new SoaTestingFrameworkConfiguration(
+            new File(".").getCanonicalPath().toString()
+            + "\\xml-resources\\jaxb\\SOATFConfiguration\\soa-testing-framework-config.xml");
+            
+            */
+            //soaTFConfig.getDatabaseType();
+            //DatabaseTestComponent dtc = new DatabaseTestComponent(soaTFConfig.getDatabaseType());
+            //dtc.generateSQLStatement(CRUDType.INSERT);
+            /*
+            WSDLReader reader = WSDLFactory.newInstance().newWSDLReader();
+            
+            WSDLReaderImpl r = new WSDLReaderImpl();
+            //Description mydesc = r.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
+            Description desc = r.read(new URL("http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue"));
+            
+            SchemaReader sreader = r.getSchemaReader();
+            //Listmydesc.getImports()
+            Schema schema = sreader.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
+            NamespaceMapperImpl impl = schema.getAllNamespaces();
+            URI uri = schema.getDocumentURI();
+            ListIterator types = schema.getTypes().listIterator();
+            while (types.hasNext()){
+            Object type = types.next();
+            System.out.println(((Type) type).toString());
+            }
+            */
+            /*
+            
+            ListIterator elements = schema.getElements().listIterator();
+            int i = 0;
+            List mylist = schema.getElements();
+            while (elements.hasNext()) {
+            Object element = elements.next();
+            System.out.println(((Element) element).toString());
+            }
+            */
+            //Description desc = reader.read(new URL("file:///c:/Dev/svn-rep/trunk/osb/ContractsMaintainFromEBS/Resources/WSDLs/ContractMaintainReceiveFromEBSForMaximo.wsdl"));
+            // Write a WSDL 1.1 or 2.0 (depend of desc version)
+            //Document doc = WSDLFactory.newInstance().newWSDLWriter().getDocument(desc);
+            //String s= doc.getTextContent();
+            /*SoapComponent stc = new SoapComponent("SendJMSQueue",
+            // "http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue",
+            "http://prometheus:11001/HudsonDemo/proxy/SendJMSQueue",
+            "sendJMSMessage",
+            "soapRequest.xml",
+            "soapResponse.xml");
+            //stc.getAndSaveXmlSchemaFromWsdl();
+            //stc.getAndSaveSoapEnvelopeRequest();
+            //stc.invokeService();
+            JAXPProcessor.getSoapBodyContent("soapRequest.xml");
+            
+            
+            stc.isSoapRequestEnvelopeValid();
+            stc.validateMessage(SoapComponent.FlowDirectionType.INBOUND);
+            stc.validateMessage(SoapComponent.FlowDirectionType.OUTBOUND);
+            System.out.println("completed.");
+            UrlSchemaLoader sl = new UrlSchemaLoader(stc.getSoapEndPointUri());
+            XmlObject xo = sl.loadXmlObject(stc.getSoapEndPointUri() + "?wsdl", null);
+            xo.save(new File("testXMLOject.xml"));
+            CachedWsdlLoader cwl = new CachedWsdlLoader(stc.getWsdlInterface());
+            cwl.saveDefinition(".");
+            System.out.println("Latest import: " + cwl.getLatestImportURI());
+            ;        System.out.println( stc.getWsdlContext().hasSchemaTypes());
+            SchemaTypeSystem sts = stc.getWsdlContext().getSchemaTypeSystem();
+            SchemaType st[] = sts.documentTypes();
+            /*
+            List allSeenTypes = new ArrayList();
+            allSeenTypes.addAll(Arrays.asList(sts.documentTypes()));
+            //allSeenTypes.addAll(Arrays.asList(sts.attributeTypes()));
+            //allSeenTypes.addAll(Arrays.asList(sts.globalTypes()));
+            for (int i = 0; i < allSeenTypes.size(); i++)
+            {
+            SchemaType sType = (SchemaType)allSeenTypes.get(i);
+            System.out.println("Visiting " + sType.toString());
+            
+            allSeenTypes.addAll(Arrays.asList(sType.getAnonymousTypes()));
+            }
+            
+            
+            
+            System.exit(0);
+            */
+        } catch (FrameworkConfigurationException ex) {
+            Logger.getLogger(SOATestingFramework.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }

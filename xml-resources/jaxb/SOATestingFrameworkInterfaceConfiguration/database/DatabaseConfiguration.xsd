@@ -18,8 +18,8 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 -->
 
 <xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:dbconf="http://www.ibm.com/SOATF/Config/Interface/Database"
-    targetNamespace="http://www.ibm.com/SOATF/Config/Interface/Database"
+    xmlns:dbconf="http://www.ibm.com/SOATF/Config/Interface/DB"
+    targetNamespace="http://www.ibm.com/SOATF/Config/Interface/DB"
     elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:complexType name="DatabaseConfiguration">
         <xs:annotation>
@@ -40,7 +40,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
-        <xs:attribute name="referenceIdentificator" type="xs:string" use="required">
+        <xs:attribute name="identificator" type="xs:string" use="required">
             <xs:annotation>
                 <xs:documentation xml:lang="en">Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command.</xs:documentation>
             </xs:annotation>
