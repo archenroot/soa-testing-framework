@@ -1,0 +1,703 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:master="http://www.ibm.com/SOATF/Config/Master"
+    targetNamespace="http://www.ibm.com/SOATF/Config/Master" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:element name="soaTestingFrameworkMasterConfiguration"
+        type="master:SOATestingFrameworkMasterConfiguration"/>
+    <xs:complexType name="SOATestingFrameworkMasterConfiguration">
+        <xs:sequence>
+            <xs:element name="interfaces" minOccurs="1">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" name="interface" type="master:Interface"
+                            minOccurs="0"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="environments" type="master:Environments"/>
+            <xs:element name="fileSystemStructure" type="master:FileSystemProjectStructure"/>
+            <xs:element name="flowPatterns" type="master:FlowPatterns"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="FileSystemProjectStructure">
+        <xs:sequence>
+            <xs:element name="testRoot">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="directory">
+                            <xs:complexType>
+                                <xs:attribute name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="referenceDirectory">
+                            <xs:complexType>
+                                <xs:attribute name="name" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="CommonFileSystemStructure">
+        <xs:sequence>
+            <xs:element name="database">
+                <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" default="database"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="jms">
+                <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" default="jms"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="ftp">
+                <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" default="ftp"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="mapping">
+                <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" default="mapping"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="soap">
+                <xs:complexType>
+                    <xs:attribute name="name" type="xs:string" default="soap"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string"/>
+    </xs:complexType>
+    <xs:complexType name="Interface">
+        <xs:sequence>
+            <xs:element name="projects">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="project"
+                            type="master:Project"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="patterns">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" name="referencedFlowPattern" minOccurs="1">
+                            <xs:complexType>
+                                <xs:attribute name="identificator" type="xs:string" use="required"/>
+                                <xs:attribute name="occurrence" type="xs:int" use="required"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required"/>
+        <xs:attribute name="description" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="Project">
+        <xs:attribute name="name" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType abstract="true" name="AbstractMasterConfigEnvironmentInstance"/>
+
+    <xs:complexType name="Environments">
+        <xs:sequence>
+            <xs:element maxOccurs="1" name="oracleFusionMiddleware" minOccurs="0"
+                type="master:OracleFusionMiddleware"> </xs:element>
+            <xs:element name="databases" type="master:Databases" minOccurs="0"> </xs:element>
+            <xs:element name="ftpServers" type="master:FTPServers" minOccurs="0"/>
+            <xs:element name="osbDatabaseReporting" type="master:OSBReporting"/>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:complexType name="OracleFusionMiddleware">
+
+        <xs:annotation>
+            <xs:documentation xml:lang="en">This part is related to OSB environment configuration which the framework will communicate to, so it includes AdminServer and related message bean classes plus JMX related stuff. On top of this it includes list of services running on OSB which can be managed trough weblogic management API.</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="1" name="oracleFusionMiddlewareInstance">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="master:AbstractMasterConfigEnvironmentInstance">
+                            <xs:sequence>
+                                <xs:element name="adminServer" minOccurs="1" maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">OSB admin server configuration.</xs:documentation>
+                                    </xs:annotation>
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element default="t3" name="jmxProtocol"
+                                                type="xs:string">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Default protocol used for communicatio with OSB cluster.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="host" type="xs:string" minOccurs="1"
+                                                maxOccurs="1">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="port" type="xs:int">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="securityPrincipal" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">User name for log onto OSB cluster.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="securityCredentials" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Password used to login onto OSB cluster.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                                <xs:element name="cluster" minOccurs="1" maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">OSB cluster configuration.</xs:documentation>
+                                    </xs:annotation>
+                                    <xs:complexType>
+                                        <xs:sequence>
+                                            <xs:element name="managedServer">
+                                                <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element name="hostName" type="xs:string"
+                                                  minOccurs="1" maxOccurs="1">
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">IPv4 or hostname.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element name="port" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">The port here is required due to supporting distributed JMS queue browser. In future this should be replaced/removed by get all distributed queue/topic connections from/trough admin server as soon as getting everything trough admin server is Oracle proposed way.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  <xs:attribute name="name" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Should be managed server name, for example "osb_server_1".</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:attribute>
+                                                </xs:complexType>
+                                            </xs:element>
+                                        </xs:sequence>
+                                    </xs:complexType>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="environment" type="master:Environment"
+                                use="required"/>
+                            <xs:attribute name="environmentType" type="master:EnvironmentType"
+                                use="required"/>
+                            <xs:attribute name="name" type="xs:string"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+
+            </xs:element>
+        </xs:sequence>
+
+    </xs:complexType>
+
+
+
+    <xs:complexType name="JMSSubsystem">
+
+        <xs:sequence>
+            <xs:element name="servers" minOccurs="1" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>Server name visible in Weblogic server administration console.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="server">
+                            <xs:complexType>
+                                <xs:attribute name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="subdeployments">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="subdeployment">
+                            <xs:complexType>
+                                <xs:attribute name="name" type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="jmsModule">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="resources">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="name" type="xs:string"/>
+                                    <xs:element name="type">
+                                        <xs:simpleType>
+                                            <xs:restriction base="xs:string">
+                                                <xs:enumeration value="Connection Factory"/>
+                                                <xs:enumeration value="Queue"/>
+                                                <xs:enumeration value="Topic"/>
+                                                <xs:enumeration value="Uniform Distributed Queue"/>
+                                            </xs:restriction>
+                                        </xs:simpleType>
+                                    </xs:element>
+                                    <xs:element name="jndiName" type="xs:string"/>
+                                    <xs:element name="targets" type="xs:string"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="name" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="Databases">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="database">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="databaseInstance">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension
+                                        base="master:AbstractMasterConfigEnvironmentInstance">
+
+                                        <xs:sequence>
+                                            <xs:element name="hostName" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="port" type="xs:integer" minOccurs="1"
+                                                maxOccurs="1">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="userName" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Database user name.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="password" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Password.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="serviceId" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Service Id. Will be extended to support different connect configuration in future versions.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                        </xs:sequence>
+                                        <xs:attribute name="environment" type="master:Environment"
+                                            use="required"/>
+                                        <xs:attribute name="environmentType"
+                                            type="master:EnvironmentType" use="required"/>
+                                        <xs:attribute name="name" type="xs:string"/>
+
+
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="identificator" type="xs:string" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">JCA name.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="DatabaseTypeEnum">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Enumeration of supported databases.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Oracle"/>
+            <!-- 
+            <xs:enumeration value="Microsoft"/>
+            <xs:enumeration value="MySql"/>
+            <xs:enumeration value="H2"/>
+            -->
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="FTPServers">
+        <xs:sequence>
+            <xs:element name="ftpServer" maxOccurs="unbounded" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ftpServerInstance" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension
+                                        base="master:AbstractMasterConfigEnvironmentInstance">
+
+                                        <xs:annotation>
+                                            <xs:documentation>
+                                        
+                                        Ftp framework component is not implemented yet!.
+                                        
+                                    </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:sequence>
+                                            <xs:element name="hostName" type="xs:string">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">FTP host name or IP address.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="port" type="xs:string">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="user" type="xs:string">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">FTP account user name.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="password" type="xs:string">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">FTP account password.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="security">
+                                                <xs:annotation>
+                                                  <xs:documentation>Is FTP service enabled with SSL support.</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Enumeration of supported security modes.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:restriction base="xs:normalizedString">
+                                                  <xs:enumeration value="NONE"/>
+                                                  <xs:enumeration value="SSL"/>
+                                                  <xs:enumeration value="SSH"/>
+                                                  <!-- 
+            <xs:enumeration value="Microsoft"/>
+            <xs:enumeration value="MySql"/>
+            <xs:enumeration value="H2"/>
+            -->
+                                                  </xs:restriction>
+
+                                                </xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="stageDirectory" type="xs:string"/>
+                                            <xs:element name="archiveDirectory" type="xs:string"/>
+                                            <xs:element name="errorDirectory" type="xs:string"/>
+                                        </xs:sequence>
+                                        <xs:attribute name="environment" type="master:Environment"
+                                            use="required"/>
+                                        <xs:attribute name="environmentType"
+                                            type="master:EnvironmentType" use="required"/>
+                                        <xs:attribute name="name" type="xs:string"/>
+
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="identificator" use="required"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="OSBReporting">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="osbReportingInstance">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="master:AbstractMasterConfigEnvironmentInstance">
+                            <xs:sequence>
+                                <xs:element name="hostName" type="xs:string" minOccurs="1"
+                                    maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="port" type="xs:integer" minOccurs="1"
+                                    maxOccurs="1" default="1521">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="userName" type="xs:string" minOccurs="1"
+                                    maxOccurs="1" default="NWK_XXXIW">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">Database user name.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="password" type="xs:string" minOccurs="1"
+                                    maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">Password.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                                <xs:element name="serviceId" type="xs:string" minOccurs="1"
+                                    maxOccurs="1">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">Service Id. Will be extended to support different connect configuration in future versions.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:element>
+                            </xs:sequence>
+                            <xs:attribute name="environment" type="master:Environment"
+                                use="required"/>
+                            <xs:attribute name="environmentType" type="master:EnvironmentType"
+                                use="required"/>
+                            <xs:attribute name="name" type="xs:string"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="dbObjects">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="reportEventsTable">
+                            <xs:complexType>
+                                <xs:attribute default="REPORTING_EVENTS" name="name"
+                                    type="xs:string" use="optional"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="errorsTable">
+                            <xs:complexType>
+                                <xs:attribute default="XXXIW_MWP_ERRORS" name="name"
+                                    type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="errorDetailsTable">
+                            <xs:complexType>
+                                <xs:attribute default="XXXIW_MWP_ERROR_DETAILS" name="name"
+                                    type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="gatherOSBReportsProcedure">
+                            <xs:complexType>
+                                <xs:attribute default="ERROR_HOSPITAL.gather_osb_data" name="name"
+                                    type="xs:string"/>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="SOAPServices"/>
+
+    <xs:complexType name="FlowPatterns">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="flowPattern"
+                type="master:FlowPattern"> </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+
+    <xs:simpleType name="Component">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DB"/>
+            <xs:enumeration value="FILE"/>
+            <xs:enumeration value="FTP"/>
+            <xs:enumeration value="JMS"/>
+            <xs:enumeration value="OSB"/>
+            <xs:enumeration value="SOAP"/>
+            <xs:enumeration value="UTIL"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+    <xs:complexType name="Operation">
+        <xs:attribute name="name" type="master:OperationName" use="required">
+            
+        </xs:attribute>
+        <xs:attribute name="executeOn" use="required" type="master:ExecuteOn"/>
+
+
+        <xs:attribute name="negative" type="xs:boolean"/>
+    </xs:complexType>
+    <xs:simpleType name="OperationName">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="DB_DELETE_RECORD"/>
+            <xs:enumeration value="DB_CLEAR_REPORTING"/>
+            <xs:enumeration value="DB_EXECUTE_INSERT"/>
+            <xs:enumeration value="DB_EXECUTE_INSERT"/>
+            <xs:enumeration value="DB_GENERATE_DELETE"/>
+            <xs:enumeration value="DB_EXECUTE_DELETE"/>
+            <xs:enumeration value="DB_GENERATE_SELECT"/>
+            <xs:enumeration value="DB_EXECUTE_SELECT"/>
+            <xs:enumeration value="DB_EXECUTE_SELECT_AND_EXPORT_TO_EXCEL"/>
+            <xs:enumeration value="DB_EXECUTE_SELECT_AND_EXPORT_TO_CSV"/>
+            <xs:enumeration value="DB_GENERATE_UPDATE"/>
+            <xs:enumeration value="DB_EXECUTE_UPDATE"/>
+            <xs:enumeration value="DB_SELECT_COUNT_AND_REMEMBER"/>
+            <xs:enumeration value="DB_SELECT_COUNT_AND_COMPARE"/>
+            <xs:enumeration value="DB_CHECK_RECORD_POOLED"/>
+            <xs:enumeration value="DB_CHECK_REPORTING"/>
+            <xs:enumeration value="DB_INSERT_RECORD"/>
+            <xs:enumeration value="DB_CHECK_RECORD_NOT_POOLED"/>
+            
+            
+            
+            <xs:enumeration value="JMS_GENERATE_MESSAGE"/>
+            <xs:enumeration value="JMS_SEND_MESSAGE_TO_QUEUE"/>
+            <xs:enumeration value="JMS_RECEIVE_MESSAGE_FROM_QUEUE"/>
+            <xs:enumeration value="JMS_PURGE_QUEUE"/>
+            <xs:enumeration value="JMS_VALIDATE_MESSAGE"/>
+            <xs:enumeration value="JMS_CHECK_ERROR_QUEUE_FOR_MESSAGE"/>
+            <xs:enumeration value="JMS_CHECK_ERROR_DATABASE_FOR_MESSAGE"/>
+            <xs:enumeration value="JMS_DESTINATION_PAUSE_INSERTION"/>
+            <xs:enumeration value="JMS_DESTINATION_PAUSE_CONSUMPTION"/>
+            <xs:enumeration value="JMS_DESTINATION_PAUSE_PRODUCTION"/>
+            <xs:enumeration value="JMS_DESTINATION_RESUME_INSERTION"/>
+            <xs:enumeration value="JMS_DESTINATION_RESUME_CONSUMPTION"/>
+            <xs:enumeration value="JMS_DESTINATION_RESUME_PRODUCTION"/>
+            <xs:enumeration value="JMS_CHECK_ERROR_QUEUE"/>
+            <xs:enumeration value="JMS_CHECK_REPORTING"/>
+            
+            <xs:enumeration value="SOAP_GENERATE_ENVELOPE"/>
+            <xs:enumeration value="SOAP_INVOKE_SERVICE"/>
+            <xs:enumeration value="SOAP_VALIDATE_RESPONSE"/>
+            <xs:enumeration value="MAPPING_COMPARE_VALUES"/>
+            <xs:enumeration value="MAPPING_COMPARE_TEST_RUNS"/>
+            <xs:enumeration value="FTP_DOWNLOAD_FILE"/>
+            <xs:enumeration value="FTP_UPLOAD_FILE"/>
+            <xs:enumeration value="FTP_SEARCH_FOR_FILE"/>
+            <xs:enumeration value="FTP_CHECK_DELIVERED_FOLDER_FOR_FILE"/>
+            <xs:enumeration value="FTP_CHECK_ERROR_FOLDER_FOR_FILE"/>
+            <xs:enumeration value="FTP_CHECK_REPORTING"/>
+            
+            
+            <xs:enumeration value="SOAP_DISABLE_SERVICE"/>
+            <xs:enumeration value="SOAP_ENABLE_SERVICE"/>
+            <xs:enumeration value="UTIL_DELAY"/>
+            <xs:enumeration value="UTIL_CLEAR_REPORTING"/>
+            <xs:enumeration value="UTIL_CHECK_REPORTING"/>
+            <xs:enumeration value="UTIL_CHECK_ERROR_QUEUE"/>
+            <xs:enumeration value="UTIL_CHECK_REPORTING_FOR_SUCCESS"/>
+            <xs:enumeration value="UTIL_CHECK_REPORTING_FOR_FAILURE"/>
+            
+            
+            <!--
+                        <xs:enumeration value="OSB_CHECK_PROXY_SERVICE_REPORT"/>
+                    -->
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="ExecuteOn">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="source"/>
+            <xs:enumeration value="target"/>
+            <xs:enumeration value="na"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Environment">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="dev"/>
+            <xs:enumeration value="dev2"/>
+            <xs:enumeration value="dev3"/>
+            <xs:enumeration value="pre-sit"/>
+            <xs:enumeration value="sit"/>
+            <xs:enumeration value="uat"/>
+            <xs:enumeration value="custom"/>
+        </xs:restriction>
+    </xs:simpleType>
+
+
+    <xs:simpleType name="EnvironmentType">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="system"/>
+            <xs:enumeration value="user"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="FlowPattern">
+        <xs:sequence>
+            <xs:element name="testScenario" maxOccurs="unbounded" type="master:TestScenario">
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string" use="required"/>
+        <xs:attribute name="testCasePatternCount" type="xs:integer" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="TestScenario">
+        <xs:sequence>
+            <xs:element minOccurs="0" name="description"/>
+            <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1"/>
+            <xs:element name="executionBlock" minOccurs="1" maxOccurs="unbounded"
+                type="master:ExecutionBlock"> </xs:element>
+            <xs:element name="postExecution" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string" use="required"/>
+        <xs:attribute name="executionBlockCount" type="xs:int" use="optional"/>
+        <xs:attribute name="type">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="positive"/>
+                    <xs:enumeration value="negative"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+        <xs:attribute name="sequenceId" type="xs:int" use="optional"/>
+    </xs:complexType>
+    <xs:complexType name="ExecutionBlock">
+        <xs:sequence maxOccurs="unbounded">
+            <xs:choice maxOccurs="1">
+                <xs:element name="operation" type="master:Operation" minOccurs="1" maxOccurs="1"/>
+            </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="identificator" type="xs:string" use="required"/>
+        <xs:attribute name="sequenceId" type="xs:int" use="optional"/>
+        <xs:attribute name="direction" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="INBOUND"/>
+                    <xs:enumeration value="OUTBOUND"/>
+                    <xs:enumeration value="BOTH"/>
+                    <xs:enumeration value="OTHER"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:element name="SOATestingFrameworkComponent" abstract="true"
+        type="master:SOATestingFrameworkComponent"/>
+
+    <xs:complexType name="SOATestingFrameworkComponent"> </xs:complexType>
+    <xs:element name="SOATestingFrameworkComponentOperation" abstract="true"/>
+    <xs:complexType name="SOATestingFrameworkComponentOperation" abstract="true"/>
+
+
+    <xs:element name="OSBComponent" substitutionGroup="master:SOATestingFrameworkComponent"
+        type="master:OSBComponent"/>
+
+
+    <xs:complexType name="OSBComponent">
+        <xs:complexContent>
+            <xs:extension base="master:SOATestingFrameworkComponent">
+                <xs:sequence>
+                    <xs:element name="operation" maxOccurs="1" minOccurs="1">
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="DISABLE_SERVICE"/>
+                                <xs:enumeration value="ENABLE_SERVICE"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:element>
+                </xs:sequence>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+
+    <xs:element name="OSBComponentOperation" type="master:OSBComponent"/>
+</xs:schema>
