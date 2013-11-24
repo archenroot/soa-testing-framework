@@ -1,0 +1,112 @@
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:stfconf="http://www.ibm.com/SOATF/Config/Iface" xmlns:dbconf="http://www.ibm.com/SOATF/Config/Iface/DB"
+    xmlns:jmsconf="http://www.ibm.com/SOATF/Config/Iface/JMS" xmlns:osbconf="http://www.ibm.com/SOATF/Config/Iface/OSB" xmlns:soapconf="http://www.ibm.com/SOATF/Config/Iface/SOAP"
+    xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Iface/FTP" xmlns:utilconf="http://www.ibm.com/SOATF/Config/Iface/UTIL" targetNamespace="http://www.ibm.com/SOATF/Config/Iface" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/DB" schemaLocation="database/DBIfaceConfig.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/FTP" schemaLocation="ftp/FTPIfaceConfig.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/JMS" schemaLocation="jms/JMSIfaceConfig.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/SOAP" schemaLocation="soap/SOAPIfaceConfig.xsd"/>
+    <xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/UTIL" schemaLocation="util/UTILIfaceConfig.xsd"/>
+
+    <xs:element name="soaTFIfaceConfig" type="stfconf:SOATFIfaceConfig">
+
+        <xs:annotation>
+            <xs:documentation xml:lang="en">SOA Testing Framework configuration.</xs:documentation>
+        </xs:annotation>
+
+    </xs:element>
+
+    <xs:complexType name="SOATFIfaceConfig">
+        <xs:sequence>
+            <xs:annotation>
+                <xs:appinfo/>
+                <xs:documentation/>
+            </xs:annotation>
+            <xs:element name="ifaceEndPoints" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Global project configuration.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="ifaceEndPoint" maxOccurs="unbounded">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="stfconf:IfaceEndpoint">
+                                        <xs:attribute name="endPointLocalId" type="xs:string"/>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element minOccurs="0" name="utilConfig" maxOccurs="1" type="utilconf:UTILConfig"> </xs:element>
+            <xs:element name="ifaceFlowPatternConfig" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="unbounded" name="ifaceFlowPattern" type="stfconf:IfaceFlowPattern"> </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="IfaceEndpoint">
+        <xs:complexContent>
+            <xs:extension base="stfconf:EndPoint">
+                <xs:choice>
+                    <xs:element name="database" type="dbconf:DBConfig" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Database related configuration.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element maxOccurs="1" name="ftpServer" type="ftpconf:FTPConfig" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">FTP server configuration.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="jmsSubsystem" type="jmsconf:JMSConfig" minOccurs="0" maxOccurs="1">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">JMS messaging system related configuration.
+                        Currently only queues are supported (NOT topics). Supported browsing of distributed queues.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                    <xs:element name="soap" type="soapconf:SOAPConfig" maxOccurs="1" minOccurs="0">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Web services based on SOAP protocol configuration.</xs:documentation>
+                        </xs:annotation>
+                    </xs:element>
+                </xs:choice>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType abstract="true" name="EndPoint"/>
+    <xs:complexType name="IfaceFlowPattern">
+        <xs:sequence>
+            <xs:element name="ifaceTestScenario" type="stfconf:IfaceTestScenario" maxOccurs="unbounded"> </xs:element>
+        </xs:sequence>
+        <xs:attribute name="refId" type="xs:string" use="required"/>
+        <xs:attribute name="testName" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="IfaceTestScenario">
+        <xs:sequence>
+            <xs:element name="ifaceExecBlock" maxOccurs="unbounded" type="stfconf:IfaceExecBlock"> </xs:element>
+        </xs:sequence>
+        <xs:attribute name="refId" type="xs:string" use="required"/>
+    </xs:complexType>
+    <xs:complexType name="IfaceExecBlock">
+        <xs:sequence>
+            <xs:element name="source" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="endPointLocalIdRef" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="target" minOccurs="0" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:attribute name="endPointLocalIdRef" type="xs:string"/>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="refId" type="xs:string" use="required"/>
+    </xs:complexType>
+</xs:schema>

@@ -1,0 +1,405 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>ftp4j 1.7 manual</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+<h1>ftp4j 1.7 manual</h1>
+<ul>
+  <li><a href="#1">Requirements</a></li>
+  <li><a href="#2">Installation</a></li>
+  <li><a href="#3">Javadocs</a></li>
+  <li><a href="#4">Quickstart</a></li>
+  <li><a href="#5">Connecting through a proxy</a></li>
+  <li><a href="#6">FTPS/FTPES secured connection</a></li>
+  <li><a href="#7">Browsing the remote site</a></li>
+  <li><a href="#8">Renaming files and directories</a></li>
+  <li><a href="#9">Moving files and directories</a></li>
+  <li><a href="#10">Deleting files</a></li>
+  <li><a href="#11">Creating and deleting directories</a></li>
+  <li><a href="#12">Listing files, directories and links</a></li>
+  <li><a href="#13">Getting the modification date of files and directories</a></li>
+  <li><a href="#14">Downloading and uploading files</a></li>
+  <li><a href="#15">Active and passive data transfer modes</a></li>
+  <li><a href="#16">Binary and textual data transfer types</a></li>
+  <li><a href="#17">Data transfer compression</a></li>
+  <li><a href="#18">NOOPing the server</a></li>
+  <li><a href="#19">Site specific and custom commands</a></li>
+  <li><a href="#20">Exceptions handling</a></li>
+</ul>
+<a name="1"></a>
+<h2>Requirements</h2>
+<p>To run the ftp4j library you need a Java Runtime Environment J2SE v. 1.4 or later.</p>
+<a name="2"></a>
+<h2>Installation</h2>
+<p>Add the ftp4j JAR file to your application classpath, and you'll be
+  automatically enabled to the use of the ftp4j classes.</p>
+<a name="3"></a>
+<h2>Javadocs</h2>
+<p>Here come the <a href="api/index.html">ftp4j javadocs</a>.</p>
+<a name="4"></a>
+<h2>Quickstart</h2>
+<p>The main class of the library is <em>FTPClient</em> (<em>it.sauronsoftware.ftp4j.FTPClient</em>).</p>
+<p>Start creating a <em>FTPClient</em> instance:</p>
+<pre>FTPClient client = new FTPClient();</pre>
+<p>Connect now to a remote FTP service:</p>
+<pre>client.connect(&quot;ftp.host.com&quot;);</pre>
+<p>If the service port is other than the standard 21 (or 990 if FTPS):</p>
+<pre>client.connect(&quot;ftp.host.com&quot;, port);</pre>
+<p>In example:</p>
+<pre>client.connect(&quot;ftp.host.com&quot;, 8021);</pre>
+<p>Step now to the login procedure:</p>
+<pre>client.login(&quot;carlo&quot;, &quot;mypassword&quot;);</pre>
+<p>If no exception is thrown you are now authenticated to the remote server. Otherwise, 
+  if the authentication attempt fails, you receive a <em>it.sauronsoftware.ftp4j.FTPException</em>.</p>
+<p>Anonymous authentication, if admitted by the connected service, can be done 
+  sending the username &quot;anonymous&quot; and an arbitrary password (note that some servers 
+  require an e-mail address in place of the password):</p>
+<pre>client.login(&quot;anonymous&quot;, &quot;ftp4j&quot;);</pre>
+<p>Do anything you want with the remote FTP service, then disconnect:</p>
+<pre>client.disconnect(true);</pre>
+<p>This one sends the FTP QUIT command to the remote server, requesting a legal 
+  disconnect procedure. If you just want to break the connection, without 
+  sending any advice to the server, call:</p>
+<pre>client.disconnect(false);</pre>
+<a name="5"></a>
+<h2>Connecting through a proxy</h2>
+<p>The client connects to the server through a connector (an object extending <em>it.sauronsoftware.ftp4j.FTPConnector</em>), which returns to the client an already open connection (an object implementing the <em>it.sauronsoftware.ftp4j.FTPConnection</em> interface). That is why ftp4j could support a large set of proxies.</p>
+<p>The connector for a client instance can be setted with the <em>setConnector()</em> method, obviously before connecting the remote server:</p>
+<pre>client.setConnector(anyConnectorYouWant);</pre>
+<p>The default connector, which is used if no other is setted, is <em>DirectConnector</em> (<em>it.sauronsoftware.ftp4j.connectors.DirectConnector</em>), which performs a direct connection to the remote server, without asking the connection to any proxy.</p>
+<p>If you can connect the remote server only through a proxy, the ftp4j library let you choose between some other connectors:</p>
+<ul>
+  <li><em>HTTPTunnelConnector</em> (<em>it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector</em>)<br />
+    This one can connect through a HTTP proxy which supports and permits the CONNECT method.</li>
+  <li><em>FTPProxyConnector</em> (<em>it.sauronsoftware.ftp4j.connectors.FTPProxyConnector</em>)<br />
+This one can connect through a FTP proxy, supporting both the SITE and the OPEN command style for demanding the connection with the remote host. Other kinds of FTP proxies, such the ones requiring a <em>username@remotehost</em> authentication, can be used without a specific connector, since they have been intended to be transparent to the client.</li>
+  <li><em>SOCKS4Connector</em> (<em>it.sauronsoftware.ftp4j.connectors.SOCKS4Connector</em>)<br />
+  This one can connect through a SOCKS 4/4a proxy.</li>
+  <li><em>SOCKS5Connector</em> (<em>it.sauronsoftware.ftp4j.connectors.SOCKS5Connector</em>)<br />
+  This one can connect through a SOCKS 5 proxy.</li>
+</ul>
+<p>Since the connector architecture used by ftp4j is a pluggable one, you can always build your own connector extending the <em>FTPConnector</em> abstract class.</p>
+<a name="6"></a>
+<h2>FTPS/FTPES secured connection</h2>
+<p>The ftp4j library supports both FTPS (FTP over implicit TLS/SSL) and FTPES (FTP over explicit TLS/SSL).</p>
+<p>The <em>setSecurity()</em> method can be used to turn on the feature:</p>
+<pre>client.setSecurity(FTPClient.SECURITY_FTPS); // enables FTPS</pre>
+<pre>client.setSecurity(FTPClient.SECURITY_FTPES); // enables FTPES</pre>
+<p>Both methods must be called before connecting the remote server.</p>
+<p>If the security is set to <em>SECURITY_FTPS</em>, the default port used by the <em>connect()</em> method changes to 990.</p>
+<p>The client object, by default, negotiates SSL connections using the SSL socket factory provided by  <em>javax.net.ssl.SSLSocketFactory.getDefault()</em>. The default socket factory can be changed calling the client <em>setSSLSocketFactory()</em> method. An alternative <em>SSLSocketFactory</em>, for example, can be used to trust every certificate given by the remote host (use it carefully):</p>
+<pre>import it.sauronsoftware.ftp4j.FTPClient;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+// ...
+
+TrustManager[] trustManager = new TrustManager[] { new X509TrustManager() {
+	public X509Certificate[] getAcceptedIssuers() {
+		return null;
+	}
+	public void checkClientTrusted(X509Certificate[] certs, String authType) {
+	}
+	public void checkServerTrusted(X509Certificate[] certs, String authType) {
+	}
+} };
+SSLContext sslContext = null;
+try {
+	sslContext = SSLContext.getInstance("SSL");
+	sslContext.init(null, trustManager, new SecureRandom());
+} catch (NoSuchAlgorithmException e) {
+	e.printStackTrace();
+} catch (KeyManagementException e) {
+	e.printStackTrace();
+}
+SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+FTPClient client = new FTPClient();
+client.setSSLSocketFactory(sslSocketFactory);
+client.setSecurity(FTPClient.SECURITY_FTPS); // or client.setSecurity(FTPClient.SECURITY_FTPES);
+
+// ...</pre>
+<a name="7"></a>
+<h2>Browsing the remote site</h2>
+<p>Get the current directory absolute path calling:</p>
+<pre>String dir = client.currentDirectory();</pre>
+<p>Change directory with:</p>
+<pre>client.changeDirectory(newPath);</pre>
+<p>You can use both absolute and relative paths:</p>
+<pre>client.changeDirectory(&quot;/an/absolute/one&quot;);
+client.changeDirectory(&quot;relative&quot;);</pre>
+<p>Back to the parent directory with:</p>
+<pre>client.changeDirectoryUp();</pre>
+<a name="8"></a>
+<h2>Renaming files and directories</h2>
+<p>To rename a remote file or directory:</p>
+<pre>client.rename(&quot;oldname&quot;, &quot;newname&quot;);</pre>
+<a name="9"></a>
+<h2>Moving files and directories</h2>
+<p>The <em>rename()</em> method can also be used to move files and directories 
+  from a location to another.</p>
+<p>In example, think in the current working directory you have a file called &quot;myfile.txt&quot;, 
+  and you want to move it in the sub-directory &quot;myfolder&quot;:</p>
+<pre>client.rename(&quot;myfile.txt&quot;, &quot;myfolder/myfile.txt&quot;);</pre>
+<a name="10"></a>
+<h2>Deleting files</h2>
+<p>To delete a remote file call:</p>
+<pre>client.deleteFile(relativeOrAbsolutePath);</pre>
+<p>In example:</p>
+<pre>client.deleteFile(&quot;useless.txt&quot;);</pre>
+<a name="11"></a>
+<h2>Creating and deleting directories</h2>
+<p>You can create a  new directory on the remote site, if the service gives 
+  you this oppurtunity:</p>
+<pre>client.createDirectory(&quot;newfolder&quot;);</pre>
+<p>You can also remove an existing one:</p>
+<pre>client.deleteDirectory(absoluteOrRelativePath);</pre>
+<p>In example:</p>
+<pre>client.deleteDirectory(&quot;oldfolder&quot;);</pre>
+<p>Please note that usually FTP servers can delete only empty directories.</p>
+<a name="12"></a>
+<h2>Listing files, directories and links</h2>
+<p>The FTP protocol doesn't offer a wide supported method to get complete informations 
+  about the contents of the working directory. The LIST command usually gives 
+  all you need to know, but unfortunately every server can use a different style 
+  for the response. It means that some servers return a UNIX style directory listing, 
+  some servers prefer the DOS style, others use some alternative ones.</p>
+<p>The ftp4j library can handle many LIST response formats, building from them 
+  a unified structured object representation of the directory contents. Currently 
+  ftp4j can handle:</p>
+<ul>
+  <li>UNIX style and variants (i.e. MAC style)</li>
+  <li>DOS style</li>
+  <li>NetWare styles</li>
+  <li>EPLF</li>
+  <li>MLSD</li>
+</ul>
+<p>This is done using pluggable parsers. The package <em>it.sauronsoftware.ftp4j.listparsers</em> 
+  contains the ones handling the styles listed above. Most of the time this should 
+  be enough.</p>
+<p>To list the current working directory entries call:</p>
+<pre>FTPFile[] list = client.list();</pre>
+<p>If you receive a <em>FTPListParseException</em> (<em>it.sauronsoftware.ftp4j.FTPListParseException</em>) 
+  it means that the server has replied to the LIST command in an incomprehensible 
+  style, that is none of the ones listed above. So you can try with the <em>listNames()</em> 
+  method, but that is less profitable than the <em>list()</em> one. <em>Extremis 
+  malis extrema remedia</em>: build your own LIST response parser, supporting 
+  the style you have encountered. You can do that implementing the <em>FTPListParser</em> 
+  (<em>it.sauronsoftware.ftp4j.FTPListParser</em>) interface. Then you can plug 
+  an instance of your parser in the client calling the <em>addListParser()</em> 
+  method.</p>
+<p><em>FTPFile</em> (<em>it.sauronsoftware.ftp4j.FTPFile</em>) objects offer a 
+  representation of the directory contents, including files, sub-directories and 
+  links. Depending on the response supplied by the server, some fields of a <em>FTPFile</em>  object could be <em>null</em> or setted to non-sense values. Please check the javadocs 
+  for details.</p>
+<p>You can also use a file filter parameter with the <em>list()</em> method, i.e.:</p>
+<pre>FTPFile[] list = client.list(&quot;*.jpg&quot;);</pre>
+<p>If the connected server declares explicitly to support the special MLSD command, ftp4j will
+use it instead of the basic LIST command. MLSD responses, infact, are standard, accurated and
+more easily parsable. Unfortunately not all of the servers support this command, and some of
+them support it badly. For these reasons the developer can control whether ftp4j should use the
+MLSD command by calling the <em>setMLSDPolicy()</em> method of a <em>FTPClient</em> object.
+Admitted values are:</p>
+<ul>
+  <li><p><em>FTPClient.MLSD_IF_SUPPORTED</em><br />
+  The client will use the MLSD command (instead of LIST) only if the server declares explicitly its support. This is the default ftp4j behaviour.</p></li>
+  <li><p><em>FTPClient.MLSD_ALWAYS</em><br />
+  The client will always use the MLSD command (instead of LIST), also if it is not explicitly supported by the server.</p></li>
+  <li><p><em>FTPClient.MLSD_NEVER</em><br />
+  The client will never use the MLSD command (instead of LIST), also if it is explicitly supported by the server.</p></li>
+</ul>
+<p>For example:</p>
+<code>client.setMLSDPolicy(FTPClient.MLSD_NEVER);</code>
+<a name="13"></a>
+<h2>Getting the modification date of files and directories</h2>
+<p>Usually a <em>FTPFile</em> object tells you about the last modification date 
+  of an entry, but as described above, that depends on the reply sent by the server. 
+  If you need a modification date and you can't get it through the <em>list()</em> 
+  method, try this:</p>
+<pre>java.util.Date md = client.modifiedDate(&quot;filename.ext&quot;);</pre>
+<a name="14"></a>
+<h2>Downloading and uploading files</h2>
+<p>The easiest way to download a remote file is a call to the <em>download(String, 
+  File)</em> method:</p>
+<pre>client.download(&quot;remoteFile.ext&quot;, new java.io.File(&quot;localFile.ext&quot;));</pre>
+<p>To upload:</p>
+<pre>client.upload(new java.io.File(&quot;localFile.ext&quot;));</pre>
+<p>To upload appending contents to an existing file:</p>
+<pre>client.append(new java.io.File(&quot;localFile.ext&quot;));</pre>
+<p>These are blocking calls: they will return only when the transfer will be completed 
+  (or failed, or aborted). Moreover a synchronization lock is imposed on the client, 
+  since only a transfer per time is permitted in a regular FTP communication. You can 
+  handle multiple transfers per time  using several <em>FTPClient</em> objects, each 
+  one establishing a separate connection with the server.</p>
+<p>You can monitor transfers with <em>FTPDataTransferListener</em> (<em>it.sauronsoftware.ftp4j.FTPDataTransferListener</em>) 
+  objects. Implement your one:</p>
+<pre>import it.sauronsoftware.ftp4j.FTPDataTransferListener;
+
+public class MyTransferListener implements FTPDataTransferListener {
+
+	public void started() {
+		// Transfer started
+	}
+
+	public void transferred(int length) {
+		// Yet other length bytes has been transferred since the last time this
+		// method was called
+	}
+
+	public void completed() {
+		// Transfer completed
+	}
+
+	public void aborted() {
+		// Transfer aborted
+	}
+
+	public void failed() {
+		// Transfer failed
+	}
+
+}</pre>
+<p>Now download or upload as follows:</p>
+<pre>client.download(&quot;remoteFile.ext&quot;, new java.io.File(&quot;localFile.ext&quot;), new MyTransferListener());</pre>
+<pre>client.upload(new java.io.File(&quot;localFile.ext&quot;), new MyTransferListener());</pre>
+<pre>client.append(new java.io.File(&quot;localFile.ext&quot;), new MyTransferListener());</pre>
+<p>While the client is downloading or uploading, the transfer can be aborted by 
+  another thread calling the <em>abortCurrentDataTransfer()</em> method on the same <em>FTPClient</em> object. This 
+  one requires a boolean parameter: <em>true</em> to perform a legal abort procedure 
+  (an ABOR command is sent to the server), <em>false</em> to abruptly close the 
+  transfer without advice:</p>
+<pre>client.abortCurrentDataTransfer(true); // Sends ABOR</pre>
+<pre>client.abortCurrentDataTransfer(false); // Breaks abruptly</pre>
+<p>Note that also the <em>list()</em> and the <em>listNames()</em> methods imply 
+  a data transfer (the response is served on a data transfer channel), so the 
+  <em>abortCurrentDataTransfer()</em> method can  also be used to interrupt a list 
+  procedure.</p>
+<p>When a data tranfer is aborted the <em>download()</em>, <em>upload()</em>, <em>append()</em>, 
+  <em>list()</em> and <em>listNames()</em> methods die throwing a <em>FTPAbortedException</em> 
+  (<em>it.sauronsoftware.ftp4j.FTPAbortedException</em>).</p>
+<p>Download and upload operation can be resumed suppling a <em>restartAt</em> 
+  parameter:</p>
+<pre>client.download(&quot;remoteFile.ext&quot;, new java.io.File(&quot;localFile.ext&quot;), 1056);</pre>
+<p>This one resumes the download operation starting from the 1056th byte of the 
+  file. The first byte transferred will be the 1057th.</p>
+<p>Other <em>download()</em>, <em>upload()</em> and <em>append()</em> variants let you work with 
+  streams instead of <em>java.io.File</em> objects. So you can also transfer data 
+  from and to a database, a network connection or anything else.</p>
+<p>Check the javadocs.</p>
+<a name="15"></a>
+<h2>Active and passive data transfer modes</h2>
+<p>Data transfer channels are established through a separate network connection between the client and the server. The server could be <em>active</em> or <em>passive</em> in the establishing of the transfer channel. When the server is active data transfers work as follows:</p>
+<ol>
+  <li>The client sends to the server its IP address and a port number.</li>
+  <li>The client asks to the server a data transfer, and it starts listening the port sent before.</li>
+  <li>The server connects the address and the port supplied by the client.</li>
+  <li>The data transfer starts in the new established channel.</li>
+</ol>
+<p>The active mode requires that your client could receive incoming connections from the server. If your client is behind a firewall, a proxy, a gateway or a mix of them, most of the time that is a problem, since it cannot receive incoming connections from outside. Here comes the <em>passive</em> data transfer mode:</p>
+<ol>
+  <li>The client asks to the server to prepare a passive data transfer.</li>
+  <li>The server replies with its IP address and a port number.</li>
+  <li>The client asks the transfer and connects.</li>
+  <li>The data transfer starts in the new established channel.</li>
+</ol>
+<p>In passive mode the client connects the server: no incoming connection is required.</p>
+<p>With ftp4j you can switch between the active and passive modes calling:</p>
+<pre>client.setPassive(false); // Active mode</pre>
+<pre>client.setPassive(true); // Passive mode</pre>
+<p>The default value for a ftp4j client passive flag is <em>true</em>: if you never call <em>setPassive(false)</em> your client will act ever asking the passive mode to the server before every transfer.</p>
+<p>When a passive file transfer is being negotiated, the server supplies an IP address and a port number. The client, as of FTP specifications, should connect to the given host and port.
+In business environments, this behavior could be often problematical, since NAT configurations could prevent literal connections to the given IP address.
+This is the reason why FTP clients usually ignore any IP address returned by the server and connects to the same host used for the communication line. The ftp4j's behavior depends on several factors:</p>
+<ul>
+  <li>Every <em>FTPConnector</em> has a default behavior. Most of the bundled ones ignores the IP address returned by the server. At the moment, the only official connector which by default uses the address returned by the server is <em>FTPProxyConnector</em>.</li>
+  <li>The connector's behavior can be globally overriden by defining the system property named <em>ftp4j.passiveDataTransfer.useSuggestedAddress</em>. If it is &quot;true&quot;, &quot;yes&quot; or &quot;1&quot;, any connector will always use the address returned by the server; otherwise, if the system property value is &quot;false&quot;, &quot;no&quot; or &quot;0&quot;, any connector will never use it.</li>
+  <li>Finally, the connector's default behavior and the global setting can be easily overridden in any connector's instance. You can achieve this by retrieving your client's connector and calling its <em>setUseSuggestedAddressForDataConnections()</em> method. This is the finest control you can obtain, since you can choose the behavior in any case and also before any file transfer, if you need to.</li>
+</ul> 
+<p>In the active transfer mode, the following system properties can be set:</p>
+<ul>
+  <li><p><em>ftp4j.activeDataTransfer.hostAddress</em><br />
+  Host address. The client will forward to the server the given address, when the server is requested to perform a connection to the client. The value should be a valid IPv4 address in the <em>a.b.c.d</em> form. I.e. <em>178.12.34.167</em>. If the value is not supplied, the client resolves automatically the system address. But if the client runs in a LAN, connecting an external server through a router with port-forwarding service for active data transfers, the auto-detected address could not be the right one. This also should happen when the system has more network interfaces. By using this system property this kind of problems can be solved.</p></li>
+  <li><p><em>ftp4j.activeDataTransfer.portRange</em><br />
+  Connection port range. The client will pick a port in the range for the data transfer. The value must be in the <em>start-stop</em> form. I.e. <em>6000-7000</em> means that the client will pick ports only between the given interval when it will ask the server to perform a connection. By default no range is specified: that means the client could pick any available port.</p></li>
+  <li><p><em>ftp4j.activeDataTransfer.acceptTimeout</em><br />
+  A value in milliseconds that will be picked as the connection timeout. If the server does not connect the client within the given timeout, the transfer is interrupted throwing a <em>FTPDataTransferException</em>. A value equal to 0 means that no timeout will be applied. Default value is 30000 (30 seconds).</p></li>
+</ul>
+<p>To set a system property you can:</p>
+<ul>
+  <li>
+  <p>Start the virtual machine with one or more <em>-Dproperty=value</em> arguments. I.e.:</p>
+<pre>java -Dftp4j.activeDataTransfer.hostAddress=178.12.34.167
+     -Dftp4j.activeDataTransfer.portRange=6000-7000
+     -Dftp4j.activeDataTransfer.acceptTimeout=5000 MyClass</pre>
+  </li>
+  <li>
+  <p>Set property values directly in the code. I.e.:</p>
+<pre>System.setProperty(&quot;ftp4j.activeDataTransfer.hostAddress&quot;, &quot;178.12.34.167&quot;);
+System.setProperty(&quot;ftp4j.activeDataTransfer.portRange&quot;, &quot;6000-7000&quot;);
+System.setProperty(&quot;ftp4j.activeDataTransfer.acceptTimeout&quot;, &quot;5000&quot;);</pre>
+  </li>
+</ul>
+<a name="16"></a>
+<h2>Binary and textual data transfer types</h2>
+<p>Another data transfer key concept concerns the <em>binary</em> and the <em>textual</em> types. When a transfer is binary the  file is treated as a binary stream, and it is stored by the target machine as it is received from the source. A textual data transfer, instead, treats the transferred file as a character stream, performing charset transformation. Suppose your client is running on a Windows platform, while the server runs on UNIX, whose default charsets are usually different. The client send a file to the server selecting textual type. The client assumes that the file is encoded with the machine standard charset, so it decodes every character and encodes it in an intermediate charset before sending. The server receives the stream, decode the intermediate charset and encodes the file with its machine default charset before storing. Bytes has been changed, but  contents are the same.</p>
+<p>You can choose your transfer type calling:</p>
+<pre>client.setType(FTPClient.TYPE_TEXTUAL);</pre>
+<pre>client.setType(FTPClient.TYPE_BINARY);</pre>
+<pre>client.setType(FTPClient.TYPE_AUTO);</pre>
+<p>The <em>TYPE_AUTO</em> constant, which is also the default one, let the client pick the type automatically: a textual transfer will be performed if the extension of the file is between the ones the client recognizes as textual type markers. File extensions are sniffed through a <em>FTPTextualExtensionRecognizer</em> (<em>it.sauronsoftware.ftp4j.FTPTextualExtensionRecognizer</em>) instance. The default extension recognizer, which is an instance of <em>it.sauronsoftware.ftp4j.recognizers.DefaultTextualExtensionRecognizer</em>, recognizes these extensions as textual ones: </p>
+<pre>abc acgi aip asm asp c c cc cc com conf cpp<br />csh css cxx def el etx f f f77 f90 f90 flx<br />for for g h h hh hh hlb htc htm html htmls<br />htt htx idc jav jav java java js ksh list<br />log lsp lst lsx m m mar mcf p pas php pl pl<br />pm py rexx rt rt rtf rtx s scm scm sdml sgm<br />sgm sgml sgml sh shtml shtml spc ssi talk<br />tcl tcsh text tsv txt uil uni unis uri uris<br />uu uue vcs wml wmls wsc xml zsh</pre>
+<p>You can build your own  recognizer implementing the <em>FTPTextualExtensionRecognizer</em> interface, but maybe you'll like more to instance the convenience class <em>ParametricTextualExtensionRecognizer</em> (<em>it.sauronsoftware.ftp4j.recognizers.ParametricTextualExtensionRecognizer</em>). Anyway, don't forget to plug your recognizer in the client:</p>
+<pre>client.setTextualExtensionRecognizer(myRecognizer);</pre>
+<a name="17"></a>
+<h2>Data transfer compression</h2>
+<p>Some servers support a data transfer compression feature called MODE Z. This feature is useful to save bandwidth on large file transfers. Once the client is connected to the server and authenticated, the compression support can be checked by calling:</p>
+<code>boolean compressionSupported = client.isCompressionSupported();</code>
+<p>If compression is supported on the server-side, it can be enabled by calling:</p>
+<code>client.setCompressionEnabled(true);</code>
+<p>After this call, any subsequent data transfer (downloads, uploads and list operations) will be compressed, saving bandwidth.</p>
+<p>Data transfer compression can be disabled again by calling:</p>
+<code>client.setCompressionEnabled(false);</code>
+<p>The flag value can also be checked:</p>
+<code>boolean compressionEnabled = client.isCompressionEnabled();</code>
+<p>Please note that compressed data transfer will take place only if compression is both supported and enabled.</p>
+<p>By default, compression is disabled, even if supported by the server. If required, it has to be explicitly turned on.</p>
+<a name="18"></a>
+<h2>NOOPing the server</h2>
+<p>Suppose your client is doing nothing since it's waiting for user input. Usually FTP servers disconnect automatically an inactive client. To avoid this timeout you can send now and then a NOOP command. This one does nothing but it points out to the server that the client is still alive, resetting  the timeout counter. Call:</p>
+<pre>client.noop();</pre>
+<p>Automatic NOOPs can also be issued by the client when an inactivity timeout occurs. By default this feature is disabled. It can be enabled by setting the timeout duration with the <em>setAutoNoopTimeout()</em> method, supplying a value expressed in milliseconds. For example:</p>
+<pre>client.setAutoNoopTimeout(30000);</pre>
+<p>With this value, the client will issue a NOOP command after 30 seconds of inactivity.</p>
+<p>The automatic NOOP timeout can be disabled again by using a value equal or less than zero:</p>
+<pre>client.setAutoNoopTimeout(0);</pre>
+<a name="19"></a>
+<h2>Site specific and custom commands</h2>
+<p>You can send site specific commands as follows:</p>
+<pre>FTPReply reply = client.sendSiteCommand(&quot;YOUR COMMAND&quot;);</pre>
+<p>You can also sends custom commands:</p>
+<pre>FTPReply reply = client.sendCustomCommand(&quot;YOUR COMMAND&quot;);</pre>
+<p>Both <em>sendSiteCommand()</em> and <em>sendCustomCommand()</em> return a <em>FTPReply</em> (<em>it.sauronsoftware.ftp4j.FTPReply</em>) object. With this one you can check the response received, getting the server reply code and message. The <em>FTPCodes </em>(<em>it.sauronsoftware.ftp4j.FTPCodes</em>) interface reports some common FTP reply codes, so you can try to match your reply code with one of those the library knows for sure.</p>
+<a name="20"></a>
+<h2>Exceptions handling</h2>
+<p>The ftp4j library defines five kinds of exception:</p>
+<ul>
+  <li><em>FTPException</em> (<em>it.sauronsoftware.ftp4.FTPException</em>) <br />
+    Depending on the  method, this one is thrown to report a FTP failure. You can check the reported error code, testing it against the <em>FTPCodes</em> constants to gain more details about the reason of the failure.</li>
+  <li><em>FTPIllegalReplyException</em>  (<em>it.sauronsoftware.ftp4.FTPIllegalReplyException</em>)<br />
+    This one means that the remote server has replied in an illegal way, that is not FTP compliant. That should be very rare.</li>
+  <li><em>FTPListParseException</em>  (<em>it.sauronsoftware.ftp4.FTPListParseException</em>)<br />
+    This one is thrown by the <em>list()</em> method if the response sent by the server cannot be parsed through the list parsers known by the client. </li>
+  <li><em>FTPDataTransferException</em>  (<em>it.sauronsoftware.ftp4.FTPDataTransferException</em>)<br />
+  This one is thrown if a data transfer (<em>download</em>, <em>upload</em>, but also <em>list</em> and <em>listNames</em>) fails due to a network connection error.</li>
+  <li><em>FTPAbortedException</em> (<em>it.sauronsoftware.ftp4.FTPAbortedException</em>)<br />
+  This one is thrown if a data transfer (<em>download</em>, <em>upload</em>, but also <em>list</em> and <em>listNames</em>) fails due to a client abort request.</li>
+</ul>
+</body>
+</html>
