@@ -9,55 +9,154 @@
     xsi:schemaLocation="http://www.archenroot.org/SOATestingFramework/Config 
     file:../schema/SoaTestingFramework.xsd">
     
-    <stfconf:database identificator="VendorContacts_DB">
-        <dbconf:databaseType>Oracle</dbconf:databaseType>
-        <dbconf:hostName>prometheus</dbconf:hostName>
-        <dbconf:port>1521</dbconf:port>
-        <dbconf:userName>FUSION</dbconf:userName>
-        <dbconf:password>FUSION</dbconf:password>
-        <dbconf:serviceId>xe</dbconf:serviceId>
-        <dbconf:dbObjects>
-            <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_CONTS_EXT">
-                <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
-            </dbconf:dbObject>
-        </dbconf:dbObjects>
-    </stfconf:database>
     
-    <stfconf:database identificator="VendorMaintain_EBS_PCM_002">
-        <dbconf:databaseType>Oracle</dbconf:databaseType>
-        <dbconf:hostName>prometheus</dbconf:hostName>
-        <dbconf:port>1521</dbconf:port>
-        <dbconf:userName>FUSION</dbconf:userName>
-        <dbconf:password>FUSION</dbconf:password>
-        <dbconf:serviceId>xe</dbconf:serviceId>
-        <dbconf:dbObjects>
-            <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_SITES_EXT">
-                <dbconf:customValue columnName="MV_INT_NAME" columnValue="EBS_PCM_002"/>
-                <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
-            </dbconf:dbObject>       
-        </dbconf:dbObjects>
-    </stfconf:database>
+    <scenario name="EBS_PCM_002">
+        <scenario step 2>
+            <source>
+             <stfconf:database identificator="eis/DBAdapter/XXXI">
+                 <dbconf:dbObjects>
+                     <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_CONTS_EXT">
+                         <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
+                     </dbconf:dbObject>
+                 </dbconf:dbObjects>
+             </stfconf:database>
+            </source>
+            <target>
+             <queue identificator="Premaintain">
+                 <messageSchema name="x.xsd"></messageSchema>
+             </queue>
+            </target>
+        </sekvence>
+        <scenario step 2>
+            <source>
+                <stfconf:database identificator="VendorContacts_DB">
+                    <dbconf:dbObjects>
+                        <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_CONTS_EXT">
+                            <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
+                        </dbconf:dbObject>
+                    </dbconf:dbObjects>
+                </stfconf:database>    
+            </source>
+            <target>
+                <queue identificator="bge.Vendors.MaintainQueue">
+                    <messageSchema name="x.xsd"></messageSchema>
+                </queue>
+            </target>
+        </sekvence>
+    </scenario>
+    <scenario name="EBS_PCM_002">
+        <sekvence 1>
+            <source>
+                <stfconf:database identificator="VendorContacts_DB">
+                    <dbconf:dbObjects>
+                        <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_CONTS_EXT">
+                            <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
+                        </dbconf:dbObject>
+                    </dbconf:dbObjects>
+                </stfconf:database>
+            </source>
+            <target>
+                <queue identificator="Premaintain">
+                    <messageSchema name="x.xsd"></messageSchema>
+                </queue>
+            </target>
+        </sekvence>
+        <sekvence 2>
+            <source>
+                <stfconf:database identificator="VendorContacts_DB">
+                    <dbconf:dbObjects>
+                        <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_CONTS_EXT">
+                            <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
+                        </dbconf:dbObject>
+                    </dbconf:dbObjects>
+                </stfconf:database>    
+            </source>
+            <target>
+                <queue identificator="bge.Vendors.MaintainQueue">
+                    <messageSchema name="y.xsd"></messageSchema>
+                </queue>
+            </target>
+        </sekvence>
+    </scenario>
+            <scenario name="EBS_PCM_002">
+                <sekvence 1>
+                    <source>
+                        <stfconf:database identificator="VendorContacts_DB">
+                            <dbconf:dbObjects>
+                                <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_CONTS_EXT">
+                                    <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
+                                </dbconf:dbObject>
+                            </dbconf:dbObjects>
+                        </stfconf:database>
+                    </source>
+                    <target>
+                        <queue identificator="Premaintain">
+                            <messageSchema name="x.xsd"></messageSchema>
+                        </queue>
+                    </target>
+                </sekvence>
+                <sekvence 2>
+                    <source>
+                        <stfconf:database identificator="VendorContacts_DB">
+                            <dbconf:dbObjects>
+                                <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_CONTS_EXT">
+                                    <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
+                                </dbconf:dbObject>
+                            </dbconf:dbObjects>
+                        </stfconf:database>    
+                    </source>
+                    <target>
+                        <queue identificator="bge.Vendors.MaintainQueue">
+                            <messageSchema name="y.xsd"></messageSchema>
+                        </queue>
+                    </target>
+                </sekvence>
+            </scenario>
     
-    <stfconf:database identificator="VendorSitesMaintainFromEBS_EBS_MAX_003">
-        <dbconf:databaseType>Oracle</dbconf:databaseType>
-        <dbconf:hostName>prometheus</dbconf:hostName>
-        <dbconf:port>1521</dbconf:port>
-        <dbconf:userName>FUSION</dbconf:userName>
-        <dbconf:password>FUSION</dbconf:password>
-        <dbconf:serviceId>xe</dbconf:serviceId>
-        <dbconf:dbObjects>
-            <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_SITES_EXT">
-                <dbconf:customValue columnName="MV_INT_NAME" columnValue="EBS_MAX_003"/>
-                <dbconf:customValue columnName="INT_STATUS" columnValue="V"/>
-            </dbconf:dbObject>
-        </dbconf:dbObjects>
-    </stfconf:database>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    <scenario name="EBS_PCM_003">
+        
+    </scenario>
+    <scenario name="EBS_PCM_004>
+        
+    </scenario>
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     <stfconf:jms identificator="IWCommonJMSServer_VendorContacts_prequeue_O47C">
-        <jmsconf:server name="IWCommonJMSServer"/>
-        <jmsconf:connectionFactory name="bge.XAConnectionFactory" jndiName="bge.XAConnectionFactory"/>
         <jmsconf:messageSchema relativeURI="test/jms/schema/Int047VendorsMaintainAdapterContacts_table.xsd"/>
-        <jmsconf:queue name="bge.Vendors.PreMaintainQueue047C" jndiName="bge/Vendors/PreMaintainQueue047C"/>
     </stfconf:jms>
     
     <stfconf:jms identificator="IWCommonJMSServer_prequeue_O47S">
@@ -84,31 +183,7 @@
    
     
     
-    <stfconf:osb>
-        <osbconf:adminServer>
-            <osbconf:jmxProtocol>t3</osbconf:jmxProtocol>
-            <osbconf:host>prometheus</osbconf:host>
-            <osbconf:port>7001</osbconf:port>
-            <osbconf:securityPrincipal>weblogic</osbconf:securityPrincipal>
-            <osbconf:securityCredentials>Weblogic123</osbconf:securityCredentials>
-        </osbconf:adminServer>
-        <osbconf:cluster>
-            <osbconf:managedServer>
-                <osbconf:hostName>prometheus</osbconf:hostName>
-                <osbconf:port>8011</osbconf:port>
-            </osbconf:managedServer>
-        </osbconf:cluster>
-        <osbconf:services>
-            <osbconf:service identificator="VendorContactsMaintainFromEBS_047C_prequeue_listener">
-                <osbconf:serviceURI>VendorMaintainFromEBS/Proxy Services/VendorContactsMaintainFromEBSPS</osbconf:serviceURI>
-                <osbconf:serviceType>ProxyService</osbconf:serviceType>
-            </osbconf:service>
-            <osbconf:service identificator="VendorsSitesAndContactsPS_masterqueue_listener">
-                <osbconf:serviceURI>VendorToMaximoPrimavera/ProxyServices/VendorsSitesAndContactsPS</osbconf:serviceURI>
-                <osbconf:serviceType>ProxyService</osbconf:serviceType>
-            </osbconf:service>
-        </osbconf:services>
-    </stfconf:osb>
+    
     
     <stfconf:mapping identificator="Validate_VendorContactDB_with_queue_047C_message">
         <mapconf:fromComponent identificator="VendorContacts_DB" componentType="Database" object="XXXIW_MW_PO_VENDOR_CONTS_EXT"/>
@@ -125,6 +200,77 @@
             <mapconf:mapping fromName="INT_STATUS" toName=""/>
             <mapconf:mapping fromName="LAST_UPDATE_LOGIN" toName="TEST"/>
         </mapconf:customMappings>
+        
     </stfconf:mapping>    
-    
+    <db-to-queue patern="db-queue">
+        <scenar 1 type="EBS_PCM_002"">
+            <sekvence name="db-to-prequeu>
+                krok 1
+                krok 2
+            <sekvence db-to-prequeu>
+                krok 1
+                krok 2
+            <sekvence db-to-prequeu>
+                krok 1
+                krok 2 - check error queue
+            </sekvence>
+        </scenar>
+        
+        <scenar 2 type="EBS_PCM_002"">
+            <sekvence db-to-prequeu>
+                krok 1
+                krok 2
+            </sekvence>
+            <sekvence PREQUEU-TO-QUEUE>
+                krok 1
+                krok 2
+            </sekvence>
+            <sekvence QUEUE-TO-ENDPOINT>
+                krok 1
+                krok 2
+            </sekvence>
+        </scenar>
+        
+        <scenar 3 type="EBS_PCM_002"">
+            <sekvence db-to-prequeu>
+                krok 1
+                krok 2
+            </sekvence>
+            <sekvence PREQUEU-TO-QUEUE>
+                krok 1
+                krok 2
+            </sekvence>
+            <sekvence QUEUE-TO-ENDPOINT>
+                krok 1
+                krok 2
+            </sekvence>
+        </scenar>
+        
+        
+        <interface identificator="A" pattern=db-queueh></interface>
+        <interface identificator="B" db-queue-lada-jech></interface>
+        <interface identificator="B" pattern=beta></interface>
+        <paterns>
+            <patern db-queueh>
+                <all type of elementGroup={sekvence1, sekvence2, sekvence3}
+                <sekvence 1= "Vypne OSB sluzbu" name="db-to-prequeu>
+                    krok 1
+                    krok 2
+                 <sekvence db-to-prequeu>
+                        krok 1
+                        krok 2
+                 <sekvence db-to-prequeu>
+                            krok 1
+                            krok 2 - check error queue
+               </sekvence>
+            </patern>
+            <patern db-queue-lada-jech>
+                <step OSB_DISABLE_SERVICE></step>
+                <step FTP_SEND_FILE></step>
+            </patern>
+            <patern beta>
+                <step OSB_DISABLE_SERVICE></step>
+                <step FTP_SEND_FILE></step>
+            </patern>
+        </paterns>
 </stfconf:soaTestingFrameworkConfiguration>
