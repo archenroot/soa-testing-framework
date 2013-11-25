@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<stfconf:soaTFIfaceConfig
+    xmlns:stfconf="http://www.ibm.com/SOATF/Config/Iface"
+    xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Iface/FTP"
+    xmlns:jmsconf="http://www.ibm.com/SOATF/Config/Iface/JMS"
+    xmlns:dbconf="http://www.ibm.com/SOATF/Config/Iface/DB"
+    xmlns:soapconf="http://www.ibm.com/SOATF/Config/Iface/SOAP"
+    xmlns:utilconf="http://www.ibm.com/SOATF/Config/Iface/UTIL"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.ibm.com/SOATF/Config/Iface ../../SOATestingFramework/schema/SOATFIfaceConfig/SOATFIfaceConfig.xsd">
+    <stfconf:ifaceEndPoints>
+        <stfconf:ifaceEndPoint endPointLocalId="Sites EBS_PCM_002 Source Database - Valid Data">
+            <stfconf:database refId="eis/ebs/DatabaseAdapter">
+                <dbconf:dbObjects>
+                    <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_SITES_EXT">
+                        <dbconf:customValue columnName="INT_STATUS" columnValue="V" pooledValue="S"/>
+                        <dbconf:customValue columnName="SEQUENCE_NUM" columnValue="999999"/>
+                        <dbconf:customValue columnName="ACTION_FLAG" columnValue="I"/>
+                        <dbconf:customValue columnName="VENDOR_ID" columnValue="5004"/>
+                        <dbconf:customValue columnName="VENDOR_SITE_ID" columnValue="5011"/>
+                        <dbconf:customValue columnName="VENDOR_SITE_CODE" columnValue="Arup Consulting Engineers - Cork"/>
+                        <dbconf:customValue columnName="VENDOR_CODE" columnValue="13"/>
+                        <!-- <dbconf:customValue columnName="FOB_CODE" columnValue="null"/>  -->
+                        <!-- <dbconf:customValue columnName="FREIGHT_TERMS" columnValue="null"/> -->
+                        <dbconf:customValue columnName="CURRENCY_CODE" columnValue="EUR"/>
+                        <!-- framework doesn't support this value, can't convert it <dbconf:customValue columnName="INACTIVE_DATE" columnValue="18-NOV-13"/> -->
+                        <dbconf:customValue columnName="ADDRESS1" columnValue="Valovice 9"/>
+                        <dbconf:customValue columnName="ADDRESS2" columnValue="Katusice"/>
+                        <dbconf:customValue columnName="ADDRESS3" columnValue="Alfa"/>
+                        <dbconf:customValue columnName="CITY" columnValue="Mlada Boleslav"/>
+                        <dbconf:customValue columnName="STATE" columnValue="Stredni Cechy"/>
+                        <dbconf:customValue columnName="PROVINCE" columnValue="Stredni Cechy"/>
+                        <dbconf:customValue columnName="MW_INT_NAME" columnValue="EBS_PCM_002"/>
+                        <dbconf:customValue columnName="MW_SOURCE_MESSAGE_REF" columnValue="7909290972" sourceMessageId="true" />
+                        <dbconf:customValue columnName="MW_SOURCE_ENTITY_REF" columnValue="0972" sourceEntityId="true"/>
+                        <dbconf:customValue columnName="PERIOD_CONTRACTOR" columnValue="1"/>
+                    </dbconf:dbObject>
+                </dbconf:dbObjects>
+            </stfconf:database>
+        </stfconf:ifaceEndPoint>
+        <stfconf:ifaceEndPoint endPointLocalId="Sites EBS_PCM_002 Source Database - Invalid Data">
+            <stfconf:database refId="eis/ebs/DatabaseAdapter">
+                <dbconf:dbObjects>
+                    <dbconf:dbObject name="XXXIW_MW_PO_VENDOR_SITES_EXT">
+                        <dbconf:customValue columnName="INT_STATUS" columnValue="V" pooledValue="S"/>
+                        <dbconf:customValue columnName="SEQUENCE_NUM" columnValue="999999"/>
+                        <dbconf:customValue columnName="ACTION_FLAG" columnValue="I"/>
+                        <dbconf:customValue columnName="VENDOR_ID" columnValue="5004"/>
+                        <dbconf:customValue columnName="VENDOR_SITE_ID" columnValue="5011"/>
+                        <dbconf:customValue columnName="VENDOR_SITE_CODE" columnValue="Arup Consulting Engineers - Cork"/>
+                        <dbconf:customValue columnName="VENDOR_CODE" columnValue="13"/>
+                        <!-- <dbconf:customValue columnName="FOB_CODE" columnValue="null"/>  -->
+                        <!-- <dbconf:customValue columnName="FREIGHT_TERMS" columnValue="null"/> -->
+                        <dbconf:customValue columnName="CURRENCY_CODE" columnValue="EUR"/>
+                        <!-- framework doesn't support this value, can't convert it <dbconf:customValue columnName="INACTIVE_DATE" columnValue="18-NOV-13"/> -->
+                        <dbconf:customValue columnName="ADDRESS1" columnValue="Valovice 9"/>
+                        <dbconf:customValue columnName="ADDRESS2" columnValue="Katusice"/>
+                        <dbconf:customValue columnName="ADDRESS3" columnValue="Alfa"/>
+                        <dbconf:customValue columnName="CITY" columnValue="Mlada Boleslav"/>
+                        <dbconf:customValue columnName="STATE" columnValue="Stredni Cechy"/>
+                        <dbconf:customValue columnName="PROVINCE" columnValue="Stredni Cechy"/>
+                        <dbconf:customValue columnName="MW_INT_NAME" columnValue="EBS_PCM_XXX"/>
+                        <dbconf:customValue columnName="MW_SOURCE_MESSAGE_REF" columnValue="7909290972" sourceMessageId="true" />
+                        <dbconf:customValue columnName="MW_SOURCE_ENTITY_REF" columnValue="0972" sourceEntityId="true"/>
+                        <dbconf:customValue columnName="PERIOD_CONTRACTOR" columnValue="1"/>
+                    </dbconf:dbObject>
+                </dbconf:dbObjects>
+            </stfconf:database>
+        </stfconf:ifaceEndPoint>
+        <stfconf:ifaceEndPoint endPointLocalId="Sites EBS_PCM_002 Preprocessing Queue">
+            <stfconf:jmsSubsystem>
+                <jmsconf:jmsServer name="IWCommonJMSServer"/>
+                <jmsconf:connectionFactory name="iw.XAConnectionFactory" jndiName="iw/XAConnectionFactory"/>
+                <jmsconf:queue name="iw.Vendors.PreMaintainQueue047V" jndiName="iw/Vendors/PreMaintainQueue047V"/>
+                <jmsconf:messageSchema path="../osb/VendorMaintainFromEBS/Resources/Schema/VendorMaintainPollingPS_table.xsd"/>
+            </stfconf:jmsSubsystem>
+    </stfconf:ifaceEndPoint>
+        <stfconf:ifaceEndPoint endPointLocalId="Sites EBS_PCM_002 Maintain Queue">
+            <stfconf:jmsSubsystem>
+                <jmsconf:jmsServer name="IWCommonJMSServer"/>
+                <jmsconf:connectionFactory name="bge.XAConnectionFactory" jndiName="bge/XAConnectionFactory"/>
+                <jmsconf:queue name="bge.Vendors.MaintainQueue" jndiName="bge/Vendors/MaintainQueue"/>
+                <jmsconf:messageSchema path="../osb/VendorMaintainFromEBS/Resources/Schema/VendorsSitesAndContacts_201006.xsd"/>
+            </stfconf:jmsSubsystem>
+        </stfconf:ifaceEndPoint>
+        <stfconf:ifaceEndPoint endPointLocalId="Sites EBS_PCM_002 Preprocessing Queue Listener Proxy">
+            <stfconf:soap>
+                <soapconf:serviceName>VendorMaintainFromEBSPS</soapconf:serviceName>
+                <soapconf:endPointUri>VendorMaintainFromEBS/Proxy Services/VendorMaintainFromEBSPS</soapconf:endPointUri>
+                <soapconf:serviceLocationType>internal</soapconf:serviceLocationType>
+                <soapconf:serviceSOAType>ProxyService</soapconf:serviceSOAType>
+            </stfconf:soap>
+        </stfconf:ifaceEndPoint>
+        <stfconf:ifaceEndPoint endPointLocalId="Sites EBS_PCM_002 Maintain Queue Listener Proxy">
+            <stfconf:soap>
+                <soapconf:serviceName>VendorsSitesAndContactsPS</soapconf:serviceName>
+                <soapconf:endPointUri>VendorToMaximoPrimavera/ProxyServices/VendorsSitesAndContactsPS</soapconf:endPointUri>
+                <soapconf:serviceLocationType>internal</soapconf:serviceLocationType>
+                <soapconf:serviceSOAType>ProxyService</soapconf:serviceSOAType>
+            </stfconf:soap>
+        </stfconf:ifaceEndPoint>
+    </stfconf:ifaceEndPoints>
+    <stfconf:utilConfig>
+    <utilconf:delays>
+        <utilconf:waitForDbPool>30000</utilconf:waitForDbPool>
+        <utilconf:waitForQueueMsgTransfer>7000</utilconf:waitForQueueMsgTransfer>
+        <utilconf:waitForErrorQueue>30000</utilconf:waitForErrorQueue>
+        <utilconf:waitForFTPPool>30000</utilconf:waitForFTPPool>
+    </utilconf:delays>
+     </stfconf:utilConfig>
+   <stfconf:ifaceFlowPatternConfig>
+       <stfconf:ifaceFlowPattern refId="Database to Queue to Queue to Database or SOAP" testName="Test case scenario for Vendor Sites of type EBS_PCM_002">
+           <stfconf:ifaceTestScenario refId="Positive scenario 1 - Source to Destination">
+               <stfconf:ifaceExecBlock refId="Database to Pre-Queue">
+                   <stfconf:source endPointLocalIdRef="Sites EBS_PCM_002 Source Database - Valid Data"/>
+                   <stfconf:target endPointLocalIdRef="Sites EBS_PCM_002 Preprocessing Queue"/>
+                   <stfconf:target endPointLocalIdRef="Sites EBS_PCM_002 Preprocessing Queue Listener Proxy"/>
+               </stfconf:ifaceExecBlock>
+               <stfconf:ifaceExecBlock refId="Pre-Queue to Maintain Queue">
+                   <stfconf:source endPointLocalIdRef="Sites EBS_PCM_002 Source Database - Valid Data"/>
+                   <stfconf:source endPointLocalIdRef="Sites EBS_PCM_002 Preprocessing Queue Listener Proxy"/>
+                   <stfconf:target endPointLocalIdRef="Sites EBS_PCM_002 Maintain Queue"/>
+                   <stfconf:target endPointLocalIdRef="Sites EBS_PCM_002 Maintain Queue Listener Proxy"/>
+               </stfconf:ifaceExecBlock>
+               <stfconf:ifaceExecBlock refId="Maintain Queue to Database or SOAP Service">
+                   <stfconf:source endPointLocalIdRef="Sites EBS_PCM_002 Source Database - Valid Data"/>
+                   <stfconf:source endPointLocalIdRef="Sites EBS_PCM_002 Maintain Queue Listener Proxy"/>
+               </stfconf:ifaceExecBlock>
+            </stfconf:ifaceTestScenario>
+           <stfconf:ifaceTestScenario refId="Negative scenario 1 - Database to Pre-Queue with Wrong Data">
+               <stfconf:ifaceExecBlock refId="Database to Pre-Queue">
+                   <stfconf:source endPointLocalIdRef="Sites EBS_PCM_002 Source Database - Invalid Data"/>
+               </stfconf:ifaceExecBlock>
+           </stfconf:ifaceTestScenario>
+       </stfconf:ifaceFlowPattern>
+   </stfconf:ifaceFlowPatternConfig>
+</stfconf:soaTFIfaceConfig>        
+

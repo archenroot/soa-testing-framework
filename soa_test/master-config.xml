@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<soaTestingFrameworkMasterConfiguration 
+    xmlns="http://www.ibm.com/SOATF/Config/Master"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+ xsi:schemaLocation="http://www.ibm.com/SOATF/Config/Master ../../SOATestingFramework/schema/SOATFMasterConfig/SOATFMasterConfig.xsd">
+    <interfaces>
+        <interface name="IW.708.JRNEXC_M_EBS" description="Journals and Exchange Rates">
+            <projects>
+                <project name="JournalExchgRateFromSalmonHRBloomberg"/>
+                <project name="JournalExchgRateToEBS"/>    
+            </projects>
+            <patterns>
+                <referencedFlowPattern identificator="FTP to Queue to Database" occurrence="1"/>
+            </patterns>
+        </interface>
+        <interface name="BG.RINT.047" description="Vendors" >
+            <projects>
+                <project name="VendorMaintainFromEBS"/>
+                <project name="VendorToMaximoPrimavera"/>    
+            </projects>
+            <patterns>
+                <referencedFlowPattern identificator="Database to Queue to Queue to Database or SOAP" occurrence="3"/>
+            </patterns>
+        </interface>
+    </interfaces>
+    <environments>
+    <oracleFusionMiddleware>
+        <oracleFusionMiddlewareInstance environment="custom" environmentType="user" name="Ladislav Jech LocalHost">
+            <adminServer>
+                <jmxProtocol>t3</jmxProtocol>
+                <host>prometheus</host>
+                <port>7001</port>
+                <securityPrincipal>weblogic</securityPrincipal>
+                <securityCredentials>Weblogic123</securityCredentials>
+            </adminServer>
+            <cluster>
+                <managedServer name="WLS_SOAP1">
+                    <hostName>prometheus</hostName>
+                    <port>8011</port>
+                </managedServer>
+            </cluster>
+        </oracleFusionMiddlewareInstance>
+        <oracleFusionMiddlewareInstance environment="custom" environmentType="user" name="kroky-localdev">
+            <adminServer>
+                <jmxProtocol>t3</jmxProtocol>
+                <host>localdev</host>
+                <port>7001</port>
+                <securityPrincipal>admin</securityPrincipal>
+                <securityCredentials>Password1</securityCredentials>
+            </adminServer>
+            <cluster>
+                <managedServer name="SOAP_server_1">
+                    <hostName>localdev</hostName>
+                    <port>7003</port>
+                </managedServer>
+            </cluster>
+        </oracleFusionMiddlewareInstance>
+        <oracleFusionMiddlewareInstance environment="custom" environmentType="user" name="vlado-localdev">
+            <adminServer>
+                <jmxProtocol>t3</jmxProtocol>
+                <host>localdev</host>
+                <port>7001</port>
+                <securityPrincipal>weblogic</securityPrincipal>
+                <securityCredentials>welcome1</securityCredentials>
+            </adminServer>
+            <cluster>
+                <managedServer name="SOAP_server_1">
+                    <hostName>localdev</hostName>
+                    <port>7003</port>
+                </managedServer>
+            </cluster>
+        </oracleFusionMiddlewareInstance>        
+    </oracleFusionMiddleware>
+        <databases >
+            <database identificator="eis/ebs/DatabaseAdapter">
+                <databaseInstance environment="custom" environmentType="user" name="Ladislav Jech LocalHost">
+                    <hostName>prometheus</hostName>
+                    <port>1521</port>
+                    <userName>FUSION</userName>
+                    <password>FUSION</password>
+                    <serviceId>xe</serviceId>
+                </databaseInstance>
+                <databaseInstance environment="custom" environmentType="user" name="kroky-localdev">
+                    <hostName>localdev</hostName>
+                    <port>1521</port>
+                    <userName>FUSION</userName>
+                    <password>Password1</password>
+                    <serviceId>xe</serviceId>
+                </databaseInstance>
+                <databaseInstance environment="custom" environmentType="user" name="vlado-localdev">
+                    <hostName>localdev</hostName>
+                    <port>1521</port>
+                    <userName>FUSION</userName>
+                    <password>Password1</password>
+                    <serviceId>xe</serviceId>
+                </databaseInstance>                
+            </database>
+        </databases>
+        <ftpServers>
+            <ftpServer identificator="SALMON to GL FTP">
+                <ftpServerInstance environment="custom" environmentType="user" name="Ladislav Jech LocalHost">
+                    <hostName>prometheus</hostName>
+                    <port>21</port>
+                    <user>FTP</user>
+                    <password>FTP</password>
+                    <security>NONE</security>
+                    <stageDirectory>salmon/out</stageDirectory>
+                    <archiveDirectory>salmon/archive</archiveDirectory>
+                    <errorDirectory>salmon/error</errorDirectory>
+                </ftpServerInstance>
+                <ftpServerInstance environment="custom" environmentType="user" name="vlado-localdev">
+                    <hostName>zarik</hostName>
+                    <port>21</port>
+                    <user>anonymous</user>
+                    <password>FTP</password>
+                    <security>NONE</security>
+                    <stageDirectory>salmon/out</stageDirectory>
+                    <archiveDirectory>salmon/archive</archiveDirectory>
+                    <errorDirectory>salmon/error</errorDirectory>
+                </ftpServerInstance>                
+            </ftpServer>
+        </ftpServers>
+        <osbDatabaseReporting>
+            <osbReportingInstance environment="custom" environmentType="user" name="Ladislav Jech LocalHost">
+                <hostName>prometheus</hostName>
+                <port>1521</port>
+                <userName>NWK_XXXIW</userName>
+                <password>NWK_XXXIW</password>
+                <serviceId>xe</serviceId>
+            </osbReportingInstance>
+            <osbReportingInstance environment="custom" environmentType="user" name="vlado-localdev">
+                <hostName>localhost</hostName>
+                <port>1521</port>
+                <userName>NWK_XXXIW</userName>
+                <password>welcome</password>
+                <serviceId>xe</serviceId>
+            </osbReportingInstance>            
+            <dbObjects>
+                <reportEventsTable name="REPORTING_EVENTS"/>
+                <errorsTable name="XXXIW_MWP_ERRORS"/>
+                <errorDetailsTable name="XXXIW_MWP_ERROR_DETAILS"/>
+                <gatherOSBReportsProcedure name="ERROR_HOSPITAL.gather_SOAP_data"/> 
+            </dbObjects>
+        </osbDatabaseReporting>
+    </environments>
+    <fileSystemStructure>
+    <testRoot>
+        <directory name="db"/>
+        <directory name="jms"/>
+        <directory name="ftp"/>
+        <directory name="SOAP"/>
+        <directory name="file"/>
+            <directory name="soap"/>
+        <directory name="report"/>
+        <referenceDirectory name="Reference Directory"/>
+    </testRoot>
+    </fileSystemStructure>
+    
+    <flowPatterns>
+        <flowPattern identificator="Database to Queue to Queue to Database or SOAP">
+            <testScenario identificator="Positive scenario 1 - Source to Destination" type="positive" >
+                <description>This is positive scenario where all the steps are expected to finish without failure from source to destination endpoint.</description>
+                <executionBlock identificator="Database to Pre-Queue" direction="INBOUND">
+                 <operation name="UTIL_CLEAR_REPORTING" executeOn="source"/>
+                 <operation name="SOAP_DISABLE_SERVICE" executeOn="target"/>
+                 <operation name="JMS_PURGE_QUEUE" executeOn="target"/>
+                 <operation name="DB_DELETE_RECORD" executeOn="source"/>
+                 <operation name="DB_INSERT_RECORD" executeOn="source"/>
+                 <operation name="UTIL_DELAY" executeOn="source"/>
+                 <operation name="DB_CHECK_RECORD_POOLED" executeOn="source"/>
+                 <operation name="JMS_RECEIVE_MESSAGE_FROM_QUEUE" executeOn="target"/>
+                 <operation name="JMS_VALIDATE_MESSAGE" executeOn="target"/>
+            </executionBlock>
+                <executionBlock identificator="Pre-Queue to Maintain Queue" sequenceId="2" direction="INBOUND">
+                <operation name="SOAP_DISABLE_SERVICE" executeOn="target"/>
+                <operation name="JMS_PURGE_QUEUE" executeOn="target"/>
+                <operation name="SOAP_ENABLE_SERVICE" executeOn="source"/>
+                <operation name="UTIL_DELAY" executeOn="target"/>
+                <operation name="JMS_RECEIVE_MESSAGE_FROM_QUEUE" executeOn="target"/>
+                <operation name="JMS_VALIDATE_MESSAGE" executeOn="target"/>
+                <operation name="UTIL_CHECK_REPORTING_FOR_SUCCESS" executeOn="source"/>
+            </executionBlock>
+                <executionBlock identificator="Maintain Queue to Database or SOAP Service" sequenceId="3" direction="OUTBOUND">
+                <operation name="UTIL_CLEAR_REPORTING" executeOn="source"/>
+                 <operation name="SOAP_ENABLE_SERVICE" executeOn="source"/>
+                <operation name="UTIL_DELAY" executeOn="na"/>
+                <operation name="UTIL_CHECK_REPORTING_FOR_SUCCESS" executeOn="source"/>
+            </executionBlock>
+            </testScenario>
+            <testScenario identificator="Negative scenario 1 - Database to Pre-Queue with Wrong Data" type="negative">
+                <description>This negative scenario tests delivery failure from the database to preprocessing queue. The failure is created by pausing production on the preprocessing queue.</description>
+                <executionBlock identificator="Database to Pre-Queue" direction="INBOUND">
+                    <operation name="UTIL_CLEAR_REPORTING" executeOn="source"/>
+                    <operation name="DB_INSERT_RECORD" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="source"/>
+                    <operation name="DB_CHECK_RECORD_NOT_POOLED" executeOn="source"/>
+                    <operation name="DB_DELETE_RECORD" executeOn="source"/>
+                </executionBlock>
+            </testScenario>
+            <testScenario identificator="Negative scenario 2 - Database to Pre-Queue With Right Data and not Available JMS Queue" type="negative">
+                <description>This negative scenario tests delivery failure from the database to preprocessing queue. The failure is created by pausing production on the preprocessing queue.</description>
+                <executionBlock identificator="Database to Pre-Queue" direction="INBOUND">
+                    <operation name="UTIL_CLEAR_REPORTING" executeOn="source"/>
+                    <operation name="JMS_DESTINATION_PAUSE_PRODUCTION" executeOn="target"/>
+                    <operation name="DB_DELETE_RECORD" executeOn="source"/>
+                    <operation name="DB_EXECUTE_INSERT" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/>
+                    <operation name="DB_CHECK_RECORD_POOLED" executeOn="source"/>
+                    <operation name="UTIL_CHECK_REPORTING_FOR_FAILURE" executeOn="source"/>
+                    <operation name="DB_DELETE_RECORD" executeOn="source"/>
+                    <operation name="JMS_DESTINATION_RESUME_PRODUCTION" executeOn="target"/>
+                </executionBlock>
+            </testScenario>
+            <testScenario identificator="Negative scenario 3 - Database to Maintain Queue With Not Available JMS Maintain Queue" type="negative">
+                <description>This negative scenario tests delivery failure from the database to maintaint queue. The failure is created by pausing production on maintain queue.</description>
+                <executionBlock identificator="Database to Queue"  direction="BOTH">
+                    <operation name="UTIL_CLEAR_REPORTING" executeOn="source"/>
+                    <operation name="DB_DELETE_RECORD" executeOn="source"/>
+                    <operation name="JMS_PURGE_QUEUE" executeOn="source"/>
+                    <operation name="JMS_PURGE_QUEUE" executeOn="target"/>
+                    <operation name="JMS_DESTINATION_PAUSE_PRODUCTION" executeOn="target"/>
+                    <operation name="DB_EXECUTE_INSERT" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/>
+                    <operation name="UTIL_CHECK_REPORTING_FOR_FAILURE" executeOn="source"/>
+                    <operation name="JMS_CHECK_ERROR_QUEUE" executeOn="source"/>
+                    <operation name="JMS_PURGE_QUEUE" executeOn="target"/>
+                    <operation name="JMS_DESTINATION_RESUME_PRODUCTION" executeOn="target"/>
+                </executionBlock>
+            </testScenario>
+            <testScenario identificator="Negative scenario 4 - Database to Database Or SOAP with disabled endpoint SOAP business service">
+                <description>This scenario test end-to-end interface flow in a way that it stops the destination external endpoint to listen, so the message cannot be finally delivered. 
+                    It is not stopping the endpoint itself, but rather the SOAP business service which sending the request to the external system.</description>
+                <executionBlock identificator="Database to SOAP" direction="OTHER">
+                    <operation name="UTIL_CLEAR_REPORTING" executeOn="source"/>
+                    <operation name="DB_DELETE_RECORD" executeOn="source"/>
+                    <operation name="JMS_PURGE_QUEUE" executeOn="source"/>
+                    <operation name="JMS_PURGE_QUEUE" executeOn="target"/>
+                    <operation name="SOAP_DISABLE_SERVICE" executeOn="target"/>
+                    <operation name="DB_EXECUTE_INSERT" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/>
+                    <operation name="UTIL_CHECK_REPORTING_FOR_FAILURE" executeOn="source"/>
+                    <operation name="JMS_CHECK_ERROR_QUEUE" executeOn="source"/>
+                </executionBlock>
+            </testScenario>
+        </flowPattern>
+        <flowPattern identificator="FTP to Queue to Database" testCasePatternCount="5">
+            <testScenario identificator="Positive scenario" type="positive" sequenceId="1" executionBlockCount="2">
+                <description>This is positive scenario where all the steps are expected to finish without failure from source to destination endpoint.</description>
+                <executionBlock identificator="FTP to MaintainQueue" sequenceId="1" direction="INBOUND">
+                    <!--operation name="UTIL_CLEAR_REPORTING" executeOn="source"/-->
+                    <operation name="SOAP_DISABLE_SERVICE" executeOn="target"/>
+                    <operation name="JMS_PURGE_QUEUE" executeOn="target"/>
+                    <operation name="FTP_UPLOAD_FILE" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/>
+                    <operation name="JMS_RECEIVE_MESSAGE_FROM_QUEUE" executeOn="target"/>                  
+                    <operation name="JMS_VALIDATE_MESSAGE" executeOn="target"/>
+                    <operation name="FTP_CHECK_DELIVERED_FOLDER_FOR_FILE" executeOn="source"/>
+                    <!--operation name="UTIL_CHECK_REPORTING" executeOn="source"/-->
+                </executionBlock>
+                <executionBlock identificator="Maintain Queue to Database" sequenceId="2" direction="OUTBOUND">
+                    <!--operation name="UTIL_CLEAR_REPORTING" executeOn="source"/-->             
+                    <operation name="SOAP_ENABLE_SERVICE" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/>
+                    <operation name="JMS_CHECK_ERROR_QUEUE_FOR_MESSAGE" executeOn="source"/>
+                    <!--operation name="UTIL_CHECK_REPORTING" executeOn="source"/-->
+                </executionBlock>
+            </testScenario>
+            <testScenario identificator="Negative scenario 1" type="positive" sequenceId="1" executionBlockCount="1">
+                <description>This negative scenario tests delivery failure from the ftp to maintain queue. The failure is created by uploading file with invalid name.</description>
+                <executionBlock identificator="FTP errors" sequenceId="1" direction="INBOUND">
+                    <!--operation name="UTIL_CLEAR_REPORTING" executeOn="source"/-->
+                    <operation name="FTP_UPLOAD_FILE" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/>
+                    <!--operation name="UTIL_CHECK_REPORTING" executeOn="source"/-->
+                    <operation name="FTP_CHECK_ERROR_FOLDER_FOR_FILE" executeOn="source"/>
+                </executionBlock>
+            </testScenario>  
+            <testScenario identificator="Negative scenario 2" type="positive" sequenceId="1" executionBlockCount="1">
+                <description>This negative scenario tests delivery failure from the ftp to maintain queue. The failure is created by uploading same file again after first successful delivery.</description>
+                <executionBlock identificator="FTP errors" sequenceId="1" direction="INBOUND">
+                    <operation name="FTP_UPLOAD_FILE" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/>                
+                    <!--operation name="UTIL_CLEAR_REPORTING" executeOn="source"/-->
+                    <operation name="FTP_UPLOAD_FILE" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/>
+                    <!--operation name="UTIL_CHECK_REPORTING" executeOn="source"/-->
+                    <operation name="FTP_CHECK_ERROR_FOLDER_FOR_FILE" executeOn="source"/>
+                </executionBlock>
+            </testScenario>  
+            <testScenario identificator="Negative scenario 3" type="positive" sequenceId="1" executionBlockCount="1">
+                <description>This negative scenario tests delivery failure from the ftp to maintain queue. The failure is created by pausing production on maintain queue.</description>
+                <executionBlock identificator="FTP to Queue" sequenceId="1" direction="INBOUND">
+                    <!--operation name="UTIL_CLEAR_REPORTING" executeOn="source"/-->
+                    <operation name="JMS_DESTINATION_PAUSE_PRODUCTION" executeOn="target"/>
+                    <operation name="FTP_UPLOAD_FILE" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/> 
+                    <operation name="JMS_DESTINATION_RESUME_PRODUCTION" executeOn="target"/>
+                    <!--operation name="UTIL_CHECK_REPORTING" executeOn="source"/-->
+                    <operation name="FTP_CHECK_ERROR_FOLDER_FOR_FILE" executeOn="source"/>                                       
+                </executionBlock>
+            </testScenario>
+            <testScenario identificator="Negative scenario 4" type="negative" sequenceId="1" executionBlockCount="1">
+                <description>This negative scenario tests delivery failure from the ftp to maintain queue. The failure is created by uploading file with valid name but containing corrupted data.</description>
+                <executionBlock identificator="FTP errors" sequenceId="1" direction="INBOUND">
+                    <!--operation name="UTIL_CLEAR_REPORTING" executeOn="source"/-->
+                    <operation name="FTP_UPLOAD_FILE" executeOn="source"/>
+                    <operation name="UTIL_DELAY" executeOn="na"/> 
+                    <!--operation name="UTIL_CHECK_REPORTING" executeOn="source"/-->
+                    <operation name="FTP_CHECK_ERROR_FOLDER_FOR_FILE" executeOn="source"/>                                       
+                </executionBlock>
+            </testScenario>                             
+                                
+        </flowPattern>        
+    </flowPatterns>
+    
+    
+</soaTestingFrameworkMasterConfiguration>
