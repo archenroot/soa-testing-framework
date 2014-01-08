@@ -6,32 +6,29 @@
 
 package com.ibm.soatf.flow;
 
-import com.ibm.soatf.component.ComponentResult;
-import com.ibm.soatf.config.master.Operation;
-
 /**
  *
  * @author user
  */
 public class FlowExecutionEvent {
-    private Operation operation;
-    private ComponentResult componentResult;
+    private String operationName;
+    private OperationResult operationResult;
 
-    public FlowExecutionEvent(Operation operation, ComponentResult componentResult) {
-        this.operation = operation;
-        this.componentResult = componentResult;
+    public FlowExecutionEvent(String operationName, OperationResult operationResult) {
+        this.operationName = operationName;
+        this.operationResult = operationResult;
     }
 
-    public FlowExecutionEvent(Operation operation) {
-        this(operation, null);
+    public FlowExecutionEvent(String operationName) {
+        this(operationName, null);
     }
 
-    public ComponentResult getComponentResult() {
-        return componentResult;
+    public OperationResult getOperationResult() {
+        return operationResult;
     }
 
-    public Operation getOperation() {
-        return operation;
+    public String getOperationName() {
+        return operationName;
     }
     
     

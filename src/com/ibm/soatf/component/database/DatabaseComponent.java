@@ -17,30 +17,38 @@
  */
 package com.ibm.soatf.component.database;
 
-import com.ibm.soatf.component.ComponentResult;
-import com.ibm.soatf.component.SOATFComponent;
+/**
+ * Component used for task related to databases. Basically CRUD operation, but 
+ * not restricted to. Currently only Oracle Database is supported, but extending for 
+ * any JDBC compatible database is scheduled.
+ * @author Ladislav Jech <archenroot@gmail.com>
+ */
+import com.ibm.soatf.FrameworkException;
+import com.ibm.soatf.FrameworkExecutionException;
 import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.flow.FlowPatternCompositeKey;
-import com.ibm.soatf.FrameworkConfiguration;
+import com.ibm.soatf.component.AbstractSOATFComponent;
 import com.ibm.soatf.config.iface.db.DBConfig;
 import com.ibm.soatf.config.iface.db.DbObject;
 import com.ibm.soatf.config.master.Databases.Database.DatabaseInstance;
 import com.ibm.soatf.config.master.Operation;
+import com.ibm.soatf.flow.OperationResult;
 import com.ibm.soatf.tool.FileSystem;
-import com.ibm.soatf.component.util.Utils;
+import com.ibm.soatf.tool.Utils;
 import java.io.File;
 import static java.lang.Boolean.TRUE;
-
-import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -53,10 +61,9 @@ import org.apache.logging.log4j.Logger;
  *
  * @author zANGETSu
  */
-public class DatabaseComponent extends SOATFComponent {
+public class DatabaseComponent extends AbstractSOATFComponent {
 
     private static final Logger logger = LogManager.getLogger(DatabaseComponent.class);
-    private static final FrameworkConfiguration FCFG = FrameworkConfiguration.getInstance();
 
     /**
      * Date format definition when working with DATE, DATETIME and TIMESTAMP
@@ -81,82 +88,85 @@ public class DatabaseComponent extends SOATFComponent {
     public static final String NAME_DELIMITER = "_";
 
     // Consider to change in next live
-    public static final Boolean POOLING_USE_POOLED_VALUE = true;
-    public static final Boolean POOLING_USE_CUSTOM_VALUE = false;
-    public static final Boolean POOLING_DONT_USE = null;
+    public static final Boolean POLLING_USE_POLLED_VALUE = true;
+    public static final Boolean POLLING_USE_CUSTOM_VALUE = false;
+    public static final Boolean POLLING_DONT_USE = null;
 
     private final DBConfig dbIfaceConfig;
+
     // Only oracle database is supported now
     private final String driverClassName = "oracle.jdbc.driver.OracleDriver";
     private String hostName;
-    private BigInteger port;
+    private int port;
     private String userName;
     private String password;
     private String serviceId;
-    // Not implemented yet
-    //private String connectAs
-    private final List<DbObject> dbObjects = new ArrayList<>();
-    private String jdbcUrl;
-    private final DatabaseInstance databaseMasterConfig;
-    private String workingDirectoryPath;
-    private FlowPatternCompositeKey fpck;
 
-    private String messageRefColName;
-    private String messageRefColValue;
-    private String entityRefColName;
-    private String entityRefColValue;
-    private String poolingColName;
-    private String poolingColValue;
-    private String poolingPooledValue;
-    private String preparedStatement;
+    private List<DbObject> dbObjects = new ArrayList<>();
+    private String jdbcUrl;
+
+    private final DatabaseInstance databaseMasterConfig;
+    
+    private final OperationResult cor;
+    
+    private Map<DbObject, DbObjectConfig> dbObjectConfigs;
+    private DbObject parentDbObject;
+
+    private static enum SQL_COMMAND {
+        SELECT,
+        DELETE
+    }
 
     public DatabaseComponent(
             DatabaseInstance databaseMasterConfig,
             DBConfig dbIfaceConfig,
-            ComponentResult componentOperationResult,
-            FlowPatternCompositeKey ifaceFlowPatternCompositeKey) {
-        super(SOATFCompType.DATABASE, componentOperationResult);
+            File workingDir) throws FrameworkExecutionException {
+        super(SOATFCompType.DATABASE);
         this.databaseMasterConfig = databaseMasterConfig;
         this.dbIfaceConfig = dbIfaceConfig;
-        this.fpck = ifaceFlowPatternCompositeKey;
-
+        this.workingDir = workingDir;
+        cor = OperationResult.getInstance();
         constructComponent();
     }
 
     /**
      * Method for database component construction.
+     * @throws com.ibm.soatf.FrameworkExecutionException
      */
     @Override
-    protected final void constructComponent() {
+    protected final void constructComponent() throws FrameworkExecutionException {
         try {
-
-            logger.debug("Constructing DatabaseComponent object.");
-
+            logger.trace("Constructing DatabaseComponent object.");
             hostName = databaseMasterConfig.getHostName();
             port = databaseMasterConfig.getPort();
             userName = databaseMasterConfig.getUserName();
             password = databaseMasterConfig.getPassword();
             serviceId = databaseMasterConfig.getServiceId();
-            dbObjects.add(dbIfaceConfig.getDbObjects().getDbObject());
-            /*
-             * Need to be refactorized!!!
-             */
-            workingDirectoryPath = FCFG.SOA_TEST_HOME + "\\"
-                    + fpck.getIfaceName() + "_" + FCFG.getValidFileSystemObjectName(fpck.getIfaceDesc()) + "\\"
-                    + FCFG.FLOW_PATTERN_DIR_NAME_PREFIX + FCFG.getValidFileSystemObjectName(fpck.getFlowPatternId()) + "\\"
-                    + FCFG.getValidFileSystemObjectName(fpck.getTestName()) + "\\"
-                    + FCFG.getValidFileSystemObjectName(fpck.getTestScenarioId()) + "\\db\\";
-
+            dbObjects = dbIfaceConfig.getDbObjects().getDbObject();
+            parentDbObject = dbObjects.get(0);
+            dbObjectConfigs = createConfigMap(dbObjects);
             jdbcUrl = constructJdbcUrl(hostName, port, serviceId);
-
             Class.forName(driverClassName);
         } catch (ClassNotFoundException ex) {
-            logger.fatal("Database driver class cannot be found: " + ex.getMessage());
+            String msg = String.format("Cannot load jdbc driver class: %s", ex.getMessage());
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ex);
         }
-        logger.debug("Constructing DatabaseComponent finished.");
+        logger.trace("Constructing DatabaseComponent finished.");
+    }
+    
+    private Map<DbObject, DbObjectConfig> createConfigMap(List<DbObject> dbObjects) throws FrameworkExecutionException {
+        Map<DbObject, DbObjectConfig> map = new HashMap<>();
+        boolean isParent = true;
+        for(DbObject object : dbObjects) {
+            map.put(object, new DbObjectConfig(object, isParent));
+            isParent = false; //only the very first DbObject is considered parent
+        }
+        return map;
     }
 
     /**
+     * Gets list of statement files generated for specific endpoint.
      *
      * @param objectName
      * @return
@@ -174,230 +184,372 @@ public class DatabaseComponent extends SOATFComponent {
      * Common method which executes specific atomic integration operation
      * supported within database component.
      *
-     * @param operation
-     * @param componentOperation operation to execute
+     * @param operation operation to execute
+     * @throws com.ibm.soatf.FrameworkExecutionException
      */
     @Override
-    protected void executeOperation(Operation operation) {
+    protected void executeOperation(Operation operation) throws FrameworkException {
         /* 
+         // This block will be reimplemented after there will be created subclasses on XSD level.
          if (!DATABASE_OPERATIONS.contains(operation)) {
          final String msg = "Unsupported operation: " + componentOperation + ". Valid operations are: " + DATABASE_OPERATIONS;
          logger.error(msg);
-         compOperResult.setResultMessage(msg);
-         compOperResult.setOverallResultSuccess(false);
+         cor.addMsg(msg);
+         cor.setOverallResultSuccess(false);
          } else {
          */
-        for (DbObject object : dbObjects) {
-            final String filename = new StringBuilder(dbIfaceConfig.getRefId().replace("/", "_")).append(NAME_DELIMITER).append(object.getName()).append(INSERT_FILE_SUFFIX).toString();
-            final String path = Utils.getFullFilePathStr(workingDirectoryPath, filename);
-            switch (operation.getName()) {
-
-                case DB_INSERT_RECORD:
-                    generateInsertStatement(object, path);
-                    executeInsertFromFile(path);
-                    break;
-                case DB_DELETE_RECORD:
-                    deleteRecord();
-                    break;
-                case DB_CHECK_RECORD_POOLED:
-                    checkIfRecordIsPooled();
-                    break;
-                case DB_CHECK_RECORD_NOT_POOLED:
-                    checkIfRecordIsNotPooled();
-                    break;
-                default:
-                    logger.info("Operation execution not yet implemented: " + operation.getName());
-                    compOperResult.setResultMessage("Operation: " + operation.getName() + " is valid, but not yet implemented");
-                    compOperResult.setOverallResultSuccess(false);
-            }
+        switch (operation.getName()) {
+            case DB_INSERT_RECORD:
+                for (DbObject object : dbObjects) {
+                    final String filename = new StringBuilder(dbIfaceConfig.getRefId().replace("/", "_")).append(NAME_DELIMITER).append(object.getName()).append(INSERT_FILE_SUFFIX).toString();
+                    final File file = new File(workingDir, filename);
+                    generateInsertStatement(object, file);
+                    executeInsertFromFile(file);
+                }
+                break;
+            case DB_DELETE_RECORD:
+                //due to possible foreign keys we need to delete the objects in reversed order
+                //we also presume that the "parent" table is the first object defined in the config
+                //and the rest are "child" objects
+                for (int i = dbObjects.size() - 1; i > -1; i--) {
+                    deleteRecord(dbObjects.get(i));
+                }
+                break;
+            case DB_CHECK_RECORD_POOLED:
+                checkIfRecordIsPolled(dbObjects.get(0)); //we check only the parent object (i.e. the first one)
+                break;
+            case DB_CHECK_RECORD_NOT_POOLED:
+                checkIfRecordIsNotPolled(dbObjects.get(0)); //we check only the parent object (i.e. the first one)
+                break;
+            default:
+                String msg = "Invalid operation name: " + operation.getName();
+                logger.error(msg);
+                cor.addMsg(msg);
+                throw new FrameworkExecutionException(msg);
         }
     }
 
-    private void generateInsertStatement(DbObject object, String insertSqlScriptFileName) {
-        Connection conn = null;
+    private void generateInsertStatement(DbObject object, File file) throws FrameworkException {
+        Connection conn = getConnection();
         try {
-            conn = getConnection();
-            StatementGenerator.generateInsertStatement(conn, object, insertSqlScriptFileName, compOperResult);
-            compOperResult.setOverallResultSuccess(true);
-        } catch (SQLException e) {
-            String sqlExMsg = e.getErrorCode() + ": " + e.getMessage();
-            String msg = String.format("Could not get database connection: %s, %s/%s SQLException is: %s", jdbcUrl, userName, "********", sqlExMsg);
-            logger.error(msg);
-            compOperResult.addMsg(msg);
-            compOperResult.setOverallResultSuccess(false);
-        } catch (StatementGeneratorException e) {
-            String msg = String.format("Statement generator failure: %s", e.getMessage());
-            logger.error(msg);
-            compOperResult.addMsg(msg);
-            compOperResult.setOverallResultSuccess(false);
+            StatementGenerator.generateInsertStatement(conn, dbObjectConfigs.get(object), file);
         } finally {
+            logger.trace("Generation of insert statement finished with result: " + OperationResult.getInstance().isSuccessful());
             closeConnection(conn);
         }
     }
 
-    private void executeInsertFromFile(String insertSQLScriptFile) {
-        Connection conn = null;
+    private void executeInsertFromFile(File file) throws FrameworkException {
+        Connection conn = getConnection();
         try {
-            conn = getConnection();
-            StatementExecutor.runScript(conn, compOperResult, insertSQLScriptFile);
-            compOperResult.setResultMessage("Record has been inserted into source database.");
-            compOperResult.setOverallResultSuccess(true);
-        } catch (SQLException e) {
-            String sqlExMsg = e.getErrorCode() + ": " + e.getMessage();
-            String msg = String.format("Could not get database connection: %s, %s/%s SQLException is: %s", jdbcUrl, userName, "********", sqlExMsg);
-            logger.error(msg);
-            compOperResult.addMsg(msg);
-            compOperResult.setOverallResultSuccess(false);
-        } catch (StatementExecutorException e) {
-            String msg = String.format("Statement executor failure: %s", e.getMessage());
-            logger.error(msg);
-            compOperResult.addMsg(msg);
-            compOperResult.setOverallResultSuccess(false);
+            StatementExecutor.runScript(conn, file);
         } finally {
+            logger.trace("Insert finished with result: " + OperationResult.getInstance().isSuccessful());
             closeConnection(conn);
         }
     }
 
-    public static String constructJdbcUrl(String hostName, BigInteger port, String serviceId) {
-        return String.format("jdbc:oracle:thin:@%s:%s:%s", hostName, port.toString(), serviceId);
+    public static String constructJdbcUrl(String hostName, int port, String serviceId) {
+        logger.trace("Constructing JDBC URL...");
+        return String.format("jdbc:oracle:thin:@%s:%s:%s", hostName, port, serviceId);
     }
 
-    private void closeConnection(Connection conn) {
+    public static void closeConnection(Connection conn) {
         try {
             if (conn != null) {
                 conn.close();
             }
+            logger.trace("SQL connection closed.");
         } catch (SQLException ex) {
-            logger.error("The database connection cannot be closed due to: " + ex.getLocalizedMessage());
+            logger.error("The database connection cannot be closed due to: " + Utils.getSQLExceptionMessage(ex));
         }
     }
 
-    private Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(jdbcUrl, userName, password);
-    }
-
-    private void deleteRecord() {
-        Connection conn = null;
+    private Connection getConnection() throws FrameworkExecutionException {
         try {
-            conn = getConnection();
-            StringBuilder sb = new StringBuilder();
-            sb.append("DELETE ");
-            sb.append(getPreparedStatement(POOLING_DONT_USE));
-            String command = sb.toString();
-            Statement statement = conn.createStatement();
-            boolean rs = statement.execute(sb.toString());
-            compOperResult.setResultMessage("Relevant records deleted by issuing: \n" + command);
-            compOperResult.setOverallResultSuccess(true);
-
+            final Connection conn = DriverManager.getConnection(jdbcUrl, userName, password);
+            final String msg = "SQL connection obtained.";
+            logger.debug(msg);
+            cor.addMsg(msg);
+            return conn;
         } catch (SQLException ex) {
-            logger.fatal("Wrong", ex);
-            compOperResult.setResultMessage("There occured error while trying to check if record is still pooled: " + ex.getMessage());
-            compOperResult.setOverallResultSuccess(false);
-
+            String msg = String.format("Could not get connection for %s/%s using URL: %s. %s", userName, "********", jdbcUrl, Utils.getSQLExceptionMessage(ex));
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ex);
         }
-
     }
 
-    private void checkIfRecordIsPooled() {
-        Connection conn = null;
+    private void deleteRecord(DbObject object) throws FrameworkException {
+        Connection conn = getConnection();
+        PreparedStatement stmt = prepareStatement(conn, SQL_COMMAND.DELETE, POLLING_DONT_USE, object);
         try {
-            conn = getConnection();
-            StringBuilder sb = new StringBuilder();
-            sb.append("SELECT * ");
-            sb.append(getPreparedStatement(POOLING_USE_POOLED_VALUE));
-            String command = sb.toString();
-            Statement statement = conn.createStatement();
-            ResultSet rs = statement.executeQuery(sb.toString());
+            int updateCount = stmt.executeUpdate();
+            final String msg = "Records deleted in database '" + jdbcUrl + "'. Number of affected records: " + updateCount;
+            logger.info(msg);
+            cor.addMsg(msg);
+            cor.markSuccessful();
+        } catch (SQLException ex) {
+            String msg = String.format("Could not execute SQL delete statement due to: %s", ex.getMessage());
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ex);
+        } finally {
+            logger.trace("Deletion of record resulted in: " + cor.isSuccessful());
+            release(null, stmt, conn);
+        }
+    }
+
+    private void checkIfRecordIsPolled(DbObject object) throws FrameworkExecutionException {
+        Connection conn = getConnection();
+        PreparedStatement stmt = prepareStatement(conn, SQL_COMMAND.SELECT, POLLING_USE_POLLED_VALUE, object);
+        
+        ResultSet rs = null;
+        try {
+            rs = stmt.executeQuery();
             int cnt = 0;
             while (rs.next()) {
-                compOperResult.setResultMessage("Record is pooled, the test has been done by issuing: \n" + command);
-                compOperResult.setOverallResultSuccess(true);
-                logger.debug("Record: " + rs.getString("CITY"));
-                return;
+                cnt++;
             }
-            if (cnt==0){
-                compOperResult.setOverallResultSuccess(false);
-                compOperResult.setResultMessage("Database record has not been pooled, check was done by issuing: \n" + command);
+            String msg;
+            if (cnt == 1) {
+                msg = "One record looks to be polled." + stmt.toString();
+                logger.info(msg);
+                cor.markSuccessful();
+            } else {
+                if (cnt == 0) {
+                    msg = "Database record has not been polled";
+                } else {
+                    msg = "It looks like more than one polled record has been found.\n"
+                            + "It can be caused by wrong configuration of the insert statement custom values, polling column or its value, etc. look into config.xml.";
+                }
+                logger.error(msg);
+            }
+            cor.addMsg(msg);
+        } catch (SQLException ex) {
+            String msg = String.format("Could not execute SQL statement in database '" + jdbcUrl + "' due to: %s", ex.getMessage());
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ex);
+        } finally {
+            logger.trace("Check for polled record in source database '" + jdbcUrl + "'resulted in: " + cor.isSuccessful());
+            release(rs, stmt, conn);
+        }
+    }
+
+    private void release(ResultSet rs, Statement statement, Connection conn) {
+        closeResultSet(rs);
+        closeStatement(statement);
+        closeConnection(conn);
+    }
+
+    private void checkIfRecordIsNotPolled(DbObject object) throws FrameworkExecutionException {
+        Connection conn = getConnection();
+        PreparedStatement stmt = prepareStatement(conn, SQL_COMMAND.SELECT, POLLING_USE_CUSTOM_VALUE, object);
+        ResultSet rs = null;
+        try {
+            rs = stmt.executeQuery();
+            if (rs.next()) {
+                final String msg = "Unpolled record in the source database found - that was expected";
+                cor.addMsg(msg);
+                logger.info(msg);
+                cor.markSuccessful();
+            }
+        } catch (SQLException ex) {
+            String msg = String.format("Could not execute SQL statement due to: %s", ex.getMessage());
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ex);
+        } finally {
+            logger.trace("Check for polled record in source database resulted in: " + cor.isSuccessful());
+            release(rs, stmt, conn);
+        }
+    }
+    
+    public static void closeStatement(Statement statement) {
+        try {
+            if (statement != null) {
+                statement.close();
+            }
+            logger.trace("SQL statement closed.");
+        } catch (SQLException ex) {
+            logger.error("The statement cannot be closed due to: " + Utils.getSQLExceptionMessage(ex));
+        }
+    }
+
+    private PreparedStatement prepareStatement(Connection conn, SQL_COMMAND sqlCommand, Boolean usePolled, DbObject object) throws FrameworkExecutionException {
+        StringBuilder sb = new StringBuilder();
+        switch(sqlCommand) {
+            case SELECT:
+                sb.append("SELECT * \n");
+                break;
+            case DELETE: 
+                sb.append("DELETE \n");
+                break;
+            default:
+                final String msg = "Don't know how to handle " + sqlCommand + " SQL command";
+                cor.addMsg(msg);
+                throw new FrameworkExecutionException(msg);
+        }
+        DbObjectConfig dbConfig = dbObjectConfigs.get(object);
+        DbObjectConfig parentDbConfig = dbObjectConfigs.get(parentDbObject);
+        sb.append(" FROM ").append(object.getName()).append("\n");
+        sb.append(" WHERE ");
+        String[] cols = parentDbConfig.getSourceEntityIdColumns();
+        sb.append(cols[0]).append(" = ?").append("\n");
+        for (int i = 1; i < cols.length; i++) {
+            sb.append(" AND ").append(cols[i]).append(" = ?").append("\n");
+        }
+        cols = parentDbConfig.getSourceMessageIdColumns();
+        for (String col : cols) {
+            sb.append(" AND ").append(col).append(" = ?").append("\n");
+        }
+        if (usePolled != null) {
+            sb.append(" AND ").append(dbConfig.getPolledColumnName()).append(" = ?");
+        }
+        String sql = sb.toString();
+                
+        PreparedStatement stmt = null;
+        try {
+            stmt = conn.prepareStatement(sql);
+            int i = 1;
+            for (String col : parentDbConfig.getSourceEntityIdColumns()) {
+                final String val = dbConfig.getColumnValue(col);
+                stmt.setString(i++, val);
+                int idx = sb.indexOf("?");
+                sb.replace(idx, idx + 1, "'" + val.replace("'", "''") + "'");
             }
             
-            logger.trace("Check for pooled record in source database resulted in: " + compOperResult.isOverallResultSuccess());
-
+            for (String col : parentDbConfig.getSourceMessageIdColumns()) {
+                final String val = dbConfig.getColumnValue(col);
+                stmt.setString(i++, val);
+                int idx = sb.indexOf("?");
+                sb.replace(idx, idx + 1, "'" + val.replace("'", "''") + "'");
+            }
+            
+            if (usePolled != null) {
+                final String val = usePolled ? dbConfig.getPolledColumnPolledValue() : dbConfig.getPolledColumnCustomValue();
+                stmt.setString(i, val);
+                int idx = sb.indexOf("?");
+                sb.replace(idx, idx + 1, "'" + val.replace("'", "''") + "'");
+            }
+            String msg = "Created prepared statement.";
+            cor.addMsg(msg);
+            logger.info(msg);
+            msg = "The underlying SQL is:\n"
+                + sb.toString();
+            cor.addMsg(msg);
+            logger.trace(msg);
+            return stmt;
         } catch (SQLException ex) {
-            logger.fatal("Wrong", ex);
-            compOperResult.setResultMessage("There occured error while trying to check if record is still pooled: " + ex.getMessage());
-            compOperResult.setOverallResultSuccess(false);
-
+            closeStatement(stmt);
+            String msg = String.format("Failed to prepare statement due to: %s", ex.getMessage());
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ex);
         }
     }
 
-    private void checkIfRecordIsNotPooled() {
-        Connection conn = null;
+    @Override
+    protected void destructComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    public static void closeResultSet(ResultSet rs) {
         try {
-            conn = getConnection();
-            StringBuilder sb = new StringBuilder();
-            sb.append("SELECT * ");
-            sb.append(getPreparedStatement(POOLING_USE_CUSTOM_VALUE));
-            String command = sb.toString();
-            Statement statement = conn.createStatement();
-
-            ResultSet rs = statement.executeQuery(sb.toString());
-            int cnt = 0;
-            while (rs.next()) {
-                compOperResult.setResultMessage("There is still not pooled record in the source database for, the test has been done by issuing: \n" + command);
-
-                compOperResult.setOverallResultSuccess(true);
-                logger.debug("Record: " + rs.getString("CITY"));
+            if (rs != null) {
+                rs.close();
             }
-
-            logger.trace("Check for pooled record in source database resulted in: " + compOperResult.isOverallResultSuccess());
-
+            logger.trace("SQL result set closed.");
         } catch (SQLException ex) {
-            logger.fatal("Wrong", ex);
-
+            logger.error("The result set cannot be closed due to: " + Utils.getSQLExceptionMessage(ex));
         }
-
     }
+    
+    public static class DbObjectConfig {
+        private Map<String, String> customValuesMap = new HashMap<>();
+        private String polledColumnName;
+        private String polledColumnPolledValue;
+        private final String dbObjectName;
+        private final String[] sourceEntityIdColumns;
+        private final String[] sourceMessageIdColumns;
+        
+        public DbObjectConfig(DbObject object, boolean isParent) throws FrameworkExecutionException {
+            OperationResult cor = OperationResult.getInstance();
+            dbObjectName = object.getName();
+            List<DbObject.CustomValue> customValues = object.getCustomValue();
+            List<String> sourceEntityIdColumnList = new ArrayList<>();
+            List<String> sourceMessageIdColumnList = new ArrayList<>();
+            if(customValues != null) {
+                for (DbObject.CustomValue cusVal : customValues) {
+                    final String name = cusVal.getColumnName().toUpperCase();
+                    final String value = cusVal.getColumnValue();
+                    customValuesMap.put(name, value.equalsIgnoreCase("null") ? "null" : value);
+                    
+                    Boolean bSEId = cusVal.isSourceEntityId();
+                    if (TRUE.equals(bSEId)) {
+                        sourceEntityIdColumnList.add(name);
+                    }
 
-    private String getPreparedStatement(Boolean usePooled) {
-        StringBuilder sb = new StringBuilder();
+                    Boolean bSMId = cusVal.isSourceMessageId();
+                    if (TRUE.equals(bSMId)) {
+                        sourceMessageIdColumnList.add(name);
+                    }
 
-        for (DbObject.CustomValue cusVal : dbIfaceConfig.getDbObjects().getDbObject().getCustomValue()) {
-
-            Boolean bSEId = cusVal.isSourceEntityId();
-            if (bSEId != null) {
-                if (cusVal.isSourceEntityId().equals(TRUE)) {
-                    entityRefColName = cusVal.getColumnName();
-                    entityRefColValue = cusVal.getColumnValue();
+                    String polledValue = cusVal.getPolledValue();
+                    if (polledValue != null) {
+                        if (polledColumnName != null) {
+                            final String msg = "There is already a column " + polledColumnName + " defined for polling, yet another was found: " + name;
+                            cor.addMsg(msg);
+                            throw new FrameworkExecutionException(msg);
+                        }
+                        polledColumnName = name;
+                        polledColumnPolledValue = polledValue;
+                    }
                 }
             }
-            Boolean bSMId = cusVal.isSourceMessageId();
-            if (bSMId != null) {
-                if (cusVal.isSourceMessageId().equals(TRUE)) {
-                    messageRefColName = cusVal.getColumnName();
-                    messageRefColValue = cusVal.getColumnValue();
+            if(isParent) {
+                if (sourceEntityIdColumnList.isEmpty()) {
+                    final String msg = "sourceEntityId attribute not configured in any of the custom values for the table " + object.getName();
+                    cor.addMsg(msg);
+                    throw new FrameworkExecutionException(msg);
+                }
+                if (sourceMessageIdColumnList.isEmpty()) {
+                    final String msg = "sourceMessageId attribute not configured in any of the custom values for the table " + object.getName();
+                    cor.addMsg(msg);
+                    throw new FrameworkExecutionException(msg);
                 }
             }
-
-            String pooledValue = cusVal.getPooledValue();
-            if (pooledValue != null) {
-                poolingColName = cusVal.getColumnName();
-                poolingPooledValue = pooledValue;
-                poolingColValue = cusVal.getColumnValue();
-            }
+            sourceEntityIdColumns = sourceEntityIdColumnList.toArray(new String[sourceEntityIdColumnList.size()]);
+            sourceMessageIdColumns = sourceMessageIdColumnList.toArray(new String[sourceMessageIdColumnList.size()]);
+            customValuesMap = Collections.unmodifiableMap(customValuesMap);
         }
 
-        sb.append(" FROM " + dbIfaceConfig.getDbObjects().getDbObject().getName());
-        sb.append(" WHERE "
-                + entityRefColName + "= '" + entityRefColValue + "'"
-                + " AND "
-                + messageRefColName + " = '" + messageRefColValue + "'");
-        if (usePooled != null) {
-            if (usePooled == false) {
-                sb.append(" AND " + poolingColName + " = '" + poolingColValue + "'");
-            } else if (usePooled == true) {
-                sb.append(" AND " + poolingColName + " = '" + poolingPooledValue + "'");
-            }
+        public Map<String, String> getCustomValuesMap() {
+            return customValuesMap;
         }
-        return sb.toString();
+
+        public String getPolledColumnName() {
+            return polledColumnName;
+        }
+        
+        public String getPolledColumnCustomValue() {
+            return getCustomValuesMap().get(getPolledColumnName());
+        }
+
+        public String getPolledColumnPolledValue() {
+            return polledColumnPolledValue;
+        }
+
+        public String getDbObjectName() {
+            return dbObjectName;
+        }
+
+        public String[] getSourceEntityIdColumns() {
+            return sourceEntityIdColumns;
+        }
+
+        public String[] getSourceMessageIdColumns() {
+            return sourceMessageIdColumns;
+        }
+        
+        public String getColumnValue(String colName) {
+            return getCustomValuesMap().get(colName);
+        }
     }
 }

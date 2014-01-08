@@ -17,9 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:jmsconf="http://www.ibm.com/SOATF/Config/Iface/JMS"
-    targetNamespace="http://www.ibm.com/SOATF/Config/Iface/JMS" elementFormDefault="qualified"
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:jmsconf="http://www.ibm.com/SOATF/Config/Iface/JMS" targetNamespace="http://www.ibm.com/SOATF/Config/Iface/JMS" elementFormDefault="qualified"
     attributeFormDefault="unqualified">
 
     <xs:complexType name="JMSConfig">
@@ -31,20 +29,49 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
         <xs:sequence>
 
             <xs:element name="jmsServer">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">JMS server configuration.</xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
-                    <xs:attribute name="name" type="xs:string" use="required"/>
+                    <xs:attribute name="name" type="xs:string" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">JMS server name.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element name="connectionFactory">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">JMS Connection factory.</xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
-                    <xs:attribute name="name" type="xs:string" use="required"/>
-                    <xs:attribute name="jndiName" type="xs:string" use="required"/>
+                    <xs:attribute name="name" type="xs:string" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">JMS connection factory name.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="jndiName" type="xs:string" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">JMS connection factory JNDI name.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element name="queue">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">JMS queue configuration.</xs:documentation>
+                </xs:annotation>
                 <xs:complexType>
-                    <xs:attribute name="name" type="xs:string" use="required"/>
-                    <xs:attribute name="jndiName" type="xs:string" use="required"/>
+                    <xs:attribute name="name" type="xs:string" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">JMS queue name.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="jndiName" type="xs:string" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">JMS queue JNDI name.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
             <xs:element name="messageSchema">
@@ -54,7 +81,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 <xs:complexType>
                     <xs:attribute name="path" type="xs:string" use="required">
                         <xs:annotation>
-                            <xs:documentation xml:lang="en">Relative URI of the message schema file withing the project.</xs:documentation>
+                            <xs:documentation xml:lang="en">Relative or full URI of the message schema file withing the project.</xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
                 </xs:complexType>

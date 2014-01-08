@@ -17,8 +17,7 @@
  */
 package com.ibm.soatf.tool;
 
-import com.ibm.soatf.component.ComponentResult;
-import com.ibm.soatf.component.SOATFComponent;
+import com.ibm.soatf.component.AbstractSOATFComponent;
 import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.config.master.Operation;
 
@@ -26,9 +25,9 @@ import com.ibm.soatf.config.master.Operation;
  *
  * @author zANGETSu
  */
-public class ToolComponent extends SOATFComponent {
-     public ToolComponent(ComponentResult componentOperationResult){
-        super(SOATFCompType.TOOL, componentOperationResult);
+public class ToolComponent extends AbstractSOATFComponent {
+     public ToolComponent(){
+        super(SOATFCompType.TOOL);
         constructComponent();
     }
   
@@ -40,5 +39,10 @@ public class ToolComponent extends SOATFComponent {
     @Override
     public void executeOperation(Operation operation) {
          
+    }
+
+    @Override
+    protected void destructComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

@@ -17,8 +17,7 @@
  */
 package com.ibm.soatf.component.file;
 
-import com.ibm.soatf.component.ComponentResult;
-import com.ibm.soatf.component.SOATFComponent;
+import com.ibm.soatf.component.AbstractSOATFComponent;
 import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.config.master.Operation;
 
@@ -26,11 +25,11 @@ import com.ibm.soatf.config.master.Operation;
  *
  * @author zANGETSu
  */
-public class FileComponent extends SOATFComponent {
+public class FileComponent extends AbstractSOATFComponent {
     
     
-    public FileComponent(ComponentResult componentOperationResult) {
-        super(SOATFCompType.FILE, componentOperationResult);
+    public FileComponent() {
+        super(SOATFCompType.FILE);
         constructComponent();
     }
   
@@ -41,6 +40,11 @@ public class FileComponent extends SOATFComponent {
 
     @Override
     public void executeOperation(Operation operation) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected void destructComponent() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

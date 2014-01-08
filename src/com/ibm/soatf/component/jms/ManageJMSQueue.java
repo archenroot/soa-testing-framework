@@ -22,7 +22,6 @@ import java.io.*;
 import java.util.*;
 import java.rmi.*;
 import javax.naming.*;
-import java.io.*;
 
 public class ManageJMSQueue {
 

@@ -116,12 +116,12 @@ public class ValidateTransferedValues {
                 }
                 logger.debug("Comparing values for column "+dbColumnName+" and coresponding element "+messageElementName);
                 messageValue = getElementFromFile(messageElementName, messageFile, false);
-                boolean differ;
+                boolean differ = false;
                 if (dateCompare) {
-                    Date dbDate = DatabaseComponent.DATE_FORMAT.parse(dbValue);
+                    final Date dbDate = DatabaseComponent.DATE_FORMAT.parse(dbValue);
                     //TODO: timezone //Date xmlDate = DatatypeConverter.parseDate(messageValue).getTime();
-                    Date xmlDate = (messageValue==null || messageValue.length() < 19)?null:JMSComponent.DATE_FORMAT.parse(messageValue.substring(0,19));
-                    differ = !dbDate.equals(xmlDate);
+                    Date xmlDate = (messageValue == null || messageValue.length() < 19) ? null : JMSComponent.DATE_FORMAT.parse(messageValue.substring(0,19));
+                    differ ^= dbDate.equals(xmlDate);
                 } else {
                     if (dbValue == null) {
                         if (messageValue != null) {
@@ -220,16 +220,19 @@ public class ValidateTransferedValues {
     private static String constructXMLElementNameFromDBColumn(String dbColumnName) {
         String elementName = null;
 
-        String[] parts = dbColumnName.split("_");
+        final String[] parts = dbColumnName.split("_");
         boolean first = true;
         for (String part : parts) {
             if (first) {
                 elementName = part.toLowerCase();
                 first = false;
             } else {
-                String firstSymbol = part.substring(0, 1).toUpperCase();
-                String restSymbols = part.substring(1, part.length()).toLowerCase();
-                elementName += firstSymbol + restSymbols;
+                final String firstSymbol = part.substring(0, 1).toUpperCase();
+                final String restSymbols = part.substring(1, part.length()).toLowerCase();
+                StringBuffer sb = new StringBuffer();
+                sb.append(firstSymbol);
+                sb.append(restSymbols);
+                elementName = sb.toString();
             }
 
         }

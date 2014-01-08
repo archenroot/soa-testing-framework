@@ -6,14 +6,12 @@
 
 package com.ibm.soatf.gui;
 
-import com.ibm.soatf.FrameworkConfigurationException;
-
 /**
  *
  * @author user
  */
 final class GUIObjects {
-    static abstract class GUIObject<T> {
+    static class GUIObject<T> {
         protected final T object;
         protected String guiName;
         private GUIObject(T object) {
@@ -44,7 +42,7 @@ final class GUIObjects {
         
         public Project(com.ibm.soatf.config.master.Project object) {
             super(object);
-            guiName = object.getName();
+            guiName = "OSB Project: " + object.getName();
         }
     }
 
@@ -76,11 +74,7 @@ final class GUIObjects {
 
         public Operation(com.ibm.soatf.config.master.Operation object) {
             super(object);
-            String operationName = object.getName().value();
-            if (object.getName().value() == null){
-                throw new FrameworkConfigurationException("There is problem with getting object " + object);
-            }
-            guiName = object.getName().value();
+            guiName = "Operation: " + object.getName().value();
         }
     }
 
@@ -88,7 +82,7 @@ final class GUIObjects {
 
         public IfaceFlowPattern(com.ibm.soatf.config.iface.IfaceFlowPattern object) {
             super(object);
-            guiName = object.getRefId() + " (" + object.getTestName() + ")";
+            guiName = "FlowPattern: " + object.getRefId() + " (" + object.getTestName() + ")";
         }
     }
 
@@ -96,7 +90,7 @@ final class GUIObjects {
 
         public InterfaceTestScenario(com.ibm.soatf.config.iface.IfaceTestScenario object) {
             super(object);
-            guiName = object.getRefId();
+            guiName = "TestScenario: " + object.getRefId();
         }
     }
 
@@ -104,7 +98,7 @@ final class GUIObjects {
 
         public InterfaceExecutionBlock(com.ibm.soatf.config.iface.IfaceExecBlock object) {
             super(object);
-            guiName = object.getRefId();
+            guiName = "ExecutionBlock: " + object.getRefId();
         }
     }
 }

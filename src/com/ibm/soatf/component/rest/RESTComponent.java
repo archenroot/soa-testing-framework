@@ -17,9 +17,7 @@
  */
 package com.ibm.soatf.component.rest;
 
-import com.ibm.soatf.component.ComponentResult;
-import com.ibm.soatf.component.CompOperType;
-import com.ibm.soatf.component.SOATFComponent;
+import com.ibm.soatf.component.AbstractSOATFComponent;
 import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.config.master.Operation;
 
@@ -27,9 +25,9 @@ import com.ibm.soatf.config.master.Operation;
  *
  * @author zANGETSu
  */
-public class RESTComponent extends SOATFComponent {
-    public RESTComponent(ComponentResult componentOperationResult){
-        super(SOATFCompType.REST, componentOperationResult);
+public class RESTComponent extends AbstractSOATFComponent {
+    public RESTComponent(){
+        super(SOATFCompType.REST);
         constructComponent();
     }
 
@@ -41,6 +39,11 @@ public class RESTComponent extends SOATFComponent {
 
     @Override
     public void executeOperation(Operation operation) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    protected void destructComponent() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

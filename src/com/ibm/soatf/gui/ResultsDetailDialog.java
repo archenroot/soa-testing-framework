@@ -8,6 +8,7 @@ package com.ibm.soatf.gui;
 
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
+import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -19,13 +20,16 @@ import javax.swing.WindowConstants;
  */
 public class ResultsDetailDialog extends EscapableDialog {
 
+    private Result result;
+    
     /**
      * Creates new form ResultsDetailDialog
      */
-    public ResultsDetailDialog(java.awt.Frame parent, boolean modal, String details) {
+    public ResultsDetailDialog(java.awt.Frame parent, boolean modal, Result result) {
         super(parent, modal);
         initComponents();
-        taResultDetails.setText(details);
+        this.result = result;
+        additionalInit();
     }
 
     /**
@@ -37,9 +41,12 @@ public class ResultsDetailDialog extends EscapableDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jButton1 = new JButton();
         jPanel1 = new JPanel();
         jScrollPane1 = new JScrollPane();
         taResultDetails = new JTextArea();
+
+        jButton1.setText("jButton1");
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -54,11 +61,11 @@ public class ResultsDetailDialog extends EscapableDialog {
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 368, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 822, Short.MAX_VALUE)
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 255, Short.MAX_VALUE)
+            .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 303, Short.MAX_VALUE)
         );
 
         GroupLayout layout = new GroupLayout(getContentPane());
@@ -82,8 +89,27 @@ public class ResultsDetailDialog extends EscapableDialog {
     }// </editor-fold>//GEN-END:initComponents
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private JButton jButton1;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
     private JTextArea taResultDetails;
     // End of variables declaration//GEN-END:variables
+
+    private void additionalInit() {
+        Utils.centerOnParent(getParent(), this);
+        String str = result.getOperationName();
+        StringBuilder sb = new StringBuilder("Operation: ").append(str).append("\n");
+        
+        str = result.getSuccessStr();
+        sb.append("Status: ").append(str).append("\n");
+        
+        sb.append("\n");
+        
+        sb.append("Messages:\n");
+        for (String msg : result.getMessages()) {
+            sb.append(msg).append("\n");
+        }
+        
+        taResultDetails.setText(sb.toString());
+    }
 }

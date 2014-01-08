@@ -32,10 +32,28 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             </xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element name="dbObjects" type="dbconf:DbObjects" minOccurs="1" maxOccurs="1">
+            <xs:element name="defaultDbObjects" minOccurs="0">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="dbconf:DbObjects"/>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="dbObjects" minOccurs="0" maxOccurs="unbounded">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Currently tables, views and materialized views are supported.</xs:documentation>
                 </xs:annotation>
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="dbconf:DbObjects">
+                            <xs:attribute name="envRefName" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">One or more environment references splitted by default splitting constant character defined in master-config.xml file.</xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
             </xs:element>
         </xs:sequence>
         <xs:attribute name="refId" type="xs:string" use="required">
@@ -45,10 +63,21 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         </xs:attribute>
     </xs:complexType>
     <xs:complexType name="DbObjects">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">List of DB objects (usually tables).
+
+During the execution of the operation(s) on this DB component, the list of objects is manipulated in different ways. What exactly is done with the object depends on the operation and also the position of this object in the list.
+
+First object in this list is considered parent. It must contain the definition of column combination (may be also a single column) representing source entity ref and which represents source message ref.
+
+DB_DELETE_RECORD and DB_INSERT_RECORD operations are executed on each object in the list.
+
+Checking (negative or positive) if record was polled is done ONLY on the first object.</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="dbObject" type="dbconf:DbObject" maxOccurs="1" minOccurs="1">
+            <xs:element name="dbObject" type="dbconf:DbObject" maxOccurs="unbounded" minOccurs="1">
                 <xs:annotation>
-                    <xs:documentation xml:lang="en">Instance of one database object.</xs:documentation>
+                    <xs:documentation xml:lang="en">Instance of one database object, such as table. </xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -61,25 +90,37 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
                     <xs:documentation xml:lang="en">Pair of column name and predefined value to use by SQL statement generator.</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
-                    <xs:attribute name="columnName" use="required">
+                    <xs:attribute name="columnName" use="required" type="xs:string">
                         <xs:annotation>
                             <xs:documentation xml:lang="en">Column name which should be generated with predefined value.</xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
-                    <xs:attribute name="columnValue" use="required">
+                    <xs:attribute name="columnValue" use="required" type="xs:string">
                         <xs:annotation>
-                            <xs:documentation>Custom value to be generated in the INSERT statement.</xs:documentation>
+                            <xs:documentation xml:lang="en">Custom value to be generated in the INSERT statement. When at the same time the polledValue attribute is used, value of columnValue should represent unpolled value (same as MarkUnreadValue in the JCA config file for the polling proxy service)</xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
-                    <xs:attribute name="sourceEntityId" type="xs:boolean"/>
-                    <xs:attribute name="sourceMessageId" type="xs:boolean"/>
-                    <xs:attribute name="pooledValue" type="xs:string"/>
+                    <xs:attribute name="sourceEntityId" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">True means this column is a part of the Source_Entity_Ref string. It may be this single column only.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="sourceMessageId" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">True means this column is a part of the Source_Message_Ref string. It may be this single column only.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="polledValue" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">If used, tells the framework that this column is used in the polling mechanism and, at the same time, defines which value is signalizing that this record was polled (same as MarkReadValue in JCA config file for the polling proxy service)</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
         <xs:attribute name="name" use="required" type="xs:string">
             <xs:annotation>
-                <xs:documentation xml:lang="en">Name of database object(table, view, materialized view)</xs:documentation>
+                <xs:documentation xml:lang="en">Name of database object (table, view, materialized view)</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
@@ -89,6 +130,4 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
             <xs:enumeration value="false"/>
         </xs:restriction>
     </xs:simpleType>
-
-
 </xs:schema>

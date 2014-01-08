@@ -26,10 +26,6 @@ class TableModelResults extends AbstractTableModel  {
     private static final Class<?>[] COLUMN_CLASSES = new Class<?>[] {
         String.class, String.class, String.class
     };
-
-    public static final String RESULT_PASSED = "PASSED";
-    public static final String RESULT_FAILED = "FAILED";
-    public static final String RESULT_UNKNOWN = "";
     
     @Override
     public Class<?> getColumnClass(int columnIndex) {
@@ -61,8 +57,8 @@ class TableModelResults extends AbstractTableModel  {
         Result result = results.get(rowIndex);
         switch(columnIndex) {
             case 0: return result.getOperationName() == null ? "" : result.getOperationName();
-            case 1: return result.getMessage() == null ? "" : result.getMessage();
-            case 2: return result.isSuccess() == null ? RESULT_UNKNOWN : (result.isSuccess() ? RESULT_PASSED : RESULT_FAILED);
+            case 1: return buildMessage(result.getMessages());
+            case 2: return result.getSuccessStr();
             default: throw new IndexOutOfBoundsException("Invalid column index: " + columnIndex);
         }
     }
@@ -75,7 +71,7 @@ class TableModelResults extends AbstractTableModel  {
     public void updateLastRow(Result result) {
         //last row
         Result resultToUpdate = results.get(getLastRowIdx());
-        resultToUpdate.setMessage(result.getMessage());
+        resultToUpdate.setMessages(result.getMessages());
         resultToUpdate.setOperationName(result.getOperationName());
         resultToUpdate.setSuccess(result.isSuccess());
         fireTableRowsUpdated(getLastRowIdx(), getLastRowIdx());
@@ -93,8 +89,12 @@ class TableModelResults extends AbstractTableModel  {
     public Result getRow(int rowIdx) {
         return results.get(rowIdx);
     }
-    
-    public String getSuccessLabel(int rowIdx){
-        return getRow(rowIdx).isSuccess() == null ? RESULT_UNKNOWN : (getRow(rowIdx).isSuccess() ? RESULT_PASSED : RESULT_FAILED);
+
+    private String buildMessage(List<String> messages) {
+        StringBuilder sb = new StringBuilder();
+        for (String msg : messages) {
+            sb.append(msg).append("\n");
+        }
+        return sb.toString();
     }
 }

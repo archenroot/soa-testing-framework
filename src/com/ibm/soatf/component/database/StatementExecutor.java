@@ -17,12 +17,14 @@
  */
 package com.ibm.soatf.component.database;
 
-import com.ibm.soatf.component.ComponentResult;
+import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.flow.OperationResult;
+import com.ibm.soatf.tool.Utils;
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.io.IOException;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -44,20 +46,23 @@ public class StatementExecutor {
      * Runs an SQL script from the file specified by the <code>inputScriptFile</code> parameter
      * 
      * @param conn SQL connection that on which to run this script
-     * @param cor object used to store success/failure messages
-     * @param inputScriptFile path to the script file
+     * @param file script file
      * @throws StatementExecutorException if SQL or IO exception occurs
      */
-    public static void runScript(Connection conn, ComponentResult cor, String inputScriptFile) throws StatementExecutorException {
+    public static void runScript(Connection conn, File file) throws FrameworkExecutionException {
+        OperationResult cor = OperationResult.getInstance();
+        String inputScriptFilePath = "";
+        Statement stmt = null;
         try {
-            String sql = FileUtils.readFileToString(new File(inputScriptFile));
+            inputScriptFilePath = file.getCanonicalPath();
+            String sql = FileUtils.readFileToString(file);
             if(sql.endsWith(";")) sql = sql.substring(0, sql.length()-1);
-            String msg = "Successfuly loaded script file: " + inputScriptFile;
+            String msg = "Successfuly loaded script file: " + inputScriptFilePath;
             logger.debug(msg);
             cor.addMsg(msg);
             
             conn.setAutoCommit(false);
-            Statement stmt = conn.createStatement();
+            stmt = conn.createStatement();
             boolean hasResults = stmt.execute(sql);
             conn.commit();
             int updateCount = -1;
@@ -67,14 +72,20 @@ public class StatementExecutor {
             msg = "Script run successful, update count: " + updateCount;
             logger.debug(msg);
             cor.addMsg(msg);
+            cor.addMsg("Record has been inserted into source database '" + conn.getMetaData().getURL() + "'.\n"
+                        + "Insert statement executed:\n"
+                        + sql);
+			cor.markSuccessful();
         } catch (IOException ex) {
-            String msg = "IOException: " + ex.getMessage();
-            logger.error(msg, ex);
-            throw new StatementExecutorException("Failed to open statement file (" + inputScriptFile + "): " + msg, ex);
+            String msg = "Failed to open statement file (" + inputScriptFilePath + ").";
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ex);
         } catch (SQLException ex) {
-            String msg = "SQLException " + ex.getErrorCode() + ": " + ex.getMessage();
-            logger.error(msg, ex);
-            throw new StatementExecutorException("Failed to generate INSERT statement: " + msg, ex);
+            String msg = String.format("Failed to execute INSERT statement: %s", Utils.getSQLExceptionMessage(ex));
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ex);
+        } finally {
+            DatabaseComponent.closeStatement(stmt);
         }
     }
 }

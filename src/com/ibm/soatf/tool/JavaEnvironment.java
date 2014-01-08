@@ -17,11 +17,8 @@
  */
 package com.ibm.soatf.tool;
 
-import com.ibm.soatf.FrameworkConfigurationException;
-import java.util.ArrayList;
+import com.ibm.soatf.config.FrameworkConfigurationException;
 import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -31,11 +28,44 @@ import org.apache.logging.log4j.Logger;
  */
 public class JavaEnvironment {
 
-    private static final Logger logger = LogManager.getLogger(FrameworkConfigurationException.class.getName());
+    private JavaEnvironment() {
+    }
 
-    public static final String JAVA_MAJOR_VERSION = getJVMMajorVersion();
-    public static final String JAVA_MINOR_VERSION = getJVMMinorVersion();
-    public static final String JAVA_UPDATE_VERSION = getJVMUpdateVersion();
+    /**
+     * Method for getting instance from singleton.
+     * @return
+     */
+    public static JavaEnvironment getSingletonObject() {
+        if (ref == null) // it's ok, we can call this constructor
+        {
+            ref = new JavaEnvironment();
+        }
+        return ref;
+    }
+
+    private static JavaEnvironment ref;
+
+    private static final Logger logger
+            = LogManager.getLogger("JavaEnvironment");
+
+    /**
+     * Constant which keeps major version of java runtime.
+     */
+    public static final String JVM_MAJOR_VER = getJVMMajorVersion();
+
+    /**
+     * Constant which keeps minor version of java runtime.
+     */
+    public static final String JVM_MINOR_VER = getJVMMinorVersion();
+
+    /**
+     * Constant which keeps update version of java runtime.
+     */
+    public static final String JVM_UPDATE_VER = getJVMUpdateVersion();
+
+    /**
+     *
+     */
     public static final Hashtable<String, String> JVM_VERSIONS = new Hashtable<String, String>() {
         {
             put("Major version", getJVMMajorVersion());
@@ -44,6 +74,9 @@ public class JavaEnvironment {
         }
     };
 
+    /**
+     *
+     */
     public static final Hashtable<String, String> JAVA_VARIABLES = new Hashtable<String, String>() {
         {
             put("java.version", "Java Runtime Environment version");
@@ -78,6 +111,9 @@ public class JavaEnvironment {
         }
     };
 
+    /**
+     *
+     */
     public static void printJavaEnvironment() {
         logger.debug("Print JVM runtime environment.");
         for (String variable : JAVA_VARIABLES.keySet()) {

@@ -1,6 +1,6 @@
 package com.ibm.soatf.flow;
 
-import com.ibm.soatf.FrameworkConfigurationException;
+import com.ibm.soatf.config.FrameworkConfigurationException;
 import com.ibm.soatf.config.iface.EndPoint;
 import com.ibm.soatf.config.iface.IfaceExecBlock;
 import com.ibm.soatf.config.iface.IfaceExecBlock.Source;

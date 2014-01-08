@@ -17,14 +17,13 @@
  */
 package com.ibm.soatf.xml;
 
-import com.ibm.soatf.component.ComponentResult;
-import com.ibm.soatf.component.CompOperType;
-import com.ibm.soatf.component.SOATFComponent;
-import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.UnsupportedComponentOperationException;
+import com.ibm.soatf.component.CompOperType;
+import com.ibm.soatf.component.SOATFCompType;
+import com.ibm.soatf.component.AbstractSOATFComponent;
 import com.ibm.soatf.config.iface.jms.JMSConfig;
 import com.ibm.soatf.config.master.Operation;
-
+import com.ibm.soatf.flow.OperationResult;
 import java.util.Set;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -33,17 +32,19 @@ import org.apache.logging.log4j.Logger;
  *
  * @author zANGETSu
  */
-public class XMLComponent extends SOATFComponent {
+public class XMLComponent extends AbstractSOATFComponent {
     private static final Logger logger = LogManager.getLogger(XMLComponent.class.getName());
     
     public static Set<CompOperType> supportedOperations = CompOperType.XML_OPERATIONS;   
     
-    private final JMSConfig jmsConfiguration;    
+    private final JMSConfig jmsConfiguration; 
     
-    public XMLComponent(JMSConfig jmsConfiguration, ComponentResult componentOperationResult, String identificator) {
-        super(SOATFCompType.XML, componentOperationResult, identificator);
+    private final OperationResult cor;
+    
+    public XMLComponent(JMSConfig jmsConfiguration, String identificator) {
+        super(SOATFCompType.XML, identificator);
         this.jmsConfiguration = jmsConfiguration;
-        
+        cor = OperationResult.getInstance();
         constructComponent();
     }
 
@@ -54,14 +55,13 @@ public class XMLComponent extends SOATFComponent {
 
     @Override
     public void executeOperation(Operation operation) {
-        this.getComponentOperationResult().setOperation(operation);
+        cor.setOperation(operation);
         if (supportedOperations.contains(operation)) {
             try {
                 throw new com.ibm.soatf.UnsupportedComponentOperationException();
             } catch (    com.ibm.soatf.UnsupportedComponentOperationException ex) {
                 logger.error("Component operation is not supported." + ex.getLocalizedMessage());
-                this.getComponentOperationResult().setOverallResultSuccess(false);
-                return; // this.getComponentOperationResult();
+                return; // cor;
             }
         }
         
@@ -82,8 +82,8 @@ public class XMLComponent extends SOATFComponent {
                 break;
         }
         logger.info("Operation " + operation.getName() + " succesfully executed.");
-        this.getComponentOperationResult().setOverallResultSuccess(true);
-        this.getComponentOperationResult().setResultMessage("Opertaion succesfully executed.");
+        cor.markSuccessful();
+        cor.addMsg("Opertaion succesfully executed.");
         
     }
     
@@ -100,11 +100,16 @@ public class XMLComponent extends SOATFComponent {
             ValidatorResult result = XMLValidator.validateXMLFile(iterateFiles.next().toString(), jmsConfiguration.getMessageSchema().getRelativeURI());
             if (!result.isValid()) {
                 componentOperationResult.setOverallResultSuccess(false);
-                componentOperationResult.setResultMessage("Message in queue " + jmsConfiguration.getQueue().getName() + " is not valid");
+                componentOperationResult.addMsg("Message in queue " + jmsConfiguration.getQueue().getName() + " is not valid");
                 logger.info("Message in queue " + jmsConfiguration.getQueue().getName() + " is not valid.");
                 return;
             }
             logger.info("Message in queue " + jmsConfiguration.getQueue().getName() + " is valid.");
         }
     }*/
+
+    @Override
+    protected void destructComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }

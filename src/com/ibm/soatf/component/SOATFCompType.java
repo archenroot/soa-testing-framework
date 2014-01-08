@@ -29,6 +29,4 @@ public enum SOATFCompType {
     public String getDisplayName() {
         return displayName;
     }
-
-    
 }

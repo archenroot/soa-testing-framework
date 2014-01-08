@@ -17,15 +17,29 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Iface/FTP"
-    targetNamespace="http://www.ibm.com/SOATF/Config/Iface/FTP" 
-    elementFormDefault="qualified"
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Iface/FTP" targetNamespace="http://www.ibm.com/SOATF/Config/Iface/FTP" elementFormDefault="qualified"
     attributeFormDefault="unqualified">
     <xs:complexType name="FTPConfig">
+        <xs:annotation>
+            <xs:documentation>Configuration for the FTP component. Contains the file to work with and optionally its content (relevant for upload only)</xs:documentation>
+        </xs:annotation>
         <xs:sequence>
-            <xs:element name="fileName" type="xs:string" maxOccurs="1"/>
-            <xs:element name="fileContent" type="xs:string" maxOccurs="1" minOccurs="0"/>
+            <xs:element minOccurs="0" name="defaultFile">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="ftpconf:File"/>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" name="file">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="ftpconf:File">
+                            <xs:attribute name="envRefName" type="xs:string"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
         </xs:sequence>
         <xs:attribute name="refId" type="xs:string" use="required">
             <xs:annotation>
@@ -50,4 +64,18 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
         </xs:restriction>
 
     </xs:simpleType>
+    <xs:complexType name="File">
+        <xs:sequence>
+            <xs:element name="fileName" type="xs:string" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The file name to work with (upload/download)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fileContent" type="xs:string" maxOccurs="1" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The content of the file you want to upload.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

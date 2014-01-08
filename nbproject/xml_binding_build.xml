@@ -11,6 +11,20 @@
     <target name="jaxb-code-generation" depends="xjc-typedef-target,-do-init,-init-macrodef-javac">
         <mkdir dir="${build.generated.sources.dir}/jaxb" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
         <mkdir dir="build/generated/jaxbCache" xmlns:s="http://xml.netbeans.org/schema/JAXBWizConfig"/>
+        <mkdir dir="build/generated/jaxbCache/SOATFMasterConfig"/>
+        <xjc destdir="build/generated/jaxbCache/SOATFMasterConfig" catalog="catalog.xml">
+            <classpath>
+                <pathelement location="${src.dir}"/>
+                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
+            </classpath>
+            <arg value="-xmlschema"/>
+            <schema file="xml-resources/jaxb/SOATFMasterConfig/SOATFMasterConfig.xsd"/>
+            <depends file="xml-resources/jaxb/SOATFMasterConfig/SOATFMasterConfig.xsd"/>
+            <produces dir="build/generated/jaxbCache/SOATFMasterConfig"/>
+        </xjc>
+        <copy todir="${build.generated.sources.dir}/jaxb">
+            <fileset dir="build/generated/jaxbCache/SOATFMasterConfig"/>
+        </copy>
         <mkdir dir="build/generated/jaxbCache/SOATFIfaceConfig"/>
         <xjc destdir="build/generated/jaxbCache/SOATFIfaceConfig" catalog="catalog.xml">
             <classpath>
@@ -38,20 +52,6 @@
         </xjc>
         <copy todir="${build.generated.sources.dir}/jaxb">
             <fileset dir="build/generated/jaxbCache/SOATFReportConfig"/>
-        </copy>
-        <mkdir dir="build/generated/jaxbCache/SOATFMasterConfig"/>
-        <xjc destdir="build/generated/jaxbCache/SOATFMasterConfig" catalog="catalog.xml">
-            <classpath>
-                <pathelement location="${src.dir}"/>
-                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
-            </classpath>
-            <arg value="-xmlschema"/>
-            <schema file="xml-resources/jaxb/SOATFMasterConfig/SOATFMasterConfig.xsd"/>
-            <depends file="xml-resources/jaxb/SOATFMasterConfig/SOATFMasterConfig.xsd"/>
-            <produces dir="build/generated/jaxbCache/SOATFMasterConfig"/>
-        </xjc>
-        <copy todir="${build.generated.sources.dir}/jaxb">
-            <fileset dir="build/generated/jaxbCache/SOATFMasterConfig"/>
         </copy>
     </target>
 </project>

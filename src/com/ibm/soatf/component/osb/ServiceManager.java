@@ -23,6 +23,8 @@ import com.bea.wli.sb.management.configuration.ALSBConfigurationMBean;
 import com.bea.wli.sb.management.configuration.BusinessServiceConfigurationMBean;
 import com.bea.wli.sb.management.configuration.ProxyServiceConfigurationMBean;
 import com.bea.wli.sb.management.configuration.SessionManagementMBean;
+import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.component.soap.SOAPComponentException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
@@ -32,6 +34,7 @@ import javax.management.ObjectName;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.naming.Context;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import weblogic.management.jmx.MBeanServerInvocationHandler;
@@ -71,7 +74,7 @@ public class ServiceManager {
 
     }
 
-    public static boolean changeServiceStatus(String servicetype, boolean status, String serviceURI, String host, int port, String username, String password) {
+    public static boolean changeServiceStatus(String servicetype, boolean status, String serviceURI, String host, int port, String username, String password) throws FrameworkExecutionException {
 
         SessionManagementMBean sm = null;
         JMXConnector conn = null;
@@ -98,17 +101,21 @@ public class ServiceManager {
                     logger.info(statusMsg);
                 }
             } else if (servicetype.equals("BusinessService")) {
-                Ref ref = constructRef("BusinessService", serviceURI);
-                BusinessServiceConfigurationMBean businessConfigMBean = (BusinessServiceConfigurationMBean) clusterService.
-                        findService(BusinessServiceConfigurationMBean.NAME + "." + SESSION_NAME, BusinessServiceConfigurationMBean.TYPE, null);
-                if (status) {
-                    businessConfigMBean.enableService(ref);
-                    statusMsg="Enable the BusinessService : " + serviceURI;
-                    logger.info(statusMsg);
-                } else {
-                    businessConfigMBean.disableService(ref);
-                    statusMsg="Disable the BusinessService : " + serviceURI;
-                    logger.info(statusMsg);
+                try{
+                    Ref ref = constructRef("BusinessService", serviceURI);
+                    BusinessServiceConfigurationMBean businessConfigMBean = (BusinessServiceConfigurationMBean) clusterService.
+                            findService(BusinessServiceConfigurationMBean.NAME + "." + SESSION_NAME, BusinessServiceConfigurationMBean.TYPE, null);
+                    if (status) {
+                        businessConfigMBean.enableService(ref);
+                        statusMsg="Enable the BusinessService : " + serviceURI;
+                        logger.info(statusMsg);
+                    } else {
+                        businessConfigMBean.disableService(ref);
+                        statusMsg="Disable the BusinessService : " + serviceURI;
+                        logger.info(statusMsg);
+                    }
+                } catch (IllegalArgumentException ex){
+                    logger.fatal(ExceptionUtils.getStackTrace(ex));
                 }
             }
             sm.activateSession(SESSION_NAME, statusMsg);
@@ -119,10 +126,11 @@ public class ServiceManager {
                     sm.discardSession(SESSION_NAME);
                 } catch (Exception e) {
                     logger.debug("Not able to discard the session. "+e.getLocalizedMessage());
+                    throw new FrameworkExecutionException(e);
                 }
             }
             result = false;
-            logger.error("Error in MBean Server connection connection. "+ex.getLocalizedMessage());
+            logger.error("Error in MBean Server connection. "+ex.getLocalizedMessage());
             ex.printStackTrace();
         } finally {
             if (null != conn) {
@@ -130,6 +138,9 @@ public class ServiceManager {
                     conn.close();
                 } catch (Exception e) {
                     logger.debug("Not able to close the JMX connection. "+e.getLocalizedMessage());
+                    throw new FrameworkExecutionException(e);
+                            
+                    
                 }
             }
         }

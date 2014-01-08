@@ -17,21 +17,13 @@
  */
 package com.ibm.soatf.component;
 
-import com.ibm.soatf.component.ComponentResult;
+import com.ibm.soatf.flow.OperationResult;
 import java.io.File;
 import java.io.IOException;
 import java.util.Properties;
 import javax.xml.bind.JAXBContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.ibm.soatf.component.database.DatabaseComponent;
-import com.ibm.soatf.component.file.FileComponent;
-import com.ibm.soatf.component.ftp.FTPComponent;
-import com.ibm.soatf.component.jms.JMSComponent;
-import com.ibm.soatf.component.osb.OSBComponent;
-import com.ibm.soatf.component.rest.RESTComponent;
-import com.ibm.soatf.component.soap.SOAPComponent;
-import com.ibm.soatf.tool.ToolComponent;
 
 /**
  *
@@ -52,16 +44,16 @@ public class SOATFCompFactory {
      * Factory master method for build 
      * @param soaTestingFrameworkComponentType type of component to be created
      * @param identificator identificator for the component defined within configuration file
-     * @param componentOperationResult instance of operation result
+     * @param cor instance of operation result
      * @return
      */
-    public static SOATFComponent buildSOATFComponent(
+    public static AbstractSOATFComponent buildSOATFComponent(
            
             
             SOATFCompType soaTestingFrameworkComponentType,
-            ComponentResult componentOperationResult) {
-        logger.debug("Factory started to build " + soaTestingFrameworkComponentType.name() + " component with id: " + componentOperationResult.getInterfaceName() + ".");
-        SOATFComponent soaTestingFrameworkComponent = null;
+            OperationResult cor) {
+        logger.debug("Factory started to build " + soaTestingFrameworkComponentType.name() + " component.");
+        AbstractSOATFComponent soaTestingFrameworkComponent = null;
 
         //initProperties = FrameworkConfiguration.getCoinfigurationInit();
         xmlConfigurationFileName = new File(initProperties.getProperty(configurationXmlFileNameProperty));
@@ -114,9 +106,9 @@ public class SOATFCompFactory {
         */
         if (soaTestingFrameworkComponent != null) {
             logger.debug("Factory successfuly built the " + soaTestingFrameworkComponentType.name() + " component.");
+            cor.markSuccessful();
         } else {
-            componentOperationResult.setOverallResultSuccess(false);
-            componentOperationResult.addMsg("Factory failed to build the " + soaTestingFrameworkComponentType.name() + " component.");
+            cor.addMsg("Factory failed to build the " + soaTestingFrameworkComponentType.name() + " component.");
             logger.error("Factory failed to build the " + soaTestingFrameworkComponentType.name() + " component.");
         }
         return soaTestingFrameworkComponent;

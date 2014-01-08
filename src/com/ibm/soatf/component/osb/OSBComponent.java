@@ -17,22 +17,22 @@
  */
 package com.ibm.soatf.component.osb;
 
-import com.ibm.soatf.component.CompOperType;
-import com.ibm.soatf.component.ComponentResult;
-import com.ibm.soatf.flow.FlowPatternCompositeKey;
-import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.component.SOATFComponent;
+import com.ibm.soatf.FrameworkExecutionException;
 import com.ibm.soatf.UnsupportedComponentOperationException;
+import com.ibm.soatf.component.CompOperType;
+import com.ibm.soatf.component.SOATFCompType;
+import com.ibm.soatf.component.AbstractSOATFComponent;
 import com.ibm.soatf.config.iface.soap.SOAPConfig;
 import com.ibm.soatf.config.master.Operation;
-
-
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.AdminServer;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.Cluster;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.Cluster.ManagedServer;
-
+import com.ibm.soatf.flow.FlowPatternCompositeKey;
+import com.ibm.soatf.flow.OperationResult;
 import java.util.Set;
+import java.util.logging.Level;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,7 +40,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author zANGETSu
  */
-public final class OSBComponent extends SOATFComponent {
+public final class OSBComponent extends AbstractSOATFComponent {
     
     private static final Logger logger = LogManager.getLogger(OSBComponent.class.getName());
     
@@ -62,18 +62,17 @@ public final class OSBComponent extends SOATFComponent {
     private final SOAPConfig soapConfig;
     private final OracleFusionMiddlewareInstance masterOFMConfig;
 
-    //private ComponentResult componentOperationResult = new ComponentResult();
+    private final OperationResult cor;
     
     public OSBComponent(
             OracleFusionMiddlewareInstance masterOFMConfig,
-            SOAPConfig soapConfig, 
-            ComponentResult componentOperationResutlt,
+            SOAPConfig soapConfig,
             FlowPatternCompositeKey ifaceFlowPatternCompositeKey) {
         
-        super(SOATFCompType.OSB, componentOperationResutlt);
+        super(SOATFCompType.OSB);
         this.masterOFMConfig = masterOFMConfig;
         this.soapConfig = soapConfig;
-        
+        cor = OperationResult.getInstance();
         constructComponent();
     }
 
@@ -112,7 +111,7 @@ public final class OSBComponent extends SOATFComponent {
     @Override
     public void executeOperation(Operation operation) {
         
-        this.getComponentOperationResult().setOperation(operation);
+        cor.setOperation(operation);
         try {
             if (!supportedOperations.contains(operation)) {
                 throw new UnsupportedComponentOperationException();
@@ -129,34 +128,49 @@ public final class OSBComponent extends SOATFComponent {
             }
         } catch (UnsupportedComponentOperationException ex) {
             logger.fatal("Component operation is not supported." + ex);
-            this.getComponentOperationResult().addMsg("Component operation is not supported.");
-            this.getComponentOperationResult().setOverallResultSuccess(false);
+            cor.addMsg("Component operation is not supported.");
         }        
     }
 
     private void disableService() {
-        boolean result = ServiceManager.changeServiceStatus(          
-                servicetype, false, 
-                serviceURI, adminHost, adminPort, username, password);
-        this.getComponentOperationResult().setResultMessage("OSB " + servicetype + " " + serviceURI + " running at " + adminHost + " has been disabled.");
-        this.getComponentOperationResult().setOverallResultSuccess(result);
-        if (result) {
-            this.getComponentOperationResult().addMsg("Service succesfully disabled.");
-        } else {
-            this.getComponentOperationResult().addMsg("Failed to disable the service.");
+        try {
+            boolean result = ServiceManager.changeServiceStatus(
+                    servicetype, false,
+                    serviceURI, adminHost, adminPort, username, password);
+            cor.addMsg("OSB " + servicetype + " " + serviceURI + " running at " + adminHost + " has been disabled.");
+            if (result) {
+                cor.addMsg("Service succesfully disabled.");
+                cor.markSuccessful();
+            } else {
+                cor.addMsg("Failed to disable the service.");
+            }
+        } catch (FrameworkExecutionException ex) {
+            String msg = "OSB Service cannot be disabled:\n" + ExceptionUtils.getFullStackTrace(ex);
+            cor.addMsg(msg);
         }
     }
 
     private void enableService() {
-        boolean result = ServiceManager.changeServiceStatus(
-                servicetype, true, 
-                serviceURI, adminHost, adminPort, username, password);
-        this.getComponentOperationResult().setResultMessage("OSB " + servicetype + " " + serviceURI + " running at " + adminHost + " has been enabled.");
-        this.getComponentOperationResult().setOverallResultSuccess(result);
-        if (result) {
-            this.getComponentOperationResult().addMsg("Service succesfully enabled.");
-        } else {
-            this.getComponentOperationResult().addMsg("Failed to enable the service.");
-        }        
+        try {
+            boolean result = ServiceManager.changeServiceStatus(
+                    servicetype, true,
+                    serviceURI, adminHost, adminPort, username, password);
+            
+            if (result) {
+                cor.addMsg("OSB " + servicetype + " " + serviceURI + " running at " + adminHost + " has been enabled.");
+                cor.addMsg("Service succesfully enabled.");
+                cor.markSuccessful();
+            } else {
+                cor.addMsg("Failed to enable the service.");        
+            }
+        } catch (FrameworkExecutionException ex) {
+            String msg = "OSB Service cannot be enabled:\n" + ExceptionUtils.getFullStackTrace(ex);
+            cor.addMsg(msg);
+        }
+    }
+
+    @Override
+    protected void destructComponent() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

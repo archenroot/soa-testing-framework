@@ -3,6 +3,8 @@
 
 package com.ibm.soatf.component.jms;
 
+import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.flow.OperationResult;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +13,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.management.AttributeNotFoundException;
 import javax.management.InstanceNotFoundException;
 import javax.management.MBeanException;
@@ -19,13 +20,12 @@ import javax.management.ObjectName;
 import javax.management.MBeanServerConnection;
 import javax.management.ReflectionException;
 import org.apache.logging.log4j.LogManager;
-
-
+import org.apache.logging.log4j.Logger;
 
 public class BeanProvider {
 
-    private static final org.apache.logging.log4j.Logger logger = LogManager.getLogger(DistribuedQueueBrowser.class.getName());
-    
+    private static final Logger logger = LogManager.getLogger(BeanProvider.class.getName());
+    private final OperationResult cor = OperationResult.getInstance();
     private MBeanServerConnection connection;
     private ObjectName service;
 
@@ -33,12 +33,12 @@ public class BeanProvider {
     }
 
     BeanProvider(MBeanServerConnection connection, ObjectName service) {
-        logger.debug("");
+        logger.trace("Constructing BeanProvider object.");
         this.connection = connection;
         this.service = service;
     }
 
-    public Iterable<String> getDistributedMemberJndiNames(String distributedDestJndiName) {
+    public Iterable<String> getDistributedMemberJndiNames(String distributedDestJndiName) throws FrameworkExecutionException {
         Iterable<String> serverNames = getJmsServerNames();
         Set<String> distributedDestNames = new TreeSet<String>();
 
@@ -49,15 +49,16 @@ public class BeanProvider {
         return distributedDestNames;
     }
 
-    public Iterable<String> getJmsServerNames() {
+    public Iterable<String> getJmsServerNames() throws FrameworkExecutionException {
         Set<String> jmsServerNames = new TreeSet<String>();
         Iterable<ObjectName> jmsServers = getJMSServers();
 
         for (ObjectName jmsServer : jmsServers) {
             try {
                 jmsServerNames.add((String) connection.getAttribute(jmsServer, "Name"));
-            } catch (Exception e) {
-                throw new RuntimeException(e);
+            } catch (IOException | AttributeNotFoundException | InstanceNotFoundException | MBeanException | ReflectionException e) {
+                
+                throw new FrameworkExecutionException(e);
             }
         }
 
@@ -70,17 +71,9 @@ public class BeanProvider {
         for (ObjectName jmsRuntimeConnection : jmsConnections) {
             try {
                 jmsConnectedHosts.add( (String) connection.getAttribute(jmsRuntimeConnection, "HostAddress") );
-            } catch (MBeanException ex) {
-                Logger.getLogger(BeanProvider.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (AttributeNotFoundException ex) {
-                Logger.getLogger(BeanProvider.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InstanceNotFoundException ex) {
-                Logger.getLogger(BeanProvider.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (ReflectionException ex) {
-                Logger.getLogger(BeanProvider.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (IOException ex) {
-                Logger.getLogger(BeanProvider.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            } catch (MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException | IOException ex) {
+                
+            } 
         }
         return jmsConnectedHosts;
     }

@@ -28,7 +28,11 @@
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
                       <Component id="btnClearLog" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                      <Component id="btnReloadXMLConfiguration" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="chkBoxIgnoreFailures" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="cbEnvironment" min="-2" pref="206" max="-2" attributes="0"/>
@@ -52,6 +56,8 @@
                   <Component id="cbEnvironment" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnClearLog" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="chkBoxIgnoreFailures" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnReloadXMLConfiguration" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -323,5 +329,18 @@
         </Container>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JCheckBox" name="chkBoxIgnoreFailures">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Ignore failures"/>
+      </Properties>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnReloadXMLConfiguration">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Reload XML Configuration"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnReloadXMLConfigurationActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>

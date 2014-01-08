@@ -17,20 +17,28 @@
  */
 package com.ibm.soatf;
 
+/**
+ * Exception thrown when framework is asked to process not defined operation.
+ * As soon as enumeration of operations has been moved into XML schema files, 
+ * this exception shouldn't be ever thrown now.
+ * @author Ladislav Jech <archenroot@gmail.com>
+ */
+
+@Deprecated
 public class UnsupportedComponentOperationException extends Exception {
 
-        public UnsupportedComponentOperationException() {}
-        
-        public UnsupportedComponentOperationException(String message) {
-            super(message);
-        }
-        
-        public UnsupportedComponentOperationException(Throwable cause){
-            super(cause);
-        }
-        
-        public UnsupportedComponentOperationException(String message, Throwable cause)
-        {
-            super(message, cause);
-        }
+    public UnsupportedComponentOperationException() {
     }
+
+    public UnsupportedComponentOperationException(String message) {
+        super(message);
+    }
+
+    public UnsupportedComponentOperationException(Throwable cause) {
+        super(cause);
+    }
+
+    public UnsupportedComponentOperationException(String message, Throwable cause) {
+        super(message, cause);
+    }
+}

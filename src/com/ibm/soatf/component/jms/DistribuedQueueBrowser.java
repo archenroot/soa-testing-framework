@@ -1,6 +1,6 @@
 package com.ibm.soatf.component.jms;
 
-import com.ibm.soatf.component.ComponentResult;
+import com.ibm.soatf.FrameworkExecutionException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -26,8 +26,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import com.ibm.soatf.component.database.DatabaseComponent;
-import com.ibm.soatf.tool.FileSystem;
-import com.ibm.soatf.component.util.Utils;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DistribuedQueueBrowser {
 
@@ -56,10 +56,10 @@ public class DistribuedQueueBrowser {
     private final String distributedDestinationName;
     private final String distributedDestinationJndi;
 
-    private String workingDirectory;
+    private File workingDirectory;
 
     public DistribuedQueueBrowser(
-            String workingDirectory,
+            File workingDirectory,
             String adminUrl,
             String providerUrl,
             String jmsServerName,
@@ -90,56 +90,51 @@ public class DistribuedQueueBrowser {
         session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
     }
 
-    public int printQueueMessagesByContent(String content) throws NoMessageFoundException, JMSException, NamingException {
-        Enumeration<ServerLocatedMessage> sli = this.getServerLocatedEnumeration();
-        int i = 0;
-        if (!sli.hasMoreElements()) {
-            throw new NoMessageFoundException();
-        }
-
-        while (sli.hasMoreElements()) {
-            ServerLocatedMessage m = sli.nextElement();
-            TextMessage mes = (TextMessage) m.getMessage();
-            //
-
-            String jmsMessageId = m.getMessage().getJMSMessageID().replaceAll("ID:<", "").replaceAll(">", "");
-
-            if (content != null) {
-                if (mes == null || mes.getText() == null || !mes.getText().contains(content)) {
-                    logger.debug("skipping" + mes);
-                    continue;
-                }
+    public List<TextMessage> printQueueMessagesByContent(String content) throws FrameworkExecutionException {
+        List<TextMessage> messages = new ArrayList<>();
+        try {
+            Enumeration<ServerLocatedMessage> sli = this.getServerLocatedEnumeration();
+            int i = 0;
+            if (!sli.hasMoreElements()) {
+                throw new NoMessageFoundException();
             }
-            /*
-             for (Enumeration<String> e = mes.getPropertyNames(); e.hasMoreElements();)
-             System.out.println("enum" + e.nextElement().toString());
+            while (sli.hasMoreElements()) {
+                ServerLocatedMessage m = sli.nextElement();
+                TextMessage mes = (TextMessage) m.getMessage();
+                String jmsMessageId = m.getMessage().getJMSMessageID().replaceAll("ID:<", "").replaceAll(">", "");
+                if (content != null) {
+                    if (mes == null || mes.getText() == null || !mes.getText().contains(content)) {
+                        logger.debug("Skipping message" + mes);
+                        continue;
+                    } else {
+                        
+                    }
+                }
+                messages.add(mes);
+                String filename = new StringBuilder(distributedDestinationName)
+                        .append(JMSComponent.NAME_DELIMITER)
+                        .append(jmsMessageId)
+                        .append(JMSComponent.NAME_DELIMITER)
+                        .append(i)
+                        .append(JMSComponent.MESSAGE_SUFFIX)
+                        .toString();
+                File file = new File(workingDirectory, filename);
+                this.writeStatementToFile(mes.getText(), file);
+                System.out.println(m);
+                ++i;
 
-
-             System.out.println("Correlation id:" + mes.getJMSCorrelationID());
-             System.out.println("Message id:" + mes.getJMSCorrelationID());
-             System.out.println("JMS Type:" + mes.getJMSType());
-             System.out.println("Content: " + mes.getText());
-             */
-
-            String filename = new StringBuilder(distributedDestinationName)
-                    .append(JMSComponent.NAME_DELIMITER)
-                    .append(jmsMessageId)
-                    .append(JMSComponent.NAME_DELIMITER)
-                    .append(i)
-                    .append(JMSComponent.MESSAGE_SUFFIX)
-                    .toString();
-            String path = Utils.getFullFilePathStr(workingDirectory, "\\", filename);
-            this.writeStatementToFile(mes.getText(), path);
-            System.out.println(m);
-            ++i;
+            }
+            if (0 == i) {
+                throw new NoMessageFoundException();
+            }
+            return messages;
+        } catch (JMSException | NamingException | NoMessageFoundException ex) {
+            throw new FrameworkExecutionException(ex);
         }
-        if (0 == i) {
-            throw new NoMessageFoundException();
-        }
-        return i;
+        
     }
 
-    public int printQueueMessages() throws NoMessageFoundException, JMSException, NamingException {
+    public List<TextMessage> printQueueMessages() throws FrameworkExecutionException {
         return printQueueMessagesByContent(null);
     }
 
@@ -272,10 +267,10 @@ public class DistribuedQueueBrowser {
         }
     }
 
-    private void writeStatementToFile(String statement, String pathToFile) {
+    private void writeStatementToFile(String statement, File file) {
         FileWriter fw = null;
         try {
-            fw = new FileWriter(new File(pathToFile));
+            fw = new FileWriter(file);
             fw.write(statement);
             fw.flush();
             fw.close();
@@ -283,7 +278,9 @@ public class DistribuedQueueBrowser {
             java.util.logging.Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
             try {
-                fw.close();
+                if (fw != null) {
+                    fw.close();
+                }
             } catch (IOException ex) {
                 java.util.logging.Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
             }
