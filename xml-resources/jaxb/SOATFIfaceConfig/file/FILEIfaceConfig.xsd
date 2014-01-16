@@ -26,51 +26,31 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
             <xs:documentation>Configuration for the file component. Contains the file to work with and optionally its content (relevant for upload only)</xs:documentation>
         </xs:annotation>
         <xs:sequence>
-            <xs:element minOccurs="0" name="defaultFile">
-                <xs:complexType>
-                    <xs:complexContent>
-                        <xs:extension base="fileconf:File"/>
-                    </xs:complexContent>
-                </xs:complexType>
-            </xs:element>
-            <xs:element maxOccurs="unbounded" name="file" minOccurs="0">
-                <xs:complexType>
-                    <xs:complexContent>
-                        <xs:extension base="fileconf:File">
-                            <xs:attribute name="envRefName" type="xs:string"/>
-                        </xs:extension>
-                    </xs:complexContent>
-                </xs:complexType>
-            </xs:element>
+            <xs:element minOccurs="0" name="defaultFile" maxOccurs="1" type="fileconf:DefaultFile"> </xs:element>
+            <xs:element maxOccurs="unbounded" name="envSpecificFile" minOccurs="0"
+                type="fileconf:EnvSpecificFile"> </xs:element>
         </xs:sequence>
-        <xs:attribute name="refId" type="xs:string" use="required">
-            <xs:annotation>
-                <xs:documentation>Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
     </xs:complexType>
-    <xs:simpleType name="Security">
-
-        <xs:annotation>
-            <xs:documentation xml:lang="en">Enumeration of supported security modes.</xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:normalizedString">
-            <xs:enumeration value="None"/>
-            <xs:enumeration value="SSL"/>
-            <xs:enumeration value="SSH"/>
-            <!-- 
-            <xs:enumeration value="Microsoft"/>
-            <xs:enumeration value="MySql"/>
-            <xs:enumeration value="H2"/>
-            -->
-        </xs:restriction>
-
-    </xs:simpleType>
     <xs:complexType name="File">
         <xs:sequence>
             <xs:element name="fileName" type="xs:string" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation>The file name to work with (put/get/check for (non)existence</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="directory" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Directory where the file should be put and polled by JCA adapter.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="archiveDirectory" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">TODO</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="errorArchiveDirectory" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">TODO</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="fileContent" type="xs:string" maxOccurs="1" minOccurs="0">
@@ -79,5 +59,20 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DefaultFile">
+        <xs:sequence>
+            <xs:element name="file" type="fileconf:File"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EnvSpecificFile">
+        <xs:sequence>
+            <xs:element name="file" type="fileconf:File"/>
+        </xs:sequence>
+        <xs:attribute name="envRefName" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">One or more environment references split by default splitting constant character defined in master-config.xml file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
     </xs:complexType>
 </xs:schema>

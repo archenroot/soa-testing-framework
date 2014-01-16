@@ -5,10 +5,10 @@
  */
 package com.ibm.soatf.gui;
 
-import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.config.ConfigurationManager;
 import com.ibm.soatf.config.DirectoryStructureManager;
-import com.ibm.soatf.config.FrameworkConfiguration;
+import com.ibm.soatf.config.MasterFrameworkConfig;
 import com.ibm.soatf.config.FrameworkConfigurationException;
 import com.ibm.soatf.config.InterfaceConfiguration;
 import com.ibm.soatf.config.MasterConfiguration;
@@ -40,24 +40,24 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * Master object for Graphical User Interface initialisation.
  *
- * @author zANGETSu
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
 public class SOATestingFrameworkGUI extends javax.swing.JFrame {
 
     /**
      * Creates new form SOATestingFrameworkGUI
      */
-    
     public SOATestingFrameworkGUI() {
         initComponents();
-        
+
         //The MOST important part for the logging - the JTextArea where the messages will appear
         JTextAreaAppender.setJTextArea(jtaLogging);
         logger.info("GUI created successfully");
         //center the frame on screen
         setLocationRelativeTo(null);
-        
+
         additionalInit();
     }
 
@@ -91,6 +91,7 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
         jtaLogging = new javax.swing.JTextArea();
         chkBoxIgnoreFailures = new javax.swing.JCheckBox();
         btnReloadXMLConfiguration = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -233,6 +234,8 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
             }
         });
 
+        jButton1.setText("Export Current Result");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -244,6 +247,8 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
                         .addComponent(btnClearLog)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(btnReloadXMLConfiguration)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jButton1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(chkBoxIgnoreFailures)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -267,7 +272,8 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(btnClearLog)
                     .addComponent(chkBoxIgnoreFailures)
-                    .addComponent(btnReloadXMLConfiguration))
+                    .addComponent(btnReloadXMLConfiguration)
+                    .addComponent(jButton1))
                 .addContainerGap())
         );
 
@@ -300,7 +306,7 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
     }//GEN-LAST:event_detailsValueChanged
 
     private void btnReloadXMLConfigurationActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnReloadXMLConfigurationActionPerformed
-       reloadXMLConfiguration();
+        reloadXMLConfiguration();
     }//GEN-LAST:event_btnReloadXMLConfigurationActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -310,6 +316,7 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
     private javax.swing.JComboBox cbEnvironment;
     private javax.swing.JCheckBox chkBoxIgnoreFailures;
     private javax.swing.JTree details;
+    private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
@@ -327,19 +334,19 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
     private javax.swing.JTextArea jtaLogging;
     // End of variables declaration//GEN-END:variables
 
-    private FrameworkConfiguration FCFG;
+    private MasterFrameworkConfig FCFG;
     private MasterConfiguration MCFG;
     private static final Logger logger = LogManager.getLogger(SOATestingFrameworkGUI.class.getName());
     private final DefaultListModel<GUIObjects.Interface> jlInterfacesModel = new DefaultListModel<>();
     private final TableModelResults jtResultsModel = new TableModelResults();
     private final FlowExecutionListener execListener = //<editor-fold defaultstate="collapsed" desc="anonymous inner class definition">
             new FlowExecutionListener() {
-                
+
                 @Override
                 public void operationStarted(FlowExecutionEvent evt) {
                     addRow(evt);
                 }
-                
+
                 @Override
                 public void operationFinished(FlowExecutionEvent evt) {
                     updateLastRow(evt);
@@ -347,7 +354,7 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
                 }
             };
 //</editor-fold>
-    
+
     private void additionalInit() {
         ConfigurationManager cfgMgr = ConfigurationManager.getInstance();
         try {
@@ -358,7 +365,7 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
         } catch (FrameworkConfigurationException ex) {
             return;
         }
-        
+
         //Interfaces list
         initInterfaces();
         //Environment combobox
@@ -369,15 +376,15 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if(e.getClickCount() > 1) {
+                if (e.getClickCount() > 1) {
                     displayResultDetails();
                 }
             }
         });
         details.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        
+
     }
-    
+
     private void initInterfaces() {
         for (Interface iface : MCFG.getInterfaces()) {
             jlInterfacesModel.addElement(new GUIObjects.Interface(iface));
@@ -404,10 +411,10 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
             return;
         }
         flowExecutor.addFlowExecutionListener(execListener);
-        
+
         AsyncWorker.post(new ExecuteTask(flowExecutor));
     }
-    
+
     private void interfaceSelection(ListSelectionEvent evt) {
         if (jlInterfaces.getSelectedValue() != null) {
             Interface iface = jlInterfaces.getSelectedValue().getWrappedObject();
@@ -438,26 +445,26 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
         nodeInterface.add(nodeProjects);
         DefaultMutableTreeNode nodePatterns = new DefaultMutableTreeNode("Flow Patterns");
         /*for (Interface.Patterns.ReferencedFlowPattern refPattern : ifaceMasterXML.getPatterns().getReferencedFlowPattern()) {
-        for (int i = 0; i < refPattern.getOccurrence(); i++) {
-        String flowPatternId = refPattern.getIdentificator();
-        FlowPattern flowPattern = MCFG.getFlowPattern(flowPatternId);
-        DefaultMutableTreeNode nodeFlowPattern = new DefaultMutableTreeNode(new GUIObjects.FlowPattern(flowPattern));
-        ICFG.getInterfaceFlowPattern(flowPatternId);
-        for (TestScenario testScenario : flowPattern.getTestScenario()) {
-        DefaultMutableTreeNode nodeTestScenario = new DefaultMutableTreeNode(new GUIObjects.TestScenario(testScenario));
-        for (ExecutionBlock executionBlock : testScenario.getExecutionBlock()) {
-        DefaultMutableTreeNode nodeExecutionBlock = new DefaultMutableTreeNode(new GUIObjects.ExecutionBlock(executionBlock));
-        for (Operation operation : executionBlock.getOperation()) {
-        DefaultMutableTreeNode nodeOperation = new DefaultMutableTreeNode(new GUIObjects.Operation(operation));
-        nodeExecutionBlock.add(nodeOperation);
-        }
-        nodeTestScenario.add(nodeExecutionBlock);
-        }
-        nodeFlowPattern.add(nodeTestScenario);
-        }
-        nodePatterns.add(nodeFlowPattern);
-        }
-        }*/
+         for (int i = 0; i < refPattern.getOccurrence(); i++) {
+         String flowPatternId = refPattern.getIdentificator();
+         FlowPattern flowPattern = MCFG.getFlowPattern(flowPatternId);
+         DefaultMutableTreeNode nodeFlowPattern = new DefaultMutableTreeNode(new GUIObjects.FlowPattern(flowPattern));
+         ICFG.getInterfaceFlowPattern(flowPatternId);
+         for (TestScenario testScenario : flowPattern.getTestScenario()) {
+         DefaultMutableTreeNode nodeTestScenario = new DefaultMutableTreeNode(new GUIObjects.TestScenario(testScenario));
+         for (ExecutionBlock executionBlock : testScenario.getExecutionBlock()) {
+         DefaultMutableTreeNode nodeExecutionBlock = new DefaultMutableTreeNode(new GUIObjects.ExecutionBlock(executionBlock));
+         for (Operation operation : executionBlock.getOperation()) {
+         DefaultMutableTreeNode nodeOperation = new DefaultMutableTreeNode(new GUIObjects.Operation(operation));
+         nodeExecutionBlock.add(nodeOperation);
+         }
+         nodeTestScenario.add(nodeExecutionBlock);
+         }
+         nodeFlowPattern.add(nodeTestScenario);
+         }
+         nodePatterns.add(nodeFlowPattern);
+         }
+         }*/
         List<IfaceFlowPattern> ifaceFlowPatterns;
         try {
             ifaceFlowPatterns = ICFG.getIfaceFlowPatterns();
@@ -491,8 +498,7 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
             nodePatterns.add(nodeInterfaceFlowPattern);
         }
         nodeInterface.add(nodePatterns);
-        
-        
+
         DefaultTreeModel defaultTreeModel = new DefaultTreeModel(nodeInterface);
         details.setModel(defaultTreeModel);
     }
@@ -505,14 +511,14 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
         final DefaultComboBoxModel model = new DefaultComboBoxModel(getListOfEnvironments());
         cbEnvironment.setModel(model);
     }
-    
+
     private void updateLastRow(FlowExecutionEvent evt) {
         Result result = new Result(evt.getOperationName());
         result.setMessages(evt.getOperationResult().getMessages());
-        result.setSuccess(evt.getOperationResult().isSuccessful());
+        result.setCommonResult(evt.getOperationResult().getCommmonResult());
         jtResultsModel.updateLastRow(result);
     }
-    
+
     private void addRow(FlowExecutionEvent evt) {
         jtResultsModel.addRow(new Result(evt.getOperationName()));
     }
@@ -526,26 +532,26 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
         if (selectionPath == null) {
             return flowExecutor;
         }
-        
+
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selectionPath.getLastPathComponent();
         while (node != null) {
             Object userObject = node.getUserObject();
             if (userObject instanceof GUIObjects.Project) {
-                boolean inboundOnly = "INBOUND".equalsIgnoreCase(((GUIObjects.Project)userObject).getWrappedObject().getDirection());
+                boolean inboundOnly = "INBOUND".equalsIgnoreCase(((GUIObjects.Project) userObject).getWrappedObject().getDirection());
                 flowExecutor = new FlowExecutor(inboundOnly, envName, interfaceId);
                 break;
             } else if (userObject instanceof GUIObjects.Operation) {
-                flowExecutor.setOperation(((GUIObjects.Operation)userObject).getWrappedObject());
+                flowExecutor.setOperation(((GUIObjects.Operation) userObject).getWrappedObject());
             } else if (userObject instanceof GUIObjects.InterfaceExecutionBlock) {
-                flowExecutor.setIfaceExecutionBlock(((GUIObjects.InterfaceExecutionBlock)userObject).getWrappedObject());
+                flowExecutor.setIfaceExecutionBlock(((GUIObjects.InterfaceExecutionBlock) userObject).getWrappedObject());
             } else if (userObject instanceof GUIObjects.InterfaceTestScenario) {
-                flowExecutor.setIfaceTestScenario(((GUIObjects.InterfaceTestScenario)userObject).getWrappedObject());
+                flowExecutor.setIfaceTestScenario(((GUIObjects.InterfaceTestScenario) userObject).getWrappedObject());
             } else if (userObject instanceof GUIObjects.IfaceFlowPattern) {
-                flowExecutor.setIfaceFlowPattern(((GUIObjects.IfaceFlowPattern)userObject).getWrappedObject());
+                flowExecutor.setIfaceFlowPattern(((GUIObjects.IfaceFlowPattern) userObject).getWrappedObject());
             }
             node = (DefaultMutableTreeNode) node.getParent();
         }
- 
+
         return flowExecutor;
     }
 
@@ -557,15 +563,15 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
     private void clearLogs() {
         jtaLogging.setText("");
     }
-    
+
     private void clearResults() {
         jtResultsModel.clear();
     }
-    
+
     private void displayResultDetails() {
         int rowIdx = jtResults.getSelectedRow();
         Result result = jtResultsModel.getRow(rowIdx);
-                
+
         JDialog dialog = new ResultsDetailDialog(this, true, result);
         dialog.setVisible(true);
     }
@@ -573,15 +579,16 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
     private void reloadXMLConfiguration() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     private class ExecuteTask extends AsyncTask {
+
         private final Logger logger = LogManager.getLogger(ExecuteTask.class);
         private final FlowExecutor flowExecutor;
 
         public ExecuteTask(FlowExecutor flowExecutor) {
             this.flowExecutor = flowExecutor;
         }
-        
+
         @Override
         public void success(Object o) {
             logger.info("Execution finished");
@@ -600,10 +607,11 @@ public class SOATestingFrameworkGUI extends javax.swing.JFrame {
             try {
                 flowExecutor.execute();
             } catch (RuntimeException e) {
+
                 throw new FrameworkExecutionException(e);
             }
             return null;
         }
-        
+
     }
 }

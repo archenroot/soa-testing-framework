@@ -19,14 +19,15 @@
 package com.ibm.soatf.component.soap;
 
 import com.ibm.soatf.FrameworkException;
-import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.flow.FrameworkExecutionException;
+import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.component.AbstractSOATFComponent;
-import com.ibm.soatf.component.osb.ServiceManager;
+import com.ibm.soatf.component.soa.ServiceManager;
 import com.ibm.soatf.component.soap.builder.SoapContext;
 import com.ibm.soatf.component.soap.builder.SoapLegacyFacade;
 import com.ibm.soatf.component.soap.builder.SoapValidationException;
 import com.ibm.soatf.component.soap.builder.XmlUtils;
+import com.ibm.soatf.config.iface.soap.EnvelopeConfig;
 import com.ibm.soatf.config.iface.soap.SOAPConfig;
 import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
@@ -41,7 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.logging.Level;
 import javax.wsdl.Binding;
 import javax.wsdl.BindingOperation;
 import javax.xml.namespace.QName;
@@ -59,10 +59,12 @@ import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Element;
 
 /**
- *
- * @author zANGETSu
+ * Class responsible for any operations related to work by using SOAP protocol or
+ * even management on objects which are just SOAP based.
+ * 
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
-public class SOAPComponent extends AbstractSOATFComponent {
+public class SOAPComponent extends AbstractSoaTFComponent {
 
     private final static Logger logger = LogManager.getLogger(SOAPComponent.class);
     
@@ -100,15 +102,18 @@ public class SOAPComponent extends AbstractSOATFComponent {
     private final Map<String, SOAPConfig.EnvelopeConfig.Element> customValues = new HashMap<>();
     
     private final OperationResult cor;
+    private List<EnvelopeConfig.Element> envelopeElements;
 
     public SOAPComponent(
             OracleFusionMiddlewareInstance soapMasterConfig,
             SOAPConfig soapIfaceConfig,
-            File workingDir) {
+            File workingDir,
+            List<EnvelopeConfig.Element> envelopeElements) {
         super(SOATFCompType.SOAP);
         this.masterOFMConfig = soapMasterConfig;
         this.soapIfaceConfig = soapIfaceConfig;
         this.workingDir = workingDir;
+        this.envelopeElements = envelopeElements;
         cor = OperationResult.getInstance();
         constructComponent();
     }
@@ -123,22 +128,21 @@ public class SOAPComponent extends AbstractSOATFComponent {
         this.managedServer = this.masterOFMConfig.getCluster().getManagedServer();
         this.username = this.masterOFMConfig.getAdminServer().getSecurityPrincipal();
         this.password = this.masterOFMConfig.getAdminServer().getSecurityCredentials();
-        this.requestContent = this.soapIfaceConfig.getRequestContent();
+        //this.requestContent = this.soapIfaceConfig.getRequestContent();
 
         this.serviceName = soapIfaceConfig.getServiceName();
         this.operationName = soapIfaceConfig.getOperationName();
         this.serviceLocactionType = soapIfaceConfig.getServiceLocationType();
         this.serviceSOAType = soapIfaceConfig.getServiceSOAType();
 
-        if (soapIfaceConfig.getEnvelopeConfig() != null) {
-            for (SOAPConfig.EnvelopeConfig.Element el : soapIfaceConfig.getEnvelopeConfig().getElement()) {
-                customValues.put(el.getElementXpath(), el);
-            }
+        for (EnvelopeConfig.Element el : envelopeElements) {
+            customValues.put(el.getElementXpath(), el);
         }
+                
     }
 
     @Override
-    protected void executeOperation(Operation operation) throws FrameworkException {
+    protected void executeOperation(Operation operation) throws FrameworkExecutionException  {
         /*if (!SOAP_OPERATIONS.contains(operation.getName())) {
          final String msg = "Unsupported operation: " + operation.getName() + ". Valid operations are: " + SOAP_OPERATIONS;
          logger.error(msg);
@@ -184,10 +188,10 @@ public class SOAPComponent extends AbstractSOATFComponent {
                     servicetype, false,
                     serviceURI, adminHost, adminPort, username, password);
             if (result) {
-                cor.addMsg("OSB " + servicetype + " " + serviceURI + " has been disabled trough " + adminHost + ":" + adminPort + ".");
+                cor.addMsg("OSB " + servicetype + " " + serviceURI + " has been disabled trough admin server " + adminHost + ":" + adminPort + ".");
                 cor.markSuccessful();
             } else {
-                cor.addMsg("OSB " + servicetype + " " + serviceURI + " has been disabled trough " + adminHost + ":" + adminPort + ".");
+                cor.addMsg("OSB " + servicetype + " " + serviceURI + " cannot be desibled been disabled trough admin server" + adminHost + ":" + adminPort + ".");
             }
         } catch (FrameworkExecutionException ex) {
             String msg = "OSB Service cannot be disabled:\n" + ExceptionUtils.getFullStackTrace(ex);
@@ -215,9 +219,9 @@ public class SOAPComponent extends AbstractSOATFComponent {
         }
     }
     
-    private Binding findBindingForOperationName(SoapLegacyFacade facade, String operationName) {
+    private Binding findBindingForOperationName(SoapLegacyFacade facade, String operationName) throws SoapComponentException {
         if(operationName == null || facade == null) {
-            throw new SOAPComponentException("Operation name or endpoint wsdl is missing or corrupted.");
+            throw new SoapComponentException("Operation name or endpoint wsdl is missing or corrupted.");
         }
         final List<QName> list = facade.getBindingNames();
         if (list != null && list.size() > 0) {
@@ -229,10 +233,10 @@ public class SOAPComponent extends AbstractSOATFComponent {
                 }
             }
         }
-        throw new SOAPComponentException("Can't find binding for provided operation name: " + operationName); 
+        throw new SoapComponentException("Can't find binding for provided operation name: " + operationName); 
     }
     
-    public static String getValueFromGeneratedEnvelope(File workingDir, String serviceName, String operationName, String xPath) {
+    public static String getValueFromGeneratedEnvelope(File workingDir, String serviceName, String operationName, String xPath) throws SoapComponentException {
         final String filename = new StringBuilder(serviceName).append(NAME_DELIMITER).append(operationName).append(NAME_DELIMITER).append(REQUEST_FILE_SUFFIX).toString();
         final File file = new File(workingDir, filename);
         try {
@@ -240,7 +244,7 @@ public class SOAPComponent extends AbstractSOATFComponent {
             final String xmlText = FileUtils.readFileToString(file);
             return XmlUtils.getXPathContent(xmlText, xPath);
         } catch (IOException ex) {
-            throw new SOAPComponentException("Can't find generated envelope file to extract values");
+            throw new SoapComponentException("Can't find generated envelope file to extract values");
         }
     }
 
@@ -302,8 +306,8 @@ public class SOAPComponent extends AbstractSOATFComponent {
                        
             final URL url = new URL(DEFAULT_PROTO, managedServer.getHostName(), managedServer.getPort(), delimiter+serviceURI);
             final String requestEnvelope = FileUtils.readFileToString(requestFile);
-            
-            final SOAPMessage res = JAXWSDispatch.invoke(url.toString(), requestEnvelope);
+            JAXWSDispatch jaxwsDispatch = new JAXWSDispatch();
+            final SOAPMessage res = jaxwsDispatch.invoke(url.toString(), requestEnvelope);
             
             String msg = "Successfuly received response of operation: " + operationName;
             logger.debug(msg);
@@ -375,7 +379,7 @@ public class SOAPComponent extends AbstractSOATFComponent {
         }       
     }
 
-    private void checkSOAPMessage(boolean ok) {
+    private void checkSOAPMessage(boolean ok) throws SoapComponentException {
         String filename = new StringBuilder(serviceName).append(NAME_DELIMITER).append(operationName).append(NAME_DELIMITER).append(RESPONSE_FILE_SUFFIX).toString();
         final File file = new File(workingDir, filename);
         InputStream is = null;
@@ -405,13 +409,13 @@ public class SOAPComponent extends AbstractSOATFComponent {
             }
         } catch (IOException | SOAPException ex) {
             logger.debug(ex);
-            throw new SOAPComponentException("error while trying to parse response");
+            throw new SoapComponentException("error while trying to parse response");
         } finally {
             if (is != null) {
                 try {
                     is.close();
                 } catch (IOException ex) {
-                    ;
+                    throw new SoapComponentException(ex);
                 }
             }
         }

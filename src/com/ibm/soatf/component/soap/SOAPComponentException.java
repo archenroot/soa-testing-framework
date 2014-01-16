@@ -17,21 +17,43 @@
  */
 package com.ibm.soatf.component.soap;
 
-public class SOAPComponentException extends RuntimeException {
-    
-    public SOAPComponentException() {
+import com.ibm.soatf.flow.FrameworkExecutionException;
+/**
+ * 
+ * 
+ * @author Ladislav Jech <archenroot@gmail.com>
+ */
+public class SoapComponentException extends FrameworkExecutionException {
+
+    /**
+     *
+     */
+    public SoapComponentException() {
     }
 
-    public SOAPComponentException(String message) {
+    /**
+     *
+     * @param message
+     */
+    public SoapComponentException(String message) {
         
         super(message);
     }
 
-    public SOAPComponentException(Throwable cause) {
+    /**
+     *
+     * @param cause
+     */
+    public SoapComponentException(Throwable cause) {
         super(cause);
     }
 
-    public SOAPComponentException(String message, Throwable cause) {
+    /**
+     *
+     * @param message
+     * @param cause
+     */
+    public SoapComponentException(String message, Throwable cause) {
         super(message, cause);
     }
 }

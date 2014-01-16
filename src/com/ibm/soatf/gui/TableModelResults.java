@@ -73,7 +73,7 @@ class TableModelResults extends AbstractTableModel  {
         Result resultToUpdate = results.get(getLastRowIdx());
         resultToUpdate.setMessages(result.getMessages());
         resultToUpdate.setOperationName(result.getOperationName());
-        resultToUpdate.setSuccess(result.isSuccess());
+        resultToUpdate.setCommonResult(result.getCommonResult());
         fireTableRowsUpdated(getLastRowIdx(), getLastRowIdx());
     }
     

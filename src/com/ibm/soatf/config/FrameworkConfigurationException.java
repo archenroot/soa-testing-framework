@@ -19,21 +19,41 @@ package com.ibm.soatf.config;
 
 import com.ibm.soatf.FrameworkException;
 
+/**
+ *
+ * @author Ladislav Jech <archenroot@gmail.com>
+ */
 public class FrameworkConfigurationException extends FrameworkException {
     
+    /**
+     *
+     */
     public FrameworkConfigurationException() {
     }
 
-    public FrameworkConfigurationException(String message) {
+    /**
+     *
+     * @param message
+     */
+    public FrameworkConfigurationException(final String message) {
         
         super(message);
     }
 
-    public FrameworkConfigurationException(Throwable cause) {
+    /**
+     *
+     * @param cause
+     */
+    public FrameworkConfigurationException(final Throwable cause) {
         super(cause);
     }
 
-    public FrameworkConfigurationException(String message, Throwable cause) {
+    /**
+     *
+     * @param message
+     * @param cause
+     */
+    public FrameworkConfigurationException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

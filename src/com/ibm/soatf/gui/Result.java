@@ -6,6 +6,8 @@
 
 package com.ibm.soatf.gui;
 
+
+import com.ibm.soatf.flow.OperationResult.CommonResult;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,17 +18,18 @@ import java.util.List;
 class Result {
     private String operationName;
     private String message;
-    private Boolean success;
+    private CommonResult commonResult;
     private List<String> messages = new ArrayList<>();
     
     public static final String RESULT_PASSED = "PASSED";
     public static final String RESULT_FAILED = "FAILED";
+    public static final String RESULT_WARNING = "WARNING";
     public static final String RESULT_UNKNOWN = "";
 
     public Result(String operationName) {
         this.operationName = operationName;
         this.message = "";
-        this.success = null;
+        this.commonResult = CommonResult.UNKNOWN;
     }
 
     public String getOperationName() {
@@ -45,12 +48,12 @@ class Result {
         this.message = message;
     }
 
-    public Boolean isSuccess() {
-        return success;
+    public CommonResult getCommonResult() {
+        return commonResult;
     }
 
-    public void setSuccess(Boolean success) {
-        this.success = success;
+    public void setCommonResult(CommonResult commonResult) {
+        this.commonResult = commonResult;
     }
 
     public List<String> getMessages() {
@@ -62,6 +65,11 @@ class Result {
     }
 
     public String getSuccessStr() {
-        return isSuccess() == null ? RESULT_UNKNOWN : (isSuccess() ? RESULT_PASSED : RESULT_FAILED);
+        switch (commonResult) {
+            case SUCCESS: return RESULT_PASSED;
+            case FAILURE: return RESULT_FAILED;
+            case WARNING: return RESULT_WARNING;
+            default: return RESULT_UNKNOWN;
+        }
     }
 }

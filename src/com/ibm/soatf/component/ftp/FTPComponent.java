@@ -18,13 +18,14 @@
 package com.ibm.soatf.component.ftp;
 
 import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.component.AbstractSOATFComponent;
+import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.config.iface.IfaceExecBlock;
 import com.ibm.soatf.config.iface.ftp.FTPConfig;
 import com.ibm.soatf.config.iface.ftp.Security;
 import com.ibm.soatf.config.master.FTPServers.FtpServer.Directories;
 import com.ibm.soatf.config.master.FTPServers.FtpServer.FtpServerInstance;
 import com.ibm.soatf.config.master.Operation;
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.flow.OperationResult;
 import it.sauronsoftware.ftp4j.FTPAbortedException;
 import it.sauronsoftware.ftp4j.FTPClient;
@@ -43,6 +44,7 @@ import java.io.Writer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.logging.Level;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -51,17 +53,18 @@ import org.apache.logging.log4j.Logger;
 
 /**
  *
- * @author zANGETSu
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
-public class FTPComponent extends AbstractSOATFComponent {
+public class FTPComponent extends AbstractSoaTFComponent {
 
     private static final Logger logger = LogManager.getLogger(FTPComponent.class);
 
     private final FtpServerInstance ftpMasterConfig;
-    private final FTPConfig ftpConfiguration;
+    //private final FTPConfig ftpConfiguration;
+    private final FTPConfig.File ftpFile;
     private final Directories directories;
     private File workingDir;
-    
+
     private String hostName;
     private int port;
     private String user;
@@ -71,42 +74,42 @@ public class FTPComponent extends AbstractSOATFComponent {
     private String errorDirectory;
     private String archiveDirectory;
     private String fileContent;
-    private String fileName; 
+    private String fileName;
     private String actualFileUsed;
-    
+
     private final OperationResult cor;
 
     public FTPComponent(
             IfaceExecBlock ifaceExecBlock,
-            FtpServerInstance ftpMasterConfig, 
-            FTPConfig ftpInterfaceConfig,
+            FtpServerInstance ftpMasterConfig,
+            FTPConfig.File ftpFile,
             Directories directories,
             File workingDir) {
         super(SOATFCompType.FTP);
         this.ftpMasterConfig = ftpMasterConfig;
-        this.ftpConfiguration = ftpInterfaceConfig;
-        this.actualFileUsed="";
+        //this.ftpConfiguration = ftpInterfaceConfig;
+        this.ftpFile = ftpFile;
+        this.actualFileUsed = "";
         this.directories = directories;
         this.workingDir = workingDir;
         cor = OperationResult.getInstance();
         constructComponent();
     }
-    
-    /*public FTPComponent(ComponentResult componentOperationResult) {
-        super(SOATFCompType.FTP, componentOperationResult);
-        this.hostName = "zarik";
-        this.port = "21";
-        this.user = "anonymous";
-        this.password = "aaa";
-        this.security = Security.NONE;
-        this.stageDirectory = "salmon/out";
-        this.errorDirectory = "salmon/error";
-        this.archiveDirectory = "salmon/archive";
-        //this.filePattern = this.ftpConfiguration.getFilePattern();
-        this.fileName = "test.data";
-        workingDirectoryPath = "C:\\test\\";
-    }*/
 
+    /*public FTPComponent(ComponentResult componentOperationResult) {
+     super(SOATFCompType.FTP, componentOperationResult);
+     this.hostName = "zarik";
+     this.port = "21";
+     this.user = "anonymous";
+     this.password = "aaa";
+     this.security = Security.NONE;
+     this.stageDirectory = "salmon/out";
+     this.errorDirectory = "salmon/error";
+     this.archiveDirectory = "salmon/archive";
+     //this.filePattern = this.ftpConfiguration.getFilePattern();
+     this.fileName = "test.data";
+     workingDirectoryPath = "C:\\test\\";
+     }*/
     @Override
     protected void constructComponent() {
 
@@ -118,183 +121,194 @@ public class FTPComponent extends AbstractSOATFComponent {
         this.stageDirectory = directories.getStageDirectory();
         this.errorDirectory = directories.getErrorDirectory();
         this.archiveDirectory = directories.getArchiveDirectory();
-        this.fileContent = this.ftpConfiguration.getFileContent();
-        this.fileName = this.ftpConfiguration.getFileName();
+        /*
+         * Fast workaround related to multiple data sources
+         */
+        //this.fileContent = this.ftpConfiguration.getFileContent();
+        //this.fileName = this.ftpConfiguration.getFileName();
+        this.fileContent = this.ftpFile.getFileContent();
+        this.fileName = this.ftpFile.getFileName();
 
     }
 
     @Override
-    public void executeOperation(Operation operation) {
-        cor.setOperation(operation);
-        /*if (!FTP_OPERATIONS.contains(operation)) {
-            final String msg = "Unsupported operation: " + operation.getName().value() + ". Valid operations are: " + FTP_OPERATIONS;
-            logger.error(msg);
-            cor.addMsg(msg);
-            cor.setOverallResultSuccess(false);
-        } else {*/
+    public void executeOperation(Operation operation) throws FrameworkExecutionException {
+        try {
+            //cor.setOperation(operation); //nastavuje konstruktor abstractoperation
+            /*if (!FTP_OPERATIONS.contains(operation)) {
+             final String msg = "Unsupported operation: " + operation.getName().value() + ". Valid operations are: " + FTP_OPERATIONS;
+             logger.error(msg);
+             cor.addMsg(msg);
+             cor.setOverallResultSuccess(false);
+             } else {*/
             actualFileUsed = getFile(this.workingDir, this.fileName, this.fileContent).getName();
             switch (operation.getName()) {
-            case FTP_DOWNLOAD_FILE:
-                try {
+                case FTP_DOWNLOAD_FILE:
                     ftpDownloadFile();
-                } catch (    FTPException | FTPIllegalReplyException | IllegalStateException | IOException | FTPDataTransferException | FTPAbortedException ex) {
-                    logger.fatal(ex);
-                    cor.addMsg("Error while downloading a file with name '" + fileName + "'");
-                }
-                break;
-            case FTP_UPLOAD_FILE:
-                try {
+                    break;
+                case FTP_UPLOAD_FILE:
                     //generateFile();
                     ftpUploadFile();
-                } catch (    IllegalStateException | IOException | FTPIllegalReplyException | FTPException | FTPDataTransferException | FTPAbortedException ex) {
-                    logger.fatal(ex);
-                    cor.addMsg("Error while uploading a file with name '" + fileName + "'");
-                }
-                break;
-            case FTP_CHECK_DELIVERED_FOLDER_FOR_FILE:
-                try {
+                    break;
+                case FTP_CHECK_DELIVERED_FOLDER_FOR_FILE:
                     checkFolderForFile(this.archiveDirectory);
-                } catch (    IllegalStateException | IOException | FTPIllegalReplyException | FTPException | FTPDataTransferException | FTPAbortedException | FTPListParseException ex) {
-                    logger.fatal(ex);
-                }
-                break;
-            case FTP_CHECK_ERROR_FOLDER_FOR_FILE:
-                try {
+                    break;
+                case FTP_CHECK_ERROR_FOLDER_FOR_FILE:
                     checkFolderForFile(this.errorDirectory);
-                } catch (    IllegalStateException | IOException | FTPIllegalReplyException | FTPException | FTPDataTransferException | FTPAbortedException | FTPListParseException ex) {
-                    logger.fatal(ex);
-                }
-                break;    
-            case FTP_SEARCH_FOR_FILE:
-                try {
+                    break;
+                case FTP_SEARCH_FOR_FILE:
                     checkFolderForFile(this.stageDirectory);
-                } catch (    IllegalStateException | IOException | FTPIllegalReplyException | FTPException | FTPDataTransferException | FTPAbortedException | FTPListParseException ex) {
-                    logger.fatal(ex);
-                }
-                break;                                  
-            default:
-                logger.info("Operation execution not yet implemented: " + operation.getName().value());
-                cor.addMsg("Operation: " + operation.getName().value() + " is valid, but not yet implemented");
+                    break;
+                default:
+                    logger.info("Operation execution not yet implemented: " + operation.getName().value());
+                    cor.addMsg("Operation: " + operation.getName().value() + " is valid, but not yet implemented");
             }
-        //}
-    }
-
-    private void ftpDownloadFile() throws IllegalStateException, IOException, FTPIllegalReplyException, FTPException, FileNotFoundException, FTPDataTransferException, FTPAbortedException {
-        switch (security) {
-            case NONE:
-                /*
-                 * This implementation is just for testing purposes, there are currently 2 libraries for FTP, SFTP, FTPS and FTPES.
-                 * Once I will wrap them into one client object, the usage will change.
-                 */
-                FTPClient client = new FTPClient();
-                client.connect(this.hostName, this.port);
-                client.login(this.user, this.password);
-                client.changeDirectory(this.stageDirectory);
-                File localFile = new File(workingDir, fileName);
-                client.download(fileName, localFile);
-                client.disconnect(true);
-                logger.info("File with name '" + fileName + "' was downloaded from: " + this.stageDirectory);
-                cor.addMsg("File with name '" + fileName + "' was downloaded from: " + this.stageDirectory);
-                cor.markSuccessful();                 
-                break;
-            default:
-                logger.info("Security type not supported: " + security);
-                cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
+        } catch (FtpComponentException ftpce){
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, ftpce);
         }
-    }
     
-    private void checkFolderForFile(String folderName) throws FTPException, FTPIllegalReplyException, IllegalStateException, IOException, FTPDataTransferException, FTPAbortedException, FTPListParseException {
-        if (fileName == null) {
-            logger.error("File name was not set.");
-            cor.addMsg("File name was not set.");
-            return;
-        }
-        switch (security) {
-            case NONE:
-                FTPClient client = new FTPClient();
-                client.connect(this.hostName, this.port);
-                client.login(this.user, this.password);
-                client.changeDirectory(folderName);
-                FTPFile[] fileArray = client.list();
-                boolean found = false;
-                for (int i = 0; i < fileArray.length; i++) {
-                    FTPFile file = fileArray[i];
-                    String name = file.getName();
-                    if(name != null && (name.equals(fileName) || name.endsWith("__"+fileName))) {
-                        found = true;
-                        break;
-                    }
-                }
-                if (found) {
-                    logger.info("File with name '" + fileName + "' was found in directory: " + folderName);
-                    cor.addMsg("File with name '" + fileName + "' was found in directory: " + folderName);
-                    cor.markSuccessful();
-                } else {
-                    logger.info("File with name '" + fileName + "' was not found in directory: " + folderName);
-                    cor.addMsg("File with name '" + fileName + "' was not found in directory: " + folderName);
-                }
-                client.disconnect(true);
-                break;
-            default:
-                logger.info("Security type not supported: " + security);
-                cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
-        }
-    }    
+    }
 
-    private void ftpUploadFile() throws IllegalStateException, IOException, FileNotFoundException, FTPIllegalReplyException, FTPException, FTPDataTransferException, FTPAbortedException {
-        switch (this.security) {
-            case NONE:
-                /*
-                 * This implementation is just for testing purposes, there are currently 2 libraries for FTP, SFTP, FTPS and FTPES.
-                 * Once I will wrap them into one client object, the usage will change.
-                 */
-                FTPClient client = new FTPClient();
-                client.connect(this.hostName, this.port);
-                client.login(this.user, this.password);
-                client.changeDirectory(this.stageDirectory);
-                File localFile = new File(workingDir, actualFileUsed);
-                client.upload(localFile);
-                client.disconnect(true);
-                logger.info("File with name '" + fileName + "' was uploaded: " + this.stageDirectory);
-                cor.addMsg("File with name '" + fileName + "' was uploaded to: " + this.stageDirectory);
-                cor.markSuccessful();                
-                break;
-            default:
-                logger.info("Security type not supported: " + security);
-                cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
+    private void ftpDownloadFile() throws FtpComponentException {
+        try {
+            switch (security) {
+                case NONE:
+                    /*
+                     * This implementation is just for testing purposes, there are currently 2 libraries for FTP, SFTP, FTPS and FTPES.
+                     * Once I will wrap them into one client object, the usage will change.
+                     */
+                    FTPClient client = new FTPClient();
+                    client.connect(this.hostName, this.port);
+                    client.login(this.user, this.password);
+                    client.changeDirectory(this.stageDirectory);
+                    File localFile = new File(workingDir, fileName);
+                    client.download(fileName, localFile);
+                    client.disconnect(true);
+                    logger.info("File with name '" + fileName + "' was downloaded from: " + this.stageDirectory);
+                    cor.addMsg("File with name '" + fileName + "' was downloaded from: " + this.stageDirectory);
+                    cor.markSuccessful();
+                    break;
+                default:
+                    logger.info("Security type not supported: " + security);
+                    cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
+            }
+        } catch (IllegalStateException | FTPException | IOException | FTPIllegalReplyException | FTPDataTransferException | FTPAbortedException ftpex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new FtpComponentException(msg, ftpex);
         }
     }
 
-    private static File generateFile(File path, String fileName, String fileContent) {
+    private void checkFolderForFile(String folderName) throws FtpComponentException {
+        try {
+            if (fileName == null) {
+                logger.error("File name was not set.");
+                cor.addMsg("File name was not set.");
+                return;
+            }
+            switch (security) {
+                case NONE:
+                    FTPClient client = new FTPClient();
+                    client.connect(this.hostName, this.port);
+                    client.login(this.user, this.password);
+                    client.changeDirectory(folderName);
+                    FTPFile[] fileArray = client.list();
+                    boolean found = false;
+                    for (int i = 0; i < fileArray.length; i++) {
+                        FTPFile file = fileArray[i];
+                        String name = file.getName();
+                        if (name != null && (name.equals(fileName) || name.endsWith("__" + fileName))) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        logger.info("File with name '" + fileName + "' was found in directory: " + folderName);
+                        cor.addMsg("File with name '" + fileName + "' was found in directory: " + folderName);
+                        cor.markSuccessful();
+                    } else {
+                        logger.info("File with name '" + fileName + "' was not found in directory: " + folderName);
+                        cor.addMsg("File with name '" + fileName + "' was not found in directory: " + folderName);
+                    }
+                    client.disconnect(true);
+                    break;
+                default:
+                    logger.info("Security type not supported: " + security);
+                    cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
+            }
+        } catch (FTPException | FTPIllegalReplyException | IllegalStateException | IOException | FTPDataTransferException | FTPAbortedException | FTPListParseException ftpex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new FtpComponentException(msg, ftpex);
+        }
+    }
+
+    private void ftpUploadFile() throws FtpComponentException {
+        try {
+            switch (this.security) {
+                case NONE:
+                    /*
+                     * This implementation is just for testing purposes, there are currently 2 libraries for FTP, SFTP, FTPS and FTPES.
+                     * Once I will wrap them into one client object, the usage will change.
+                     */
+                    FTPClient client = new FTPClient();
+                    client.connect(this.hostName, this.port);
+                    client.login(this.user, this.password);
+                    client.changeDirectory(this.stageDirectory);
+                    File localFile = new File(workingDir, actualFileUsed);
+                    client.upload(localFile);
+                    client.disconnect(true);
+                    logger.info("File with name '" + fileName + "' was uploaded: " + this.stageDirectory);
+                    cor.addMsg("File with name '" + fileName + "' was uploaded to: " + this.stageDirectory);
+                    cor.markSuccessful();
+                    break;
+                default:
+                    logger.info("Security type not supported: " + security);
+                    cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
+            }
+        } catch (IllegalStateException | IOException | FTPIllegalReplyException | FTPException | FTPDataTransferException | FTPAbortedException ftpex) {
+            final String msg = "";
+            cor.addMsg(msg);
+            throw new FtpComponentException(msg, ftpex);
+        }
+    }
+
+    private File generateFile(File path, String fileName, String fileContent) throws FtpComponentException {
         String actualPrefix = new SimpleDateFormat("yyyyMMdd_hhmmss_").format(new Date());
-        File localFile = new File(path, actualPrefix+fileName);
+        File localFile = new File(path, actualPrefix + fileName);
         if (localFile.exists()) {
             return localFile;
         }
         Writer writer = null;
         try {
             writer = new BufferedWriter(new OutputStreamWriter(
-                  new FileOutputStream(localFile), "utf-8"));
+                    new FileOutputStream(localFile), "utf-8"));
             writer.write(fileContent);
             writer.flush();
         } catch (IOException ex) {
-          //TODO
+            //TODO
         } finally {
-           try {
-               if (writer != null) {
-                writer.close();
-               }
-           } catch (Exception ex) {}
+            try {
+                if (writer != null) {
+                    writer.close();
+                }
+            } catch (IOException ex) {
+                final String msg = "TODO";
+                cor.addMsg(msg);
+                throw new FtpComponentException(msg, ex);
+            }
         }
         return localFile;
     }
-    
-    public static File getFile(File workingDirectory, String fileName, String fileContent) {
+
+    public File getFile(File workingDirectory, String fileName, String fileContent) throws FtpComponentException {
         String pattern = "*_" + fileName;
         Iterator<File> it = FileUtils.iterateFiles(workingDirectory, new WildcardFileFilter(pattern), TrueFileFilter.INSTANCE);
         int count = 0;
         File f = null;
-        while(it.hasNext()) {
+        while (it.hasNext()) {
             ++count;
             f = it.next();
         }
@@ -308,7 +322,7 @@ public class FTPComponent extends AbstractSOATFComponent {
     }
 
     @Override
-    protected void destructComponent() {
+        protected void destructComponent() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

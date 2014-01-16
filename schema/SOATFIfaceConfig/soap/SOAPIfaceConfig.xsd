@@ -117,7 +117,11 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 <xs:complexType>
                     <xs:complexContent>
                         <xs:extension base="soapconf:EnvelopeConfig">
-                            <xs:attribute name="newAttribute"/>
+                            <xs:attribute name="envRefName">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">One or more environment references splitted by default splitting constant character defined in master-config.xml file. Currently hardcoded to pipe |.</xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
                         </xs:extension>
                     </xs:complexContent>
                 </xs:complexType>
@@ -126,7 +130,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
     </xs:complexType>
     <xs:complexType name="EnvelopeConfig">
         <xs:sequence>
-            <xs:element maxOccurs="unbounded" name="element">
+            <xs:element maxOccurs="unbounded" name="element" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Single instance of element within SOAP message.</xs:documentation>
                 </xs:annotation>

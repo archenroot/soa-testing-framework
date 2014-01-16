@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 zANGETSu
+ * Copyright (C) 2013 Ladislav Jech
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,28 +17,53 @@
  */
 package com.ibm.soatf;
 
+import com.ibm.soatf.flow.FrameworkExecutionException;
+
 /**
- * Exception thrown when framework is asked to process not defined operation.
- * As soon as enumeration of operations has been moved into XML schema files, 
- * this exception shouldn't be ever thrown now.
+ * Exception thrown when framework is asked to process not defined operation. As
+ * soon as enumeration of operations has been moved into XML schema files, this
+ * exception shouldn't be ever thrown now.
+ *
  * @author Ladislav Jech <archenroot@gmail.com>
  */
+public class UnsupportedComponentOperationException
+        extends FrameworkExecutionException {
 
-@Deprecated
-public class UnsupportedComponentOperationException extends Exception {
-
+    /**
+     * General constructor.
+     */
     public UnsupportedComponentOperationException() {
+        super();
     }
 
-    public UnsupportedComponentOperationException(String message) {
+    /**
+     * Exception constructor which passes error message.
+     *
+     * @param message Exception description.
+     */
+    public UnsupportedComponentOperationException(final String message) {
         super(message);
     }
 
-    public UnsupportedComponentOperationException(Throwable cause) {
+    /**
+     * Exception constructor which passes error cause.
+     *
+     * @param cause Exception cause.
+     */
+    public UnsupportedComponentOperationException(final Throwable cause) {
         super(cause);
     }
 
-    public UnsupportedComponentOperationException(String message, Throwable cause) {
+    /**
+     * Exception constructor which passes both error description and cause as
+     * well.
+     *
+     * @param message Exception cause.
+     * @param cause Exception cause.
+     */
+    public UnsupportedComponentOperationException(
+            final String message,
+            final Throwable cause) {
         super(message, cause);
     }
 }

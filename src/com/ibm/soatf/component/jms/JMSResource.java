@@ -1,15 +1,20 @@
 package com.ibm.soatf.component.jms;
 
+import com.ibm.soatf.flow.OperationResult;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
+import javax.management.AttributeNotFoundException;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
 
 import javax.management.MBeanServerConnection;
 import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
 import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -24,6 +29,13 @@ import weblogic.management.configuration.JMSSystemResourceMBean;
 
 public class JMSResource {
 
+    private final static String SERVICE_NAME = "com.bea:Name=RuntimeService,";
+    private final static String SERVICE_MBEAN = "Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean";
+    private final static String JNDI_ROOT = "/jndi/";
+    private final static String MBEAN_SERVER = "weblogic.management.mbeanservers.runtime";
+
+    private final OperationResult cor = OperationResult.getInstance();
+
     private static MBeanServerConnection connection;
     private static JMXConnector connector;
     private static ObjectName service;
@@ -34,44 +46,62 @@ public class JMSResource {
 
             System.out.println("…");
             service = new ObjectName(
-                    "com.bea:Name=RuntimeService,"
-                    + "Type=weblogic.management.mbeanservers.runtime.RuntimeServiceMBean");
+                    SERVICE_NAME
+                    + SERVICE_MBEAN);
         } catch (MalformedObjectNameException e) {
             throw new AssertionError(e.getMessage());
         }
     }
 
-    public static void initConnection(String hostname, String portString,
-            String username, String password) throws IOException,
-            MalformedURLException,
-            Exception {
-        String protocol = "t3";
-        Integer portInteger = Integer.valueOf(portString);
-        int port = portInteger.intValue();
-        String jndiroot = "/jndi/";
-        String mserver = "weblogic.management.mbeanservers.runtime";
-        JMXServiceURL serviceURL = new JMXServiceURL(protocol, hostname, port,
-                jndiroot + mserver);
-        Hashtable h = new Hashtable();
-        h.put(Context.SECURITY_PRINCIPAL, username);
-        h.put(Context.SECURITY_CREDENTIALS, password);
-        h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES,
-                "weblogic.management.remote");
-        connector = JMXConnectorFactory.connect(serviceURL, h);
-        connection = connector.getMBeanServerConnection();
+    public void initConnection(
+            String hostname,
+            String portString,
+            String username,
+            String password) throws JmsComponentException {
+        try {
+            String protocol = "t3";
+            Integer portInteger = Integer.valueOf(portString);
+            int port = portInteger.intValue();
+            String jndiroot = JNDI_ROOT;
+            String mserver = MBEAN_SERVER;
+            JMXServiceURL serviceURL = new JMXServiceURL(protocol, hostname, port,
+                    jndiroot + mserver);
+            Hashtable h = new Hashtable();
+            h.put(Context.SECURITY_PRINCIPAL, username);
+            h.put(Context.SECURITY_CREDENTIALS, password);
+            h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES,
+                    "weblogic.management.remote");
+            connector = JMXConnectorFactory.connect(serviceURL, h);
+            connection = connector.getMBeanServerConnection();
+        } catch (IOException ex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
+        }
     }
 
-    public static ObjectName[] getJMSServers() throws Exception {
-        ObjectName serverRuntime = (ObjectName) connection.getAttribute(
-                service, "ServerRuntime");
-        ObjectName jmsRuntime = (ObjectName) connection.getAttribute(
-                serverRuntime, "JMSRuntime");
-        ObjectName[] jmsServers = (ObjectName[]) connection.getAttribute(
-                jmsRuntime, "JMSServers");
-        return jmsServers;
+    public ObjectName[] getJMSServers() throws JmsComponentException {
+        try {
+            ObjectName serverRuntime = (ObjectName) connection.getAttribute(
+                    service, "ServerRuntime");
+            ObjectName jmsRuntime = (ObjectName) connection.getAttribute(
+                    serverRuntime, "JMSRuntime");
+            ObjectName[] jmsServers = (ObjectName[]) connection.getAttribute(
+                    jmsRuntime, "JMSServers");
+            return jmsServers;
+        } catch (MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException ex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
+        } catch (IOException ex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
+        }
     }
 
-    public static void testMethod() {
+    @Deprecated
+    public void testMethod() {
 
         try {
 
@@ -85,7 +115,6 @@ public class JMSResource {
             ObjectName[] serverRT = getJMSServers();
             int length = (int) serverRT.length;
             System.out.println("length:::" + length);
-            
 
             for (int i = 0; i < length; i++) {
 
@@ -99,7 +128,7 @@ public class JMSResource {
                 System.out.println("JMS Server name: " + jmsServerName);
 
                 int queueCount = (int) queues.length;
-                if (!jmsServerName.equals("wlsbJMSServer")){
+                if (!jmsServerName.equals("wlsbJMSServer")) {
                     for (int k = 0; k < queueCount; k++) {
 
                         String queueNameWithModule = (String) connection
@@ -149,7 +178,7 @@ public class JMSResource {
 
                     }
                 }
-                
+
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -157,16 +186,16 @@ public class JMSResource {
 
     }
 
+    @Deprecated
     public static void main(String[] args) throws Exception {
-
         String hostname = "iwpdcdevsoaa.iwater.ie";
         String portString = "8011";
         String username = "weblogic";
         String password = "passw0rd1";
         System.out.println("initializing conenction….");
-        initConnection(hostname, portString, username, password);
-        JMSResource.testMethod();
+        JMSResource jmsRes = new JMSResource();
+        jmsRes.initConnection(hostname, portString, username, password);
+        jmsRes.testMethod();
         connector.close();
     }
-
 }

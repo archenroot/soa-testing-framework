@@ -5,10 +5,13 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
- * This class need to be completely refactorized or even deleted due to duplicate configuration here and within the XML schemas. 
- * My proposal is to delete this class and keep enumarions only within XML schema files.
- * @author zANGETSu
+ * This class need to be completely refactorized or even deleted due to
+ * duplicate configuration here and within the XML schemas. My proposal is to
+ * delete this class and keep enumarions only within XML schema files.
+ *
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
+@Deprecated
 public enum CompOperType {
 
     /**
@@ -35,8 +38,14 @@ public enum CompOperType {
      * Execute UPDATE statement over database from provided SQL script file.
      */
     DB_EXECUTE_UPDATE_FROM_FILE(SOATFCompType.DATABASE, "Execute UPDATE statement over database from provided SQL script file."),
-    DB_CHECK_REPORTING(SOATFCompType.DATABASE,""),
-    DB_CHECK_RECORD_NOT_POOLED(SOATFCompType.DATABASE,""),
+    /**
+     *
+     */
+    DB_CHECK_REPORTING(SOATFCompType.DATABASE, ""),
+    /**
+     *
+     */
+    DB_CHECK_RECORD_NOT_POOLED(SOATFCompType.DATABASE, ""),
     /**
      * Generate dynamically update statement with random values based on column
      * definition for one row based on defined primary/unique key column and its
@@ -61,9 +70,21 @@ public enum CompOperType {
      * Generate SELECT statement for defined object in database.
      */
     DB_GENERATE_SELECT(SOATFCompType.DATABASE, "Generate SELECT statement for defined object in database."),
+    /**
+     *
+     */
     DB_CLEAR_REPORTING(SOATFCompType.DATABASE, ""),
+    /**
+     *
+     */
     DB_DELETE_RECORD(SOATFCompType.DATABASE, ""),
+    /**
+     *
+     */
     DB_INSERT_RECORD(SOATFCompType.DATABASE, ""),
+    /**
+     *
+     */
     DB_CHECK_RECORD_POOLED(SOATFCompType.DATABASE, ""),
     /**
      * Dummy constant for database operations EnumSet.range() end.
@@ -87,10 +108,25 @@ public enum CompOperType {
      * Dummy constant for FTP enumset EnumSet.range() begining.
      */
     FTP_OPERATIONS_DEFINITION_BEGIN("Dummy constant for FTP enumset EnumSet.range() begining."),
+    /**
+     *
+     */
     FTP_UPLOAD_FILE("Send file to FTP server."),
+    /**
+     *
+     */
     FTP_DOWNLOAD_FILE("Receive file from FTP server."),
+    /**
+     *
+     */
     FTP_SEARCH_FOR_FILE("Search for file/files on FTP server."),
+    /**
+     *
+     */
     FTP_CHECK_DELIVERED_FOLDER_FOR_FILE("Search for file/files on FTP server."),
+    /**
+     *
+     */
     FTP_CHECK_ERROR_FOLDER_FOR_FILE("Search for file/files on FTP server."),
     /**
      * Dummy constant for FTP operations EnumSet.range() end.
@@ -140,8 +176,10 @@ public enum CompOperType {
      * Delete all messages in topic.
      */
     JMS_PURGE_TOPIC(SOATFCompType.JMS, "Delete all messages in topic."),
+    /**
+     *
+     */
     JMS_CHECK_REPORTING(SOATFCompType.JMS, ""),
-    
     /**
      * Validate message file against provided schema.
      */
@@ -206,7 +244,10 @@ public enum CompOperType {
     SOAP_OPERATIONS_DEFINITION_END("Dummy constant for SOAP operations EnumSet.range() end."),
     // TOOL related framework operations
 
-    UTIL_DELAY(SOATFCompType.SOAP,""),
+    /**
+     *
+     */
+    UTIL_DELAY(SOATFCompType.SOAP, ""),
     /**
      * Dummy constant for TOOL enumset EnumSet.range() begining.
      */
@@ -255,10 +296,30 @@ public enum CompOperType {
      *
      */
     MAPPING_OPERATIONS_DEFINITION_END("Dummy constant for MAPPING operations EnumSet.range() end."),
-    
+    /**
+     *
+     */
     UTIL_CLEAR_REPORTING(SOATFCompType.UTIL, ""),
+    /**
+     *
+     */
     UTIL_CHECK_REPORTING_FOR_SUCCESS(SOATFCompType.UTIL, ""),
-    UTIL_CHECK_REPORTING_FOR_FAILURE(SOATFCompType.UTIL, "");
+    /**
+     *
+     */
+    UTIL_CHECK_REPORTING_FOR_FAILURE(SOATFCompType.UTIL, ""),
+    /**
+     *
+     */
+    REPORT_OPERATIONS_DEFINITION_BEGIN("Dummy constant for REPORT enumset EnumSet.range() begining."),
+    /**
+     *
+     */
+    REPORT_GENERATE(SOATFCompType.REPORT, "Compare results of two given component outputs."),
+    /**
+     *
+     */
+    REPORT_OPERATIONS_DEFINITION_END("Dummy constant for REPORT operations EnumSet.range() end.");
 
     /**
      * Constant with all supported database related operations.

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 zANGETSu
+ * Copyright (C) 2013 Ladislav Jech
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -17,16 +17,19 @@
  */
 package com.ibm.soatf;
 
-
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.config.ConfigurationManager;
 import com.ibm.soatf.config.DirectoryStructureManager;
 import com.ibm.soatf.config.FrameworkConfigurationException;
 import com.ibm.soatf.config.MasterConfiguration;
 import com.ibm.soatf.config.master.Interface;
 import com.ibm.soatf.config.master.Project;
+import com.ibm.soatf.config.master.SOATestingFrameworkMasterConfiguration;
 import com.ibm.soatf.flow.FlowExecutor;
 import com.ibm.soatf.gui.SOATestingFrameworkGUI;
+import com.ibm.soatf.gui.logging.JTextAreaAppender;
 import java.util.List;
+import javax.swing.JTextArea;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -38,33 +41,45 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * SOA Testing Framework main class. Used to parse input parameters and start
+ * GUI based interface or process command-line execution.
  *
- * @author zANGETSu
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
 public class SOATestingFramework {
-    private static final Logger logger = LogManager.getLogger(SOATestingFramework.class.getName());
-    
+
+    private static final Logger logger
+            = LogManager.getLogger(SOATestingFramework.class.getName());
+
+    /**
+     * SOA Testing Framework main static method.
+     *
+     * @param args Main input parameters.
+     */
     public static void main(String[] args) {
         Options options = new Options();
-        options.addOption(new Option("gui", "Display a GUI")); // does not have a value
+        options.addOption(new Option("gui", "Display a GUI"));
+
         options.addOption(OptionBuilder.withArgName("environment")
-                                .hasArg()
-                                .withDescription("Environment to run the tests on")
-                                .create("env")); // has a value
+                .hasArg()
+                .withDescription("Environment to run the tests on")
+                .create("env")); // has a value
         options.addOption(OptionBuilder.withArgName("project")
-                                .hasArg()
-                                .withDescription("Project to run the tests on")
-                                .create("p")); // has a value
-        options.addOption(OptionBuilder.withArgName("interface")
-                                .hasArg()
-                                .withDescription("Interface to run the tests on")
-                                .create("i")); // has a value
+                .hasArg()
+                .withDescription("Project to run the tests on")
+                .create("p")); // has a value
+        options.addOption(OptionBuilder
+                .withArgName("interface")
+                .hasArg()
+                .withDescription("Interface to run the tests on")
+                .create("i")); // has a value
         CommandLineParser parser = new BasicParser();
         try {
             CommandLine cmd = parser.parse(options, args);
             validate(cmd);
+
             if (cmd.hasOption("gui")) {
-        
+
                 /* Set the Nimbus look and feel */
                 //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
                 /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
@@ -77,7 +92,7 @@ public class SOATestingFramework {
                             break;
                         }
                     }
-                } catch (    ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
+                } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
                     logger.error("Cannot set look and feel", ex);
                 }
                 //</editor-fold>
@@ -92,20 +107,22 @@ public class SOATestingFramework {
                 });
             } else {
                 try {
+                    // Initialization of configuration manager.
                     ConfigurationManager.getInstance().init();
                     DirectoryStructureManager.checkFrameworkDirectoryStructure();
-                    
+
                     String env = cmd.getOptionValue("env", null);
                     String ifaceName;
                     boolean inboundOnly = false;
-                    if(cmd.hasOption("p")) {
+                    if (cmd.hasOption("p")) {
                         String projectName = cmd.getOptionValue("p");
                         MasterConfiguration masterConfig = ConfigurationManager.getInstance().getMasterConfig();
-                        List<Interface> interfaces = masterConfig.getInterfaces();
-                        all: for (Interface iface : interfaces) {
+                        List<SOATestingFrameworkMasterConfiguration.Interfaces.Interface> interfaces = masterConfig.getInterfaces();
+                        all:
+                        for (Interface iface : interfaces) {
                             List<Project> projects = iface.getProjects().getProject();
                             for (Project project : projects) {
-                                if(project.getName().equals(projectName)) {
+                                if (project.getName().equals(projectName)) {
                                     inboundOnly = "INBOUND".equalsIgnoreCase(project.getDirection());
                                     ifaceName = iface.getName();
                                     break all;
@@ -129,10 +146,8 @@ public class SOATestingFramework {
             logger.fatal("Could not parse the command line arguments. Reason: " + ex.getMessage());
             printUsage();
         } catch (FrameworkExecutionException ex) {
-            logger.fatal(ex.getMessage());
+            logger.fatal("Unexpected error occured: ", ex.getMessage());
             printUsage();
-        } catch (Throwable ex) {
-            logger.fatal("Unexpected error occured: ", ex);
             System.exit(-1);
         }
     }
@@ -141,16 +156,19 @@ public class SOATestingFramework {
         if (cmd.hasOption("gui")) {
             //ok
         } else {
-            if(cmd.hasOption("env")) {
-                if(cmd.hasOption("p") && cmd.hasOption("i")) {
+            //dummy JTextArea object for the GUI logger to avoid stupid errors from it
+            //proper way would be to programmatically remove this appender from the logging framework when there's no GUI
+            JTextAreaAppender.setJTextArea(new JTextArea());
+            if (cmd.hasOption("env")) {
+                if (cmd.hasOption("p") && cmd.hasOption("i")) {
                     throw new FrameworkExecutionException("Specify either -p or -i parameter, not both");
                 } else {
-                    if(!cmd.hasOption("p") && !cmd.hasOption("i")) {
+                    if (!cmd.hasOption("p") && !cmd.hasOption("i")) {
                         throw new FrameworkExecutionException("You must specify either -p or -i parameter");
                     }
                 }
             } else {
-                throw new FrameworkExecutionException("Parameter -env expected");
+                throw new FrameworkExecutionException("Parameter -gui or -env expected");
             }
         }
     }

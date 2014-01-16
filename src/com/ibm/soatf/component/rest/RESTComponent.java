@@ -17,7 +17,7 @@
  */
 package com.ibm.soatf.component.rest;
 
-import com.ibm.soatf.component.AbstractSOATFComponent;
+import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.config.master.Operation;
 
@@ -25,7 +25,7 @@ import com.ibm.soatf.config.master.Operation;
  *
  * @author zANGETSu
  */
-public class RESTComponent extends AbstractSOATFComponent {
+public class RESTComponent extends AbstractSoaTFComponent {
     public RESTComponent(){
         super(SOATFCompType.REST);
         constructComponent();

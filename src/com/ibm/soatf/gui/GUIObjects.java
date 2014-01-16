@@ -64,7 +64,7 @@ final class GUIObjects {
 
     static class ExecutionBlock extends GUIObject<com.ibm.soatf.config.master.ExecutionBlock> {
 
-        public ExecutionBlock(com.ibm.soatf.config.master.ExecutionBlock object) {
+        public ExecutionBlock(com.ibm.soatf.config.master.TestScenario.ExecutionBlock object) {
             super(object);
             guiName = object.getIdentificator();
         }
@@ -82,7 +82,7 @@ final class GUIObjects {
 
         public IfaceFlowPattern(com.ibm.soatf.config.iface.IfaceFlowPattern object) {
             super(object);
-            guiName = "FlowPattern: " + object.getRefId() + " (" + object.getTestName() + ")";
+            guiName = "FlowPattern: " + object.getRefId() + " (" + object.getInstanceMetadata().getTestName() + ")";
         }
     }
 

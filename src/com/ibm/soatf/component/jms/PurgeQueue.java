@@ -22,8 +22,6 @@ import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddleware
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -35,6 +33,8 @@ import javax.jms.Session;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
@@ -42,6 +42,8 @@ import javax.naming.NamingException;
  */
 public class PurgeQueue {
 
+    private static final Logger logger = LogManager.getLogger(PurgeQueue.class.getName());
+    
     private Queue queue;
     private ConnectionFactory queueConnFactory;
     private Connection queueConn;
@@ -51,6 +53,9 @@ public class PurgeQueue {
 
     public static final String WEBLOGIC_JMS_XA_CONNECTION_FACTORY = "weblogic/jms/XAConnectionFactory";
 
+    PurgeQueue(){
+        
+    }
     public static Context createInitialContext(OracleFusionMiddlewareInstance osbConfig) throws NamingException {
         Hashtable<String, String> ht = new Hashtable<String, String>();
         ht.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
@@ -66,7 +71,7 @@ public class PurgeQueue {
         return ctx;
     }
 
-    public void init(JMSConfig jmsConfig, OracleFusionMiddlewareInstance osbConfig) throws JMSComponentException {
+    public void init(JMSConfig jmsConfig, OracleFusionMiddlewareInstance osbConfig) throws JmsComponentException {
         try {
             // get the initial context
             Context ctx = createInitialContext(osbConfig);
@@ -84,11 +89,11 @@ public class PurgeQueue {
             // create a queue browser
             queueBrowser = queueSession.createBrowser(queue);
         } catch (NamingException | JMSException ex) {
-            throw new JMSComponentException(ex);
+            throw new JmsComponentException(ex);
         } 
     }
 
-    public List<Message> deleteAllMessagesFromQueue(JMSConfig jmsConfig, OracleFusionMiddlewareInstance osbConfig) throws JMSComponentException {
+    public List<Message> deleteAllMessagesFromQueue(JMSConfig jmsConfig, OracleFusionMiddlewareInstance osbConfig) throws JmsComponentException {
         
         List<Message> messages = new ArrayList<>();
         try {
@@ -108,7 +113,7 @@ public class PurgeQueue {
             queueConn.close();
 
         } catch (JMSException ex) {
-            throw new JMSComponentException(ex);
+            throw new JmsComponentException(ex);
         } finally{
             
         }

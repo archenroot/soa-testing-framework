@@ -1,6 +1,5 @@
 package com.ibm.soatf.component.database;
 
-import com.ibm.soatf.FrameworkExecutionException;
 import com.ibm.soatf.flow.OperationResult;
 import com.ibm.soatf.tool.RandomGenerator;
 import java.io.File;
@@ -23,7 +22,7 @@ public final class StatementGenerator {
     private static final Logger logger = LogManager.getLogger(StatementGenerator.class);
     private static final int DEFAULT_NUMBER_PRECISION = 9;
 
-    public static void generateInsertStatement(Connection conn, DatabaseComponent.DbObjectConfig config, File file) throws FrameworkExecutionException {
+    public static void generateInsertStatement(Connection conn, DatabaseComponent.DbObjectConfig config, File file) throws DatabaseComponentException {
         OperationResult cor = OperationResult.getInstance();
         String objectName = config.getDbObjectName();
         
@@ -123,13 +122,13 @@ public final class StatementGenerator {
             cor.addMsg(msg);
             cor.markSuccessful();
         } catch (SQLException ex) {
-            String msg = String.format("Failed to generate INSERT statement. Reason: %s", ex.getMessage());
+            final String msg = String.format("Failed to generate INSERT statement. Reason: %s", ex.getMessage());
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         } catch (IOException ex) {
-            String msg = String.format("Failed to save INSERT statement file %s. Reason: %s", outputScriptFilePath, ex.getMessage());
+            final String msg = String.format("Failed to save INSERT statement file %s. Reason: %s", outputScriptFilePath, ex.getMessage());
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         }
     }
 

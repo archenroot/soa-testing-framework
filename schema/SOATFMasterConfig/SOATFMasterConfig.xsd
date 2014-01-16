@@ -17,7 +17,7 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element name="constants">
+                        <xs:element name="constants" minOccurs="0">
                             <xs:annotation>
                                 <xs:documentation xml:lang="en">Framework constants.</xs:documentation>
                             </xs:annotation>
@@ -31,6 +31,35 @@
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
+                        <xs:element minOccurs="0" name="operations">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element maxOccurs="unbounded" minOccurs="0" name="operation"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="mailServer">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="host"/>
+                                    <xs:element name="port"/>
+                                    <xs:element name="principal"/>
+                                    <xs:element name="credentials"/>
+                                    <xs:element name="protocol"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="subversionServer">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="host"/>
+                                    <xs:element name="port"/>
+                                    <xs:element name="principal"/>
+                                    <xs:element name="credentials"/>
+                                    <xs:element name="protocol"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -40,10 +69,12 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" name="interface" type="master:Interface" minOccurs="0">
-                            <xs:annotation>
-                                <xs:documentation xml:lang="en">Interface instance nodes.</xs:documentation>
-                            </xs:annotation>
+                        <xs:element maxOccurs="unbounded" minOccurs="0" name="interface">
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension base="master:Interface"/>
+                                </xs:complexContent>
+                            </xs:complexType>
                         </xs:element>
                     </xs:sequence>
                 </xs:complexType>
@@ -119,6 +150,7 @@
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
+    <xs:complexType abstract="true" name="AbstractMasterConfigEnvironmentInstance"/>
     <xs:complexType name="Interface">
         <xs:sequence>
             <xs:element name="projects" minOccurs="0">
@@ -214,7 +246,6 @@
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
-    <xs:complexType abstract="true" name="AbstractMasterConfigEnvironmentInstance"/>
     <xs:complexType name="Environments">
         <xs:sequence>
             <xs:element maxOccurs="1" name="oracleFusionMiddleware" minOccurs="0" type="master:OracleFusionMiddleware">
@@ -682,7 +713,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="SOAPServices"/>
     <xs:complexType name="FlowPatterns">
         <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="flowPattern" type="master:FlowPattern">
@@ -692,17 +722,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:simpleType name="Component">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="DB"/>
-            <xs:enumeration value="FILE"/>
-            <xs:enumeration value="FTP"/>
-            <xs:enumeration value="JMS"/>
-            <xs:enumeration value="OSB"/>
-            <xs:enumeration value="SOAP"/>
-            <xs:enumeration value="UTIL"/>
-        </xs:restriction>
-    </xs:simpleType>
     <xs:complexType name="Operation">
         <xs:sequence>
             <xs:element minOccurs="0" name="description" type="xs:string"/>
@@ -789,16 +808,22 @@
             <xs:enumeration value="UTIL_WAIT_FOR_JMS_MESSAGE_TRANSFER"/>
             <xs:enumeration value="UTIL_WAIT_FOR_FTP_POOLING_TRIGGER"/>
             <xs:enumeration value="UTIL_WAIT_FOR_ENQUEUE_TO_ERROR_QUEUE"/>
+            <xs:enumeration value="UTIL_WAIT_FOR_FILE_POLLING_TRIGGER"/>
             <xs:enumeration value="UTIL_CLEAR_REPORTING"/>
             <xs:enumeration value="UTIL_CHECK_REPORTING"/>
             <xs:enumeration value="UTIL_CHECK_ERROR_QUEUE"/>
             <xs:enumeration value="UTIL_CHECK_REPORTING_FOR_SUCCESS"/>
             <xs:enumeration value="UTIL_CHECK_REPORTING_FOR_FAILURE"/>
             <xs:enumeration value="UTIL_PRINT_OSB_REPORTING"/>
+            <xs:enumeration value="REPORT_GENERATE"/>
             <xs:enumeration value="FILE_PUT"/>
             <xs:enumeration value="FILE_GET"/>
-            <xs:enumeration value="FILE_EXISTS"/>
-            <xs:enumeration value="FILE_NOT_EXISTS"/>
+            <xs:enumeration value="FILE_EXISTS_IN_SOURCE_DIR"/>
+            <xs:enumeration value="FILE_EXISTS_IN_ERROR_DIR"/>
+            <xs:enumeration value="FILE_EXISTS_IN_ARCHIVE_DIR"/>
+            <xs:enumeration value="FILE_NOT_EXISTS_IN_SOURCE_DIR"/>
+            <xs:enumeration value="FILE_NOT_EXISTS_IN_ERROR_DIR"/>
+            <xs:enumeration value="FILE_NOT_EXISTS_IN_ARCHIVE_DIR"/>
             <!--
                 <xs:enumeration value="OSB_CHECK_PROXY_SERVICE_REPORT"/>
             -->
@@ -841,6 +866,11 @@
                 <xs:annotation>
                     <xs:documentation xml:lang="en">NOT implemented yet within framework. This block should be used for configuration which helps to lock concrete environment and prepare it for execution of test scenario. Locking of the world should help to keep environments consistent even when unexpected behavior of the framework occurs.</xs:documentation>
                 </xs:annotation>
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="master:ExecutionBlock"/>
+                    </xs:complexContent>
+                </xs:complexType>
             </xs:element>
             <xs:element name="executionBlock" minOccurs="1" maxOccurs="unbounded">
                 <xs:annotation>
@@ -848,19 +878,59 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:complexContent>
-                        <xs:extension base="master:ExecutionBlock"> </xs:extension>
+                        <xs:extension base="master:ExecutionBlock">
+                            <xs:attribute name="identificator" type="xs:string" use="required">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">Unique identificator of Execution Block within Test Scenario group.</xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attribute name="sequenceId" type="xs:int" use="optional">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">Sequence id defining rank of concrete execution block within list of execution block on Test Scenario level.</xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                            <xs:attribute name="direction" use="required">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">Direction of the flow execution block operations from fusion middleware perspective can have following values:
+- INBOUND
+- OUTBOUND
+- E2E
+- NOT APPLICABLE
+- OTHER</xs:documentation>
+                                </xs:annotation>
+                                <xs:simpleType>
+                                    <xs:restriction base="xs:string">
+                                        <xs:enumeration value="INBOUND"/>
+                                        <xs:enumeration value="OUTBOUND"/>
+                                        <xs:enumeration value="E2E"/>
+                                        <xs:enumeration value="OTHER"/>
+                                        <xs:enumeration value="NOT APPLICABLE"/>
+                                    </xs:restriction>
+                                </xs:simpleType>
+                            </xs:attribute>
+                        </xs:extension>
                     </xs:complexContent>
                 </xs:complexType>
             </xs:element>
-            <xs:element minOccurs="0" name="onFailExecution">
+            <xs:element minOccurs="0" name="onFailExecutionBlock">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Steps to be executed in case of some failure to take care of cleanup within testing world.</xs:documentation>
                 </xs:annotation>
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="master:ExecutionBlock"/>
+                    </xs:complexContent>
+                </xs:complexType>
             </xs:element>
-            <xs:element name="postExecution" minOccurs="0" maxOccurs="1">
+            <xs:element name="postExecutionBlock" minOccurs="0" maxOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">NOT implemented yet! These are tasks which are not directly related to test scenario execution, but on the other hand help keeping environments in consistent state or can do other custom tasks like email test execution results.</xs:documentation>
                 </xs:annotation>
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="master:ExecutionBlock"/>
+                    </xs:complexContent>
+                </xs:complexType>
             </xs:element>
         </xs:sequence>
         <xs:attribute name="identificator" type="xs:string" use="required">
@@ -909,56 +979,5 @@
                 </xs:choice>
             </xs:sequence>
         </xs:sequence>
-        <xs:attribute name="identificator" type="xs:string" use="required">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Unique identificator of Execution Block within Test Scenario group.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="sequenceId" type="xs:int" use="optional">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Sequence id defining rank of concrete execution block within list of execution block on Test Scenario level.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
-        <xs:attribute name="direction" use="required">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Direction of the flow execution block operations from fusion middleware perspective can have following values:
-- INBOUND
-- OUTBOUND
-- E2E
-- NOT APPLICABLE
-- OTHER</xs:documentation>
-            </xs:annotation>
-            <xs:simpleType>
-                <xs:restriction base="xs:string">
-                    <xs:enumeration value="INBOUND"/>
-                    <xs:enumeration value="OUTBOUND"/>
-                    <xs:enumeration value="E2E"/>
-                    <xs:enumeration value="OTHER"/>
-                    <xs:enumeration value="NOT APPLICABLE"/>
-                </xs:restriction>
-            </xs:simpleType>
-        </xs:attribute>
     </xs:complexType>
-    <xs:element name="SOATestingFrameworkComponent" abstract="true" type="master:SOATestingFrameworkComponent"/>
-    <xs:complexType name="SOATestingFrameworkComponent"/> 
-    <xs:element name="SOATestingFrameworkComponentOperation" abstract="true"/>
-    <xs:complexType name="SOATestingFrameworkComponentOperation" abstract="true"/>
-    <xs:element name="OSBComponent" substitutionGroup="master:SOATestingFrameworkComponent" type="master:OSBComponent"/>
-    <xs:complexType name="OSBComponent">
-        <xs:complexContent>
-            <xs:extension base="master:SOATestingFrameworkComponent">
-                <xs:sequence>
-                    <xs:element name="operation" maxOccurs="1" minOccurs="1">
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="DISABLE_SERVICE"/>
-                                <xs:enumeration value="ENABLE_SERVICE"/>
-                            </xs:restriction>
-                        </xs:simpleType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
-    </xs:complexType>
-    <xs:element name="OSBComponentOperation" type="master:OSBComponent"/>
 </xs:schema>

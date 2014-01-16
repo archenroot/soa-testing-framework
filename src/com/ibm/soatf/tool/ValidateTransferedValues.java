@@ -18,7 +18,7 @@
 package com.ibm.soatf.tool;
 
 import com.ibm.soatf.component.database.DatabaseComponent;
-import com.ibm.soatf.component.jms.JMSComponent;
+import com.ibm.soatf.component.jms.JmsComponent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -120,7 +120,7 @@ public class ValidateTransferedValues {
                 if (dateCompare) {
                     final Date dbDate = DatabaseComponent.DATE_FORMAT.parse(dbValue);
                     //TODO: timezone //Date xmlDate = DatatypeConverter.parseDate(messageValue).getTime();
-                    Date xmlDate = (messageValue == null || messageValue.length() < 19) ? null : JMSComponent.DATE_FORMAT.parse(messageValue.substring(0,19));
+                    Date xmlDate = (messageValue == null || messageValue.length() < 19) ? null : JmsComponent.DATE_FORMAT.parse(messageValue.substring(0,19));
                     differ ^= dbDate.equals(xmlDate);
                 } else {
                     if (dbValue == null) {

@@ -82,7 +82,6 @@ Checking (negative or positive) if record was polled is done ONLY on the first o
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-
     <xs:complexType name="DbObject">
         <xs:sequence>
             <xs:element name="customValue" maxOccurs="unbounded" minOccurs="0">

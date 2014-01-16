@@ -12,6 +12,9 @@ import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPConstants;
 import javax.xml.soap.SOAPMessage;
 import org.apache.commons.io.FileUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 
 /**
  *
@@ -19,14 +22,16 @@ import org.apache.commons.io.FileUtils;
  */
 public class JAXWSDispatch{
 
-     public static void invokeServiceWithProvidedSOAPRequest(String urlString, String requestFile, String responseFileName)  {
+    private final static Logger logger = LogManager.getLogger(JAXWSDispatch.class);
+    private boolean basicAuthOn = false;
+    
+     public void invokeServiceWithProvidedSOAPRequest(String urlString, String requestFile, String responseFileName) throws SoapComponentException  {
         try {
             final String filename = new StringBuilder("").toString();
-                       
             final URL url = new URL(urlString);
             final String requestEnvelope = FileUtils.readFileToString(new File(requestFile));
             
-            final SOAPMessage response = JAXWSDispatch.invoke(url.toString(), requestEnvelope);
+            final SOAPMessage response = invoke(url.toString(), requestEnvelope);
             final File responseFile = new File(responseFileName);
             if (responseFile.exists()) {
                 FileUtils.forceDelete(responseFile);
@@ -34,8 +39,10 @@ public class JAXWSDispatch{
             try (FileOutputStream fos = new FileOutputStream(responseFile)) {
                 response.writeTo(fos);
             }
-        } catch (Throwable ex) {
-            
+        } catch (Throwable th) {
+            String msg = "" + th.getMessage();
+            logger.error(msg);
+            throw new SoapComponentException(th);
         }
     }
     /**
@@ -45,11 +52,13 @@ public class JAXWSDispatch{
      * @return
      * @throws Exception
      */
-    public static SOAPMessage invoke(String endpointUrl, String xmlMsg) throws Exception {
+    public SOAPMessage invoke(String endpointUrl, String xmlMsg) throws Exception {
         /** Create a service and add at least one port to it. **/
         
         SOAPConnectionFactory sfc = SOAPConnectionFactory.newInstance();
+        
         SOAPConnection connection = sfc.createConnection();
+        
         InputStream is = new ByteArrayInputStream(xmlMsg.getBytes());
         SOAPMessage request = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createMessage(new MimeHeaders(), is);
         request.removeAllAttachments();

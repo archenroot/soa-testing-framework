@@ -17,19 +17,39 @@
  */
 package com.ibm.soatf.component.database;
 
-public class UnknownCRUDTypeException extends Exception {
+/**
+ *
+ * @author Ladislav Jech <archenroot@gmail.com>
+ */
+public class UnknownCRUDTypeException extends DatabaseComponentException {
 
-        public UnknownCRUDTypeException() {}
-        
-        public UnknownCRUDTypeException(String message) {
+    /**
+     *
+     */
+    public UnknownCRUDTypeException() {}
+
+    /**
+     *
+     * @param message
+     */
+    public UnknownCRUDTypeException(String message) {
             super(message);
         }
-        
-        public UnknownCRUDTypeException(Throwable cause){
+
+    /**
+     *
+     * @param cause
+     */
+    public UnknownCRUDTypeException(Throwable cause){
             super(cause);
         }
-        
-        public UnknownCRUDTypeException(String message, Throwable cause)
+
+    /**
+     *
+     * @param message
+     * @param cause
+     */
+    public UnknownCRUDTypeException(String message, Throwable cause)
         {
             super(message, cause);
         }

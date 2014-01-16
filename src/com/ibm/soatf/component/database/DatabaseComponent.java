@@ -24,10 +24,9 @@ package com.ibm.soatf.component.database;
  * @author Ladislav Jech <archenroot@gmail.com>
  */
 import com.ibm.soatf.FrameworkException;
-import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.component.AbstractSOATFComponent;
-import com.ibm.soatf.config.iface.db.DBConfig;
+import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.config.iface.db.DbObject;
 import com.ibm.soatf.config.master.Databases.Database.DatabaseInstance;
 import com.ibm.soatf.config.master.Operation;
@@ -59,9 +58,9 @@ import org.apache.logging.log4j.Logger;
  * Database component server every stuff related to databases. Basically it
  * provides common CRUD statement generation and execution.
  *
- * @author zANGETSu
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
-public class DatabaseComponent extends AbstractSOATFComponent {
+public class DatabaseComponent extends AbstractSoaTFComponent {
 
     private static final Logger logger = LogManager.getLogger(DatabaseComponent.class);
 
@@ -92,8 +91,6 @@ public class DatabaseComponent extends AbstractSOATFComponent {
     public static final Boolean POLLING_USE_CUSTOM_VALUE = false;
     public static final Boolean POLLING_DONT_USE = null;
 
-    private final DBConfig dbIfaceConfig;
-
     // Only oracle database is supported now
     private final String driverClassName = "oracle.jdbc.driver.OracleDriver";
     private String hostName;
@@ -111,6 +108,7 @@ public class DatabaseComponent extends AbstractSOATFComponent {
     
     private Map<DbObject, DbObjectConfig> dbObjectConfigs;
     private DbObject parentDbObject;
+    private String refId;
 
     private static enum SQL_COMMAND {
         SELECT,
@@ -119,12 +117,14 @@ public class DatabaseComponent extends AbstractSOATFComponent {
 
     public DatabaseComponent(
             DatabaseInstance databaseMasterConfig,
-            DBConfig dbIfaceConfig,
-            File workingDir) throws FrameworkExecutionException {
+            List<DbObject> dbObjects,
+            File workingDir,
+            String refId) throws DatabaseComponentException {
         super(SOATFCompType.DATABASE);
         this.databaseMasterConfig = databaseMasterConfig;
-        this.dbIfaceConfig = dbIfaceConfig;
+        this.dbObjects = dbObjects;
         this.workingDir = workingDir;
+        this.refId = refId;
         cor = OperationResult.getInstance();
         constructComponent();
     }
@@ -134,7 +134,7 @@ public class DatabaseComponent extends AbstractSOATFComponent {
      * @throws com.ibm.soatf.FrameworkExecutionException
      */
     @Override
-    protected final void constructComponent() throws FrameworkExecutionException {
+    protected final void constructComponent() throws DatabaseComponentException {
         try {
             logger.trace("Constructing DatabaseComponent object.");
             hostName = databaseMasterConfig.getHostName();
@@ -142,20 +142,19 @@ public class DatabaseComponent extends AbstractSOATFComponent {
             userName = databaseMasterConfig.getUserName();
             password = databaseMasterConfig.getPassword();
             serviceId = databaseMasterConfig.getServiceId();
-            dbObjects = dbIfaceConfig.getDbObjects().getDbObject();
             parentDbObject = dbObjects.get(0);
             dbObjectConfigs = createConfigMap(dbObjects);
             jdbcUrl = constructJdbcUrl(hostName, port, serviceId);
             Class.forName(driverClassName);
         } catch (ClassNotFoundException ex) {
-            String msg = String.format("Cannot load jdbc driver class: %s", ex.getMessage());
+            final String msg = String.format("Cannot load jdbc driver class: %s", ex.getMessage());
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         }
         logger.trace("Constructing DatabaseComponent finished.");
     }
     
-    private Map<DbObject, DbObjectConfig> createConfigMap(List<DbObject> dbObjects) throws FrameworkExecutionException {
+    private Map<DbObject, DbObjectConfig> createConfigMap(List<DbObject> dbObjects) throws DatabaseComponentException {
         Map<DbObject, DbObjectConfig> map = new HashMap<>();
         boolean isParent = true;
         for(DbObject object : dbObjects) {
@@ -188,7 +187,9 @@ public class DatabaseComponent extends AbstractSOATFComponent {
      * @throws com.ibm.soatf.FrameworkExecutionException
      */
     @Override
-    protected void executeOperation(Operation operation) throws FrameworkException {
+    protected void executeOperation(Operation operation) throws FrameworkExecutionException {
+        try{
+        
         /* 
          // This block will be reimplemented after there will be created subclasses on XSD level.
          if (!DATABASE_OPERATIONS.contains(operation)) {
@@ -200,8 +201,10 @@ public class DatabaseComponent extends AbstractSOATFComponent {
          */
         switch (operation.getName()) {
             case DB_INSERT_RECORD:
+                int count = 0;
                 for (DbObject object : dbObjects) {
-                    final String filename = new StringBuilder(dbIfaceConfig.getRefId().replace("/", "_")).append(NAME_DELIMITER).append(object.getName()).append(INSERT_FILE_SUFFIX).toString();
+
+                    final String filename = new StringBuilder(refId.replace("/", "_")).append(NAME_DELIMITER).append(object.getName()).append(INSERT_FILE_SUFFIX).toString();
                     final File file = new File(workingDir, filename);
                     generateInsertStatement(object, file);
                     executeInsertFromFile(file);
@@ -225,11 +228,16 @@ public class DatabaseComponent extends AbstractSOATFComponent {
                 String msg = "Invalid operation name: " + operation.getName();
                 logger.error(msg);
                 cor.addMsg(msg);
-                throw new FrameworkExecutionException(msg);
+                throw new DatabaseComponentException(msg);
+        }
+        } catch (DatabaseComponentException dce){
+            final String msg = "";
+            cor.addMsg(msg);
+            throw new FrameworkExecutionException(msg, dce);
         }
     }
 
-    private void generateInsertStatement(DbObject object, File file) throws FrameworkException {
+    private void generateInsertStatement(DbObject object, File file) throws DatabaseComponentException {
         Connection conn = getConnection();
         try {
             StatementGenerator.generateInsertStatement(conn, dbObjectConfigs.get(object), file);
@@ -239,10 +247,11 @@ public class DatabaseComponent extends AbstractSOATFComponent {
         }
     }
 
-    private void executeInsertFromFile(File file) throws FrameworkException {
+    private void executeInsertFromFile(File file) throws DatabaseComponentException {
         Connection conn = getConnection();
         try {
-            StatementExecutor.runScript(conn, file);
+            StatementExecutor se = new StatementExecutor();
+            se.runScript(conn, file);
         } finally {
             logger.trace("Insert finished with result: " + OperationResult.getInstance().isSuccessful());
             closeConnection(conn);
@@ -251,21 +260,26 @@ public class DatabaseComponent extends AbstractSOATFComponent {
 
     public static String constructJdbcUrl(String hostName, int port, String serviceId) {
         logger.trace("Constructing JDBC URL...");
-        return String.format("jdbc:oracle:thin:@%s:%s:%s", hostName, port, serviceId);
+        final String jdbcUrl = String.format("jdbc:oracle:thin:@%s:%s:%s", hostName, port, serviceId);
+        logger.trace("JDBC URL constructed: " + jdbcUrl);
+        return jdbcUrl;
     }
 
-    public static void closeConnection(Connection conn) {
+    public void closeConnection(Connection conn) throws DatabaseComponentException {
         try {
             if (conn != null) {
                 conn.close();
             }
             logger.trace("SQL connection closed.");
         } catch (SQLException ex) {
-            logger.error("The database connection cannot be closed due to: " + Utils.getSQLExceptionMessage(ex));
+            final String msg = "The database connection cannot be closed due to: " + Utils.getSQLExceptionMessage(ex);
+            logger.error(msg);
+            cor.addMsg(msg);
+            throw new DatabaseComponentException(msg, ex);
         }
     }
 
-    private Connection getConnection() throws FrameworkExecutionException {
+    private Connection getConnection() throws DatabaseComponentException {
         try {
             final Connection conn = DriverManager.getConnection(jdbcUrl, userName, password);
             final String msg = "SQL connection obtained.";
@@ -275,14 +289,15 @@ public class DatabaseComponent extends AbstractSOATFComponent {
         } catch (SQLException ex) {
             String msg = String.format("Could not get connection for %s/%s using URL: %s. %s", userName, "********", jdbcUrl, Utils.getSQLExceptionMessage(ex));
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         }
     }
 
-    private void deleteRecord(DbObject object) throws FrameworkException {
+    private void deleteRecord(DbObject object) throws DatabaseComponentException {
         Connection conn = getConnection();
         PreparedStatement stmt = prepareStatement(conn, SQL_COMMAND.DELETE, POLLING_DONT_USE, object);
         try {
+            logger.debug("Trying to delete records in source table ");
             int updateCount = stmt.executeUpdate();
             final String msg = "Records deleted in database '" + jdbcUrl + "'. Number of affected records: " + updateCount;
             logger.info(msg);
@@ -291,14 +306,14 @@ public class DatabaseComponent extends AbstractSOATFComponent {
         } catch (SQLException ex) {
             String msg = String.format("Could not execute SQL delete statement due to: %s", ex.getMessage());
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         } finally {
             logger.trace("Deletion of record resulted in: " + cor.isSuccessful());
             release(null, stmt, conn);
         }
     }
 
-    private void checkIfRecordIsPolled(DbObject object) throws FrameworkExecutionException {
+    private void checkIfRecordIsPolled(DbObject object) throws DatabaseComponentException {
         Connection conn = getConnection();
         PreparedStatement stmt = prepareStatement(conn, SQL_COMMAND.SELECT, POLLING_USE_POLLED_VALUE, object);
         
@@ -327,20 +342,20 @@ public class DatabaseComponent extends AbstractSOATFComponent {
         } catch (SQLException ex) {
             String msg = String.format("Could not execute SQL statement in database '" + jdbcUrl + "' due to: %s", ex.getMessage());
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         } finally {
             logger.trace("Check for polled record in source database '" + jdbcUrl + "'resulted in: " + cor.isSuccessful());
             release(rs, stmt, conn);
         }
     }
 
-    private void release(ResultSet rs, Statement statement, Connection conn) {
+    private void release(ResultSet rs, Statement statement, Connection conn) throws DatabaseComponentException {
         closeResultSet(rs);
         closeStatement(statement);
         closeConnection(conn);
     }
 
-    private void checkIfRecordIsNotPolled(DbObject object) throws FrameworkExecutionException {
+    private void checkIfRecordIsNotPolled(DbObject object) throws DatabaseComponentException {
         Connection conn = getConnection();
         PreparedStatement stmt = prepareStatement(conn, SQL_COMMAND.SELECT, POLLING_USE_CUSTOM_VALUE, object);
         ResultSet rs = null;
@@ -353,27 +368,30 @@ public class DatabaseComponent extends AbstractSOATFComponent {
                 cor.markSuccessful();
             }
         } catch (SQLException ex) {
-            String msg = String.format("Could not execute SQL statement due to: %s", ex.getMessage());
+            final String msg = String.format("Could not execute SQL statement due to: %s", ex.getMessage());
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         } finally {
             logger.trace("Check for polled record in source database resulted in: " + cor.isSuccessful());
             release(rs, stmt, conn);
         }
     }
     
-    public static void closeStatement(Statement statement) {
+    public void closeStatement(Statement statement) throws DatabaseComponentException {
         try {
             if (statement != null) {
                 statement.close();
             }
             logger.trace("SQL statement closed.");
         } catch (SQLException ex) {
-            logger.error("The statement cannot be closed due to: " + Utils.getSQLExceptionMessage(ex));
+            final String msg = "The statement cannot be closed due to: " + Utils.getSQLExceptionMessage(ex);
+            cor.addMsg(msg);
+            throw new DatabaseComponentException(msg, ex);
+            
         }
     }
 
-    private PreparedStatement prepareStatement(Connection conn, SQL_COMMAND sqlCommand, Boolean usePolled, DbObject object) throws FrameworkExecutionException {
+    private PreparedStatement prepareStatement(Connection conn, SQL_COMMAND sqlCommand, Boolean usePolled, DbObject object) throws DatabaseComponentException {
         StringBuilder sb = new StringBuilder();
         switch(sqlCommand) {
             case SELECT:
@@ -385,7 +403,7 @@ public class DatabaseComponent extends AbstractSOATFComponent {
             default:
                 final String msg = "Don't know how to handle " + sqlCommand + " SQL command";
                 cor.addMsg(msg);
-                throw new FrameworkExecutionException(msg);
+                throw new DatabaseComponentException(msg);
         }
         DbObjectConfig dbConfig = dbObjectConfigs.get(object);
         DbObjectConfig parentDbConfig = dbObjectConfigs.get(parentDbObject);
@@ -439,9 +457,9 @@ public class DatabaseComponent extends AbstractSOATFComponent {
             return stmt;
         } catch (SQLException ex) {
             closeStatement(stmt);
-            String msg = String.format("Failed to prepare statement due to: %s", ex.getMessage());
+            final String msg = String.format("Failed to prepare statement due to: %s", ex.getMessage());
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         }
     }
 
@@ -450,14 +468,16 @@ public class DatabaseComponent extends AbstractSOATFComponent {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public static void closeResultSet(ResultSet rs) {
+    public static void closeResultSet(ResultSet rs) throws DatabaseComponentException {
         try {
             if (rs != null) {
                 rs.close();
             }
             logger.trace("SQL result set closed.");
         } catch (SQLException ex) {
-            logger.error("The result set cannot be closed due to: " + Utils.getSQLExceptionMessage(ex));
+            final String msg = "The result set cannot be closed due to: " + Utils.getSQLExceptionMessage(ex);
+            throw new DatabaseComponentException(msg , ex);
+            
         }
     }
     
@@ -469,7 +489,7 @@ public class DatabaseComponent extends AbstractSOATFComponent {
         private final String[] sourceEntityIdColumns;
         private final String[] sourceMessageIdColumns;
         
-        public DbObjectConfig(DbObject object, boolean isParent) throws FrameworkExecutionException {
+        public DbObjectConfig(DbObject object, boolean isParent) throws DatabaseComponentException {
             OperationResult cor = OperationResult.getInstance();
             dbObjectName = object.getName();
             List<DbObject.CustomValue> customValues = object.getCustomValue();
@@ -496,7 +516,7 @@ public class DatabaseComponent extends AbstractSOATFComponent {
                         if (polledColumnName != null) {
                             final String msg = "There is already a column " + polledColumnName + " defined for polling, yet another was found: " + name;
                             cor.addMsg(msg);
-                            throw new FrameworkExecutionException(msg);
+                            throw new DatabaseComponentException(msg);
                         }
                         polledColumnName = name;
                         polledColumnPolledValue = polledValue;
@@ -507,12 +527,12 @@ public class DatabaseComponent extends AbstractSOATFComponent {
                 if (sourceEntityIdColumnList.isEmpty()) {
                     final String msg = "sourceEntityId attribute not configured in any of the custom values for the table " + object.getName();
                     cor.addMsg(msg);
-                    throw new FrameworkExecutionException(msg);
+                    throw new DatabaseComponentException(msg);
                 }
                 if (sourceMessageIdColumnList.isEmpty()) {
                     final String msg = "sourceMessageId attribute not configured in any of the custom values for the table " + object.getName();
                     cor.addMsg(msg);
-                    throw new FrameworkExecutionException(msg);
+                    throw new DatabaseComponentException(msg);
                 }
             }
             sourceEntityIdColumns = sourceEntityIdColumnList.toArray(new String[sourceEntityIdColumnList.size()]);

@@ -1,4 +1,5 @@
 package com.ibm.soatf.gui;
+
 import java.awt.Color;
 import java.awt.Component;
 import javax.swing.JLabel;
@@ -14,14 +15,18 @@ public class ResultColumnRenderer extends DefaultTableCellRenderer {
         JLabel l = (JLabel) super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, col);
         TableModelResults model = (TableModelResults) table.getModel();
         Result result = model.getRow(row);
-        if (result.isSuccess() == null) {
-            l.setBackground(Color.LIGHT_GRAY);
-        } else {
-            if (result.isSuccess()) {
+        switch (result.getCommonResult()) {
+            case SUCCESS: 
                 l.setBackground(Color.GREEN);
-            } else {
+                break;
+            case FAILURE:
                 l.setBackground(Color.RED);
-            }
+                break;
+            case WARNING:
+                l.setBackground(Color.YELLOW);
+                break;
+            default:
+                l.setBackground(Color.LIGHT_GRAY);
         }
         //Return the JLabel which renders the cell.
         return l;

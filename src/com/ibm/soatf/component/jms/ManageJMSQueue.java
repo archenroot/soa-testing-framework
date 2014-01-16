@@ -17,13 +17,20 @@
  */
 package com.ibm.soatf.component.jms;
 
+import com.ibm.soatf.flow.OperationResult;
 import javax.management.*;
 import java.io.*;
 import java.util.*;
 import java.rmi.*;
+
 import javax.naming.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class ManageJMSQueue {
+
+    private static final Logger logger = LogManager.getLogger(DistribuedQueueBrowser.class.getName());
+    private final OperationResult cor = OperationResult.getInstance();
 
     private MBeanServerConnection server = null;
 
@@ -43,12 +50,20 @@ public class ManageJMSQueue {
         }
     }
 
-    public void monitorJMS() throws Exception {
-        ObjectName objectName = new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue");
-        System.out.println("nnServerPeer = " + (javax.management.ObjectName) server.getAttribute(objectName, new String("ServerPeer")));
-        System.out.println("QueueName = " + (String) server.getAttribute(new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue"), new String("Name")));
-        System.out.println("JNDI Name = " + (String) server.getAttribute(new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue"), new String("JNDIName")));
-        System.out.println("FullSize = " + (Integer) server.getAttribute(new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue"), new String("FullSize")));
+    public void monitorJMS() throws JmsComponentException {
+        try {
+            ObjectName objectName = new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue");
+            logger.debug("nnServerPeer = " + (javax.management.ObjectName) server.getAttribute(objectName, new String("ServerPeer")));
+            logger.debug("QueueName = " + (String) server.getAttribute(new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue"), new String("Name")));
+            logger.debug("JNDI Name = " + (String) server.getAttribute(new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue"), new String("JNDIName")));
+            logger.debug("FullSize = " + (Integer) server.getAttribute(new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue"), new String("FullSize")));
+
+        } catch (MalformedObjectNameException | MBeanException | AttributeNotFoundException | InstanceNotFoundException | ReflectionException | IOException ex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
+        }
+
     }
 
     public void listAllJMS_Messages() throws Exception {
@@ -61,9 +76,9 @@ public class ManageJMSQueue {
 
     public void removeAllJMS_Messages() throws Exception {
         String queueName = (String) server.getAttribute(new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue"), new String("Name"));
-        System.out.println("nt Removing all JMS Messages from Queue: " + queueName);
+        logger.debug("nt Removing all JMS Messages from Queue: " + queueName);
         server.invoke(new ObjectName("jboss.messaging.destination:name=DLQ,service=Queue"), "removeAllMessages", null, null);
-        System.out.println("nt All the Messages are removed from JMS Queue: " + queueName);
+        logger.debug("nt All the Messages are removed from JMS Queue: " + queueName);
     }
 
     public void removeAllJMSMessages(
@@ -94,10 +109,10 @@ public class ManageJMSQueue {
     public static void main(String ar[]) throws Exception {
         ManageJMSQueue ref = new ManageJMSQueue();
         ref.monitorJMS();
-        System.out.println("nt Following Messages Are present inside the JMS Queue:");
+        logger.debug("nt Following Messages Are present inside the JMS Queue:");
         ref.listAllJMS_Messages();
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        System.out.print("nn Please Specify (yes/no) to delete all the messages from JMS Queue ? ");
+        logger.debug("nn Please Specify (yes/no) to delete all the messages from JMS Queue ? ");
         String answer = "";
         if ((answer = br.readLine()).equals("yes")) {
             ref.removeAllJMS_Messages();

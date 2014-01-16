@@ -19,6 +19,7 @@ package com.ibm.soatf.tool;
 
 import java.io.File;
 import java.sql.SQLException;
+import java.util.Collection;
 
 /**
  *
@@ -45,5 +46,18 @@ public final class Utils {
     
     public static String getSQLExceptionMessage(SQLException ex) {
         return String.format("SQL Code: %s Message: %s", ex.getErrorCode(), ex.getMessage());
+    }
+    
+    public static boolean isEmpty(Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        if(obj instanceof String) {
+            return ((String) obj).isEmpty();
+        }
+        if(obj instanceof Collection) {
+            return ((Collection) obj).isEmpty();
+        }
+        return false;
     }
 }

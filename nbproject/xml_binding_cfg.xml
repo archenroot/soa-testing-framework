@@ -10,21 +10,22 @@
 		</bindings>
 		<catalog/>
 	</schema>
-	<schema type='-xmlschema' package='' name='SOATFIfaceConfig'>
-		<xjc-options>
-		</xjc-options>
-		<schema-sources>
-			<schema-source location='xml-resources/jaxb/SOATFIfaceConfig/SOATFIfaceConfig.xsd' origLocation='schema/SOATFIfaceConfig/SOATFIfaceConfig.xsd'/>
-		</schema-sources>
-		<bindings>
-		</bindings>
-		<catalog/>
-	</schema>
 	<schema type='-xmlschema' package='' name='SOATFReportConfig'>
 		<xjc-options>
 		</xjc-options>
 		<schema-sources>
 			<schema-source location='xml-resources/jaxb/SOATFReportConfig/SOATFReportConfig.xsd' origLocation='schema/SOATFReportConfig/SOATFReportConfig.xsd'/>
+		</schema-sources>
+		<bindings>
+		</bindings>
+		<catalog/>
+	</schema>
+	<schema type='-xmlschema' package='' name='SOATFIfaceConfig'>
+		<xjc-options>
+			<xjc-option name='-verbose' value='true'/>
+		</xjc-options>
+		<schema-sources>
+			<schema-source location='xml-resources/jaxb/SOATFIfaceConfig/SOATFIfaceConfig.xsd' origLocation='schema/SOATFIfaceConfig/SOATFIfaceConfig.xsd'/>
 		</schema-sources>
 		<bindings>
 		</bindings>

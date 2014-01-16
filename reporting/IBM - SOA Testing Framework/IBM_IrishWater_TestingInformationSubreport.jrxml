@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IBM_IrishWater_ObjectInformationSubreport" pageWidth="555" pageHeight="802" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="2b23446e-777f-47e8-8eac-a205b28398e5">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<queryString language="xpath2">
+		<![CDATA[/*]]>
+	</queryString>
+	<field name="testName" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testName]]></fieldDescription>
+	</field>
+	<field name="document" class="java.lang.String">
+		<fieldDescription><![CDATA[stfconf:document]]></fieldDescription>
+	</field>
+	<field name="documentLinkOrReferenceId" class="java.lang.String">
+		<fieldDescription><![CDATA[stfconf:documentLinkOrReferenceId]]></fieldDescription>
+	</field>
+	<field name="version" class="java.lang.String">
+		<fieldDescription><![CDATA[stfconf:version]]></fieldDescription>
+	</field>
+	<field name="localName" class="java.lang.String">
+		<fieldDescription><![CDATA[local-name()]]></fieldDescription>
+	</field>
+	<field name="testPlanOverview" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:testingInformation/stfconf:testPlanOverview]]></fieldDescription>
+	</field>
+	<field name="prerequisitiesOrSetups" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:testingInformation/stfconf:prerequisitiesOrSetups]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="167">
+			<line>
+				<reportElement x="0" y="0" width="555" height="1" uuid="93bb733c-f183-44e5-aec3-88c7daeff517"/>
+				<graphicElement>
+					<pen lineWidth="2.0"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="0" y="2" width="555" height="20" uuid="2c13391f-c6af-4bb2-b2c9-b9e4871ef95b"/>
+				<textElement>
+					<font fontName="Trebuchet MS" size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Testing Information]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="27" width="555" height="20" uuid="9c8f7bf6-304b-41c8-b0c1-64415ded071d"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Trebuchet MS" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Test Plan Overview]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="52" width="555" height="20" uuid="65e9ede9-4b20-49f4-a3ff-8d12618743bf"/>
+				<textElement>
+					<font fontName="Trebuchet MS"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{testPlanOverview}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="77" width="555" height="20" uuid="c26de6b2-9be8-49c2-ac84-89dde1f86c21"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Trebuchet MS" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Prerequisites/Setups]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="0" y="102" width="555" height="20" uuid="953f046c-ab02-4763-a471-4c9af4d3f236"/>
+				<textElement>
+					<font fontName="Trebuchet MS"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{prerequisitiesOrSetups}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="127" width="555" height="20" uuid="e9d3c01c-ba12-4670-bec0-b22b33b974d0"/>
+				<box>
+					<bottomPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Trebuchet MS" size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Document References]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="15" y="152" width="180" height="15" forecolor="#000000" backcolor="#CCCCCC" uuid="53aeb6f3-bbd3-4b1f-8db8-5634beda6d8d"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Trebuchet MS" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Document]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="195" y="152" width="180" height="15" forecolor="#000000" backcolor="#CCCCCC" uuid="533ea655-8b2c-47c2-8e10-65411500c2a4"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Trebuchet MS" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Document Link / Reference ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" mode="Opaque" x="375" y="152" width="180" height="15" forecolor="#000000" backcolor="#CCCCCC" uuid="dcadcb63-698e-438f-98ab-3da89fb57ffa"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Trebuchet MS" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Version]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="15" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="15" y="0" width="180" height="15" uuid="51034b09-5cfd-4a92-a9d9-e22e0a3b3dde"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{document}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="195" y="0" width="180" height="15" uuid="e09ef980-ac2d-4f8c-8c75-5a7e2c37d71f"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{documentLinkOrReferenceId}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToBandHeight" x="375" y="0" width="180" height="15" uuid="1968c8f2-98b6-4278-a8db-6eca88229894"/>
+				<box leftPadding="5">
+					<topPen lineWidth="0.25"/>
+					<leftPen lineWidth="0.25"/>
+					<bottomPen lineWidth="0.25"/>
+					<rightPen lineWidth="0.25"/>
+				</box>
+				<textFieldExpression><![CDATA[$F{version}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

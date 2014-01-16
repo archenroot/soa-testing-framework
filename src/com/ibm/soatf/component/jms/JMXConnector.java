@@ -1,9 +1,8 @@
 package com.ibm.soatf.component.jms;
 
+import com.ibm.soatf.flow.OperationResult;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.management.MBeanServerConnection;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
@@ -17,6 +16,8 @@ import weblogic.management.remote.t3.ClientProvider;
  */
 public class JMXConnector {
 
+    private final OperationResult cor = OperationResult.getInstance();
+    
     private JMXServiceURL serviceURL;
     private javax.management.remote.JMXConnector connector;
     private MBeanServerConnection connection;
@@ -57,7 +58,7 @@ public class JMXConnector {
         
     }
 
-    private void initConnection() {
+    private void initConnection() throws JmsComponentException {
         try {
             serviceURL = new JMXServiceURL("t3", hostName, Integer.valueOf(port), jndiroot + messageBeanServer);
 
@@ -70,18 +71,22 @@ public class JMXConnector {
 
             connection = connector.getMBeanServerConnection();
         } catch (IOException ioex) {
-            Logger.getLogger(JMXConnector.class.getName()).log(Level.SEVERE, "Connection to the service cannot be initiated: ", ioex);
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ioex);
         }
     }
     
-    public void closeConnection() {
+    public void closeConnection() throws JmsComponentException {
         try {
             this.connector.close();
         } catch (IOException ex) {
-            Logger.getLogger(JMXConnector.class.getName()).log(Level.SEVERE, "Connector cannot be closed: ", ex);
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
         }
     }
-    public MBeanServerConnection getConnection() {
+    public MBeanServerConnection getConnection() throws JmsComponentException {
         this.initConnection();
         return connection;
     }

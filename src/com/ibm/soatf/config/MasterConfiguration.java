@@ -1,11 +1,23 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright (C) 2013 Ladislav Jech
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; either version 2
+ * of the License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
  */
 package com.ibm.soatf.config;
 
-import static com.ibm.soatf.config.FrameworkConfiguration.IFACE_CONFIG_FILENAME;
+import static com.ibm.soatf.config.MasterFrameworkConfig.IFACE_CONFIG_FILENAME;
 import com.ibm.soatf.config.master.Databases.Database;
 import com.ibm.soatf.config.master.Databases.Database.DatabaseInstance;
 import com.ibm.soatf.config.master.FTPServers.FtpServer;
@@ -30,6 +42,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.logging.Level;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -48,50 +61,60 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
+ * Class responsible for input/output operations between framework and master
+ * configuration file and SOA Testing Framework.
  *
- * @author zANGETSu
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
 public final class MasterConfiguration {
 
     private static final Logger logger = LogManager.getLogger(MasterConfiguration.class.getName());
 
-    private final FrameworkConfiguration FCFG;
+    private final MasterFrameworkConfig MFC;
 
     private SOATestingFrameworkMasterConfiguration XML_CONFIG;
-    
+
     private Set<String> environments;
-    
+
     private final Map<String, InterfaceConfiguration> ICFG = new HashMap<>();
     private final Map<Interface, InterfaceConfiguration> ICFG2 = new HashMap<>();
 
-    MasterConfiguration(FrameworkConfiguration fcfg) {
-        FCFG = fcfg;
+    MasterConfiguration(final MasterFrameworkConfig mfc) {
+        MFC = mfc;
     }
 
     /**
+     * Initialize master configuraiton XML file unmarshaller. Check if the file
+     * exists and unmarshall master configuration into object.
      *
-     * @return @throws FrameworkConfigurationException
+     * @throws FrameworkConfigurationException
      */
     void init() throws FrameworkConfigurationException {
-        logger.info("Unmarshalling master configuration from file: " + FCFG.getMasterConfigFile());
+        logger.info("Unmarshalling master configuration from file: " + MFC.getMasterConfigFile());
         JAXBContext jaxbContext;
         Unmarshaller jaxbUnmarshaller;
         try {
             jaxbContext = JAXBContext.newInstance("com.ibm.soatf.config.master");
             jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            XML_CONFIG = ((JAXBElement<SOATestingFrameworkMasterConfiguration>) jaxbUnmarshaller.unmarshal(FCFG.getMasterConfigFile())).getValue();
+            XML_CONFIG = ((JAXBElement<SOATestingFrameworkMasterConfiguration>) jaxbUnmarshaller.unmarshal(MFC.getMasterConfigFile())).getValue();
         } catch (JAXBException jbex) {
-            throw new FrameworkConfigurationException("Error while unmarshalling master configuration object from XML file " + FCFG.getMasterConfigFile(), jbex);
+            throw new FrameworkConfigurationException("Error while unmarshalling master configuration object from XML file " + MFC.getMasterConfigFile(), jbex);
         }
     }
-    
-    public Set<String> getAllEnvironments() throws FrameworkConfigurationException {
+
+    /**
+     * Gets all environments configured within master configuration file.
+     *
+     * @return all environments definitions within framework configuration file.
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public Set<String> getAllEnvironments() throws MasterConfigurationException {
         if (environments == null) {
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder;
             try {
                 builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(FCFG.getMasterConfigFile());
+                Document doc = builder.parse(MFC.getMasterConfigFile());
                 XPathFactory xPathfactory = XPathFactory.newInstance();
                 XPath xpath = xPathfactory.newXPath();
                 NodeList list = (NodeList) xpath.evaluate("//*/@environment", doc, XPathConstants.NODESET);
@@ -109,24 +132,37 @@ public final class MasterConfiguration {
             } catch (ParserConfigurationException ex) {
                 String msg = "Error while attempting to parse master configuration for XPath queries.";
                 logger.error(msg);
-                throw new FrameworkConfigurationException(ex);
+                throw new MasterConfigurationException(ex);
             } catch (SAXException | IOException | XPathExpressionException ex) {
                 String msg = "Error while attempting to parse master configuration for XPath queries.";
                 logger.error(msg, ex);
-                throw new FrameworkConfigurationException(ex);
+                throw new MasterConfigurationException(ex);
             }
         }
         return environments;
     }
-    
-    public List<Interface> getInterfaces() {
-        final List<Interface> iface = XML_CONFIG.getInterfaces().getInterface();
+
+    /**
+     * Gets list of all interfaces configured within framework master
+     * configuration file.
+     *
+     * @return list of configured interfaces
+     * @see com.ibm.soatf.config.master.Interface
+     */
+    public List<SOATestingFrameworkMasterConfiguration.Interfaces.Interface> getInterfaces() {
+        final List<SOATestingFrameworkMasterConfiguration.Interfaces.Interface> iface = XML_CONFIG.getInterfaces().getInterface();
         if (iface.isEmpty()) {
             logger.warn("There are no interfaces defined in master configuration XML file.");
         }
         return iface;
     }
 
+    /**
+     * Gets list of all interface names configured within framework master
+     * configuration file.
+     *
+     * @return list of configured interface names
+     */
     public List<String> getInterfaceNames() {
         List<String> interfaceNames = new ArrayList<>();
         for (Interface iface : getInterfaces()) {
@@ -136,39 +172,46 @@ public final class MasterConfiguration {
     }
 
     /**
+     * Gets concrete interface.
      *
-     * @param interfaceName
-     * @return
-     * @throws FrameworkConfigurationException
+     * @param interfaceName String representation of interface name.
+     * @return concrete interface instance
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     * @see com.ibm.soatf.config.master.Interface
      */
-    public Interface getInterface(String interfaceName) throws FrameworkConfigurationException {
+    public Interface getInterface(String interfaceName) throws MasterConfigurationException {
+
         for (Interface iface : getInterfaces()) {
             if (iface.getName().equals(interfaceName)) {
                 return iface;
             }
         }
-        throw new FrameworkConfigurationException("Interface with following identificator cannot be found in master configuration: " + interfaceName);
+        throw new MasterConfigurationException("Interface with following identificator cannot be found in master configuration: " + interfaceName);
     }
 
     /**
+     * Gets list of all relative project definition for selected interface.
      *
-     * @param interfaceName
-     * @return
-     * @throws FrameworkConfigurationException
+     * @param interfaceName String representation of interface name
+     * @return list of configured projects.
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     * @see com.ibm.soatf.config.master.Project
      */
-    public List<Project> getProjects(String interfaceName) throws FrameworkConfigurationException {
+    public List<Project> getProjects(String interfaceName) throws MasterConfigurationException {
         final List<Project> projects = getInterface(interfaceName).getProjects().getProject();
         if (projects.isEmpty()) {
-            throw new FrameworkConfigurationException("There are no configured projects for interface " + interfaceName + " in master configuration XML file.");
+            throw new MasterConfigurationException("There are no configured projects for interface " + interfaceName + " in master configuration XML file.");
         }
         return projects;
     }
 
     /**
+     * Gets concrete interface related project.
      *
-     * @param interfaceName
-     * @param projectName
-     * @return
+     * @param interfaceName interface name
+     * @param projectName project name
+     * @return concrete project
+     * @see com.ibm.soatf.config.master.Project
      */
     public Project getProject(String interfaceName, String projectName) {
         throw new UnsupportedOperationException("Not supported yet.");
@@ -176,15 +219,16 @@ public final class MasterConfiguration {
     }
 
     /**
-     *
-     * @param interfaceName
-     * @return
-     * @throws FrameworkConfigurationException
+     * Gets list of interface referenced flow patterns.
+     * @param interfaceName String representation of interface name
+     * @return list of flow patterns referenced by interface
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     * @see com.ibm.soatf.config.master.Interface.Patterns.ReferencedFlowPattern
      */
-    public List<ReferencedFlowPattern> getReferencedFlowPatterns(String interfaceName) throws FrameworkConfigurationException {
+    public List<ReferencedFlowPattern> getReferencedFlowPatterns(String interfaceName) throws MasterConfigurationException {
         final List<ReferencedFlowPattern> referencedFlowPatterns = getInterface(interfaceName).getPatterns().getReferencedFlowPattern();
         if (referencedFlowPatterns.isEmpty()) {
-            throw new FrameworkConfigurationException("There are no configured referenced flow patterns for interface " + interfaceName + ".");
+            throw new MasterConfigurationException("There are no configured referenced flow patterns for interface " + interfaceName + ".");
         }
         return referencedFlowPatterns;
     }
@@ -201,11 +245,12 @@ public final class MasterConfiguration {
 
     /**
      *
-     * @return @throws FrameworkConfigurationException
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public List<OracleFusionMiddlewareInstance> getOracleFusionMiddlewareInstances() throws FrameworkConfigurationException {
+    public List<OracleFusionMiddlewareInstance> getOracleFusionMiddlewareInstances() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getOracleFusionMiddleware().getOracleFusionMiddlewareInstance().isEmpty()) {
-            throw new FrameworkConfigurationException("There are no Oracle Fusion Middleware instances configured.");
+            throw new MasterConfigurationException("There are no Oracle Fusion Middleware instances configured.");
         }
         return XML_CONFIG.getEnvironments().getOracleFusionMiddleware().getOracleFusionMiddlewareInstance();
     }
@@ -214,24 +259,25 @@ public final class MasterConfiguration {
      *
      * @param environment
      * @return
-     * @throws FrameworkConfigurationException
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public OracleFusionMiddlewareInstance getOracleFusionMiddlewareInstance(String environment) throws FrameworkConfigurationException {
+    public OracleFusionMiddlewareInstance getOracleFusionMiddlewareInstance(String environment) throws MasterConfigurationException {
         for (OracleFusionMiddlewareInstance inst : getOracleFusionMiddlewareInstances()) {
             if (inst.getEnvironment().equals(environment)) {
                 return inst;
             }
         }
-        throw new FrameworkConfigurationException("Oracle Fusion Middleware instance configuration not found for environment " + environment);
+        throw new MasterConfigurationException("Oracle Fusion Middleware instance configuration not found for environment " + environment);
     }
 
     /**
      *
-     * @return @throws FrameworkConfigurationException
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException @throws FrameworkConfigurationException
      */
-    public List<Database> getDatabases() throws FrameworkConfigurationException {
+    public List<Database> getDatabases() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getDatabases().getDatabase().isEmpty()) {
-            throw new FrameworkConfigurationException("There are is no database configured.");
+            throw new MasterConfigurationException("There are is no database configured.");
         }
         return XML_CONFIG.getEnvironments().getDatabases().getDatabase();
     }
@@ -240,26 +286,26 @@ public final class MasterConfiguration {
      *
      * @param identificator
      * @return
-     * @throws FrameworkConfigurationException
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public Database getDatabase(String identificator) throws FrameworkConfigurationException {
+    public Database getDatabase(String identificator) throws MasterConfigurationException {
         for (Database database : getDatabases()) {
             if (database.getIdentificator().equals(identificator)) {
                 return database;
             }
         }
-        throw new FrameworkConfigurationException("Database configuration with identificator " + identificator + " cannot be found.");
+        throw new MasterConfigurationException("Database configuration with identificator " + identificator + " cannot be found.");
     }
 
     /**
      *
      * @param identificator
      * @return
-     * @throws FrameworkConfigurationException
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public List<DatabaseInstance> getDatabaseInstances(String identificator) throws FrameworkConfigurationException {
+    public List<DatabaseInstance> getDatabaseInstances(String identificator) throws MasterConfigurationException {
         if (getDatabase(identificator).getDatabaseInstance().isEmpty()) {
-            throw new FrameworkConfigurationException("There are no database instances configured for database environment identificator " + identificator + ".");
+            throw new MasterConfigurationException("There are no database instances configured for database environment identificator " + identificator + ".");
         }
         return getDatabase(identificator).getDatabaseInstance();
     }
@@ -269,24 +315,25 @@ public final class MasterConfiguration {
      * @param environment
      * @param identificator
      * @return
-     * @throws FrameworkConfigurationException
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public DatabaseInstance getDatabaseInstance(String environment, String identificator) throws FrameworkConfigurationException {
+    public DatabaseInstance getDatabaseInstance(String environment, String identificator) throws MasterConfigurationException {
         for (DatabaseInstance inst : getDatabaseInstances(identificator)) {
             if (inst.getEnvironment().equals(environment)) {
                 return inst;
             }
         }
-        throw new FrameworkConfigurationException("Database configuration with identificator " + identificator + " for environment " + environment + " cannot be found.");
+        throw new MasterConfigurationException("Database configuration with identificator " + identificator + " for environment " + environment + " cannot be found.");
     }
 
     /**
      *
-     * @return @throws FrameworkConfigurationException
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException @throws FrameworkConfigurationException
      */
-    public List<FtpServer> getFTPServers() throws FrameworkConfigurationException {
+    public List<FtpServer> getFTPServers() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getFtpServers().getFtpServer().isEmpty()) {
-            throw new FrameworkConfigurationException("There are is FTP servers configuration.");
+            throw new MasterConfigurationException("There are is FTP servers configuration.");
         }
         return XML_CONFIG.getEnvironments().getFtpServers().getFtpServer();
     }
@@ -295,35 +342,41 @@ public final class MasterConfiguration {
      *
      * @param identificator
      * @return
-     * @throws FrameworkConfigurationException
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public FtpServer getFTPServer(String identificator) throws FrameworkConfigurationException {
+    public FtpServer getFTPServer(String identificator) throws MasterConfigurationException {
         for (FtpServer ftpServer : getFTPServers()) {
             if (ftpServer.getIdentificator().equals(identificator)) {
                 return ftpServer;
             }
         }
-        throw new FrameworkConfigurationException("FTP server configuration with identificator " + identificator + " cannot be found.");
+        throw new MasterConfigurationException("FTP server configuration with identificator " + identificator + " cannot be found.");
     }
 
-    public Directories getFTPServerDirectories(String identificator) throws FrameworkConfigurationException {
-        
-        Directories directories = getFTPServer(identificator).getDirectories();
-        if (directories == null ){
-            throw new FrameworkConfigurationException();
-        }
-        return directories;
-    }
-    
     /**
      *
      * @param identificator
      * @return
-     * @throws FrameworkConfigurationException
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public List<FtpServerInstance> getFTPServerInstances(String identificator) throws FrameworkConfigurationException {
+    public Directories getFTPServerDirectories(String identificator) throws MasterConfigurationException {
+
+        Directories directories = getFTPServer(identificator).getDirectories();
+        if (directories == null) {
+            throw new MasterConfigurationException();
+        }
+        return directories;
+    }
+
+    /**
+     *
+     * @param identificator
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public List<FtpServerInstance> getFTPServerInstances(String identificator) throws MasterConfigurationException {
         if (getFTPServer(identificator).getFtpServerInstance().isEmpty()) {
-            throw new FrameworkConfigurationException("There are no ftp server instances configured for database environment identificator " + identificator + ".");
+            throw new MasterConfigurationException("There are no ftp server instances configured for database environment identificator " + identificator + ".");
         }
         return getFTPServer(identificator).getFtpServerInstance();
     }
@@ -333,66 +386,101 @@ public final class MasterConfiguration {
      * @param environment
      * @param identificator
      * @return
-     * @throws FrameworkConfigurationException
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public FtpServerInstance getFtpServerInstance(String environment, String identificator) throws FrameworkConfigurationException {
+    public FtpServerInstance getFtpServerInstance(String environment, String identificator) throws MasterConfigurationException {
         for (FtpServerInstance inst : getFTPServerInstances(identificator)) {
             if (inst.getEnvironment().equals(environment)) {
                 return inst;
             }
         }
-        throw new FrameworkConfigurationException("FTP instance configuration with identificator " + identificator + " for environment " + environment + " cannot be found.");
+        throw new MasterConfigurationException("FTP instance configuration with identificator " + identificator + " for environment " + environment + " cannot be found.");
     }
 
     /**
      *
-     * @return @throws FrameworkConfigurationException
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException @throws FrameworkConfigurationException
      */
-    public List<FlowPattern> getFlowPatterns() throws FrameworkConfigurationException {
+    public List<FlowPattern> getFlowPatterns() throws MasterConfigurationException {
         if (XML_CONFIG.getFlowPatterns().getFlowPattern().isEmpty()) {
-            throw new FrameworkConfigurationException("There are no flow pattern definitions available in the configuration file.");
+            throw new MasterConfigurationException("There are no flow pattern definitions available in the configuration file.");
         }
         return XML_CONFIG.getFlowPatterns().getFlowPattern();
     }
 
-    public FlowPattern getFlowPattern(String flowPatternId) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param flowPatternId
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public FlowPattern getFlowPattern(String flowPatternId) throws MasterConfigurationException {
         for (FlowPattern flowPattern : getFlowPatterns()) {
             if (flowPattern.getIdentificator().equals(flowPatternId)) {
                 return flowPattern;
             }
         }
-        throw new FrameworkConfigurationException("No such flow pattern found: " + flowPatternId);
+        throw new MasterConfigurationException("Master configuration file - no such flow pattern found: " + flowPatternId);
     }
 
-    public List<TestScenario> getTestScenarios(String flowPatternId) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param flowPatternId
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public List<TestScenario> getTestScenarios(String flowPatternId) throws MasterConfigurationException {
         final List<TestScenario> testScenarios = getFlowPattern(flowPatternId).getTestScenario();
         if (testScenarios.isEmpty()) {
-            throw new FrameworkConfigurationException("No test scenario found in flow pattern: " + flowPatternId);
+            throw new MasterConfigurationException("No test scenario found in flow pattern: " + flowPatternId);
         }
         return testScenarios;
     }
 
-    public TestScenario getTestScenario(String flowPatternId, String testScenarioId) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param flowPatternId
+     * @param testScenarioId
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public TestScenario getTestScenario(String flowPatternId, String testScenarioId) throws MasterConfigurationException {
         for (TestScenario testScenario : getTestScenarios(flowPatternId)) {
             if (testScenario.getIdentificator().equals(testScenarioId)) {
                 return testScenario;
             }
         }
-        throw new FrameworkConfigurationException("No such test scenario found: " + testScenarioId + " in flow pattern: " + flowPatternId);
+        throw new MasterConfigurationException("No such test scenario found within framework master configuration file: " + testScenarioId + " in flow pattern: " + flowPatternId);
     }
 
-    public List<ExecutionBlock> getExecutionBlocks(String flowPatternId, String testScenarioId) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param flowPatternId
+     * @param testScenarioId
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public List<ExecutionBlock> getExecutionBlocks(String flowPatternId, String testScenarioId) throws MasterConfigurationException {
         final List<ExecutionBlock> executionBlocks = getTestScenario(flowPatternId, testScenarioId).getExecutionBlock();
         if (executionBlocks.isEmpty()) {
-            throw new FrameworkConfigurationException("No execution blocks found in test scenario: " + testScenarioId
+            throw new MasterConfigurationException("No execution blocks found in test scenario: " + testScenarioId
                     + " in flow pattern: " + flowPatternId);
         }
         return executionBlocks;
     }
 
-    public ExecutionBlock getExecutionBlock(String flowPatternId, String testScenarioId, String execBlockId) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param flowPatternId
+     * @param testScenarioId
+     * @param execBlockId
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public ExecutionBlock getExecutionBlock(String flowPatternId, String testScenarioId, String execBlockId) throws MasterConfigurationException {
         if (execBlockId.equals("")) {
-            throw new FrameworkConfigurationException("Execution block reference id if empty in config.xml for:"
+            throw new MasterConfigurationException("Execution block reference id if empty in config.xml for:"
                     + "\nFlowPatternId: " + flowPatternId
                     + "\nTestScenarioId: " + testScenarioId
                     + "\nCheck config.xml file for selected interface and fill reference id for this block.");
@@ -402,24 +490,41 @@ public final class MasterConfiguration {
                 return executionBlock;
             }
         }
-        throw new FrameworkConfigurationException("'" + execBlockId + "' ExecutionBlockId cannot be found for: "
+        throw new MasterConfigurationException("Execption foudn in master configuration file. '" + execBlockId + "' ExecutionBlockId cannot be found for: "
                 + "\nFlowPatternId: " + flowPatternId
                 + "\nTestScenarioId: " + testScenarioId
                 + "\n Looks like there is mismatch between identificators in master and config files.");
     }
 
-    public List<Operation> getOperations(String interfaceFlowPatternId, String interfaceTestScenarioId, String interfaceExecutionBlockId) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param interfaceFlowPatternId
+     * @param interfaceTestScenarioId
+     * @param interfaceExecutionBlockId
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public List<Operation> getOperations(String interfaceFlowPatternId, String interfaceTestScenarioId, String interfaceExecutionBlockId) throws MasterConfigurationException {
         ExecutionBlock executionBlock = this.getExecutionBlock(interfaceFlowPatternId, interfaceTestScenarioId, interfaceExecutionBlockId);
         return executionBlock.getOperation();
     }
 
-    public Operation getOperation(String interfaceFlowPatternId, String interfaceTestScenarioId, String interfaceExecutionBlockId, String operationName) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param interfaceFlowPatternId
+     * @param interfaceTestScenarioId
+     * @param interfaceExecutionBlockId
+     * @param operationName
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public Operation getOperation(String interfaceFlowPatternId, String interfaceTestScenarioId, String interfaceExecutionBlockId, String operationName) throws MasterConfigurationException {
         for (Operation operation : getOperations(interfaceFlowPatternId, interfaceTestScenarioId, interfaceExecutionBlockId)) {
             if (operation.getName().name().equals(operationName)) {
                 return operation;
             }
         }
-        throw new FrameworkConfigurationException("No such operation found: " + operationName + " in test scenario: " + interfaceTestScenarioId
+        throw new MasterConfigurationException("No such operation found: " + operationName + " in test scenario: " + interfaceTestScenarioId
                 + " in flow pattern: " + interfaceFlowPatternId + " in execution block: " + interfaceExecutionBlockId);
     }
 
@@ -427,13 +532,22 @@ public final class MasterConfiguration {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     *
+     * @return
+     */
     public SOATestingFrameworkMasterConfiguration getXmlConfig() {
         return XML_CONFIG;
     }
 
-    public List<OsbReportingInstance> getOsbReportingInstanceInstances() throws FrameworkConfigurationException {
+    /**
+     *
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public List<OsbReportingInstance> getOsbReportingInstanceInstances() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getOsbDatabaseReporting().getOsbReportingInstance().isEmpty()) {
-            throw new FrameworkConfigurationException("There are is no OSB Database Reporting instances configured.");
+            throw new MasterConfigurationException("There are is no OSB Database Reporting instances configured.");
         }
         return XML_CONFIG.getEnvironments().getOsbDatabaseReporting().getOsbReportingInstance();
     }
@@ -442,55 +556,119 @@ public final class MasterConfiguration {
      *
      * @param environment
      * @return
-     * @throws FrameworkConfigurationException
+     * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public OsbReportingInstance getOSBReportingInstance(String environment) throws FrameworkConfigurationException {
+    public OsbReportingInstance getOSBReportingInstance(String environment) throws MasterConfigurationException {
         for (OsbReportingInstance inst : getOsbReportingInstanceInstances()) {
             if (inst.getEnvironment().equals(environment)) {
                 return inst;
             }
         }
-        throw new FrameworkConfigurationException("OSB reporting instance configuration not found for environment " + environment);
-    }
-    
-    public String getInterfaceDirName(String ifaceName) throws FrameworkConfigurationException {
-        return ifaceName + "_" + FCFG.getValidFileSystemObjectName(getInterface(ifaceName).getDescription());
+        throw new MasterConfigurationException("OSB reporting instance configuration not found for environment " + environment);
     }
 
-    public File getIfaceDir(String ifaceName) throws FrameworkConfigurationException {
-        return new File(FCFG.getSoaTestHome(), getInterfaceDirName(ifaceName));
+    /**
+     *
+     * @param ifaceName
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public String getInterfaceDirName(String ifaceName) throws MasterConfigurationException {
+        try {
+            return ifaceName + "_" + MFC.getValidFileSystemObjectName(getInterface(ifaceName).getDescription());
+        } catch (FrameworkConfigurationException ex) {
+            throw new MasterConfigurationException(ex);
+        }
     }
 
-    public File getIfaceConfigFile(String ifaceName) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param ifaceName
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public File getIfaceDir(String ifaceName) throws MasterConfigurationException {
+        return new File(MFC.getSoaTestHome(), getInterfaceDirName(ifaceName));
+    }
+
+    /**
+     *
+     * @param ifaceName
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public File getIfaceConfigFile(String ifaceName) throws MasterConfigurationException {
         return new File(getIfaceDir(ifaceName), IFACE_CONFIG_FILENAME);
     }
-    
-    public InterfaceConfiguration getInterfaceConfig(String ifaceName) throws FrameworkConfigurationException {
+
+    /**
+     *
+     * @param ifaceName
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public InterfaceConfiguration getInterfaceConfig(String ifaceName) throws MasterConfigurationException {
         if (!ICFG.containsKey(ifaceName)) {
-            InterfaceConfiguration ifaceConfig = new InterfaceConfiguration(getIfaceConfigFile(ifaceName), ConfigurationManager.getInstance().getFrameworkConfig(), this);
-            ifaceConfig.init();
-            ICFG.put(ifaceName, ifaceConfig);
+            try {
+                InterfaceConfiguration ifaceConfig = new InterfaceConfiguration(getIfaceConfigFile(ifaceName), ConfigurationManager.getInstance().getFrameworkConfig(), this);
+                ifaceConfig.init();
+                ICFG.put(ifaceName, ifaceConfig);
+            } catch (FrameworkConfigurationException ex) {
+                throw new MasterConfigurationException(ex);
+            }
         }
         return ICFG.get(ifaceName);
     }
-    
-    public String getInterfaceDirName(Interface interfaceObj) throws FrameworkConfigurationException {
-        return interfaceObj.getName() + "_" + FCFG.getValidFileSystemObjectName(interfaceObj.getDescription());
+
+    /**
+     *
+     * @param interfaceObj
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public String getInterfaceDirName(Interface interfaceObj) throws MasterConfigurationException {
+        try {
+            return interfaceObj.getName() + "_" + MFC.getValidFileSystemObjectName(interfaceObj.getDescription());
+        } catch (FrameworkConfigurationException ex) {
+            throw new MasterConfigurationException(ex);
+        }
     }
 
-    public File getIfaceDir(Interface interfaceObj) throws FrameworkConfigurationException {
-        return new File(FCFG.getSoaTestHome(), getInterfaceDirName(interfaceObj.getName()));
+    /**
+     *
+     * @param interfaceObj
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public File getIfaceDir(Interface interfaceObj) throws MasterConfigurationException {
+        return new File(MFC.getSoaTestHome(), getInterfaceDirName(interfaceObj.getName()));
     }
 
-    public File getIfaceConfigFile(Interface interfaceObj) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param interfaceObj
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public File getIfaceConfigFile(Interface interfaceObj) throws MasterConfigurationException {
         return new File(getIfaceDir(interfaceObj.getName()), IFACE_CONFIG_FILENAME);
     }
 
-    public InterfaceConfiguration getInterfaceConfig(Interface interfaceObj) throws FrameworkConfigurationException {
+    /**
+     *
+     * @param interfaceObj
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public InterfaceConfiguration getInterfaceConfig(Interface interfaceObj) throws MasterConfigurationException {
         if (!ICFG2.containsKey(interfaceObj)) {
-            InterfaceConfiguration ifaceConfig = new InterfaceConfiguration(getIfaceConfigFile(interfaceObj), ConfigurationManager.getInstance().getFrameworkConfig(), this);
-            ifaceConfig.init();
-            ICFG2.put(interfaceObj, ifaceConfig);
+            try {
+                InterfaceConfiguration ifaceConfig = new InterfaceConfiguration(getIfaceConfigFile(interfaceObj), ConfigurationManager.getInstance().getFrameworkConfig(), this);
+                ifaceConfig.init();
+                ICFG2.put(interfaceObj, ifaceConfig);
+            } catch (FrameworkConfigurationException ex) {
+                throw new MasterConfigurationException(ex);
+            }
         }
         return ICFG2.get(interfaceObj);
     }

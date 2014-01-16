@@ -17,20 +17,42 @@
  */
 package com.ibm.soatf.config;
 
-public class FTPDirectoriesNotFoundException extends FrameworkConfigurationException {
+import com.ibm.soatf.flow.FrameworkExecutionException;
 
-        public FTPDirectoriesNotFoundException() {}
-        
-        public FTPDirectoriesNotFoundException(String message) {
-            super(message);
-        }
-        
-        public FTPDirectoriesNotFoundException(Throwable cause){
-            super(cause);
-        }
-        
-        public FTPDirectoriesNotFoundException(String message, Throwable cause)
-        {
-            super(message, cause);
-        }
+/**
+ *
+ * @author Ladislav Jech <archenroot@gmail.com>
+ */
+public class FTPDirectoriesNotFoundException extends FrameworkExecutionException {
+
+    /**
+     *
+     */
+    public FTPDirectoriesNotFoundException() {
     }
+
+    /**
+     *
+     * @param message
+     */
+    public FTPDirectoriesNotFoundException(final String message) {
+        super(message);
+    }
+
+    /**
+     *
+     * @param cause
+     */
+    public FTPDirectoriesNotFoundException(final Throwable cause) {
+        super(cause);
+    }
+
+    /**
+     *
+     * @param message
+     * @param cause
+     */
+    public FTPDirectoriesNotFoundException(final String message, final Throwable cause) {
+        super(message, cause);
+    }
+}

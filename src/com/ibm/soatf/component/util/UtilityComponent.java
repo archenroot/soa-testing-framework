@@ -1,25 +1,29 @@
 package com.ibm.soatf.component.util;
 
 import com.ibm.soatf.FrameworkException;
-import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.flow.FrameworkExecutionException;
+import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.component.AbstractSOATFComponent;
 import com.ibm.soatf.component.database.DatabaseComponent;
 import static com.ibm.soatf.component.database.DatabaseComponent.constructJdbcUrl;
-import com.ibm.soatf.component.ftp.FTPComponent;
 import com.ibm.soatf.component.soap.SOAPComponent;
+import com.ibm.soatf.component.soap.SoapComponentException;
 import com.ibm.soatf.config.ConfigurationManager;
-import com.ibm.soatf.config.FrameworkConfiguration;
+import com.ibm.soatf.config.MasterFrameworkConfig;
+import com.ibm.soatf.config.FrameworkConfigurationException;
 import com.ibm.soatf.config.InterfaceConfiguration;
+import com.ibm.soatf.config.InterfaceConfigurationException;
 import com.ibm.soatf.config.iface.IfaceExecBlock;
+import com.ibm.soatf.config.iface.IfaceTestScenario;
+import com.ibm.soatf.config.iface.SOATFIfaceConfig;
 import com.ibm.soatf.config.iface.SOATFIfaceConfig.IfaceEndPoints.IfaceEndPoint;
 import com.ibm.soatf.config.iface.db.DBConfig;
 import com.ibm.soatf.config.iface.db.DbObject;
 import com.ibm.soatf.config.iface.db.DbObject.CustomValue;
 import com.ibm.soatf.config.iface.ftp.FTPConfig;
 import com.ibm.soatf.config.iface.jms.JMSConfig;
+import com.ibm.soatf.config.iface.soap.EnvelopeConfig;
 import com.ibm.soatf.config.iface.soap.SOAPConfig;
-import com.ibm.soatf.config.iface.soap.SOAPConfig.EnvelopeConfig.Element;
 import com.ibm.soatf.config.iface.util.UTILConfig;
 import com.ibm.soatf.config.master.Component;
 import com.ibm.soatf.config.master.ExecuteOn;
@@ -28,6 +32,7 @@ import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
 import com.ibm.soatf.flow.FlowPatternCompositeKey;
 import com.ibm.soatf.flow.OperationResult;
+import com.ibm.soatf.tool.Utils;
 import java.io.File;
 import static java.lang.Boolean.TRUE;
 import java.sql.CallableStatement;
@@ -43,13 +48,20 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
+ * Utility component is not strictly related to any technology. So it simply do
+ * operations which not related to any fusion middleware endpoint technology, or
+ * it is working over multiple endpoints within one operation.
  *
- * @author zANGETSu
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
-public class UtilityComponent extends AbstractSOATFComponent {
+public class UtilityComponent extends AbstractSoaTFComponent {
 
     private static final Logger logger = LogManager.getLogger(UtilityComponent.class);
 
+    private MasterFrameworkConfig MCFG;
+    private InterfaceConfiguration ICFG;
+
+    private String envName;
     private OsbReportingInstance osbReportingInstance;
     private UTILConfig utilIfaceConfig;
     private FlowPatternCompositeKey fpck;
@@ -63,6 +75,7 @@ public class UtilityComponent extends AbstractSOATFComponent {
     private String password;
     private final String driverClassName = "oracle.jdbc.driver.OracleDriver";
 
+    private Operation operation;
     private String messageRefColName;
     private String messageRefColValue;
     private String entityRefColName;
@@ -88,76 +101,91 @@ public class UtilityComponent extends AbstractSOATFComponent {
 
     private String jmsMessageId;
 
-    StringBuilder resultMessage = new StringBuilder();
+    private StringBuilder resultMessage = new StringBuilder();
+    
+    private IfaceTestScenario ifaceTestScenario = null;
+    private IfaceExecBlock firstIfaceExecBlock =  null;
 
     private final OperationResult cor;
 
     public UtilityComponent(
+            String envName,
             IfaceExecBlock ifaceExecBlock,
             OsbReportingInstance osbReportingInstance,
             UTILConfig utilInterfaceConfig,
             FlowPatternCompositeKey ifpck,
-            File rootWorkingDir) {
+            File rootWorkingDir,
+            Operation operation) throws FrameworkConfigurationException, FrameworkExecutionException {
         super(SOATFCompType.UTIL);
+        this.envName = envName;
         this.ifaceExecBlock = ifaceExecBlock;
         this.osbReportingInstance = osbReportingInstance;
         this.utilIfaceConfig = utilInterfaceConfig;
         this.fpck = ifpck;
         this.rootWorkingDir = rootWorkingDir;
+        this.operation = operation;
         cor = OperationResult.getInstance();
         constructComponent();
     }
 
     @Override
-    protected void constructComponent() {
-
+    protected void constructComponent() throws FrameworkConfigurationException, FrameworkExecutionException {
+        MCFG = ConfigurationManager.getInstance().getFrameworkConfig();
+        ICFG = ConfigurationManager.getInstance().getInterfaceConfig(fpck.getIfaceName());
         this.jdbcUrl = constructJdbcUrl(this.osbReportingInstance.getHostName(), this.osbReportingInstance.getPort(), this.osbReportingInstance.getServiceId());
         this.userName = this.osbReportingInstance.getUserName();
         this.password = this.osbReportingInstance.getPassword();
         try {
             Class.forName(driverClassName);
         } catch (ClassNotFoundException ex) {
-            try {
-                throw new FrameworkExecutionException("");
-            } catch (FrameworkExecutionException ex1) {
-                java.util.logging.Logger.getLogger(UtilityComponent.class.getName()).log(Level.SEVERE, null, ex1);
-            }
+            throw new FrameworkExecutionException("The specific JDBC driver class cannot be found: " + ex);
         }
 
     }
 
     @Override
-    public void executeOperation(Operation operation) throws FrameworkException {
-        FrameworkConfiguration FCFG = ConfigurationManager.getInstance().getFrameworkConfig();
-        InterfaceConfiguration ICFG = ConfigurationManager.getInstance().getInterfaceConfig(fpck.getIfaceName());
-        
+    public void executeOperation(Operation operation) throws FrameworkExecutionException {
+        /**
+         * Getting the component which is the test scenario first data source.
+         */
         
         if (operation.getExecuteOn() == ExecuteOn.NA) {
+            logger.debug("Current util component is not targeted to any endpoint and therefore no search for origin data source of test scenario is required. Setting component type to UTIL.");
             component = Component.UTIL;
         } else {
-            IfaceExecBlock firstIfaceExecBlock = ICFG.getIfaceTestScenario(this.fpck.getFlowPatternId(), this.fpck.getTestScenarioId()).getIfaceExecBlock().get(0);
-            
-            for (IfaceEndPoint ifaceEndPoint : ICFG.getIfaceEndPoint(firstIfaceExecBlock, operation.getExecuteOn())) {
-                if (ifaceEndPoint.getDatabase() != null) {
-                    dbConfig = ifaceEndPoint.getDatabase();
-                    component = Component.DB;
-                } else if (ifaceEndPoint.getFtpServer() != null) {
-                    ftpConfig = ifaceEndPoint.getFtpServer();
-                    component = Component.FTP;
-                } else if (ifaceEndPoint.getSoap() != null) {
-                    if (ifaceEndPoint.getSoap().getOperationName() != null) {
-                        soapConfig = ifaceEndPoint.getSoap();
-                        component = Component.SOAP;
+            try {
+                ifaceTestScenario = ICFG.getIfaceTestScenario(this.fpck.getFlowPatternId(), this.fpck.getTestScenarioId());
+                logger.debug("Getting the component type which is defined as origin data source for test scenario " + ifaceTestScenario.getRefId() + ".");
+                firstIfaceExecBlock = ifaceTestScenario.getIfaceExecBlock().get(0);
+                for (IfaceEndPoint ifaceEndPoint : ICFG.getIfaceEndPoint(firstIfaceExecBlock, operation.getExecuteOn())) {
+                    if (ifaceEndPoint.getDatabase() != null) {
+                        dbConfig = ifaceEndPoint.getDatabase();
+                        component = Component.DB;
+                        break;
+                    } else if (ifaceEndPoint.getFtpServer() != null) {
+                        ftpConfig = ifaceEndPoint.getFtpServer();
+                        component = Component.FTP;
+                    } else if (ifaceEndPoint.getSoap() != null) {
+                        if (ifaceEndPoint.getSoap().getOperationName() != null) {
+                            soapConfig = ifaceEndPoint.getSoap();
+                            component = Component.SOAP;
+                        }
+                    } else if (ifaceEndPoint.getJmsSubsystem() != null) {
+                        jmsConfig = ifaceEndPoint.getJmsSubsystem();
+                        component = Component.JMS;
                     }
-                } else if (ifaceEndPoint.getJmsSubsystem() != null) {
-                    jmsConfig = ifaceEndPoint.getJmsSubsystem();
-                    component = Component.JMS;
                 }
+            } catch (InterfaceConfigurationException ex) {
+                final String msg = "Error when trying to obtain the original data source component type defined for test scenario " + ifaceTestScenario.getRefId() + ".";
+                cor.addMsg(msg);
+                throw new UtilComponentException(msg, ex);
             }
         }
+        logger.debug("Origin component is type of " +  component + " for scenario " + ifaceTestScenario.getRefId());
 
-        cor.setOperation(operation);
+        //cor.setOperation(operation); //nastavuje konstruktor abstractoperation
         loadQueryVariablesOSBReporting();
+
         /*if (!UTIL_OPERATIONS.contains(componentOperation)) {
          final String msg = "Unsupported operation: " + componentOperation + ". Valid operations are: " + UTIL_OPERATIONS;
          logger.error(msg);
@@ -171,7 +199,6 @@ public class UtilityComponent extends AbstractSOATFComponent {
                 threadSleep(utilIfaceConfig.getDelays().getWaitForDbPool());
                 cor.markSuccessful();
                 cor.addMsg("Test process paused for db poller.");
-
                 break;
             case UTIL_WAIT_FOR_ENQUEUE_TO_ERROR_QUEUE:
                 logger.info("Wait for error enqueue for " + utilIfaceConfig.getDelays().getWaitForErrorQueue() / 1000 + " seconds.");
@@ -190,6 +217,12 @@ public class UtilityComponent extends AbstractSOATFComponent {
                 threadSleep(utilIfaceConfig.getDelays().getWaitForQueueMsgTransfer());
                 cor.markSuccessful();
                 cor.addMsg("Test process paused for JMS message transfer.");
+                break;
+            case UTIL_WAIT_FOR_FILE_POLLING_TRIGGER:
+                logger.info("Wait for FILE poller for " + utilIfaceConfig.getDelays().getWaitForFilePoll() / 1000 + " seconds.");
+                threadSleep(utilIfaceConfig.getDelays().getWaitForFilePoll());
+                cor.markSuccessful();
+                cor.addMsg("Test process paused for FILE poller.");
                 break;
             case UTIL_CLEAR_REPORTING:
                 cleanReporting();
@@ -210,7 +243,7 @@ public class UtilityComponent extends AbstractSOATFComponent {
 
     }
 
-    private void checkOSBDBReportingForFailure() throws FrameworkExecutionException {
+    private void checkOSBDBReportingForFailure() throws UtilComponentException {
         Connection conn = null;
         CallableStatement callableStatement = null;
         ResultSet rs = null;
@@ -272,28 +305,30 @@ public class UtilityComponent extends AbstractSOATFComponent {
             }
 
         } catch (SQLException ex) {
-            resultMessage.append("\n JDBC error occured" + ex.getErrorCode() + ": " + ex.getMessage());
-            logger.fatal("JDBC error", ex);
+            final String msg = "JDBC error occured" + ex.getErrorCode() + ": " + ex.getMessage();
+            cor.addMsg(msg);
+            throw new UtilComponentException(msg, ex);
+
         } finally {
             cor.addMsg(resultMessage.toString());
             if (callableStatement != null) {
                 try {
                     callableStatement.close();
                 } catch (SQLException ex) {
-                    throw new FrameworkExecutionException(ex);
+                    throw new UtilComponentException(ex);
                 }
                 if (conn != null) {
                     try {
                         conn.close();
                     } catch (SQLException ex) {
-                        throw new FrameworkExecutionException(ex);
+                        throw new UtilComponentException(ex);
                     }
                 }
             }
         }
     }
 
-    private void checkOSBDBReportingForSuccess() throws FrameworkExecutionException {
+    private void checkOSBDBReportingForSuccess() throws UtilComponentException {
         Connection conn = null;
         CallableStatement callableStatement = null;
         ResultSet rs = null;
@@ -358,8 +393,11 @@ public class UtilityComponent extends AbstractSOATFComponent {
             }
 
         } catch (SQLException ex) {
-            resultMessage.append("\n JDBC error occured" + ex.getErrorCode() + ": " + ex.getMessage());
-            logger.fatal("JDBC error", ex);
+
+            final String msg = "JDBC error occured" + ex.getErrorCode() + ": " + ex.getMessage();
+            cor.addMsg(msg);
+            throw new UtilComponentException(msg, ex);
+
         } finally {
             cor.addMsg(resultMessage.toString());
             if (callableStatement != null) {
@@ -367,7 +405,7 @@ public class UtilityComponent extends AbstractSOATFComponent {
                     callableStatement.close();
 
                 } catch (SQLException ex) {
-                    throw new FrameworkExecutionException(ex);
+                    throw new UtilComponentException(ex);
                 }
 
                 if (conn != null) {
@@ -375,118 +413,141 @@ public class UtilityComponent extends AbstractSOATFComponent {
                         conn.close();
 
                     } catch (SQLException ex) {
-                        throw new FrameworkExecutionException(ex);
+                        throw new UtilComponentException(ex);
                     }
                 }
             }
         }
     }
 
-    private Connection getConnection() throws FrameworkExecutionException {
+    private Connection getConnection() throws UtilComponentException {
         try {
+            final String msg = "Trying to get connection to " + jdbcUrl;
+            cor.addMsg(msg);
             return DriverManager.getConnection(jdbcUrl, userName, password);
         } catch (SQLException ex) {
-            throw new FrameworkExecutionException("Cannot get connection to database.", ex);
+            final String msg = "Cannot get connection to database." + Utils.getSQLExceptionMessage(ex);
+            cor.addMsg(msg);
+            throw new UtilComponentException(msg, ex);
+
         }
 
     }
 
-    private void loadQueryVariablesOSBReporting() throws FrameworkExecutionException {
-        osbReportingDatabaseDelete = " FROM REPORTING_EVENTS WHERE ";
-        entityRefColName = "ENTITY_REF";
-        messageRefColName = "MESSAGE_REF";
-        //component = Component.DB;
-        File path;
-        switch (component) {
-            case DB:
-                StringBuilder entitySb = new StringBuilder();
-                StringBuilder messageSb = new StringBuilder();
-                int bSEIdCount = 0, bSMIdCount = 0;
-                for (CustomValue cusVal : dbConfig.getDbObjects().getDbObject().get(0).getCustomValue()) {
+    private void loadQueryVariablesOSBReporting() throws UtilComponentException {
+        try {
+            osbReportingDatabaseDelete = " FROM REPORTING_EVENTS WHERE ";
+            entityRefColName = "ENTITY_REF";
+            messageRefColName = "MESSAGE_REF";
+            //component = Component.DB;
+            File path;
+            switch (component) {
+                case DB:
+                    StringBuilder entitySb = new StringBuilder();
+                    StringBuilder messageSb = new StringBuilder();
+                    int bSEIdCount = 0,
+                     bSMIdCount = 0;
+
+                    List<DbObject> dbObjects = ICFG.getIfaceDbObjectList(this.envName, firstIfaceExecBlock, operation.getExecuteOn());
+                    if (dbObjects.isEmpty()) {
+                        String msg = "There exists no Database endpoint within config.xml file "
+                                + " execution block " + ifaceExecBlock.getRefId()
+                                + " targeting " + operation.getExecuteOn().value() + ".";
+                        logger.error(msg);
+                        throw new UtilComponentException(msg);
+                    }
+                    DbObject dbObject = dbObjects.get(0);
+
+                    for (CustomValue cusVal : dbObject.getCustomValue()) {
+
+                        Boolean bSEId = cusVal.isSourceEntityId();
+                        if (bSEId != null) {
+                            bSEIdCount++;
+                            if (cusVal.isSourceEntityId().equals(TRUE)) {
+                                if (bSEIdCount == 1) {
+                                    entitySb.append(cusVal.getColumnValue());
+                                } else {
+                                    entitySb.append("-").append(cusVal.getColumnValue());
+                                }
+
+                            }
+                        }
+                        Boolean bSMId = cusVal.isSourceMessageId();
+                        if (bSMId != null) {
+                            bSMIdCount++;
+                            if (cusVal.isSourceMessageId().equals(TRUE)) {
+                                if (bSMIdCount == 1) {
+
+                                    messageSb.append(cusVal.getColumnValue());
+                                } else {
+                                    messageSb.append("-").append(cusVal.getColumnValue());
+                                }
+
+                            }
+                        }
+
+                    }
+
+                    // Should be removed if new implementation works in all cases
+                    //entityRefColValue = entitySb.deleteCharAt(entitySb.length() - 1).toString();
+                    //messageRefColValue = messageSb.deleteCharAt(entitySb.length() - 1).toString();
+                    entityRefColValue = entitySb.toString();
+                    messageRefColValue = messageSb.toString();
+                    break;
+                case FTP:
+                    /*
+                     TODO
+                     String fileName = ftpConfig.getFileName();
+                     path = new File(rootWorkingDir, "ftp");
+                     String fileContent = ftpConfig.getFileContent();
                     
-                    Boolean bSEId = cusVal.isSourceEntityId();
-                    if (bSEId != null) {
-                        bSEIdCount++;
-                        if (cusVal.isSourceEntityId().equals(TRUE)) {
-                            if (bSEIdCount == 1){
-                                entitySb.append(cusVal.getColumnValue());
-                            } else{
-                                entitySb.append("-").append(cusVal.getColumnValue());
-                            }
-                            
+                     String actualFile = FTPComponent.getFile(path, fileName, fileContent).getName();
+                     if (actualFile != null && actualFile.lastIndexOf(".") > 0) {
+                     actualFile = actualFile.substring(0, actualFile.lastIndexOf("."));
+                     }
+                     entityRefColValue = actualFile;
+                     messageRefColValue = null;
+                     */
+                    break;
+                case SOAP:
+                    path = new File(rootWorkingDir, "soap");
+                    List<EnvelopeConfig.Element> customVals = ICFG.getSoapEnvelopeElements(this.envName, ifaceExecBlock, operation.getExecuteOn());
+                    String entityRefElement = null;
+                    String messageRefElement = null;
+                    for (EnvelopeConfig.Element e : customVals) {
+                        if (e.isSourceEntityRef() != null && e.isSourceEntityRef()) {
+                            entityRefElement = e.getElementXpath();
+                        }
+                        if (e.isSourceMessageId() != null && e.isSourceMessageId()) {
+                            messageRefElement = e.getElementXpath();
                         }
                     }
-                    Boolean bSMId = cusVal.isSourceMessageId();
-                    if (bSMId != null) {
-                        bSMIdCount++;
-                        if (cusVal.isSourceMessageId().equals(TRUE)) {
-                            if (bSMIdCount == 1) {
-                                
-                                messageSb.append(cusVal.getColumnValue());
-                            } else {
-                                messageSb.append("-").append(cusVal.getColumnValue());
-                            }                        
-                            
-                        }
+                    if (entityRefElement != null) {
+                        entityRefColValue = SOAPComponent.getValueFromGeneratedEnvelope(path, soapConfig.getServiceName(), soapConfig.getOperationName(), transformXPath(entityRefElement));
+                        logger.trace("SOAP request entityRefId is: " + entityRefColValue);
                     }
-
-                }
-
-                // Should be removed if new implementation works in all cases
-                //entityRefColValue = entitySb.deleteCharAt(entitySb.length() - 1).toString();
-                //messageRefColValue = messageSb.deleteCharAt(entitySb.length() - 1).toString();
-                entityRefColValue = entitySb.toString();
-                messageRefColValue = messageSb.toString();
-                break;
-            case FTP:
-                String fileName = ftpConfig.getFileName();
-                path = new File(rootWorkingDir, "ftp");
-                String fileContent = ftpConfig.getFileContent();
-
-                String actualFile = FTPComponent.getFile(path, fileName, fileContent).getName();
-                if (actualFile != null && actualFile.lastIndexOf(".") > 0) {
-                    actualFile = actualFile.substring(0, actualFile.lastIndexOf("."));
-                }
-                entityRefColValue = actualFile;
-                messageRefColValue = null;
-                break;
-            case SOAP:
-                path = new File(rootWorkingDir, "soap");
-                if (soapConfig.getEnvelopeConfig() != null) {
-                    List<Element> customVals = soapConfig.getEnvelopeConfig().getElement();
-                    if (customVals != null) {
-                        String entityRefElement = null;
-                        String messageRefElement = null;
-                        for (Element e : customVals) {
-                            if (e.isSourceEntityRef() != null && e.isSourceEntityRef()) {
-                                entityRefElement = e.getElementXpath();
-                            }
-                            if (e.isSourceMessageId() != null && e.isSourceMessageId()) {
-                                messageRefElement = e.getElementXpath();
-                            }
-                        }
-                        if (entityRefElement != null) {
-                            entityRefColValue = SOAPComponent.getValueFromGeneratedEnvelope(path, soapConfig.getServiceName(), soapConfig.getOperationName(), transformXPath(entityRefElement));
-                            logger.trace("SOAP request entityRefId is: " + entityRefColValue);
-                        }
-                        if (messageRefElement != null) {
-                            messageRefColValue = SOAPComponent.getValueFromGeneratedEnvelope(path, soapConfig.getServiceName(), soapConfig.getOperationName(), transformXPath(messageRefElement));
-                            logger.trace("SOAP request messageRefId is: " + messageRefColValue);
-                        }
+                    if (messageRefElement != null) {
+                        messageRefColValue = SOAPComponent.getValueFromGeneratedEnvelope(path, soapConfig.getServiceName(), soapConfig.getOperationName(), transformXPath(messageRefElement));
+                        logger.trace("SOAP request messageRefId is: " + messageRefColValue);
                     }
-                }
-            case JMS:
-                //TODO
-                break;
-            case UTIL:
-                break;
-            default:
-                throw new IllegalArgumentException("Unknown component type on input: " + component.value() + ".");
+                    break;
+                case JMS:
+                    //TODO
+                    break;
+                case UTIL:
+                    break;
+                default:
+                    throw new IllegalArgumentException("Unknown component type on input: " + component.value() + ".");
 
-        }
-        osbReportingDatabaseDelete += entityRefColName + "= '" + entityRefColValue + "'";
-        if (component != Component.FTP) { //(messageRefColValue != null)
+            }
+            osbReportingDatabaseDelete += entityRefColName + "= '" + entityRefColValue + "'";
+            if (component != Component.FTP) { //(messageRefColValue != null)
                 osbReportingDatabaseDelete += " AND " + messageRefColName + " = '" + messageRefColValue + "'";
+            }
+        } catch (FrameworkConfigurationException | SoapComponentException | IllegalArgumentException ex) {
+            final String msg = "Error occured while trying to configure OSB reporting subsystem with origin source of type " + component.value() + ".";
+            cor.addMsg(msg);
+            throw new UtilComponentException(msg, ex);
         }
     }
 
@@ -510,10 +571,9 @@ public class UtilityComponent extends AbstractSOATFComponent {
         return s;
     }
 
-    private void cleanReporting() throws FrameworkExecutionException {
+    private void cleanReporting() throws UtilComponentException {
         String command = "DELETE" + this.osbReportingDatabaseDelete;
         Connection connection = getConnection();
-        
 
         try {
             boolean result;
@@ -539,7 +599,7 @@ public class UtilityComponent extends AbstractSOATFComponent {
             connection.commit();
             //connection.close();
 
-           // connection = getConnection();
+            // connection = getConnection();
             sb = new StringBuilder();
             sb.append("DELETE FROM NWKOSB_DBUSER.WLI_QS_REPORT_ATTRIBUTE ");
             sb.append("WHERE MSG_LABELS LIKE \'%Key=");
@@ -551,7 +611,7 @@ public class UtilityComponent extends AbstractSOATFComponent {
             command = deleteSOAWLIAttributeTable;
             statement = connection.createStatement();
             boolean r = statement.execute(deleteSOAWLIAttributeTable);
-                logger.trace("second wli table." + result);
+            logger.trace("second wli table." + result);
             resultMessage.append("\nCleaning SOA infra JMS reporitng attribute table sucessful issuing following command:\n");
             resultMessage.append(deleteSOAWLIAttributeTable + "\n");
             resultMessage.append("Affected rows: " + statement.getUpdateCount());
@@ -568,64 +628,67 @@ public class UtilityComponent extends AbstractSOATFComponent {
             command = deleteOSBReportingEventsTable;
             result = statement.execute(deleteOSBReportingEventsTable);
             logger.trace("obs table." + result);
-            
+
             resultMessage.append("\nCleaning OSB reporting table sucessful issuing following command:\n");
             resultMessage.append(deleteOSBReportingEventsTable + "\n");
             resultMessage.append("Affected rows: " + statement.getUpdateCount());
             connection.commit();
-            
+
             // Error tables clean up
             // Table XXXIW_MWP_ERROR_DETAILS
             sb = new StringBuilder();
             sb.append("DELETE FROM XXXIW_MWP_ERROR_DETAILS WHERE error_id IN \n");
             sb.append("(\n");
-            sb.append("  SELECT ID FROM xxxiw_mwp_errors ERR WHERE err.source_ENTITY_REF = '" + entityRefColValue + "' AND err.source_message_ref = '" + messageRefColValue +"'\n");
+            sb.append("  SELECT ID FROM xxxiw_mwp_errors ERR WHERE err.source_ENTITY_REF = '" + entityRefColValue + "' AND err.source_message_ref = '" + messageRefColValue + "'\n");
             sb.append("  )");
             sb.toString();
             command = sb.toString();
             result = statement.execute(command);
             logger.trace("obs table." + result);
             connection.commit();
-            
+
             resultMessage.append("\nCleaning OSB reporting ERROR_DETAILS table sucessful issuing following command:\n");
             resultMessage.append(command + "\n");
             resultMessage.append("Affected rows: " + statement.getUpdateCount());
-            
+
             // Table xxxiw_mwp_errors
             sb = new StringBuilder();
-            sb.append("  DELETE FROM xxxiw_mwp_errors ERR WHERE err.source_ENTITY_REF = '" + entityRefColValue + "' AND err.source_message_ref = '" + messageRefColValue +"'\n");
+            sb.append("  DELETE FROM xxxiw_mwp_errors ERR WHERE err.source_ENTITY_REF = '" + entityRefColValue + "' AND err.source_message_ref = '" + messageRefColValue + "'\n");
             sb.toString();
             command = sb.toString();
             result = statement.execute(command);
             logger.trace("obs table." + result);
-            
+
             resultMessage.append("\nCleaning OSB reporting ERROR_DETAILS table sucessful issuing following command:\n");
             resultMessage.append(command + "\n");
             resultMessage.append("Affected rows: " + statement.getUpdateCount());
             connection.commit();
-            
+
             cor.markSuccessful();
             cor.addMsg(resultMessage.toString());
         } catch (SQLException ex) {
             String message = "There occured error when trying to clear SOA reporting subsystem:\n" + ex.getErrorCode() + ": " + ex.getMessage();
             cor.addMsg(message + "\n by issuing command:\n" + command);
-        } finally{
+        } finally {
             try {
                 connection.close();
             } catch (SQLException ex) {
-               String msg = "TODO";
-               throw new FrameworkExecutionException(ex);
+                final String msg = "TODO";
+                cor.addMsg(msg);
+                throw new UtilComponentException(msg, ex);
             }
         }
     }
 
-    private void threadSleep(Long delay) {
+    private void threadSleep(Long delay) throws UtilComponentException {
         try {
             Thread.sleep(delay);
             cor.markSuccessful();
             cor.addMsg("Process dealyed for " + delay / 1000 + " seconds.");
         } catch (InterruptedException ex) {
-            cor.addMsg("Process dealyed for " + delay / 1000 + " seconds failed: " + ex.getMessage());
+            final String msg = "Process dealyed for " + delay / 1000 + " seconds failed: " + ex.getMessage();
+            cor.addMsg(msg);
+            throw new UtilComponentException(msg, ex);
         }
     }
 
@@ -634,7 +697,7 @@ public class UtilityComponent extends AbstractSOATFComponent {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    private void printOSBReporting() throws FrameworkExecutionException {
+    private void printOSBReporting() throws UtilComponentException {
         try {
             Connection connection = getConnection();
             String getDBUSERByUserIdSql = "{call ERROR_HOSPITAL.GATHER_OSB_DATA()}";
@@ -644,44 +707,43 @@ public class UtilityComponent extends AbstractSOATFComponent {
             logger.debug("Tryied to update osb reporting table with result: " + result);
             Statement statement = connection.createStatement();
             ResultSet rsRepEvent, rsErrors = null;
-            String repEventCommand = "SELECT DISTINCT\n" +
-                    "repev.originator,\n" +
-                    "repev.status,\n" +
-                    "repev.jms_message_id,\n" +
-                    "repev.project_name,\n" +
-                    "repev.interface\n" +
-                    "FROM REPORTING_EVENTS REPEV\n" +
-                    "WHERE REPEV.ENTITY_REF = '" + this.entityRefColValue + "'";
+            String repEventCommand = "SELECT DISTINCT\n"
+                    + "repev.originator,\n"
+                    + "repev.status,\n"
+                    + "repev.jms_message_id,\n"
+                    + "repev.project_name,\n"
+                    + "repev.interface\n"
+                    + "FROM REPORTING_EVENTS REPEV\n"
+                    + "WHERE REPEV.ENTITY_REF = '" + this.entityRefColValue + "'";
             if (this.messageRefColValue != null) {
                 repEventCommand += " AND repev.message_ref = '" + this.messageRefColValue + "'";
             }
-       
+
             logger.debug("Command for selecting report_events table:\n" + repEventCommand);
-            String errorsCommand = "SELECT DISTINCT\n" + 
-                    "err.id,\n" +
-                    "err.int_name,\n" +
-                    "err.error_context,\n" +
-                    "TO_CHAR(err.error_datetime, 'DD-MM-YYYY HH24:MI:SS') AS ERROR_DATETIME,\n"+
-                    "errdet.error_code,\n" + 
-                    "errdet.error_message " + 
-                    "FROM xxxiw_mwp_errors ERR\n" +
-                    "INNER JOIN xxxiw_mwp_error_details ERRDET\n" +
-                    "ON err.id = errdet.error_id\n" +
-                    "WHERE err.source_ENTITY_REF = '" + this.entityRefColValue + "'";
+            String errorsCommand = "SELECT DISTINCT\n"
+                    + "err.id,\n"
+                    + "err.int_name,\n"
+                    + "err.error_context,\n"
+                    + "TO_CHAR(err.error_datetime, 'DD-MM-YYYY HH24:MI:SS') AS ERROR_DATETIME,\n"
+                    + "errdet.error_code,\n"
+                    + "errdet.error_message "
+                    + "FROM xxxiw_mwp_errors ERR\n"
+                    + "INNER JOIN xxxiw_mwp_error_details ERRDET\n"
+                    + "ON err.id = errdet.error_id\n"
+                    + "WHERE err.source_ENTITY_REF = '" + this.entityRefColValue + "'";
             if (this.messageRefColValue != null) {
                 errorsCommand += " AND err.source_message_ref = '" + this.messageRefColValue + "'";
-            }            
+            }
             logger.debug("Command for selecting error tables:\n" + errorsCommand);
             statement = connection.createStatement();
             rsRepEvent = statement.executeQuery(repEventCommand);
-            
-            
+
             StringBuilder sb = new StringBuilder();
             sb.append("\n************************************************************************************************");
             sb.append("\n****************                      PRODUCTION TEST                       ********************");
             sb.append("\n************************************************************************************************");
             sb.append("\n");
-            sb.append("\nQuerying OSB reporting in 2 stages withing database(" + this.jdbcUrl+ " under schema + '" + this.userName + "'): ");
+            sb.append("\nQuerying OSB reporting in 2 stages withing database(" + this.jdbcUrl + " under schema + '" + this.userName + "'): ");
             sb.append("\n");
             sb.append("\nPhase 1: checking table REPORTING_EVENTS");
             sb.append("\n" + repEventCommand);
@@ -689,21 +751,20 @@ public class UtilityComponent extends AbstractSOATFComponent {
             sb.append("\n************************************************************************************************");
             sb.append("\n****************               Phase 1 results(REPORTING EVENTS)                ****************");
             int count = 0;
-            while (rsRepEvent.next()){
+            while (rsRepEvent.next()) {
                 sb.append("\n");
                 sb.append("\nResult number " + ++count + " found with following data: ");
                 sb.append("\n Interface: " + rsRepEvent.getString("interface"));
                 sb.append("\n Originator: " + rsRepEvent.getString("originator"));
-                sb.append("\n JMS message id: " + rsRepEvent.getString("jms_message_id")); 
-                sb.append("\n Project name: " + rsRepEvent.getString("project_name")); 
-                sb.append("\n Reporting status: " + rsRepEvent.getString("status")); 
+                sb.append("\n JMS message id: " + rsRepEvent.getString("jms_message_id"));
+                sb.append("\n Project name: " + rsRepEvent.getString("project_name"));
+                sb.append("\n Reporting status: " + rsRepEvent.getString("status"));
                 sb.append("\n-----------------------------------------------------");
-              }
-            if (count == 0){
+            }
+            if (count == 0) {
                 sb.append("No relevant records found.");
             }
-            
-            
+
             rsErrors = statement.executeQuery(errorsCommand);
             sb.append("\n");
             sb.append("\nPhase 2: checking tables ERRORS and ERROR_DETAILS");
@@ -712,16 +773,16 @@ public class UtilityComponent extends AbstractSOATFComponent {
             sb.append("\n************************************************************************************************");
             sb.append("\n****************                Phase 2 results(ERRORS)                         ****************");
             count = 0;
-            while (rsErrors.next()){
+            while (rsErrors.next()) {
                 sb.append("\nResult number " + ++count + " found with following data: ");
                 sb.append("\n Interface: " + rsErrors.getString("int_name"));
                 sb.append("\n Error context: " + rsErrors.getString("error_context"));
-                sb.append("\n Error date: " + rsErrors.getString("ERROR_DATETIME")); 
-                sb.append("\n Error code: " + rsErrors.getString("error_code")); 
-                sb.append("\n Error message: " + rsErrors.getString("error_message")); 
+                sb.append("\n Error date: " + rsErrors.getString("ERROR_DATETIME"));
+                sb.append("\n Error code: " + rsErrors.getString("error_code"));
+                sb.append("\n Error message: " + rsErrors.getString("error_message"));
                 sb.append("\n-----------------------------------------------------");
-              }
-            if (count == 0){
+            }
+            if (count == 0) {
                 sb.append("No relevant records found.");
             }
             sb.append("\n Printout finished...");
@@ -730,7 +791,7 @@ public class UtilityComponent extends AbstractSOATFComponent {
         } catch (FrameworkExecutionException | SQLException ex) {
             String msg = "Something happended while printing OSB report events:\n" + ExceptionUtils.getFullStackTrace(ex);
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(ex);
+            throw new UtilComponentException(msg, ex);
         }
     }
 }

@@ -17,7 +17,7 @@
  */
 package com.ibm.soatf.tool;
 
-import com.ibm.soatf.component.AbstractSOATFComponent;
+import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.config.master.Operation;
 
@@ -25,7 +25,7 @@ import com.ibm.soatf.config.master.Operation;
  *
  * @author zANGETSu
  */
-public class ToolComponent extends AbstractSOATFComponent {
+public class ToolComponent extends AbstractSoaTFComponent {
      public ToolComponent(){
         super(SOATFCompType.TOOL);
         constructComponent();

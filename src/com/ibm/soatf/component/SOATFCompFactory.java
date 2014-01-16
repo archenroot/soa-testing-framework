@@ -27,8 +27,9 @@ import org.apache.logging.log4j.Logger;
 
 /**
  *
- * @author zANGETSu
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
+@Deprecated
 public class SOATFCompFactory {
 
     private static final Logger logger = LogManager.getLogger(SOATFCompFactory.class.getName());
@@ -47,13 +48,13 @@ public class SOATFCompFactory {
      * @param cor instance of operation result
      * @return
      */
-    public static AbstractSOATFComponent buildSOATFComponent(
+    public static AbstractSoaTFComponent buildSOATFComponent(
            
             
             SOATFCompType soaTestingFrameworkComponentType,
             OperationResult cor) {
         logger.debug("Factory started to build " + soaTestingFrameworkComponentType.name() + " component.");
-        AbstractSOATFComponent soaTestingFrameworkComponent = null;
+        AbstractSoaTFComponent soaTestingFrameworkComponent = null;
 
         //initProperties = FrameworkConfiguration.getCoinfigurationInit();
         xmlConfigurationFileName = new File(initProperties.getProperty(configurationXmlFileNameProperty));

@@ -25,20 +25,6 @@
         <copy todir="${build.generated.sources.dir}/jaxb">
             <fileset dir="build/generated/jaxbCache/SOATFMasterConfig"/>
         </copy>
-        <mkdir dir="build/generated/jaxbCache/SOATFIfaceConfig"/>
-        <xjc destdir="build/generated/jaxbCache/SOATFIfaceConfig" catalog="catalog.xml">
-            <classpath>
-                <pathelement location="${src.dir}"/>
-                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
-            </classpath>
-            <arg value="-xmlschema"/>
-            <schema file="xml-resources/jaxb/SOATFIfaceConfig/SOATFIfaceConfig.xsd"/>
-            <depends file="xml-resources/jaxb/SOATFIfaceConfig/SOATFIfaceConfig.xsd"/>
-            <produces dir="build/generated/jaxbCache/SOATFIfaceConfig"/>
-        </xjc>
-        <copy todir="${build.generated.sources.dir}/jaxb">
-            <fileset dir="build/generated/jaxbCache/SOATFIfaceConfig"/>
-        </copy>
         <mkdir dir="build/generated/jaxbCache/SOATFReportConfig"/>
         <xjc destdir="build/generated/jaxbCache/SOATFReportConfig" catalog="catalog.xml">
             <classpath>
@@ -52,6 +38,21 @@
         </xjc>
         <copy todir="${build.generated.sources.dir}/jaxb">
             <fileset dir="build/generated/jaxbCache/SOATFReportConfig"/>
+        </copy>
+        <mkdir dir="build/generated/jaxbCache/SOATFIfaceConfig"/>
+        <xjc destdir="build/generated/jaxbCache/SOATFIfaceConfig" catalog="catalog.xml">
+            <classpath>
+                <pathelement location="${src.dir}"/>
+                <pathelement path="${jaxbwiz.xjcrun.classpath}"/>
+            </classpath>
+            <arg value="-xmlschema"/>
+            <arg value="-verbose"/>
+            <schema file="xml-resources/jaxb/SOATFIfaceConfig/SOATFIfaceConfig.xsd"/>
+            <depends file="xml-resources/jaxb/SOATFIfaceConfig/SOATFIfaceConfig.xsd"/>
+            <produces dir="build/generated/jaxbCache/SOATFIfaceConfig"/>
+        </xjc>
+        <copy todir="${build.generated.sources.dir}/jaxb">
+            <fileset dir="build/generated/jaxbCache/SOATFIfaceConfig"/>
         </copy>
     </target>
 </project>

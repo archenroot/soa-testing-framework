@@ -5,7 +5,7 @@
  */
 
 package com.ibm.soatf.component.util;
-import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import javax.mail.*;
 import javax.mail.internet.*;
 import java.util.Date;

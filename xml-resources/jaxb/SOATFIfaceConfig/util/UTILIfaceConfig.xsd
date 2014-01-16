@@ -42,9 +42,14 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                                 <xs:documentation xml:lang="en">Delay in milliseconds to wait for message to be delivered to Error Queue.</xs:documentation>
                             </xs:annotation>
                         </xs:element>
-                        <xs:element name="waitForFTPPool" type="xs:long">
+                        <xs:element name="waitForFTPPool" type="xs:long" minOccurs="0">
                             <xs:annotation>
-                                <xs:documentation xml:lang="en">Delay in miliseconds to wait for FTP adapter to poll file.</xs:documentation>
+                                <xs:documentation xml:lang="en">Delay in milliseconds to wait for FTP adapter to poll file.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="waitForFilePoll" type="xs:long" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">Delay in milliseconds to wait for FILE adapter to poll the file.</xs:documentation>
                             </xs:annotation>
                         </xs:element>
                     </xs:sequence>

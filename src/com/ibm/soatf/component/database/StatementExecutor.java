@@ -17,7 +17,7 @@
  */
 package com.ibm.soatf.component.database;
 
-import com.ibm.soatf.FrameworkExecutionException;
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.flow.OperationResult;
 import com.ibm.soatf.tool.Utils;
 import java.io.File;
@@ -49,7 +49,7 @@ public class StatementExecutor {
      * @param file script file
      * @throws StatementExecutorException if SQL or IO exception occurs
      */
-    public static void runScript(Connection conn, File file) throws FrameworkExecutionException {
+    public void runScript(Connection conn, File file) throws DatabaseComponentException {
         OperationResult cor = OperationResult.getInstance();
         String inputScriptFilePath = "";
         Statement stmt = null;
@@ -79,13 +79,27 @@ public class StatementExecutor {
         } catch (IOException ex) {
             String msg = "Failed to open statement file (" + inputScriptFilePath + ").";
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         } catch (SQLException ex) {
             String msg = String.format("Failed to execute INSERT statement: %s", Utils.getSQLExceptionMessage(ex));
             cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ex);
+            throw new DatabaseComponentException(msg, ex);
         } finally {
-            DatabaseComponent.closeStatement(stmt);
+            
+            closeStatement(stmt);
+        }
+    }
+     public void closeStatement(Statement statement) throws DatabaseComponentException {
+        try {
+            if (statement != null) {
+                statement.close();
+            }
+            logger.trace("SQL statement closed.");
+        } catch (SQLException ex) {
+            final String msg = "The statement cannot be closed due to: " + Utils.getSQLExceptionMessage(ex);
+            OperationResult.getInstance().addMsg(msg);
+            throw new DatabaseComponentException(msg, ex);
+            
         }
     }
 }

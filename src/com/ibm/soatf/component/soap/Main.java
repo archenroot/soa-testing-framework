@@ -33,7 +33,7 @@ import javax.xml.soap.SOAPMessage;
 
 /**
  *
- * @author zANGETSu
+ * @author Ladislav Jech <archenroot@gmail.com>
  */
 public class Main {
     public static void main(String[] args) {
@@ -54,7 +54,8 @@ public class Main {
             facade.validateSoapRequestMessage(binding, operation, msg, false);
             System.out.println("----------------------------------------------------------");
             //poslanie requestu a ziskanie response v resMsg
-            SOAPMessage res = JAXWSDispatch.invoke("http://localdev:7003/osb/PurchaseRequisitionConnectorMaximo/PurchaseRequisitionConnectorMaximoPS", msg);
+            JAXWSDispatch jaxwsDispatch = new JAXWSDispatch();
+            SOAPMessage res = jaxwsDispatch.invoke("http://localdev:7003/osb/PurchaseRequisitionConnectorMaximo/PurchaseRequisitionConnectorMaximoPS", msg);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             res.writeTo(baos );
             String resMsg = baos.toString();            

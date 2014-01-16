@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2013 zANGETSu
+ * Copyright (C) 2013 Ladislav Jech
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -18,24 +18,48 @@
 package com.ibm.soatf;
 
 /**
+ * General soa testing framework exception. Is itself never thrown, but
+ * underlying classes are defined related to configuration and execution.
  *
  * @author Ladislav Jech <archenroot@gmail.com>
  */
 public class FrameworkException extends Exception {
 
+    /**
+     * General constructor.
+     */
     public FrameworkException() {
+        super();
     }
 
-    public FrameworkException(String message) {
-
+    /**
+     * Exception constructor which passes error message.
+     *
+     * @param message Exception description.
+     */
+    public FrameworkException(final String message) {
         super(message);
     }
 
-    public FrameworkException(Throwable cause) {
+    /**
+     * Exception constructor which passes error cause.
+     *
+     * @param cause Exception cause.
+     */
+    public FrameworkException(final Throwable cause) {
         super(cause);
     }
 
-    public FrameworkException(String message, Throwable cause) {
+    /**
+     * Exception constructor which passes both error description and cause as
+     * well.
+     *
+     * @param message Exception cause.
+     * @param cause Exception cause.
+     */
+    public FrameworkException(
+            final String message,
+            final Throwable cause) {
         super(message, cause);
     }
 }

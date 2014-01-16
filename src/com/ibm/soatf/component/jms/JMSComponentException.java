@@ -17,21 +17,45 @@
  */
 package com.ibm.soatf.component.jms;
 
-public class JMSComponentException extends Exception {
+import com.ibm.soatf.flow.FrameworkExecutionException;
+
+
+/**
+* 
+* @author Ladislav Jech <archenroot@gmail.com>
+*/
+
+public class JmsComponentException extends FrameworkExecutionException {
     
-    public JMSComponentException() {
+    /**
+     *
+     */
+    public JmsComponentException() {
     }
 
-    public JMSComponentException(String message) {
+    /**
+     *
+     * @param message
+     */
+    public JmsComponentException(String message) {
         
         super(message);
     }
 
-    public JMSComponentException(Throwable cause) {
+    /**
+     *
+     * @param cause
+     */
+    public JmsComponentException(Throwable cause) {
         super(cause);
     }
 
-    public JMSComponentException(String message, Throwable cause) {
+    /**
+     *
+     * @param message
+     * @param cause
+     */
+    public JmsComponentException(String message, Throwable cause) {
         super(message, cause);
     }
 }

@@ -17,10 +17,11 @@
  */
 package com.ibm.soatf.xml;
 
-import com.ibm.soatf.UnsupportedComponentOperationException;
+import com.ibm.soatf.FrameworkException;
+import com.ibm.soatf.flow.FrameworkExecutionException;
+import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.CompOperType;
 import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.component.AbstractSOATFComponent;
 import com.ibm.soatf.config.iface.jms.JMSConfig;
 import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.flow.OperationResult;
@@ -32,7 +33,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author zANGETSu
  */
-public class XMLComponent extends AbstractSOATFComponent {
+public class XMLComponent extends AbstractSoaTFComponent {
     private static final Logger logger = LogManager.getLogger(XMLComponent.class.getName());
     
     public static Set<CompOperType> supportedOperations = CompOperType.XML_OPERATIONS;   
@@ -49,21 +50,21 @@ public class XMLComponent extends AbstractSOATFComponent {
     }
 
     @Override
-    protected void constructComponent() {
+    protected final void constructComponent() {
         //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     @Override
-    public void executeOperation(Operation operation) {
+    public void executeOperation(Operation operation) throws FrameworkException {
         cor.setOperation(operation);
-        if (supportedOperations.contains(operation)) {
-            try {
-                throw new com.ibm.soatf.UnsupportedComponentOperationException();
-            } catch (    com.ibm.soatf.UnsupportedComponentOperationException ex) {
-                logger.error("Component operation is not supported." + ex.getLocalizedMessage());
-                return; // cor;
-            }
-        }
+//        if (supportedOperations.contains(operation)) {
+//            try {
+//                throw new com.ibm.soatf.UnsupportedComponentOperationException();
+//            } catch (    com.ibm.soatf.UnsupportedComponentOperationException ex) {
+//                logger.error("Component operation is not supported." + ex.getLocalizedMessage());
+//                return; // cor;
+//            }
+//        }
         
         switch (operation.getName()){
             /*case XML_VALIDATE_FILE:
@@ -74,16 +75,14 @@ public class XMLComponent extends AbstractSOATFComponent {
                 }
                 break;*/
             default:
-                try {
-                    throw new UnsupportedComponentOperationException();
-                } catch (UnsupportedComponentOperationException ex) {
-                    logger.fatal( ex);
-                }                
-                break;
+                String msg = "Invalid operation name: " + operation.getName();
+                logger.error(msg);
+                cor.addMsg(msg);
+                throw new FrameworkExecutionException(msg);
         }
-        logger.info("Operation " + operation.getName() + " succesfully executed.");
-        cor.markSuccessful();
-        cor.addMsg("Opertaion succesfully executed.");
+//        logger.info("Operation " + operation.getName() + " succesfully executed.");
+//        cor.markSuccessful();
+//        cor.addMsg("Opertaion succesfully executed.");
         
     }
     

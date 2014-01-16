@@ -1,6 +1,5 @@
 package com.ibm.soatf.component.jms;
 
-import com.ibm.soatf.FrameworkExecutionException;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -10,7 +9,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
 import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 import javax.jms.JMSException;
@@ -25,7 +23,7 @@ import javax.naming.NamingException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.ibm.soatf.component.database.DatabaseComponent;
+import com.ibm.soatf.flow.OperationResult;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,16 +45,17 @@ public class DistribuedQueueBrowser {
 
     private static final Logger logger = LogManager.getLogger(DistribuedQueueBrowser.class.getName());
 
-    private final InitialContext ctx;
-    private final Connection connection;
-    private final Session session;
-    private final Iterable<String> queueNames;
-
-    private final String jmsServerName;
-    private final String distributedDestinationName;
-    private final String distributedDestinationJndi;
+    private InitialContext ctx = null;
+    private Connection connection;
+    private Session session;
+    private Iterable<String> queueNames;
+    private String jmsServerName;
+    private String distributedDestinationName;
+    private String distributedDestinationJndi;
 
     private File workingDirectory;
+
+    private final OperationResult cor = OperationResult.getInstance();
 
     public DistribuedQueueBrowser(
             File workingDirectory,
@@ -67,38 +66,45 @@ public class DistribuedQueueBrowser {
             String distributedDestinationName,
             String distributedDestinationJndi,
             String userName,
-            String password) throws Exception {
-        this.jmsServerName = jmsServerName;
-        this.distributedDestinationName = distributedDestinationName;
-        this.distributedDestinationJndi = distributedDestinationJndi;
-        this.workingDirectory = workingDirectory;
-
-        WeblogicMBeanHelper factory = null;
+            String password) throws JmsComponentException {
         try {
-            factory = new WeblogicMBeanHelper(adminUrl, userName, password);
-            queueNames = factory.getDistributedMemberJndiNames(distributedDestinationName);
-        } finally {
-            if (factory != null) {
-                factory.close();
-            }
-        }
+            this.jmsServerName = jmsServerName;
+            this.distributedDestinationName = distributedDestinationName;
+            this.distributedDestinationJndi = distributedDestinationJndi;
+            this.workingDirectory = workingDirectory;
 
-        ctx = getInitialContext(providerUrl, userName, password);
-        ConnectionFactory connFactory = (ConnectionFactory) ctx.lookup(connectionFactoryName);
-        connection = connFactory.createConnection();
-        connection.start();
-        session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            WeblogicMBeanHelper factory = null;
+            try {
+                factory = new WeblogicMBeanHelper(adminUrl, userName, password);
+                queueNames = factory.getDistributedMemberJndiNames(distributedDestinationName);
+            } finally {
+                if (factory != null) {
+                    factory.close();
+                }
+            }
+
+            ctx = getInitialContext(providerUrl, userName, password);
+            ConnectionFactory connFactory = (ConnectionFactory) ctx.lookup(connectionFactoryName);
+            connection = connFactory.createConnection();
+            connection.start();
+            session = connection.createSession(false, Session.AUTO_ACKNOWLEDGE);
+        } catch (JMSException | NamingException ex) {
+            final String msg = "Problem catched while trying to get JMS messages from the queue.";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
+        }
     }
 
-    public List<TextMessage> printQueueMessagesByContent(String content) throws FrameworkExecutionException {
+    public List<TextMessage> getQueueMessagesByContent(String content) throws JmsComponentException {
         List<TextMessage> messages = new ArrayList<>();
-        try {
-            Enumeration<ServerLocatedMessage> sli = this.getServerLocatedEnumeration();
-            int i = 0;
-            if (!sli.hasMoreElements()) {
-                throw new NoMessageFoundException();
-            }
-            while (sli.hasMoreElements()) {
+
+        Enumeration<ServerLocatedMessage> sli = this.getServerLocatedEnumeration();
+        int i = 0;
+        if (!sli.hasMoreElements()) {
+            throw new NoMessageFoundException();
+        }
+        while (sli.hasMoreElements()) {
+            try {
                 ServerLocatedMessage m = sli.nextElement();
                 TextMessage mes = (TextMessage) m.getMessage();
                 String jmsMessageId = m.getMessage().getJMSMessageID().replaceAll("ID:<", "").replaceAll(">", "");
@@ -107,73 +113,88 @@ public class DistribuedQueueBrowser {
                         logger.debug("Skipping message" + mes);
                         continue;
                     } else {
-                        
+
                     }
                 }
                 messages.add(mes);
                 String filename = new StringBuilder(distributedDestinationName)
-                        .append(JMSComponent.NAME_DELIMITER)
+                        .append(JmsComponent.NAME_DELIMITER)
                         .append(jmsMessageId)
-                        .append(JMSComponent.NAME_DELIMITER)
+                        .append(JmsComponent.NAME_DELIMITER)
                         .append(i)
-                        .append(JMSComponent.MESSAGE_SUFFIX)
+                        .append(JmsComponent.MESSAGE_SUFFIX)
                         .toString();
                 File file = new File(workingDirectory, filename);
                 this.writeStatementToFile(mes.getText(), file);
                 System.out.println(m);
                 ++i;
+            } catch (JMSException ex) {
+                final String msg = "Problem catched while trying to get JMS messages from the queue.";
+                cor.addMsg(msg);
+                throw new JmsComponentException(msg, ex);
+            }
 
-            }
-            if (0 == i) {
-                throw new NoMessageFoundException();
-            }
-            return messages;
-        } catch (JMSException | NamingException | NoMessageFoundException ex) {
-            throw new FrameworkExecutionException(ex);
         }
-        
+        /*if (0 == i) {
+                
+         throw new NoMessageFoundException();
+         }
+         */
+        return messages;
     }
 
-    public List<TextMessage> printQueueMessages() throws FrameworkExecutionException {
-        return printQueueMessagesByContent(null);
+    public List<TextMessage> getQueueMessages() throws JmsComponentException {
+        return getQueueMessagesByContent(null);
     }
 
-    private InitialContext getInitialContext(String providerUrl, String userName, String password) throws NamingException {
-        Hashtable<String, String> ht = new Hashtable<String, String>();
+    private InitialContext getInitialContext(String providerUrl, String userName, String password) throws JmsComponentException {
+        try {
 
-        ht.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
-        ht.put(Context.PROVIDER_URL, providerUrl);
-        ht.put(Context.SECURITY_PRINCIPAL, userName);
-        ht.put(Context.SECURITY_CREDENTIALS, password);
+            Hashtable<String, String> ht = new Hashtable<String, String>();
+            ht.put(Context.INITIAL_CONTEXT_FACTORY, INITIAL_CONTEXT_FACTORY);
+            ht.put(Context.PROVIDER_URL, providerUrl);
+            ht.put(Context.SECURITY_PRINCIPAL, userName);
+            ht.put(Context.SECURITY_CREDENTIALS, password);
 
-        return new InitialContext(ht);
+            // Using obsolete collection type, prepared for future changes in source code
+            return new InitialContext(ht);
+        } catch (NamingException ne) {
+            final String msg = "Execption raised when trying to create initial context for specified weblogic server 'providerUrl'";
+            logger.error(msg);
+            throw new JmsComponentException(ne);
+
+        }
     }
 
-    public Enumeration<Message> getEnumeration() throws JMSException, NamingException {
+    public Enumeration<Message> getEnumeration() throws JmsComponentException {
         return new JmsMessageEnumeration(getMessageEnumeratorMap());
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, Enumeration<Message>> getMessageEnumeratorMap() throws JMSException, NamingException {
+    private Map<String, Enumeration<Message>> getMessageEnumeratorMap() throws JmsComponentException {
         Map<String, Enumeration<Message>> serverMessageMap = new HashMap<String, Enumeration<Message>>();
 
         String queueAtServer = jmsServerName + QUEUE_AT_SERVER_SIGN + distributedDestinationName;
         for (String queueName : queueNames) {
             if (queueAtServer.equals(queueName)) {
-                String serverDq[] = StringUtils.split(queueName, QUEUE_AT_SERVER_SIGN);
-                queueName = distributedDestinationJndi;
-                Queue queue = (Queue) ctx.lookup(queueName);
-                logger.debug(queue);
-                javax.jms.QueueBrowser qb = session.createBrowser(queue);
-                serverMessageMap.put(serverDq[0], qb.getEnumeration());
+                try {
+                    String serverDq[] = StringUtils.split(queueName, QUEUE_AT_SERVER_SIGN);
+                    queueName = distributedDestinationJndi;
+                    Queue queue = (Queue) ctx.lookup(queueName);
+                    logger.debug(queue);
+                    javax.jms.QueueBrowser qb = session.createBrowser(queue);
+                    serverMessageMap.put(serverDq[0], qb.getEnumeration());
+                } catch (NamingException | JMSException ex) {
+                    final String msg = "Exception found when trying to get enumeration of messages within JMS queue.";
+                    throw new JmsComponentException(msg, ex);
+                }
             }
         }
 
         return serverMessageMap;
     }
 
-    public Enumeration<ServerLocatedMessage> getServerLocatedEnumeration() throws JMSException,
-            NamingException {
+    public Enumeration<ServerLocatedMessage> getServerLocatedEnumeration() throws JmsComponentException {
         return new ServerLocatedMessageEnumeration(getMessageEnumeratorMap());
     }
 
@@ -251,23 +272,32 @@ public class DistribuedQueueBrowser {
         }
     }
 
-    public void close() {
+    public void close() throws JmsComponentException {
         try {
             session.close();
-        } catch (JMSException ignored) {
+        } catch (JMSException ex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
         }
         try {
             connection.close();
-        } catch (JMSException ignored) {
+        } catch (JMSException ex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
         }
 
         try {
             ctx.close();
-        } catch (NamingException ignored) {
+        } catch (NamingException ex) {
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
         }
     }
 
-    private void writeStatementToFile(String statement, File file) {
+    private void writeStatementToFile(String statement, File file) throws JmsComponentException {
         FileWriter fw = null;
         try {
             fw = new FileWriter(file);
@@ -275,14 +305,18 @@ public class DistribuedQueueBrowser {
             fw.flush();
             fw.close();
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+            final String msg = "TODO";
+            cor.addMsg(msg);
+            throw new JmsComponentException(msg, ex);
         } finally {
             try {
                 if (fw != null) {
                     fw.close();
                 }
             } catch (IOException ex) {
-                java.util.logging.Logger.getLogger(DatabaseComponent.class.getName()).log(Level.SEVERE, null, ex);
+                final String msg = "TODO";
+                cor.addMsg(msg);
+                throw new JmsComponentException(msg, ex);
             }
         }
     }
