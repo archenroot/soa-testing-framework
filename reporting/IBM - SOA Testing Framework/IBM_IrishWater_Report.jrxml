@@ -2,14 +2,15 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IBM_IrishWater_Report" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="547" leftMargin="24" rightMargin="24" topMargin="24" bottomMargin="24" isTitleNewPage="true" uuid="bd083342-1372-40bf-81af-5d24b51066d0">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="521"/>
+	<property name="ireport.y" value="520"/>
 	<parameter name="testName" class="java.lang.String"/>
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
-		<defaultValueExpression><![CDATA["C:\\SOATestingFramework\\reporting\\IBM - SOA Testing Framework\\"]]></defaultValueExpression>
+		<defaultValueExpression><![CDATA["reporting\\IBM - SOA Testing Framework\\"]]></defaultValueExpression>
 	</parameter>
 	<parameter name="fileName" class="java.lang.String"/>
 	<parameter name="MASTER_DATA_DOCUMENT" class="org.w3c.dom.Document"/>
 	<parameter name="operationResult" class="com.ibm.soatf.flow.OperationResult"/>
+	<parameter name="scenarioName" class="java.lang.String"/>
 	<queryString language="xPath">
 		<![CDATA[/*]]>
 	</queryString>
@@ -45,7 +46,7 @@
 			</textField>
 			<image isLazy="true">
 				<reportElement mode="Opaque" x="457" y="2" width="90" height="42" uuid="207a03af-a634-458f-bfc2-f57ac0c363f7"/>
-				<imageExpression><![CDATA["C:\\SOATestingFramework\\reporting\\IBM - SOA Testing Framework\\img\\ibm-logo.png"]]></imageExpression>
+				<imageExpression><![CDATA["reporting\\IBM - SOA Testing Framework\\img\\ibm-logo.png"]]></imageExpression>
 			</image>
 			<textField isBlankWhenNull="true">
 				<reportElement x="0" y="200" width="547" height="100" uuid="354f9610-6dd9-49b4-adfe-d862a1ecd8bd"/>
@@ -104,7 +105,7 @@
 		<band height="30" splitType="Stretch">
 			<image>
 				<reportElement x="0" y="0" width="50" height="20" uuid="ecb46868-dbaa-41b9-97d0-dead733c40c3"/>
-				<imageExpression><![CDATA["C:\\SOATestingFramework\\reporting\\IBM - SOA Testing Framework\\img\\ibm-logo-bw.png"]]></imageExpression>
+				<imageExpression><![CDATA["reporting\\IBM - SOA Testing Framework\\img\\ibm-logo-bw.png"]]></imageExpression>
 			</image>
 		</band>
 	</pageHeader>
@@ -181,11 +182,14 @@
 				<subreportParameter name="SUBREPORT_DIR">
 					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
 				</subreportParameter>
-				<subreportParameter name="testName">
-					<subreportParameterExpression><![CDATA[$P{testName}]]></subreportParameterExpression>
+				<subreportParameter name="scenarioName">
+					<subreportParameterExpression><![CDATA[$P{scenarioName}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="XML_DATA_DOCUMENT">
 					<subreportParameterExpression><![CDATA[$P{XML_DATA_DOCUMENT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="testName">
+					<subreportParameterExpression><![CDATA[$P{testName}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="operationResult">
 					<subreportParameterExpression><![CDATA[$P{operationResult}]]></subreportParameterExpression>
@@ -198,7 +202,6 @@
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.XalanXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("/stfconf:ifaceFlowPattern/stfconf:ifaceTestScenario")]]></dataSourceExpression>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "IBM_IrishWater_UnitTestPlanSubreport.jasper"]]></subreportExpression>
-                <!--subreportExpression><![CDATA[JasperCompileManager.compileReport(getClass().getResource("IBM_IrishWater_UnitTestPlanSubreport.jrxml").openStream())]]></subreportExpression-->
 			</subreport>
 			<break>
 				<reportElement x="0" y="1" width="100" height="1" uuid="82d48733-7bcc-4f7f-baef-677afc5e233b"/>

@@ -26,4 +26,6 @@ public interface FlowExecutionListener {
     public void operationStarted(FlowExecutionEvent evt);
 
     public void operationFinished(FlowExecutionEvent evt);
+    
+    public void blockChanged(String message);
 }

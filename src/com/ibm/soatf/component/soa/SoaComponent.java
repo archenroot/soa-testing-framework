@@ -18,7 +18,6 @@
 package com.ibm.soatf.component.soa;
 
 import com.ibm.soatf.FrameworkException;
-import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.CompOperType;
 import com.ibm.soatf.component.SOATFCompType;
@@ -26,9 +25,7 @@ import com.ibm.soatf.config.iface.soap.SOAPConfig;
 import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.AdminServer;
-import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.Cluster;
-import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.Cluster.ManagedServer;
-import com.ibm.soatf.flow.FlowPatternCompositeKey;
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.flow.OperationResult;
 import java.util.Set;
 import org.apache.commons.lang.exception.ExceptionUtils;
@@ -55,8 +52,8 @@ public final class SoaComponent extends AbstractSoaTFComponent {
     private String jmxProtocol;
 
     private AdminServer adminServer;
-    private Cluster cluster;
-    private ManagedServer managedServer;
+    //private Cluster cluster;
+    //private ManagedServer managedServer;
     
     private final SOAPConfig soapConfig;
     private final OracleFusionMiddlewareInstance masterOFMConfig;
@@ -65,8 +62,7 @@ public final class SoaComponent extends AbstractSoaTFComponent {
     
     public SoaComponent(
             OracleFusionMiddlewareInstance masterOFMConfig,
-            SOAPConfig soapConfig,
-            FlowPatternCompositeKey ifaceFlowPatternCompositeKey) {
+            SOAPConfig soapConfig) {
         
         super(SOATFCompType.OSB);
         this.masterOFMConfig = masterOFMConfig;
@@ -109,7 +105,6 @@ public final class SoaComponent extends AbstractSoaTFComponent {
 
     @Override
     public void executeOperation(Operation operation) throws FrameworkException {
-        cor.setOperation(operation);
 //        if (!supportedOperations.contains(operation)) {
 //            throw new UnsupportedComponentOperationException();
 //        }            
@@ -130,7 +125,7 @@ public final class SoaComponent extends AbstractSoaTFComponent {
 
     private void disableService() {
         try {
-            boolean result = ServiceManager.changeServiceStatus(
+            boolean result = ServiceManager.changeOsbServiceStatus(
                     servicetype, false,
                     serviceURI, adminHost, adminPort, username, password);
             cor.addMsg("OSB " + servicetype + " " + serviceURI + " running at " + adminHost + " has been disabled.");
@@ -148,7 +143,7 @@ public final class SoaComponent extends AbstractSoaTFComponent {
 
     private void enableService() {
         try {
-            boolean result = ServiceManager.changeServiceStatus(
+            boolean result = ServiceManager.changeOsbServiceStatus(
                     servicetype, true,
                     serviceURI, adminHost, adminPort, username, password);
             

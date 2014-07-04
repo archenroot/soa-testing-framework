@@ -18,27 +18,43 @@
  */
 package com.ibm.soatf.component.soap.builder;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.w3c.dom.*;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
-import javax.xml.namespace.QName;
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.io.Writer;
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.xml.namespace.QName;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.xerces.dom.DOMInputImpl;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.w3c.dom.CDATASection;
+import org.w3c.dom.Document;
+import org.w3c.dom.DocumentFragment;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.ProcessingInstruction;
+import org.w3c.dom.Text;
+import org.w3c.dom.ls.LSInput;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -290,6 +306,14 @@ public final class XmlUtils {
     public static XmlObject createXmlObject(String input, XmlOptions xmlOptions) throws XmlException {
         return XmlObject.Factory.parse(input, xmlOptions);
     }
+    
+    public static XmlObject createXmlObject(InputStream input, XmlOptions xmlOptions) throws XmlException {
+        try {
+            return XmlObject.Factory.parse(input, xmlOptions);
+        } catch (Exception e) {
+            throw new XmlException(e.toString());
+        }
+    }
 
     public static XmlObject createXmlObject(URL input, XmlOptions xmlOptions) throws XmlException {
         try {
@@ -305,6 +329,15 @@ public final class XmlUtils {
     }
 
     public static XmlObject createXmlObject(URL input) throws XmlException {
+        try {
+            return XmlObject.Factory.parse(input);
+        } catch (Exception e) {
+
+            throw new XmlException(e);
+        }
+    }
+    
+    public static XmlObject createXmlObject(InputStream input) throws XmlException {
         try {
             return XmlObject.Factory.parse(input);
         } catch (Exception e) {
@@ -501,13 +534,13 @@ public final class XmlUtils {
          try {
             XmlObject xmlObject = XmlObject.Factory.parse(xmlText);
 
-            String namespaces = declareXPathNamespaces(xmlObject);
+            /*String namespaces = declareXPathNamespaces(xmlObject);
             if (namespaces != null && namespaces.trim().length() > 0)
-                xPath = namespaces + xPath;
+                xPath = namespaces + xPath;*/
 
             XmlObject[] path = xmlObject.selectPath(xPath);
             if (path == null || path.length != 1 || path[0].getDomNode() == null) {
-                return null;
+                return xmlText;
             }
             Node node = path[0].getDomNode();
             setNodeValue(node, value);
@@ -525,13 +558,13 @@ public final class XmlUtils {
          try {
             XmlObject xmlObject = XmlObject.Factory.parse(xmlText);
 
-            String namespaces = declareXPathNamespaces(xmlObject);
+            /*String namespaces = declareXPathNamespaces(xmlObject);
             if (namespaces != null && namespaces.trim().length() > 0)
-                xPath = namespaces + xPath;
+                xPath = namespaces + xPath;*/
 
             XmlObject[] path = xmlObject.selectPath(xPath);
             if (path == null || path.length != 1 || path[0].getDomNode() == null) {
-                return null;
+                return xmlText;
             }
             Node node = path[0].getDomNode();
             short nodeType = node.getNodeType();
@@ -545,6 +578,7 @@ public final class XmlUtils {
         }
         return xmlText;
     }
+    
 
     public static void serializePretty(XmlObject xmlObject, Writer writer) throws IOException {
         XmlOptions options = new XmlOptions();
@@ -558,6 +592,20 @@ public final class XmlUtils {
         //
         // options.setSaveSuggestedPrefixes( map );
         xmlObject.save(writer, options);
+    }
+    
+    public static InputStream fixSchemaFile(File schemaFile) throws XmlException, IOException {
+        XmlObject xmlObject = XmlObject.Factory.parse(schemaFile);
+        XmlObject[] booleanTypes = xmlObject.selectPath("$this//*[local-name()=\"restriction\" and contains(@base,'xsd:boolean') and *[local-name()=\"pattern\"]]");
+        for(XmlObject boolType: booleanTypes) {
+            Node node = boolType.getDomNode();
+            short nodeType = node.getNodeType();
+            if (nodeType == Node.ELEMENT_NODE) {           
+                Element e = (Element)node;
+                e.setAttribute("base", "xsd:int");
+            }
+        }
+        return xmlObject.newInputStream();
     }
 
 }

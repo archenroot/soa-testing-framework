@@ -53,7 +53,7 @@ public class JTextAreaAppender extends AbstractAppender {
     @Override
     public void append(LogEvent event) {
         if(jTextArea == null) {
-            LOGGER.error("No JTextArea was set for the JTextAreaAppender. Please use the static setter JTextAreaAppender.setJTextArea()");
+            LOGGER.warn("No JTextArea was set for the JTextAreaAppender. Please use the static setter JTextAreaAppender.setJTextArea()");
             jTextArea = new JTextArea();
             return;
         }

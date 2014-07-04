@@ -20,11 +20,17 @@ package com.ibm.soatf.component.file;
 import com.ibm.soatf.FrameworkException;
 import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.SOATFCompType;
+import com.ibm.soatf.config.ConfigurationManager;
+import com.ibm.soatf.config.MasterConfiguration;
 import com.ibm.soatf.config.iface.file.File;
 import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.config.master.OracleFusionMiddleware;
+import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.Clusters.Cluster.ManagedServer;
+import com.ibm.soatf.flow.FlowExecutor;
 import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.flow.OperationResult;
+import com.ibm.soatf.gui.ProgressMonitor;
+import com.ibm.soatf.tool.FileSystem;
 import com.ibm.soatf.tool.Utils;
 import com.jcraft.jsch.Channel;
 import com.jcraft.jsch.ChannelSftp;
@@ -35,8 +41,6 @@ import com.jcraft.jsch.SftpException;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Properties;
 import java.util.Vector;
 import org.apache.commons.io.FileUtils;
@@ -46,8 +50,8 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- *
- * @author zANGETSu
+ * Component that deals with manipulation of files over SSH protocol
+ * @author kroky
  */
 public class FileComponent extends AbstractSoaTFComponent {
 
@@ -63,7 +67,7 @@ public class FileComponent extends AbstractSoaTFComponent {
     private int port;
     private String hostName;
     
-    private static final Properties CONFIG = new java.util.Properties();
+    public static final Properties CONFIG = new java.util.Properties();
     static {
         CONFIG.put("userauth.password", "com.jcraft.jsch.UserAuthPassword");
         CONFIG.put("StrictHostKeyChecking", "no");
@@ -74,6 +78,9 @@ public class FileComponent extends AbstractSoaTFComponent {
     /**
      * Constructor. Sets the component type to FILE and calls the
      * constructComponent method.
+     * @param ofmInstance
+     * @param fileObjectFromXml
+     * @param workingDir
      */
     public FileComponent(OracleFusionMiddleware.OracleFusionMiddlewareInstance ofmInstance, File fileObjectFromXml, java.io.File workingDir) {
         super(SOATFCompType.FILE);
@@ -98,26 +105,34 @@ public class FileComponent extends AbstractSoaTFComponent {
         sshUser = ofmInstance.getSsh().getSshUser();
         sshPassword = ofmInstance.getSsh().getSshPassword();
         port = ofmInstance.getSsh().getPort();
-        hostName = ofmInstance.getCluster().getManagedServer().getHostName();
     }
 
+    /**
+     * Executes the operation.
+     * @param operation operation to execute
+     * @throws FrameworkException when the operation execution fails
+     */
     @Override
     public void executeOperation(Operation operation) throws FrameworkException {
         //cor.setOperation(operation); //nastavuje konstruktor abstractoperation
+        MasterConfiguration masterConfig = ConfigurationManager.getInstance().getMasterConfig();
+        ManagedServer managedServer = masterConfig.getFirstManagedServerInCluster(masterConfig.getOsbCluster(ofmInstance));
+        hostName = managedServer.getHostName();
+        java.io.File actualFileUsed = createLocalFile();//(this.workingDir, this.fileName, this.fileContent).getName();
         switch (operation.getName()) {
             case FILE_PUT:
-                putFile(getLocalFile(), remoteDir);
+                putFile(actualFileUsed, remoteDir);
                 break;
             case FILE_GET:
                 break;
             case FILE_EXISTS_IN_SOURCE_DIR:
-                checkFileInDir(fileName, remoteDir);
+                checkFileInDir(actualFileUsed.getName(), remoteDir);
                 break;
             case FILE_EXISTS_IN_ERROR_DIR:
-                checkFileInDir(fileName, errorDir);
+                checkFileInDir(actualFileUsed.getName(), errorDir);
                 break;
             case FILE_EXISTS_IN_ARCHIVE_DIR:
-                checkFileInDir(fileName, archiveDir);
+                checkFileInDir(actualFileUsed.getName(), archiveDir);
                 break;
             case FILE_NOT_EXISTS_IN_SOURCE_DIR:
                 break;
@@ -131,20 +146,25 @@ public class FileComponent extends AbstractSoaTFComponent {
         }
     }
 
+    /**
+     * Creates file on your local filesystem with name configured in the config.xml and sufixes it with current date and time
+     * in following format: yyyyMMdd_hhmmss_
+     * @return returns the reference to the created file
+     * @throws FrameworkExecutionException when <code>IOException</code> occurs
+     */
     private java.io.File createLocalFile() throws FrameworkExecutionException {
-        String actualPrefix = new SimpleDateFormat("yyyyMMdd_hhmmss_").format(new Date());
-        java.io.File localFile = new java.io.File(workingDir, actualPrefix + fileName);
+        java.io.File localFile = new java.io.File(workingDir, Utils.insertTimestampToFilename(fileName, FlowExecutor.getActualRunDate()));
         if (localFile.exists()) {
-            String msg = "Local file " + localFile.getAbsolutePath() + " already exists, returning it instead of creating a new one.";
-            logger.info(msg);
-            cor.addMsg(msg);
+            String msg = "Local file %s already exists, returning it instead of creating a new one.";
+            logger.info(String.format(msg, localFile.getAbsolutePath()));
+            cor.addMsg(msg, "<a href='file://"+localFile.getAbsolutePath()+"'>"+localFile.getAbsolutePath()+"</a>", FileSystem.getRelativePath(localFile));
             return localFile;
         }
         try {
             FileUtils.writeStringToFile(localFile, fileContent, "UTF-8");
-            String msg = "Created local file: " + localFile.getAbsolutePath();
-            logger.info(msg);
-            cor.addMsg(msg);
+            String msg = "Created local file: %s";
+            logger.info(String.format(msg, localFile.getAbsolutePath()));
+            cor.addMsg(msg, "<a href='file://"+localFile.getAbsolutePath()+"'>"+localFile.getAbsolutePath()+"</a>", FileSystem.getRelativePath(localFile));
         } catch (IOException ex) {
             String msg = String.format("Failed to create local file. Reason: %s", ex.getMessage());
             cor.addMsg(msg);
@@ -153,6 +173,12 @@ public class FileComponent extends AbstractSoaTFComponent {
         return localFile;
     }
 
+    /**
+     * Returns the first file that matches the *_&lt;fileName&gt; pattern.
+     * If no such file exists, it is created by calling the <code>createLocalFile()</code> method
+     * @return the existing or newly created file
+     * @throws FrameworkExecutionException when <code>IOException</code> occurs
+     */
     private java.io.File getLocalFile() throws FrameworkExecutionException {
         String pattern = "*_" + fileName;
         java.io.File[] files = FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(workingDir, new WildcardFileFilter(pattern), TrueFileFilter.INSTANCE));
@@ -165,6 +191,12 @@ public class FileComponent extends AbstractSoaTFComponent {
         return files[0];
     }
 
+    /**
+     * Transfers the <code>file</code> to the specified remote directory via SSH
+     * @param file file to transfer
+     * @param where the directory to transfer to
+     * @throws FrameworkExecutionException when error occurs while connecting via SSH or transfer fails
+     */
     private void putFile(java.io.File file, String where) throws FrameworkExecutionException {
         Session session = null;
         ChannelSftp channelSftp = null;
@@ -173,14 +205,15 @@ public class FileComponent extends AbstractSoaTFComponent {
             JSch jsch = new JSch();
             try {
                 String msg = "Creating SSH session...";
+                ProgressMonitor.init(8, msg);
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
                 session = jsch.getSession(sshUser, hostName, port);
                 session.setPassword(sshPassword);
                 session.setConfig(CONFIG);
                 msg = "SSH session created.";
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
             } catch (JSchException ex) {
                 String msg = String.format("Failed to create SSH session. Reason: %s", ex.getMessage());
                 cor.addMsg(msg);
@@ -189,12 +222,13 @@ public class FileComponent extends AbstractSoaTFComponent {
             
             try {
                 String msg = "Connecting to SSH session...";
+                ProgressMonitor.increment(msg);
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
                 session.connect();
                 msg = "Connected to SSH session.";
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
             } catch (JSchException ex) {
                 String msg = String.format("Failed to connect to the SSH session. Reason: %s", ex.getMessage());
                 cor.addMsg(msg);
@@ -203,12 +237,13 @@ public class FileComponent extends AbstractSoaTFComponent {
             
             try {
                 String msg = "Opening SSH channel...";
+                ProgressMonitor.increment(msg);
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
                 channelSftp = (ChannelSftp) session.openChannel("sftp");
                 msg = "SSH channel opened.";
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
             } catch (JSchException ex) {
                 String msg = String.format("Failed to open the SFTP channel. Reason: %s", ex.getMessage());
                 cor.addMsg(msg);
@@ -217,6 +252,7 @@ public class FileComponent extends AbstractSoaTFComponent {
             
             try {
                 String msg = "Connecting to SSH channel...";
+                ProgressMonitor.increment(msg);
                 logger.info(msg);
                 cor.addMsg(msg);
                 channelSftp.connect();
@@ -231,6 +267,7 @@ public class FileComponent extends AbstractSoaTFComponent {
             
             try {
                 String msg = "Changing to '" + where + "' directory...";
+                ProgressMonitor.increment("Changing directory...");
                 logger.info(msg);
                 cor.addMsg(msg);
                 channelSftp.cd(where);
@@ -246,8 +283,9 @@ public class FileComponent extends AbstractSoaTFComponent {
             final FileInputStream fis;
             try {
                 String destFile = (where + "/" + fileName).replaceAll("//", "/"); //ensure that variable doesn't contain double slash
-                final String msg = "Opening file '" + file.getAbsolutePath() + "' for transfer. Destination file is: " + destFile;
-                cor.addMsg(msg);
+                final String msg = "Opening file '%s' for transfer. Destination file is: " + destFile;
+                ProgressMonitor.increment("Opening file for transfer...");
+                cor.addMsg(msg, "<a href='file://"+file.getAbsolutePath()+"'>"+file.getAbsolutePath()+"</a>", FileSystem.getRelativePath(file));
                 fis = new FileInputStream(file);
             } catch (FileNotFoundException ex) {
                 String msg = String.format("Could not open source file. Reason: %s", ex.getMessage());
@@ -256,24 +294,32 @@ public class FileComponent extends AbstractSoaTFComponent {
             }
             
             try {
-                String msg = "File transfer started.";
+                String msg = "Transferring file...";
+                ProgressMonitor.increment(msg);
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
                 channelSftp.put(fis, fileName);
                 msg = "File transfer finished successfully.";
                 logger.info(msg);
                 cor.addMsg(msg);
+                cor.markSuccessful();
             } catch (SftpException ex) {
                 String msg = String.format("Could not transfer source file. Reason: %s", ex.getMessage());
                 cor.addMsg(msg);
                 throw new FrameworkExecutionException(msg, ex);
             }
         } finally {
+            ProgressMonitor.increment("Disconnecting...");
             disconnect(session, channelSftp);
         }
     }
     
-    private void disconnect(Session session, Channel channel) {
+    /**
+     * Releases the resources allocated. If either of the objects is null, it is silently ignored and nothing is done
+     * @param session session to release
+     * @param channel channel to release
+     */
+    public static void disconnect(Session session, Channel channel) {
         if (channel != null) {
             try {
                 String msg = "Disconnecting from SSH channel...";
@@ -303,6 +349,13 @@ public class FileComponent extends AbstractSoaTFComponent {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
+    /**
+     * Checks if the file with name <code>fileName</code> exists in the directory specified by <code>dir</code>.
+     * It is done by matching the filename against each file residing in the <code>dir</code>
+     * @param fileName name of the file
+     * @param dir directory to check
+     * @throws FrameworkExecutionException when error occurs while connecting via SSH or 'ls' command fails
+     */
     private void checkFileInDir(String fileName, String dir) throws FrameworkExecutionException {
         Session session = null;
         ChannelSftp channelSftp = null;
@@ -311,14 +364,15 @@ public class FileComponent extends AbstractSoaTFComponent {
             JSch jsch = new JSch();
             try {
                 String msg = "Creating SSH session...";
+                ProgressMonitor.init(6, msg);
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
                 session = jsch.getSession(sshUser, hostName, port);
                 session.setPassword(sshPassword);
                 session.setConfig(CONFIG);
                 msg = "SSH session created.";
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
             } catch (JSchException ex) {
                 String msg = String.format("Failed to create SSH session. Reason: %s", ex.getMessage());
                 cor.addMsg(msg);
@@ -327,12 +381,13 @@ public class FileComponent extends AbstractSoaTFComponent {
             
             try {
                 String msg = "Connecting to SSH session...";
+                ProgressMonitor.increment(msg);
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
                 session.connect();
                 msg = "Connected to SSH session.";
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
             } catch (JSchException ex) {
                 String msg = String.format("Failed to connect to the SSH session. Reason: %s", ex.getMessage());
                 cor.addMsg(msg);
@@ -341,12 +396,13 @@ public class FileComponent extends AbstractSoaTFComponent {
             
             try {
                 String msg = "Opening SSH channel...";
+                ProgressMonitor.increment(msg);
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
                 channelSftp = (ChannelSftp) session.openChannel("sftp");
                 msg = "SSH channel opened.";
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
             } catch (JSchException ex) {
                 String msg = String.format("Failed to open the SFTP channel. Reason: %s", ex.getMessage());
                 cor.addMsg(msg);
@@ -355,8 +411,9 @@ public class FileComponent extends AbstractSoaTFComponent {
             
             try {
                 String msg = "Connecting to SSH channel...";
+                ProgressMonitor.increment(msg);
                 logger.info(msg);
-                cor.addMsg(msg);
+                cor.addMsg(msg, null);
                 channelSftp.connect();
                 msg = "Connected to SSH channel.";
                 logger.info(msg);
@@ -370,6 +427,7 @@ public class FileComponent extends AbstractSoaTFComponent {
             Vector ls;
             try {
                 String msg = "Listing '" + dir + "' content...";
+                ProgressMonitor.increment("Listing directory content...");
                 logger.info(msg);
                 cor.addMsg(msg);
                 ls = channelSftp.ls(dir);
@@ -394,6 +452,7 @@ public class FileComponent extends AbstractSoaTFComponent {
             cor.addMsg(msg);
             throw new FrameworkExecutionException(msg);
         } finally {
+            ProgressMonitor.increment("Disconnecting...");
             disconnect(session, channelSftp);
         }
     }

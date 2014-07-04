@@ -18,14 +18,15 @@
  */
 package com.ibm.soatf.component.soap.builder;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apache.xmlbeans.*;
-//import org.w3.x2003.x05.soapEnvelope.EnvelopeDocument;
-//import org.w3.x2003.x05.soapEnvelope.FaultDocument;
-
-import javax.xml.namespace.QName;
 import java.io.IOException;
-import java.net.URL;
+import java.io.InputStream;
+import javax.xml.namespace.QName;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeLoader;
+import org.apache.xmlbeans.XmlBeans;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -73,16 +74,16 @@ public class SoapVersion12 extends AbstractSoapVersion {
     private SoapVersion12() {
 
         try {
-            URL soapSchemaXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/xsds/", "soapEnvelope12.xsd");
+            InputStream soapSchemaXmlResource = ResourceUtils.getResourceAsInputStream(getClass(),
+                    "/xsds/" + "soapEnvelope12.xsd");
             soapSchemaXml = XmlUtils.createXmlObject(soapSchemaXmlResource);
             soapSchema = XmlBeans.loadXsd(new XmlObject[]{soapSchemaXml});
             
             soapEnvelopeType = soapSchema.findDocumentType(envelopeQName);
             soapFaultType = soapSchema.findDocumentType(faultQName);
 
-            URL soapEncodingXmlResource = ResourceUtils.getResourceWithAbsolutePackagePath(getClass(),
-                    "/xsds/", "soapEncoding12.xsd");
+            InputStream soapEncodingXmlResource = ResourceUtils.getResourceAsInputStream(getClass(),
+                    "/xsds/" + "soapEncoding12.xsd");
             soapEncodingXml = XmlUtils.createXmlObject(soapEncodingXmlResource);
         } catch (XmlException e) {
             throw new SoapBuilderException(e);

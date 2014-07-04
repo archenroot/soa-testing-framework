@@ -19,19 +19,6 @@
 package com.ibm.soatf.component.soap.builder;
 
 import com.ibm.wsdl.xml.WSDLReaderImpl;
-
-import org.apache.xmlbeans.SchemaGlobalElement;
-import org.apache.xmlbeans.SchemaType;
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-
-import javax.wsdl.*;
-import javax.wsdl.extensions.soap.SOAPBinding;
-import javax.wsdl.extensions.soap12.SOAP12Binding;
-import javax.wsdl.xml.WSDLReader;
-import javax.xml.namespace.QName;
 import java.io.File;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -39,11 +26,28 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.http.annotation.ThreadSafe;
+import javax.wsdl.Binding;
+import javax.wsdl.BindingInput;
+import javax.wsdl.BindingOperation;
+import javax.wsdl.BindingOutput;
+import javax.wsdl.Definition;
+import javax.wsdl.Message;
+import javax.wsdl.Part;
+import javax.wsdl.WSDLException;
+import javax.wsdl.extensions.soap.SOAPBinding;
+import javax.wsdl.extensions.soap12.SOAP12Binding;
+import javax.wsdl.xml.WSDLReader;
+import javax.xml.namespace.QName;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.xmlbeans.SchemaGlobalElement;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
 import org.w3c.dom.DOMException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -75,7 +79,6 @@ import org.w3c.dom.DOMException;
  *
  * @author Ole.Matzura
  */
-@ThreadSafe
 @SuppressWarnings("unchecked")
 public class SoapMessageBuilder {
 

@@ -45,8 +45,7 @@ public class XmlFormatter {
 
             return writer.writeToString(document);
         } catch (ParserConfigurationException | SAXException | IOException | ClassNotFoundException | InstantiationException | IllegalAccessException | ClassCastException ex) {
-            final String msg = "Error while formating the message: " + xml;
-            throw new XMLSubsystemException(msg, ex);
+            return xml;
         }
     }
 }

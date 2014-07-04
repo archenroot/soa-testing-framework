@@ -26,27 +26,31 @@ package com.ibm.soatf.flow;
 public class FlowExecutionEvent {
 
     private String operationName;
+    private boolean prePostOperation;
     private OperationResult operationResult;
 
     /**
      * General constructor.
      *
      * @param operationName framework component operation name
+     * @param prePostOperation
      * @param operationResult framework component operation execution result
      * instance
      */
-    public FlowExecutionEvent(String operationName, OperationResult operationResult) {
+    public FlowExecutionEvent(String operationName, boolean prePostOperation, OperationResult operationResult) {
         this.operationName = operationName;
         this.operationResult = operationResult;
+        this.prePostOperation = prePostOperation;
     }
 
     /**
      * Constructor for simple scenario.
      *
      * @param operationName framework component operation name
+     * @param prePostOperation
      */
-    public FlowExecutionEvent(String operationName) {
-        this(operationName, null);
+    public FlowExecutionEvent(String operationName, boolean prePostOperation) {
+        this(operationName, prePostOperation, null);
     }
 
     /**
@@ -67,4 +71,12 @@ public class FlowExecutionEvent {
         return operationName;
     }
 
+    /**
+     * Gets component operation prePost status
+     *
+     * @return boolean representing operation pre/post status
+     */
+    public boolean isPrePostOperation() {
+        return prePostOperation;
+    }
 }

@@ -1,12 +1,7 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:master="http://www.ibm.com/SOATF/Config/Master" targetNamespace="http://www.ibm.com/SOATF/Config/Master" elementFormDefault="qualified"
-    attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:master="http://www.ibm.com/SOATF/Config/Master" targetNamespace="http://www.ibm.com/SOATF/Config/Master" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:element name="soaTestingFrameworkMasterConfiguration" type="master:SOATestingFrameworkMasterConfiguration">
         <xs:annotation>
-            <xs:documentation xml:lang="en">Root element. Master configuration file defines information for interface testing within heterogenous environments. It keeps concrete technology enpoints if relevant and consists of following elements:
-- Interfaces
-- Environements
-- File System Structure
-- Flow Patterns</xs:documentation>
+            <xs:documentation xml:lang="en">Root element. Master configuration file defines information for interface testing within heterogenous environments. It keeps concrete technology enpoints if relevant and consists of following elements: - Interfaces - Environements - File System Structure - Flow Patterns</xs:documentation>
         </xs:annotation>
     </xs:element>
     <xs:complexType name="SOATestingFrameworkMasterConfiguration">
@@ -35,6 +30,28 @@
                             <xs:complexType>
                                 <xs:sequence>
                                     <xs:element maxOccurs="unbounded" minOccurs="0" name="operation"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="mailServer">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="host"/>
+                                    <xs:element name="port"/>
+                                    <xs:element name="principal"/>
+                                    <xs:element name="credentials"/>
+                                    <xs:element name="protocol"/>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="subversionServer">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="host"/>
+                                    <xs:element name="port"/>
+                                    <xs:element name="principal"/>
+                                    <xs:element name="credentials"/>
+                                    <xs:element name="protocol"/>
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
@@ -69,11 +86,7 @@
             </xs:element>
             <xs:element name="flowPatterns" type="master:FlowPatterns">
                 <xs:annotation>
-                    <xs:documentation xml:lang="en">Master element for definition of all integration patterns supported by framework. Flow pattern element is parent element in group of 3:
-- Flow Pattern
- |- Test Scenario
-  |- Execution Block
-</xs:documentation>
+                    <xs:documentation xml:lang="en">Master element for definition of all integration patterns supported by framework. Flow pattern element is parent element in group of 3: - Flow Pattern |- Test Scenario |- Execution Block </xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -93,6 +106,14 @@
                                 <xs:attribute name="name" use="required"/>
                             </xs:complexType>
                         </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="flowPatternInstanceRoot">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element maxOccurs="1" minOccurs="1" name="reportDirectory" type="xs:string"> </xs:element>
+                        <xs:element name="archiveDirectory" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
             </xs:element>
@@ -128,6 +149,7 @@
         </xs:sequence>
         <xs:attribute name="name" type="xs:string"/>
     </xs:complexType>
+    <xs:complexType abstract="true" name="AbstractMasterConfigEnvironmentInstance"/>
     <xs:complexType name="Interface">
         <xs:sequence>
             <xs:element name="projects" minOccurs="0">
@@ -160,7 +182,7 @@
                                         <xs:documentation xml:lang="en">Identificator of referenced flow pattern.</xs:documentation>
                                     </xs:annotation>
                                 </xs:attribute>
-                                <xs:attribute name="occurrence" type="xs:int" use="required">
+                                <xs:attribute name="occurrence" type="xs:int" use="optional" default="1">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="en">Defines how many times is referenced flow pattern used for particular interface.</xs:documentation>
                                     </xs:annotation>
@@ -181,6 +203,14 @@
                 <xs:documentation xml:lang="en">Text human readable name of interface.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
+        <xs:attribute name="release" use="required">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:enumeration value="M3.0"/>
+                    <xs:enumeration value="M3.1"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:attribute>
     </xs:complexType>
     <xs:complexType name="Project">
         <xs:attribute name="name" type="xs:string" use="required">
@@ -190,13 +220,7 @@
         </xs:attribute>
         <xs:attribute name="direction">
             <xs:annotation>
-                <xs:documentation xml:lang="en">
-                    Indication of the project flow resolution. Can have following values:
-                    - INBOUND
-                    - OUTBOUND
-                    - BOTH
-                    - NOT APPLICABLE
-                </xs:documentation>
+                <xs:documentation xml:lang="en"> Indication of the project flow resolution. Can have following values: - INBOUND - OUTBOUND - BOTH - NOT APPLICABLE </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
@@ -209,11 +233,7 @@
         </xs:attribute>
         <xs:attribute name="type">
             <xs:annotation>
-                <xs:documentation>
-                    Indication of the project type from SOA Suite perspective. Can have following values:
-                    - OSB
-                    - SOA
-                </xs:documentation>
+                <xs:documentation> Indication of the project type from SOA Suite perspective. Can have following values: - OSB - SOA </xs:documentation>
             </xs:annotation>
             <xs:simpleType>
                 <xs:restriction base="xs:string">
@@ -223,7 +243,6 @@
             </xs:simpleType>
         </xs:attribute>
     </xs:complexType>
-    <xs:complexType abstract="true" name="AbstractMasterConfigEnvironmentInstance"/>
     <xs:complexType name="Environments">
         <xs:sequence>
             <xs:element maxOccurs="1" name="oracleFusionMiddleware" minOccurs="0" type="master:OracleFusionMiddleware">
@@ -316,55 +335,64 @@
                                         </xs:sequence>
                                     </xs:complexType>
                                 </xs:element>
-                                <xs:element name="cluster" minOccurs="1" maxOccurs="1">
+                                <xs:element name="clusters">
                                     <xs:annotation>
-                                        <xs:documentation xml:lang="en">OSB cluster configuration.</xs:documentation>
+                                        <xs:documentation xml:lang="en">All clusters which exist within the fusion middleware environment.</xs:documentation>
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:sequence>
-                                            <xs:element name="managedServer">
+                                            <xs:element name="cluster" minOccurs="0" maxOccurs="unbounded">
+                                                <xs:annotation>
+                                                    <xs:documentation xml:lang="en">Concrete cluster type running within fusion middleware environment.</xs:documentation>
+                                                </xs:annotation>
                                                 <xs:complexType>
                                                     <xs:sequence>
-                                                        <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1">
-                                                            <xs:annotation>
-                                                                <xs:documentation xml:lang="en">IPv4 or hostname.</xs:documentation>
-                                                            </xs:annotation>
-                                                        </xs:element>
-                                                        <xs:element name="port" type="xs:int">
-                                                            <xs:annotation>
-                                                                <xs:documentation xml:lang="en">The port here is required due to supporting distributed JMS queue browser. In future this should be replaced/removed by get all distributed queue/topic connections from/trough admin server as soon as getting everything trough admin server is Oracle proposed way.</xs:documentation>
-                                                            </xs:annotation>
+                                                        <xs:element name="managedServer" maxOccurs="unbounded" minOccurs="0">
+                                                            <xs:complexType>
+                                                                <xs:sequence>
+                                                                    <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1">
+                                                                        <xs:annotation>
+                                                                            <xs:documentation xml:lang="en">IPv4 or hostname.</xs:documentation>
+                                                                        </xs:annotation>
+                                                                    </xs:element>
+                                                                    <xs:element name="port" type="xs:int">
+                                                                        <xs:annotation>
+                                                                            <xs:documentation xml:lang="en">The port here is required due to supporting distributed JMS queue browser. In future this should be replaced/removed by get all distributed queue/topic connections from/trough admin server as soon as getting everything trough admin server is Oracle proposed way.</xs:documentation>
+                                                                        </xs:annotation>
+                                                                    </xs:element>
+                                                                </xs:sequence>
+                                                                <xs:attribute name="name" type="xs:string">
+                                                                    <xs:annotation>
+                                                                        <xs:documentation xml:lang="en">Should be managed server name, for example "osb_server_1".</xs:documentation>
+                                                                    </xs:annotation>
+                                                                </xs:attribute>
+                                                            </xs:complexType>
                                                         </xs:element>
                                                     </xs:sequence>
+                                                    <xs:attribute name="type">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Type of cluster. SOA Suite allow any infrastructure extension component set to run within separate cluster</xs:documentation>
+                                                        </xs:annotation>
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string">
+                                                                <xs:enumeration value="OSB"/>
+                                                                <xs:enumeration value="SOA"/>
+                                                                <xs:enumeration value="WSM">
+                                                                    <xs:annotation>
+                                                                        <xs:documentation>Oracle Web Service Manager</xs:documentation>
+                                                                    </xs:annotation>
+                                                                </xs:enumeration>
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:attribute>
                                                     <xs:attribute name="name" type="xs:string">
                                                         <xs:annotation>
-                                                            <xs:documentation xml:lang="en">Should be managed server name, for example "osb_server_1".</xs:documentation>
+                                                            <xs:documentation xml:lang="en">Name of the cluster.</xs:documentation>
                                                         </xs:annotation>
                                                     </xs:attribute>
                                                 </xs:complexType>
                                             </xs:element>
                                         </xs:sequence>
-                                        <xs:attribute name="type">
-                                            <xs:annotation>
-                                                <xs:documentation>Type of cluster. SOA Suite allow any infrastructure extension component set to run within separate cluster</xs:documentation>
-                                            </xs:annotation>
-                                            <xs:simpleType>
-                                                <xs:restriction base="xs:string">
-                                                    <xs:enumeration value="OSB"/>
-                                                    <xs:enumeration value="SOA"/>
-                                                    <xs:enumeration value="WSM">
-                                                        <xs:annotation>
-                                                            <xs:documentation>Oracle Web Service Manager</xs:documentation>
-                                                        </xs:annotation>
-                                                    </xs:enumeration>
-                                                </xs:restriction>
-                                            </xs:simpleType>
-                                        </xs:attribute>
-                                        <xs:attribute name="name" type="xs:string">
-                                            <xs:annotation>
-                                                <xs:documentation xml:lang="en">Name of the cluster.</xs:documentation>
-                                            </xs:annotation>
-                                        </xs:attribute>
                                     </xs:complexType>
                                 </xs:element>
                             </xs:sequence>
@@ -464,11 +492,18 @@
                                                     <xs:documentation xml:lang="en">Password.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
-                                            <xs:element name="serviceId" type="xs:string" minOccurs="1" maxOccurs="1">
-                                                <xs:annotation>
-                                                    <xs:documentation xml:lang="en">Service Id. Will be extended to support different connect configuration in future versions.</xs:documentation>
-                                                </xs:annotation>
-                                            </xs:element>
+                                            <xs:choice>
+                                                <xs:element name="serviceId" type="xs:string">
+                                                    <xs:annotation>
+                                                        <xs:documentation xml:lang="en">Database Service ID</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                                <xs:element name="serviceName" type="xs:string">
+                                                    <xs:annotation>
+                                                        <xs:documentation xml:lang="en">Database Service Name</xs:documentation>
+                                                    </xs:annotation>
+                                                </xs:element>
+                                            </xs:choice>
                                         </xs:sequence>
                                         <xs:attribute name="environment" use="required"/>
                                     </xs:extension>
@@ -514,9 +549,7 @@
                                 <xs:complexContent>
                                     <xs:extension base="master:AbstractMasterConfigEnvironmentInstance">
                                         <xs:annotation>
-                                            <xs:documentation>
-                                                Ftp framework component is not implemented yet!.
-                                            </xs:documentation>
+                                            <xs:documentation> Ftp framework component is not implemented yet!. </xs:documentation>
                                         </xs:annotation>
                                         <xs:sequence>
                                             <xs:element name="hostName" type="xs:string">
@@ -633,11 +666,18 @@
                                         <xs:documentation xml:lang="en">Password.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
-                                <xs:element name="serviceId" type="xs:string" minOccurs="1" maxOccurs="1">
-                                    <xs:annotation>
-                                        <xs:documentation xml:lang="en">Service Id. Will be extended to support different connect configuration in future versions.</xs:documentation>
-                                    </xs:annotation>
-                                </xs:element>
+                                <xs:choice>
+                                    <xs:element name="serviceId" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en">Database Service ID</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="serviceName" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en">Database Service Name</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                </xs:choice>
                             </xs:sequence>
                             <xs:attribute name="environment" use="required" type="xs:string">
                                 <xs:annotation>
@@ -684,6 +724,16 @@
                             </xs:annotation>
                             <xs:complexType>
                                 <xs:attribute default="ERROR_HOSPITAL.gather_osb_data" name="name" type="xs:string"/>
+                                <xs:attribute default="60" name="scheduledInterval" type="xs:int" use="optional">
+                                    <xs:annotation>
+                                        <xs:documentation>interval in seconds</xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                                <xs:attribute default="false" name="forceProcedureExecution" type="xs:boolean">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">if true, procedure is executed. if false, framework waits for scheduled interval</xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
@@ -691,7 +741,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:complexType name="SOAPServices"/>
     <xs:complexType name="FlowPatterns">
         <xs:sequence>
             <xs:element maxOccurs="unbounded" minOccurs="0" name="flowPattern" type="master:FlowPattern">
@@ -701,17 +750,6 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
-    <xs:simpleType name="Component">
-        <xs:restriction base="xs:string">
-            <xs:enumeration value="DB"/>
-            <xs:enumeration value="FILE"/>
-            <xs:enumeration value="FTP"/>
-            <xs:enumeration value="JMS"/>
-            <xs:enumeration value="OSB"/>
-            <xs:enumeration value="SOAP"/>
-            <xs:enumeration value="UTIL"/>
-        </xs:restriction>
-    </xs:simpleType>
     <xs:complexType name="Operation">
         <xs:sequence>
             <xs:element minOccurs="0" name="description" type="xs:string"/>
@@ -727,11 +765,24 @@
                 <xs:documentation xml:lang="en">Defines if the operation should be executed on the source or target of the execution block. Optional value is NA.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute default="false" name="continueOnFailure" type="xs:boolean">
-            <xs:annotation>
-                <xs:documentation xml:lang="en">Operational switch used to continue execution of the test in case of concreted marked operation failed. Defaulting to 'false'.</xs:documentation>
-            </xs:annotation>
-        </xs:attribute>
+    </xs:complexType>
+    <xs:complexType name="ExecBlockOperation">
+        <xs:complexContent>
+            <xs:extension base="master:Operation">
+                <xs:attribute default="false" name="continueOnFailure" type="xs:boolean">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Operational switch used to continue execution of the test in case of concreted marked operation failed. Defaulting to 'false'.</xs:documentation>
+                    </xs:annotation>
+                </xs:attribute>
+            </xs:extension>
+        </xs:complexContent>
+    </xs:complexType>
+    <xs:complexType name="PreOrPostExecBlockOperation">
+        <xs:complexContent>
+            <xs:extension base="master:Operation">
+                <xs:attribute name="executionBlockRef" type="xs:string" use="required"/>
+            </xs:extension>
+        </xs:complexContent>
     </xs:complexType>
     <xs:simpleType name="OperationName">
         <xs:restriction base="xs:string">
@@ -804,7 +855,11 @@
             <xs:enumeration value="UTIL_CHECK_ERROR_QUEUE"/>
             <xs:enumeration value="UTIL_CHECK_REPORTING_FOR_SUCCESS"/>
             <xs:enumeration value="UTIL_CHECK_REPORTING_FOR_FAILURE"/>
+            <xs:enumeration value="UTIL_CHECK_REPORTING_FOR_NOTHING"/>
             <xs:enumeration value="UTIL_PRINT_OSB_REPORTING"/>
+            <xs:enumeration value="UTIL_PURGE_DUPLICATE_CONTROL"/>
+            <xs:enumeration value="UTIL_ARCHIVE_RESULTS"/>
+            <xs:enumeration value="UTIL_CLEAN_RESULTS"/>
             <xs:enumeration value="REPORT_GENERATE"/>
             <xs:enumeration value="FILE_PUT"/>
             <xs:enumeration value="FILE_GET"/>
@@ -828,9 +883,19 @@
     </xs:simpleType>
     <xs:complexType name="FlowPattern">
         <xs:sequence>
+            <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1" type="master:FlowPatternPreOrPostExecutionBlock">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">NOT implemented yet within framework. This block should be used for configuration which helps to lock concrete environment and prepare it for execution of test scenario. Locking of the world should help to keep environments consistent even when unexpected behavior of the framework occurs.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
             <xs:element name="testScenario" maxOccurs="unbounded" type="master:TestScenario">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Test scenario element defines concrete unit test defined within it's flow pattern parent object.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="postExecutionBlock" minOccurs="0" maxOccurs="1" type="master:FlowPatternPreOrPostExecutionBlock">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">NOT implemented yet! These are tasks which are not directly related to test scenario execution, but on the other hand help keeping environments in consistent state or can do other custom tasks like email test execution results.</xs:documentation>
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
@@ -852,15 +917,10 @@
                     <xs:documentation xml:lang="en">Test scenario description.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1">
+            <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1" type="master:TestScenarioPreOrPostExecutionBlock">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">NOT implemented yet within framework. This block should be used for configuration which helps to lock concrete environment and prepare it for execution of test scenario. Locking of the world should help to keep environments consistent even when unexpected behavior of the framework occurs.</xs:documentation>
                 </xs:annotation>
-                <xs:complexType>
-                    <xs:complexContent>
-                        <xs:extension base="master:ExecutionBlock"/>
-                    </xs:complexContent>
-                </xs:complexType>
             </xs:element>
             <xs:element name="executionBlock" minOccurs="1" maxOccurs="unbounded">
                 <xs:annotation>
@@ -881,12 +941,7 @@
                             </xs:attribute>
                             <xs:attribute name="direction" use="required">
                                 <xs:annotation>
-                                    <xs:documentation xml:lang="en">Direction of the flow execution block operations from fusion middleware perspective can have following values:
-- INBOUND
-- OUTBOUND
-- E2E
-- NOT APPLICABLE
-- OTHER</xs:documentation>
+                                    <xs:documentation xml:lang="en">Direction of the flow execution block operations from fusion middleware perspective can have following values: - INBOUND - OUTBOUND - E2E - NOT APPLICABLE - OTHER</xs:documentation>
                                 </xs:annotation>
                                 <xs:simpleType>
                                     <xs:restriction base="xs:string">
@@ -912,15 +967,10 @@
                     </xs:complexContent>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="postExecutionBlock" minOccurs="0" maxOccurs="1">
+            <xs:element name="postExecutionBlock" minOccurs="0" maxOccurs="1" type="master:TestScenarioPreOrPostExecutionBlock">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">NOT implemented yet! These are tasks which are not directly related to test scenario execution, but on the other hand help keeping environments in consistent state or can do other custom tasks like email test execution results.</xs:documentation>
                 </xs:annotation>
-                <xs:complexType>
-                    <xs:complexContent>
-                        <xs:extension base="master:ExecutionBlock"/>
-                    </xs:complexContent>
-                </xs:complexType>
             </xs:element>
         </xs:sequence>
         <xs:attribute name="identificator" type="xs:string" use="required">
@@ -949,20 +999,19 @@
                 <xs:documentation xml:lang="en">Sequence id defines the rank of the test scenario in execution list when framework executes whole set of test scenarios.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
-        <xs:attribute name="nonStandard" type="xs:boolean">
+        <xs:attribute name="nonStandard" type="xs:boolean" default="false">
             <xs:annotation>
                 <xs:documentation xml:lang="en">This flag marks test scenario as part non-standard scenarios. This means that this scenario shouldn't be executed when asking framework to test the interface. This behavior can be overiden with client switch. This is primarily used for special cases when non-standard test needs to be executed for example directly against production environment.</xs:documentation>
             </xs:annotation>
         </xs:attribute>
     </xs:complexType>
-    <xs:element name="newElement"/>
     <xs:complexType name="ExecutionBlock">
         <xs:sequence maxOccurs="1">
             <xs:element name="description" maxOccurs="1" minOccurs="0" type="xs:string"/>
             <xs:element minOccurs="0" name="expectedResult" type="xs:string"/>
             <xs:sequence maxOccurs="unbounded">
                 <xs:choice maxOccurs="1">
-                    <xs:element name="operation" type="master:Operation" minOccurs="1" maxOccurs="1">
+                    <xs:element name="operation" type="master:ExecBlockOperation" minOccurs="1" maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation xml:lang="en">Atomic operation from framework integration perspective.</xs:documentation>
                         </xs:annotation>
@@ -971,26 +1020,30 @@
             </xs:sequence>
         </xs:sequence>
     </xs:complexType>
-    <xs:element name="SOATestingFrameworkComponent" abstract="true" type="master:SOATestingFrameworkComponent"/>
-    <xs:complexType name="SOATestingFrameworkComponent"/>
-    <xs:element name="SOATestingFrameworkComponentOperation" abstract="true"/>
-    <xs:complexType name="SOATestingFrameworkComponentOperation" abstract="true"/>
-    <xs:element name="OSBComponent" substitutionGroup="master:SOATestingFrameworkComponent" type="master:OSBComponent"/>
-    <xs:complexType name="OSBComponent">
-        <xs:complexContent>
-            <xs:extension base="master:SOATestingFrameworkComponent">
-                <xs:sequence>
-                    <xs:element name="operation" maxOccurs="1" minOccurs="1">
-                        <xs:simpleType>
-                            <xs:restriction base="xs:string">
-                                <xs:enumeration value="DISABLE_SERVICE"/>
-                                <xs:enumeration value="ENABLE_SERVICE"/>
-                            </xs:restriction>
-                        </xs:simpleType>
-                    </xs:element>
-                </xs:sequence>
-            </xs:extension>
-        </xs:complexContent>
+    <xs:complexType name="TestScenarioPreOrPostExecutionBlock">
+        <xs:sequence maxOccurs="1">
+            <xs:element name="description" maxOccurs="1" minOccurs="0" type="xs:string"/>
+            <xs:element minOccurs="0" name="expectedResult" type="xs:string"/>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element name="operation" type="master:PreOrPostExecBlockOperation" minOccurs="1" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Operation that should be executed after all executions blocks are executed.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:sequence>
     </xs:complexType>
-    <xs:element name="OSBComponentOperation" type="master:OSBComponent"/>
+    <xs:complexType name="FlowPatternPreOrPostExecutionBlock">
+        <xs:sequence maxOccurs="1">
+            <xs:element name="description" maxOccurs="1" minOccurs="0" type="xs:string"/>
+            <xs:element minOccurs="0" name="expectedResult" type="xs:string"/>
+            <xs:sequence maxOccurs="unbounded">
+                <xs:element name="operation" type="master:Operation" minOccurs="1" maxOccurs="1">
+                    <xs:annotation>
+                        <xs:documentation xml:lang="en">Operation that should be executed after all executions blocks are executed.</xs:documentation>
+                    </xs:annotation>
+                </xs:element>
+            </xs:sequence>
+        </xs:sequence>
+    </xs:complexType>
 </xs:schema>

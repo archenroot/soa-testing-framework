@@ -18,10 +18,8 @@
  */
 package com.ibm.soatf.component.soap.builder;
 
-import org.apache.commons.io.FilenameUtils;
-
 import java.io.InputStream;
-import java.net.URL;
+import org.apache.commons.io.FilenameUtils;
 
 
 /**
@@ -33,9 +31,9 @@ import java.net.URL;
  */
 public class ResourceUtils {
 
-    public static URL getResourceWithAbsolutePackagePath(String absolutePackagePath, String resourceName) {
-        return getResourceWithAbsolutePackagePath(ResourceUtils.class, absolutePackagePath, resourceName);
-    }
+//    public static URL getResourceWithAbsolutePackagePath(String absolutePackagePath, String resourceName) {
+//        return getResourceWithAbsolutePackagePath(ResourceUtils.class, absolutePackagePath, resourceName);
+//    }
 
     private static class Path {
         String packagePath = "";
@@ -62,15 +60,15 @@ public class ResourceUtils {
         return path;
     }
 
-    public static URL getResource(String resourcePath) {
-        Path path = parsePath(resourcePath);
-        return getResourceWithAbsolutePackagePath(path.packagePath, path.resourcePath);
-    }
-
-    public static URL getResource(Class<?> clazz, String resourcePath) {
-        Path path = parsePath(resourcePath);
-        return getResourceWithAbsolutePackagePath(clazz, path.packagePath, path.resourcePath);
-    }
+//    public static URL getResource(String resourcePath) {
+//        Path path = parsePath(resourcePath);
+//        return getResourceWithAbsolutePackagePath(path.packagePath, path.resourcePath);
+//    }
+//
+//    public static URL getResource(Class<?> clazz, String resourcePath) {
+//        Path path = parsePath(resourcePath);
+//        return getResourceWithAbsolutePackagePath(clazz, path.packagePath, path.resourcePath);
+//    }
 
     public static InputStream getResourceAsStream(String resourcePath) {
         Path path = parsePath(resourcePath);
@@ -82,24 +80,41 @@ public class ResourceUtils {
         return getResourceWithAbsolutePackagePathAsStream(clazz, path.packagePath, path.resourcePath);
     }
 
-    public static URL getResourceWithAbsolutePackagePath(Class<?> clazz, String absolutePackagePath, String resourceName) {
+//    public static URL getResourceWithAbsolutePackagePath(Class<?> clazz, String absolutePackagePath, String resourceName) {
+//        if (clazz == null) {
+//            throw new NullPointerException("clazz cannot be null");
+//        }        
+//        String resourcePath = getResourcePath(absolutePackagePath, resourceName);
+//        URL resource = null;
+//        // first attempt - outside/inside jar file
+//        resource = clazz.getClass().getResource(resourcePath);
+//        // second attempt - servlet container - inside application lib folder
+//        if (resource == null) {
+//            if (absolutePackagePath.charAt(0) == '/') {
+//                String resourcePathWithoutLeadingSlash = resourcePath.substring(1);
+//                resource = Thread.currentThread().getContextClassLoader().getResource(resourcePathWithoutLeadingSlash);
+//            }
+//        }
+//        if (resource == null) {
+//            throw new IllegalArgumentException(String.format("Resource [%s] loading failed", resourcePath));
+//        }         
+//        return resource;
+//    }
+    
+    public static InputStream getResourceAsInputStream(Class<?> clazz, String resourcePath) {
         if (clazz == null) {
             throw new NullPointerException("clazz cannot be null");
-        }        
-        String resourcePath = getResourcePath(absolutePackagePath, resourceName);
-        URL resource = null;
-        // first attempt - outside/inside jar file
-        resource = clazz.getClass().getResource(resourcePath);
+        }  
+        InputStream resource = clazz.getClass().getResourceAsStream(resourcePath);
         // second attempt - servlet container - inside application lib folder
         if (resource == null) {
-            if (absolutePackagePath.charAt(0) == '/') {
-                String resourcePathWithoutLeadingSlash = resourcePath.substring(1);
-                resource = Thread.currentThread().getContextClassLoader().getResource(resourcePathWithoutLeadingSlash);
-            }
+            ClassLoader classLoader = clazz.getClass().getClassLoader();
+            if (classLoader != null)
+                resource = classLoader.getResourceAsStream(resourcePath);
         }
         if (resource == null) {
             throw new IllegalArgumentException(String.format("Resource [%s] loading failed", resourcePath));
-        }         
+        }  
         return resource;
     }
 

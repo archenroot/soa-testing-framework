@@ -10,7 +10,6 @@
 <project name="SOATestingFramework" default="default" basedir=".">
     <description>Builds, tests, and runs the project SOATestingFramework.</description>
     <import file="nbproject/build-impl.xml"/>
-    <import file="nbproject/management-build-impl.xml"/>
     <!--
 
     There exist several targets which are by default empty and which can be 
@@ -71,5 +70,45 @@
     nbproject/build-impl.xml file. 
 
     -->
-</project>
+    <property name="schema.dir" value="schema"/>
+    <property name="reporting.dir" value="reporting"/>
+    <property name="bin.dist.dir" value="${basedir}/../soa_testing_framework_bin"/>
+    <property name="bin.dist.lib.dir" value="${bin.dist.dir}/lib"/>
+    <property name="bin.dist.schema.dir" value="${bin.dist.dir}/schema"/>
+    <property name="bin.dist.reporting.dir" value="${bin.dist.dir}/reporting"/>
+    <property name="bin.dist.jar" value="${bin.dist.dir}/SOATestingFramework.jar"/>
 
+    <target name="-post-clean">
+        <echo message="Deleting ${bin.dist.lib.dir} dir"/>
+        <delete dir="${bin.dist.lib.dir}"/>
+        
+        <echo message="Deleting ${bin.dist.schema.dir} dir"/>
+        <delete dir="${bin.dist.schema.dir}"/>
+        
+        <echo message="Deleting ${bin.dist.schema.dir} dir"/>
+        <delete dir="${bin.dist.schema.dir}"/>
+        
+        <echo message="Deleting ${bin.dist.reporting.dir} dir"/>
+        <delete dir="${bin.dist.reporting.dir}"/>
+                
+        <echo message="Deleting ${bin.dist.jar} file"/>
+        <delete file="${bin.dist.jar}"/>
+    </target>
+        
+    <target name="-post-jar">
+        <echo message="Copying ${schema.dir} dir to ${dist.dir}"/>
+        <copy todir="${dist.dir}">
+            <fileset dir="${basedir}" includes="${schema.dir}/**"/>
+        </copy>
+        
+        <echo message="Copying ${reporting.dir} dir to ${dist.dir}"/>
+        <copy todir="${dist.dir}">
+            <fileset dir="${basedir}" includes="${reporting.dir}/**"/>
+        </copy>
+        
+        <echo message="Copying ${dist.dir} dir to ${bin.dist.dir}"/>
+        <copy todir="${bin.dist.dir}">
+            <fileset dir="${dist.dir}" includes="**"/>
+        </copy>
+    </target>
+</project>

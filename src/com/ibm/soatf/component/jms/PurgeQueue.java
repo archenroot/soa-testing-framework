@@ -17,8 +17,11 @@
  */
 package com.ibm.soatf.component.jms;
 
+
 import com.ibm.soatf.config.iface.jms.JMSConfig;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
+import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.Clusters.Cluster.ManagedServer;
+import com.ibm.soatf.gui.ProgressMonitor;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -54,27 +57,27 @@ public class PurgeQueue {
     public static final String WEBLOGIC_JMS_XA_CONNECTION_FACTORY = "weblogic/jms/XAConnectionFactory";
 
     PurgeQueue(){
-        
     }
-    public static Context createInitialContext(OracleFusionMiddlewareInstance osbConfig) throws NamingException {
-        Hashtable<String, String> ht = new Hashtable<String, String>();
+    
+    public static Context createInitialContext(String hostname, int port, String login, String pass) throws NamingException {
+        Hashtable<String, String> ht = new Hashtable<>();
         ht.put(Context.INITIAL_CONTEXT_FACTORY, "weblogic.jndi.WLInitialContextFactory");
         ht.put(Context.PROVIDER_URL,
                 "t3://"
-                + osbConfig.getCluster().getManagedServer().getHostName()
+                + hostname
                 + ":"
-                + osbConfig.getCluster().getManagedServer().getPort()
+                + port
         );
-        ht.put(Context.SECURITY_PRINCIPAL, osbConfig.getAdminServer().getSecurityPrincipal());
-        ht.put(Context.SECURITY_CREDENTIALS, osbConfig.getAdminServer().getSecurityCredentials());
+        ht.put(Context.SECURITY_PRINCIPAL, login);
+        ht.put(Context.SECURITY_CREDENTIALS, pass);
         Context ctx = new InitialContext(ht);
         return ctx;
     }
 
-    public void init(JMSConfig jmsConfig, OracleFusionMiddlewareInstance osbConfig) throws JmsComponentException {
+    public void init(JMSConfig jmsConfig, OracleFusionMiddlewareInstance osbConfig, ManagedServer managedServer) throws JmsComponentException {
         try {
             // get the initial context
-            Context ctx = createInitialContext(osbConfig);
+            Context ctx = createInitialContext(managedServer.getHostName(), managedServer.getPort(), osbConfig.getAdminServer().getSecurityPrincipal(), osbConfig.getAdminServer().getSecurityCredentials());
             // lookup the queue object
             queue = (Queue) ctx.lookup(jmsConfig.getQueue().getJndiName());
 
@@ -93,14 +96,16 @@ public class PurgeQueue {
         } 
     }
 
-    public List<Message> deleteAllMessagesFromQueue(JMSConfig jmsConfig, OracleFusionMiddlewareInstance osbConfig) throws JmsComponentException {
-        
+    public List<Message> deleteAllMessagesFromQueue(JMSConfig jmsConfig, OracleFusionMiddlewareInstance osbConfig, ManagedServer managedServer) throws JmsComponentException {
+        MessageConsumer consumer = null;
         List<Message> messages = new ArrayList<>();
         try {
-            init(jmsConfig, osbConfig);
-            MessageConsumer consumer = queueSession.createConsumer(queue);
+            ProgressMonitor.init(2, "Connecting to queue...");
+            init(jmsConfig, osbConfig, managedServer);
+            consumer = queueSession.createConsumer(queue);
             Message message = null;
 
+            ProgressMonitor.increment("Removing messages...");
             do {
                 message = consumer.receiveNoWait();
                 if (message != null) {
@@ -110,12 +115,20 @@ public class PurgeQueue {
             } while (message != null);
 
             consumer.close();
-            queueConn.close();
 
         } catch (JMSException ex) {
             throw new JmsComponentException(ex);
         } finally{
-            
+            try {            
+                if (consumer != null) {
+                    consumer.close();
+                }
+                if (queueConn != null) {
+                    queueConn.close();
+                }
+            } catch (JMSException ex) {
+                ;
+            }            
         }
         return messages;
     }

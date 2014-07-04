@@ -17,16 +17,26 @@
  */
 package com.ibm.soatf.component.ftp;
 
-import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.component.AbstractSoaTFComponent;
+import com.ibm.soatf.component.SOATFCompType;
+import com.ibm.soatf.component.file.FileComponent;
 import com.ibm.soatf.config.iface.IfaceExecBlock;
 import com.ibm.soatf.config.iface.ftp.FTPConfig;
 import com.ibm.soatf.config.iface.ftp.Security;
 import com.ibm.soatf.config.master.FTPServers.FtpServer.Directories;
 import com.ibm.soatf.config.master.FTPServers.FtpServer.FtpServerInstance;
 import com.ibm.soatf.config.master.Operation;
+import com.ibm.soatf.flow.FlowExecutor;
 import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.flow.OperationResult;
+import com.ibm.soatf.gui.ProgressMonitor;
+import com.ibm.soatf.tool.FileSystem;
+import com.ibm.soatf.tool.Utils;
+import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Session;
+import com.jcraft.jsch.SftpException;
 import it.sauronsoftware.ftp4j.FTPAbortedException;
 import it.sauronsoftware.ftp4j.FTPClient;
 import it.sauronsoftware.ftp4j.FTPDataTransferException;
@@ -36,15 +46,14 @@ import it.sauronsoftware.ftp4j.FTPIllegalReplyException;
 import it.sauronsoftware.ftp4j.FTPListParseException;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Iterator;
-import java.util.logging.Level;
+import java.util.Vector;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
@@ -63,7 +72,6 @@ public class FTPComponent extends AbstractSoaTFComponent {
     //private final FTPConfig ftpConfiguration;
     private final FTPConfig.File ftpFile;
     private final Directories directories;
-    private File workingDir;
 
     private String hostName;
     private int port;
@@ -111,7 +119,7 @@ public class FTPComponent extends AbstractSoaTFComponent {
      workingDirectoryPath = "C:\\test\\";
      }*/
     @Override
-    protected void constructComponent() {
+    protected final void constructComponent() {
 
         this.hostName = this.ftpMasterConfig.getHostName();
         this.port = this.ftpMasterConfig.getPort();
@@ -127,51 +135,46 @@ public class FTPComponent extends AbstractSoaTFComponent {
         //this.fileContent = this.ftpConfiguration.getFileContent();
         //this.fileName = this.ftpConfiguration.getFileName();
         this.fileContent = this.ftpFile.getFileContent();
+        //if (this.fileContent != null) fileContent = fileContent.trim();
         this.fileName = this.ftpFile.getFileName();
 
     }
 
     @Override
     public void executeOperation(Operation operation) throws FrameworkExecutionException {
-        try {
-            //cor.setOperation(operation); //nastavuje konstruktor abstractoperation
-            /*if (!FTP_OPERATIONS.contains(operation)) {
-             final String msg = "Unsupported operation: " + operation.getName().value() + ". Valid operations are: " + FTP_OPERATIONS;
-             logger.error(msg);
-             cor.addMsg(msg);
-             cor.setOverallResultSuccess(false);
-             } else {*/
-            actualFileUsed = getFile(this.workingDir, this.fileName, this.fileContent).getName();
-            switch (operation.getName()) {
-                case FTP_DOWNLOAD_FILE:
-                    ftpDownloadFile();
-                    break;
-                case FTP_UPLOAD_FILE:
-                    //generateFile();
-                    ftpUploadFile();
-                    break;
-                case FTP_CHECK_DELIVERED_FOLDER_FOR_FILE:
-                    checkFolderForFile(this.archiveDirectory);
-                    break;
-                case FTP_CHECK_ERROR_FOLDER_FOR_FILE:
-                    checkFolderForFile(this.errorDirectory);
-                    break;
-                case FTP_SEARCH_FOR_FILE:
-                    checkFolderForFile(this.stageDirectory);
-                    break;
-                default:
-                    logger.info("Operation execution not yet implemented: " + operation.getName().value());
-                    cor.addMsg("Operation: " + operation.getName().value() + " is valid, but not yet implemented");
-            }
-        } catch (FtpComponentException ftpce){
-            final String msg = "TODO";
-            cor.addMsg(msg);
-            throw new FrameworkExecutionException(msg, ftpce);
+        //cor.setOperation(operation); //nastavuje konstruktor abstractoperation
+        /*if (!FTP_OPERATIONS.contains(operation)) {
+         final String msg = "Unsupported operation: " + operation.getName().value() + ". Valid operations are: " + FTP_OPERATIONS;
+         logger.error(msg);
+         cor.addMsg(msg);
+         cor.setOverallResultSuccess(false);
+         } else {*/
+        actualFileUsed = generateFile(this.workingDir, this.fileName, this.fileContent).getName();//(this.workingDir, this.fileName, this.fileContent).getName();
+        switch (operation.getName()) {
+            case FTP_DOWNLOAD_FILE:
+                ftpDownloadFile();
+                break;
+            case FTP_UPLOAD_FILE:
+                //generateFile();
+                ftpUploadFile();
+                break;
+            case FTP_CHECK_DELIVERED_FOLDER_FOR_FILE:
+                checkFolderForFile(this.archiveDirectory);
+                break;
+            case FTP_CHECK_ERROR_FOLDER_FOR_FILE:
+                checkFolderForFile(this.errorDirectory);
+                break;
+            case FTP_SEARCH_FOR_FILE:
+                checkFolderForFile(this.stageDirectory);
+                break;
+            default:
+                logger.info("Operation execution not yet implemented: " + operation.getName().value());
+                cor.addMsg("Operation: " + operation.getName().value() + " is valid, but not yet implemented");
         }
-    
     }
 
     private void ftpDownloadFile() throws FtpComponentException {
+        FTPClient client = null;
         try {
             switch (security) {
                 case NONE:
@@ -179,105 +182,369 @@ public class FTPComponent extends AbstractSoaTFComponent {
                      * This implementation is just for testing purposes, there are currently 2 libraries for FTP, SFTP, FTPS and FTPES.
                      * Once I will wrap them into one client object, the usage will change.
                      */
-                    FTPClient client = new FTPClient();
+                    client = new FTPClient();
                     client.connect(this.hostName, this.port);
                     client.login(this.user, this.password);
                     client.changeDirectory(this.stageDirectory);
-                    File localFile = new File(workingDir, fileName);
+                    File localFile = new File(workingDir, actualFileUsed);
                     client.download(fileName, localFile);
-                    client.disconnect(true);
                     logger.info("File with name '" + fileName + "' was downloaded from: " + this.stageDirectory);
                     cor.addMsg("File with name '" + fileName + "' was downloaded from: " + this.stageDirectory);
                     cor.markSuccessful();
                     break;
                 default:
-                    logger.info("Security type not supported: " + security);
-                    cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
+                    final String msg = "Security type not supported: " + security;
+                    logger.info(msg);
+                    cor.addMsg(msg);
+                    throw new FtpComponentException(msg);
             }
         } catch (IllegalStateException | FTPException | IOException | FTPIllegalReplyException | FTPDataTransferException | FTPAbortedException ftpex) {
-            final String msg = "TODO";
+            final String msg = "Error while downloading the file.";
             cor.addMsg(msg);
             throw new FtpComponentException(msg, ftpex);
+        } finally {
+            if (client != null) {
+                try {
+                    client.disconnect(true);
+                } catch (IllegalStateException | IOException | FTPIllegalReplyException | FTPException ex) {;}
+            }
         }
     }
 
     private void checkFolderForFile(String folderName) throws FtpComponentException {
-        try {
-            if (fileName == null) {
-                logger.error("File name was not set.");
-                cor.addMsg("File name was not set.");
-                return;
-            }
-            switch (security) {
-                case NONE:
-                    FTPClient client = new FTPClient();
+        FTPClient client = null;
+        if (actualFileUsed == null) {
+            final String msg = "File name was not set.";
+            cor.addMsg(msg);
+            throw new FtpComponentException(msg);
+        }
+        switch (security) {
+            case NONE:
+                try {
+                    ProgressMonitor.init(5, "Connecting to FTP server...");
+                    client = new FTPClient();
                     client.connect(this.hostName, this.port);
+                    ProgressMonitor.increment("Logging in...");
                     client.login(this.user, this.password);
+                    ProgressMonitor.increment("Changing directory...");
                     client.changeDirectory(folderName);
+                    ProgressMonitor.increment("Listing files...");
                     FTPFile[] fileArray = client.list();
                     boolean found = false;
-                    for (int i = 0; i < fileArray.length; i++) {
-                        FTPFile file = fileArray[i];
+                    for (FTPFile file : fileArray) {
                         String name = file.getName();
-                        if (name != null && (name.equals(fileName) || name.endsWith("__" + fileName))) {
+                        if (name != null && (name.equals(actualFileUsed) || name.endsWith("__" + actualFileUsed))) {
                             found = true;
                             break;
                         }
                     }
                     if (found) {
-                        logger.info("File with name '" + fileName + "' was found in directory: " + folderName);
-                        cor.addMsg("File with name '" + fileName + "' was found in directory: " + folderName);
+                        logger.info("File with name '" + actualFileUsed + "' was found in directory: " + folderName);
+                        cor.addMsg("File with name '" + actualFileUsed + "' was found in directory: " + folderName);
                         cor.markSuccessful();
                     } else {
-                        logger.info("File with name '" + fileName + "' was not found in directory: " + folderName);
-                        cor.addMsg("File with name '" + fileName + "' was not found in directory: " + folderName);
+                        final String message = "File with name '" + actualFileUsed + "' was not found in directory: " + folderName;
+                        logger.info(message);
+                        cor.addMsg(message);
+                        String additionalMessage=null;
+                        client.changeDirectory(this.stageDirectory);
+                        fileArray = client.list();
+                        for (int i = 0; i < fileArray.length; i++) {
+                            FTPFile file = fileArray[i];
+                            String name = file.getName();
+                            if (name != null && (name.equals(actualFileUsed) || name.endsWith("__" + actualFileUsed))) {
+                                additionalMessage = "The file was found in the original directory, it seems not to be polled at all.\n";
+                                break;
+                            }
+                        }
+                        if (additionalMessage == null) {
+                            client.changeDirectory(this.errorDirectory);
+                            fileArray = client.list();
+                            for (int i = 0; i < fileArray.length; i++) {
+                                FTPFile file = fileArray[i];
+                                String name = file.getName();
+                                if (name != null && (name.equals(actualFileUsed) || name.endsWith("__" + actualFileUsed))) {
+                                    additionalMessage = "The file was found in the error directory. There was an error while processing the file.";
+                                    break;
+                                }
+                            }
+                        }
+                        if (additionalMessage == null) {
+                            client.changeDirectory(this.archiveDirectory);
+                            fileArray = client.list();
+                            for (int i = 0; i < fileArray.length; i++) {
+                                FTPFile file = fileArray[i];
+                                String name = file.getName();
+                                if (name != null && (name.equals(actualFileUsed) || name.endsWith("__" + actualFileUsed))) {
+                                    additionalMessage = "The file was found in the archive directory. File was processed without any errors.";
+                                    break;
+                                }
+                            }
+                        }
+                        cor.addMsg(additionalMessage);                        
+                        throw new FtpComponentException(message);
                     }
-                    client.disconnect(true);
                     break;
-                default:
-                    logger.info("Security type not supported: " + security);
-                    cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
-            }
-        } catch (FTPException | FTPIllegalReplyException | IllegalStateException | IOException | FTPDataTransferException | FTPAbortedException | FTPListParseException ftpex) {
-            final String msg = "TODO";
-            cor.addMsg(msg);
-            throw new FtpComponentException(msg, ftpex);
+                } catch (FTPException | FTPIllegalReplyException | IllegalStateException | IOException | FTPDataTransferException | FTPAbortedException | FTPListParseException ftpex) {
+                    final String msg = "FTP error while trying to search in the remote folder";
+                    cor.addMsg(msg);
+                    throw new FtpComponentException(msg, ftpex);
+                } finally {
+                    ProgressMonitor.increment("Disconnecting...");
+                    if (client != null) {
+                        try {
+                            client.disconnect(true);
+                        } catch (IllegalStateException | IOException | FTPIllegalReplyException | FTPException ex) {;}
+                    }
+                }
+            case SSH:
+                Session session = null;
+                ChannelSftp channelSftp = null;
+
+                try {
+                    JSch jsch = new JSch();
+                    String sshMsg = "Creating SSH session...";
+                    ProgressMonitor.init(6, sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+                    session = jsch.getSession(this.user, this.hostName, this.port);
+                    session.setPassword(this.password);
+                    session.setConfig(FileComponent.CONFIG);
+                    sshMsg = "SSH session created.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+
+                    sshMsg = "Connecting to SSH session...";
+                    ProgressMonitor.increment(sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+                    session.connect();
+                    sshMsg = "Connected to SSH session.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+
+                    sshMsg = "Opening SSH channel...";
+                    ProgressMonitor.increment(sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+                    channelSftp = (ChannelSftp) session.openChannel("sftp");
+                    sshMsg = "SSH channel opened.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+
+                    sshMsg = "Connecting to SSH channel...";
+                    ProgressMonitor.increment(sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+                    channelSftp.connect();
+                    sshMsg = "Connected to SSH channel.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg);
+
+                    Vector ls;
+
+                    sshMsg = "Listing '" + folderName + "' content...";
+                    ProgressMonitor.increment("Listing directory content...");
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg);
+                    ls = channelSftp.ls(folderName);
+
+                    if(!Utils.isEmpty(ls)) {
+                        for (Object object : ls) {
+                            ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) object;
+                            final String name = entry.getFilename();
+                            if (name != null && (name.equals(actualFileUsed) || name.endsWith("__" + actualFileUsed))) {
+                            //if (entry.getFilename().matches(fileName)) {
+                                String msg = "File '" + actualFileUsed + "' found in '" + folderName + "'";
+                                logger.info(msg);
+                                cor.addMsg(msg);
+                                cor.markSuccessful();
+                                return;
+                            }
+                        }
+                    }
+                    sshMsg = "File '" + actualFileUsed + "' not found in '" + folderName + "'";
+                    cor.addMsg(sshMsg);
+
+                    String additionalMessage=null;
+                    ls = channelSftp.ls(this.stageDirectory);                        
+                    if(!Utils.isEmpty(ls)) {
+                        for (Object object : ls) {
+                            ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) object;
+                            final String name = entry.getFilename();
+                            if (name != null && (name.equals(actualFileUsed) || name.endsWith("__" + actualFileUsed))) {
+                                additionalMessage =  "The file was found in the original directory, it seems not to be polled at all.\n";
+                                break;
+                            }
+                        }
+                    }
+                    if (additionalMessage == null) {
+                        ls = channelSftp.ls(this.errorDirectory);     
+                        if(!Utils.isEmpty(ls)) {
+                            for (Object object : ls) {
+                                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) object;
+                                final String name = entry.getFilename();
+                                if (name != null && (name.equals(actualFileUsed) || name.endsWith("__" + actualFileUsed))) {
+                                    additionalMessage =  "The file was found in the error directory. There was an error while processing the file.";
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    if (additionalMessage == null) {
+                        ls = channelSftp.ls(this.archiveDirectory);     
+                        if(!Utils.isEmpty(ls)) {
+                            for (Object object : ls) {
+                                ChannelSftp.LsEntry entry = (ChannelSftp.LsEntry) object;
+                                final String name = entry.getFilename();
+                                if (name != null && (name.equals(actualFileUsed) || name.endsWith("__" + actualFileUsed))) {
+                                    additionalMessage = "The file was found in the archive directory. File was processed without any errors.";
+                                    break;
+                                }
+                            }
+                        }                            
+                    }
+                    cor.addMsg(additionalMessage);                         
+                    throw new FtpComponentException(sshMsg);
+                } catch (JSchException | SftpException ftpex) {
+                    final String msg = "FTP error while trying to search in the remote folder";
+                    cor.addMsg(msg);
+                    throw new FtpComponentException(msg, ftpex);
+                } finally {
+                    ProgressMonitor.increment("Disconnecting...");
+                    FileComponent.disconnect(session, channelSftp);
+                }                                                                                                                                                                                                                                                                                                                                
+            default:
+                final String msg = "Security type not supported: " + security;
+                logger.info(msg);
+                cor.addMsg(msg);
+                throw new FtpComponentException(msg);
         }
     }
 
     private void ftpUploadFile() throws FtpComponentException {
-        try {
-            switch (this.security) {
-                case NONE:
+        FTPClient client = null;
+        
+        File localFile = new File(workingDir, actualFileUsed);            
+        switch (this.security) {
+            case NONE:
+                try {
                     /*
                      * This implementation is just for testing purposes, there are currently 2 libraries for FTP, SFTP, FTPS and FTPES.
                      * Once I will wrap them into one client object, the usage will change.
                      */
-                    FTPClient client = new FTPClient();
+                    ProgressMonitor.init(5, "Connecting to FTP server...");
+                    client = new FTPClient();
                     client.connect(this.hostName, this.port);
+                    ProgressMonitor.increment("Logging in...");
                     client.login(this.user, this.password);
+                    ProgressMonitor.increment("Changing directory...");
                     client.changeDirectory(this.stageDirectory);
-                    File localFile = new File(workingDir, actualFileUsed);
+                    ProgressMonitor.increment("Uploading file...");
                     client.upload(localFile);
-                    client.disconnect(true);
-                    logger.info("File with name '" + fileName + "' was uploaded: " + this.stageDirectory);
-                    cor.addMsg("File with name '" + fileName + "' was uploaded to: " + this.stageDirectory);
+                    logger.info("File with name '" + actualFileUsed + "' was uploaded: " + this.stageDirectory);
+                    cor.addMsg("File with name '" + actualFileUsed + "' was uploaded to: " + this.stageDirectory);
                     cor.markSuccessful();
-                    break;
-                default:
-                    logger.info("Security type not supported: " + security);
-                    cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
-            }
-        } catch (IllegalStateException | IOException | FTPIllegalReplyException | FTPException | FTPDataTransferException | FTPAbortedException ftpex) {
-            final String msg = "";
-            cor.addMsg(msg);
-            throw new FtpComponentException(msg, ftpex);
+                } catch (IllegalStateException | IOException | FTPIllegalReplyException | FTPException | FTPDataTransferException | FTPAbortedException ftpex) {
+                    final String msg = "FTP error while uploading the file.";
+                    cor.addMsg(msg);
+                    throw new FtpComponentException(msg, ftpex);
+                } finally {
+                    ProgressMonitor.increment("Disconnecting...");
+                    if (client != null) {
+                        try {
+                            client.disconnect(true);
+                        } catch (IllegalStateException | IOException | FTPIllegalReplyException | FTPException ex) {;}
+                    }
+                }
+                break;
+            case SSH:
+                String sshMsg;
+                Session session = null;
+                ChannelSftp channelSftp = null;
+                try {
+                    JSch jsch = new JSch();
+                    sshMsg = "Creating SSH session...";
+                    ProgressMonitor.init(8, sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+                    session = jsch.getSession(this.user, this.hostName, this.port);
+                    session.setPassword(this.password);
+                    session.setConfig(FileComponent.CONFIG);
+                    sshMsg = "SSH session created.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+
+                    sshMsg = "Connecting to SSH session...";
+                    ProgressMonitor.increment(sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+                    session.connect();
+                    sshMsg = "Connected to SSH session.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+
+                    sshMsg = "Opening SSH channel...";
+                    ProgressMonitor.increment(sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+                    channelSftp = (ChannelSftp) session.openChannel("sftp");
+                    sshMsg = "SSH channel opened.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+
+                    sshMsg = "Connecting to SSH channel...";
+                    ProgressMonitor.increment(sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg);
+                    channelSftp.connect();
+                    sshMsg = "Connected to SSH channel.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg);
+
+                    sshMsg = "Changing to '" + this.stageDirectory + "' directory...";
+                    ProgressMonitor.increment("Changing directory...");
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg);
+                    channelSftp.cd(this.stageDirectory);
+                    sshMsg = "Directory changed.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg);
+
+                    final FileInputStream fis;
+                    String destFile = (this.stageDirectory + "/" + actualFileUsed).replaceAll("//", "/"); //ensure that variable doesn't contain double slash
+                    sshMsg = "Opening file '%s' for transfer. Destination file is: " + destFile;
+                    ProgressMonitor.increment("Opening file for transfer...");
+                    cor.addMsg(sshMsg, "<a href='file://"+localFile.getAbsolutePath()+"'>"+localFile.getAbsolutePath()+"</a>", FileSystem.getRelativePath(localFile));
+                    fis = new FileInputStream(localFile);
+
+                    sshMsg = "Transferring file...";
+                    ProgressMonitor.increment(sshMsg);
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg, null);
+                    channelSftp.put(fis, actualFileUsed);
+                    sshMsg = "File transfer finished successfully.";
+                    logger.info(sshMsg);
+                    cor.addMsg(sshMsg);
+                    cor.markSuccessful();
+                } catch (JSchException | SftpException | FileNotFoundException ftpex) {
+                    final String msg = "FTP error while uploading the file.";
+                    cor.addMsg(msg);
+                    throw new FtpComponentException(msg, ftpex);
+                } finally {
+                    ProgressMonitor.increment("Disconnecting...");
+                    FileComponent.disconnect(session, channelSftp);
+                }
+                break;                                                                                                                                                                
+            default:
+                logger.info("Security type not supported: " + security);
+                cor.addMsg("Security type " + security + " is valid, but not implemented yet.");
         }
     }
 
     private File generateFile(File path, String fileName, String fileContent) throws FtpComponentException {
-        String actualPrefix = new SimpleDateFormat("yyyyMMdd_hhmmss_").format(new Date());
-        File localFile = new File(path, actualPrefix + fileName);
+        File localFile = new File(path, Utils.insertTimestampToFilename(fileName, FlowExecutor.getActualRunDate()));
+        
         if (localFile.exists()) {
             return localFile;
         }
@@ -290,15 +557,11 @@ public class FTPComponent extends AbstractSoaTFComponent {
         } catch (IOException ex) {
             //TODO
         } finally {
-            try {
-                if (writer != null) {
+            if (writer != null) {            
+                try {
                     writer.close();
-                }
-            } catch (IOException ex) {
-                final String msg = "TODO";
-                cor.addMsg(msg);
-                throw new FtpComponentException(msg, ex);
-            }
+                } catch (IOException ex) {;}
+            }                
         }
         return localFile;
     }

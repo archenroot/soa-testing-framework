@@ -20,19 +20,23 @@ package com.ibm.soatf.config;
 import static com.ibm.soatf.config.MasterFrameworkConfig.IFACE_CONFIG_FILENAME;
 import com.ibm.soatf.config.master.Databases.Database;
 import com.ibm.soatf.config.master.Databases.Database.DatabaseInstance;
+import com.ibm.soatf.config.master.ExecBlockOperation;
 import com.ibm.soatf.config.master.FTPServers.FtpServer;
 import com.ibm.soatf.config.master.FTPServers.FtpServer.Directories;
 import com.ibm.soatf.config.master.FTPServers.FtpServer.FtpServerInstance;
 import com.ibm.soatf.config.master.FlowPattern;
 import com.ibm.soatf.config.master.Interface;
 import com.ibm.soatf.config.master.Interface.Patterns.ReferencedFlowPattern;
+import com.ibm.soatf.config.master.OSBReporting;
 import com.ibm.soatf.config.master.OSBReporting.OsbReportingInstance;
 import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
+import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.AdminServer;
 import com.ibm.soatf.config.master.Project;
 import com.ibm.soatf.config.master.SOATestingFrameworkMasterConfiguration;
 import com.ibm.soatf.config.master.TestScenario;
 import com.ibm.soatf.config.master.TestScenario.ExecutionBlock;
+import com.ibm.soatf.config.master.TestScenarioPreOrPostExecutionBlock;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -42,14 +46,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.logging.Level;
+import javax.xml.XMLConstants;
+import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
@@ -57,8 +62,11 @@ import javax.xml.xpath.XPathFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
  * Class responsible for input/output operations between framework and master
@@ -70,6 +78,21 @@ public final class MasterConfiguration {
 
     private static final Logger logger = LogManager.getLogger(MasterConfiguration.class.getName());
 
+    /**
+     *
+     */
+    public static final String OSB_CLUSTER_TYPE = "OSB";
+
+    /**
+     *
+     */
+    public static final String SOA_CLUSTER_TYPE = "SOA";
+
+    /**
+     *
+     */
+    public static final String WSM_CLUSTER_TYPE = "WSM";
+
     private final MasterFrameworkConfig MFC;
 
     private SOATestingFrameworkMasterConfiguration XML_CONFIG;
@@ -78,27 +101,63 @@ public final class MasterConfiguration {
 
     private final Map<String, InterfaceConfiguration> ICFG = new HashMap<>();
     private final Map<Interface, InterfaceConfiguration> ICFG2 = new HashMap<>();
+    private Document DOM;
+    private Document noNamespaceDOM;
+    private Binder<Node> binder;
 
     MasterConfiguration(final MasterFrameworkConfig mfc) {
         MFC = mfc;
     }
 
     /**
-     * Initialize master configuraiton XML file unmarshaller. Check if the file
-     * exists and unmarshall master configuration into object.
-     *
+     * If refers <code>./schema/SOATFMasterConfig/SOATFMasterConfig.xsd</code> for schema file and
+     * creates a document builder by passing the schema file as argument.
+     * this document builder refers the <code>MasterFrameworkConfig.masterConfigFile</code> for the 
+     * physical location of <code>master-config</code> file and parse the file using DOM and creates a JAVA object name 
+     * <code>SOATestingFrameworkMasterConfiguration</code>
      * @throws FrameworkConfigurationException
      */
-    void init() throws FrameworkConfigurationException {
+    void init() throws MasterConfigurationException {
         logger.info("Unmarshalling master configuration from file: " + MFC.getMasterConfigFile());
-        JAXBContext jaxbContext;
-        Unmarshaller jaxbUnmarshaller;
         try {
-            jaxbContext = JAXBContext.newInstance("com.ibm.soatf.config.master");
-            jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            XML_CONFIG = ((JAXBElement<SOATestingFrameworkMasterConfiguration>) jaxbUnmarshaller.unmarshal(MFC.getMasterConfigFile())).getValue();
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            SchemaFactory sFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            File schemaFile = new File(new File(new File(MasterFrameworkConfig.SOATF_HOME, "schema"), "SOATFMasterConfig"), "SOATFMasterConfig.xsd");
+            dbf.setSchema(sFactory.newSchema(schemaFile));
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            builder.setErrorHandler(new ErrorHandler() {
+                @Override
+                public void warning(SAXParseException exception) throws SAXException {
+                    throw exception;
+                }
+                @Override
+                public void error(SAXParseException exception) throws SAXException {
+                    throw exception;
+                }
+                @Override
+                public void fatalError(SAXParseException exception) throws SAXException {
+                    throw exception;
+                }
+            });
+            DOM = builder.parse(MFC.getMasterConfigFile());
+            DocumentBuilderFactory noNamespaceFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder noNamespaceBuilder = noNamespaceFactory.newDocumentBuilder();
+            noNamespaceDOM = noNamespaceBuilder.parse(MFC.getMasterConfigFile());
+            JAXBContext jaxbContext = JAXBContext.newInstance("com.ibm.soatf.config.master");
+            binder = jaxbContext.createBinder();
+            XML_CONFIG = ((JAXBElement<SOATestingFrameworkMasterConfiguration>) binder.unmarshal(DOM)).getValue();
         } catch (JAXBException jbex) {
-            throw new FrameworkConfigurationException("Error while unmarshalling master configuration object from XML file " + MFC.getMasterConfigFile(), jbex);
+            throw new MasterConfigurationException("Error while unmarshalling master configuration object from XML file " + MFC.getMasterConfigFile(), jbex);
+        } catch (ParserConfigurationException ex) {
+            String msg = "Error while attempting to create DocumentBuilder while processing " + MFC.getMasterConfigFile().getAbsolutePath();
+            throw new MasterConfigurationException(msg, ex);
+        } catch (SAXException ex) {
+            String msg = "Error while parsing master configuration from " + MFC.getMasterConfigFile().getAbsolutePath() + ": " + ex.getMessage();
+            throw new MasterConfigurationException(msg, ex);
+        } catch (IOException ex) {
+            String msg = "I/O Error occured when trying to parse master configuration file " + MFC.getMasterConfigFile().getAbsolutePath() + ": " + ex.getMessage();
+            throw new MasterConfigurationException(msg, ex);
         }
     }
 
@@ -110,36 +169,46 @@ public final class MasterConfiguration {
      */
     public Set<String> getAllEnvironments() throws MasterConfigurationException {
         if (environments == null) {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder builder;
-            try {
-                builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(MFC.getMasterConfigFile());
-                XPathFactory xPathfactory = XPathFactory.newInstance();
-                XPath xpath = xPathfactory.newXPath();
-                NodeList list = (NodeList) xpath.evaluate("//*/@environment", doc, XPathConstants.NODESET);
-                //sorting case insensitive
-                environments = new TreeSet<>(new Comparator<String>() {
+            NodeList list = getNodeList("//*/@environment", DOM);
+            //sorting case insensitive
+            environments = new TreeSet<>(new Comparator<String>() {
 
-                    @Override
-                    public int compare(String s1, String s2) {
-                        return s1.compareToIgnoreCase(s2);
-                    }
-                });
-                for (int i = 0; i < list.getLength(); i++) {
-                    environments.add(list.item(i).getNodeValue());
+                @Override
+                public int compare(String s1, String s2) {
+                    return s1.compareToIgnoreCase(s2);
                 }
-            } catch (ParserConfigurationException ex) {
-                String msg = "Error while attempting to parse master configuration for XPath queries.";
-                logger.error(msg);
-                throw new MasterConfigurationException(ex);
-            } catch (SAXException | IOException | XPathExpressionException ex) {
-                String msg = "Error while attempting to parse master configuration for XPath queries.";
-                logger.error(msg, ex);
-                throw new MasterConfigurationException(ex);
+            });
+            for (int i = 0; i < list.getLength(); i++) {
+                environments.add(list.item(i).getNodeValue());
             }
         }
         return environments;
+    }
+    
+    private NodeList getNodeList(String xpathExpr, Document dom) throws MasterConfigurationException {
+        try {
+            XPathFactory xPathfactory = XPathFactory.newInstance();
+            XPath xpath = xPathfactory.newXPath();
+            NodeList list = (NodeList) xpath.evaluate(xpathExpr, dom, XPathConstants.NODESET);
+            return list;
+        } catch (XPathExpressionException ex) {
+            String msg = "Error while evaluating XPath expression.";
+            logger.error(msg, ex);
+            throw new MasterConfigurationException(ex);
+        }
+    }
+    
+    private Node getSingleNode(String xpathExpr, Document dom) throws MasterConfigurationException {
+        try {
+            XPathFactory xPathfactory = XPathFactory.newInstance();
+            XPath xpath = xPathfactory.newXPath();
+            Node node = (Node) xpath.evaluate(xpathExpr, dom, XPathConstants.NODE);
+            return node;
+        } catch (XPathExpressionException ex) {
+            String msg = "Error while evaluating XPath expression.";
+            logger.error(msg, ex);
+            throw new MasterConfigurationException(ex);
+        }
     }
 
     /**
@@ -220,6 +289,7 @@ public final class MasterConfiguration {
 
     /**
      * Gets list of interface referenced flow patterns.
+     *
      * @param interfaceName String representation of interface name
      * @return list of flow patterns referenced by interface
      * @throws com.ibm.soatf.config.MasterConfigurationException
@@ -245,8 +315,7 @@ public final class MasterConfiguration {
 
     /**
      *
-     * @return
-     * @throws com.ibm.soatf.config.MasterConfigurationException
+     * @return @throws com.ibm.soatf.config.MasterConfigurationException
      */
     public List<OracleFusionMiddlewareInstance> getOracleFusionMiddlewareInstances() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getOracleFusionMiddleware().getOracleFusionMiddlewareInstance().isEmpty()) {
@@ -272,8 +341,195 @@ public final class MasterConfiguration {
 
     /**
      *
+     * @param environment
      * @return
-     * @throws com.ibm.soatf.config.MasterConfigurationException @throws FrameworkConfigurationException
+     * @throws MasterConfigurationException
+     */
+    public AdminServer getAdminServer(String environment) throws MasterConfigurationException {
+        OracleFusionMiddlewareInstance ofmwi = getOracleFusionMiddlewareInstance(environment);
+        AdminServer as = ofmwi.getAdminServer();
+        if (as == null) {
+            throw new MasterConfigurationException("Missing admin server configuration.");
+        }
+        return as;
+    }
+
+    /**
+     *
+     * @param environment
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public List<OracleFusionMiddlewareInstance.Clusters.Cluster> getClusters(String environment) throws MasterConfigurationException {
+        OracleFusionMiddlewareInstance.Clusters clusters = getOracleFusionMiddlewareInstance(environment).getClusters();
+        // TODO
+        if (false) {
+            throw new MasterConfigurationException("TODO");
+        }
+        return clusters.getCluster();
+    }
+
+    /**
+     *
+     * @param ofmwi
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public List<OracleFusionMiddlewareInstance.Clusters.Cluster> getClusters(OracleFusionMiddlewareInstance ofmwi) throws MasterConfigurationException {
+        OracleFusionMiddlewareInstance.Clusters clusters = ofmwi.getClusters();
+        // TODO
+        if (false) {
+            throw new MasterConfigurationException("TODO");
+        }
+        return clusters.getCluster();
+    }
+
+    /**
+     *
+     * @param environment
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public OracleFusionMiddlewareInstance.Clusters.Cluster getOsbCluster(String environment) throws MasterConfigurationException {
+        List<OracleFusionMiddlewareInstance.Clusters.Cluster> clusters = getOracleFusionMiddlewareInstance(environment).getClusters().getCluster();
+
+        for (OracleFusionMiddlewareInstance.Clusters.Cluster cluster : clusters) {
+            if (cluster.getType().equals(OSB_CLUSTER_TYPE)) {
+                return cluster;
+
+            }
+
+        }
+        throw new MasterConfigurationException("Cannot find any OSB cluster type configuration in master configuration file.");
+    }
+
+    /**
+     *
+     * @param ofmwi
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public OracleFusionMiddlewareInstance.Clusters.Cluster getOsbCluster(OracleFusionMiddlewareInstance ofmwi) throws MasterConfigurationException {
+        List<OracleFusionMiddlewareInstance.Clusters.Cluster> clusters = ofmwi.getClusters().getCluster();
+
+        for (OracleFusionMiddlewareInstance.Clusters.Cluster cluster : clusters) {
+            if (cluster.getType().equals(OSB_CLUSTER_TYPE)) {
+                return cluster;
+
+            }
+
+        }
+        throw new MasterConfigurationException("Cannot find any OSB cluster type configuration in master configuration file.");
+    }
+
+    /**
+     *
+     * @param environment
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public OracleFusionMiddlewareInstance.Clusters.Cluster getSoaCluster(String environment) throws MasterConfigurationException {
+        List<OracleFusionMiddlewareInstance.Clusters.Cluster> clusters = getOracleFusionMiddlewareInstance(environment).getClusters().getCluster();
+
+        for (OracleFusionMiddlewareInstance.Clusters.Cluster cluster : clusters) {
+            if (cluster.getType().equals(SOA_CLUSTER_TYPE)) {
+                return cluster;
+
+            }
+
+        }
+        throw new MasterConfigurationException("Cannot find any SOA cluster type configuration in master configuration file.");
+    }
+
+    /**
+     *
+     * @param ofmwi
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public OracleFusionMiddlewareInstance.Clusters.Cluster getSoaCluster(OracleFusionMiddlewareInstance ofmwi) throws MasterConfigurationException {
+        List<OracleFusionMiddlewareInstance.Clusters.Cluster> clusters = ofmwi.getClusters().getCluster();
+
+        for (OracleFusionMiddlewareInstance.Clusters.Cluster cluster : clusters) {
+            if (cluster.getType().equals(SOA_CLUSTER_TYPE)) {
+                return cluster;
+
+            }
+
+        }
+        throw new MasterConfigurationException("Cannot find any SOA cluster type configuration in master configuration file.");
+    }
+
+    /**
+     *
+     * @param environment
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public OracleFusionMiddlewareInstance.Clusters.Cluster getWsmCluster(String environment) throws MasterConfigurationException {
+        List<OracleFusionMiddlewareInstance.Clusters.Cluster> clusters = getOracleFusionMiddlewareInstance(environment).getClusters().getCluster();
+
+        for (OracleFusionMiddlewareInstance.Clusters.Cluster cluster : clusters) {
+            if (cluster.getType().equals(WSM_CLUSTER_TYPE)) {
+                return cluster;
+
+            }
+
+        }
+        throw new MasterConfigurationException("Cannot find any WSM cluster type configuration in master configuration file.");
+    }
+
+    /**
+     *
+     * @param ofmwi
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public OracleFusionMiddlewareInstance.Clusters.Cluster getWsmCluster(OracleFusionMiddlewareInstance ofmwi) throws MasterConfigurationException {
+        List<OracleFusionMiddlewareInstance.Clusters.Cluster> clusters = ofmwi.getClusters().getCluster();
+
+        for (OracleFusionMiddlewareInstance.Clusters.Cluster cluster : clusters) {
+            if (cluster.getType().equals(WSM_CLUSTER_TYPE)) {
+                return cluster;
+
+            }
+
+        }
+        throw new MasterConfigurationException("Cannot find any WSM cluster type configuration in master configuration file.");
+    }
+
+    /**
+     *
+     * @param environment
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public OracleFusionMiddlewareInstance.Clusters.Cluster.ManagedServer getFirstManagedServerInCluster(String environment) throws MasterConfigurationException {
+        for (OracleFusionMiddlewareInstance.Clusters.Cluster.ManagedServer ms : getWsmCluster(environment).getManagedServer()) {
+            return ms;
+        }
+
+        throw new MasterConfigurationException("There are no managed servers configured within lookup cluster: " + getWsmCluster(environment).getName());
+    }
+
+    /**
+     *
+     * @param cluster
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public OracleFusionMiddlewareInstance.Clusters.Cluster.ManagedServer getFirstManagedServerInCluster(
+            OracleFusionMiddlewareInstance.Clusters.Cluster cluster) throws MasterConfigurationException {
+        for (OracleFusionMiddlewareInstance.Clusters.Cluster.ManagedServer ms : cluster.getManagedServer()) {
+            return ms;
+        }
+        throw new MasterConfigurationException("There are no managed servers configured within lookup cluster: " + cluster.getName());
+    }
+
+    /**
+     *
+     * @return @throws com.ibm.soatf.config.MasterConfigurationException @throws
+     * FrameworkConfigurationException
      */
     public List<Database> getDatabases() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getDatabases().getDatabase().isEmpty()) {
@@ -328,8 +584,8 @@ public final class MasterConfiguration {
 
     /**
      *
-     * @return
-     * @throws com.ibm.soatf.config.MasterConfigurationException @throws FrameworkConfigurationException
+     * @return @throws com.ibm.soatf.config.MasterConfigurationException @throws
+     * FrameworkConfigurationException
      */
     public List<FtpServer> getFTPServers() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getFtpServers().getFtpServer().isEmpty()) {
@@ -399,8 +655,8 @@ public final class MasterConfiguration {
 
     /**
      *
-     * @return
-     * @throws com.ibm.soatf.config.MasterConfigurationException @throws FrameworkConfigurationException
+     * @return @throws com.ibm.soatf.config.MasterConfigurationException @throws
+     * FrameworkConfigurationException
      */
     public List<FlowPattern> getFlowPatterns() throws MasterConfigurationException {
         if (XML_CONFIG.getFlowPatterns().getFlowPattern().isEmpty()) {
@@ -504,7 +760,7 @@ public final class MasterConfiguration {
      * @return
      * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public List<Operation> getOperations(String interfaceFlowPatternId, String interfaceTestScenarioId, String interfaceExecutionBlockId) throws MasterConfigurationException {
+    public List<ExecBlockOperation> getOperations(String interfaceFlowPatternId, String interfaceTestScenarioId, String interfaceExecutionBlockId) throws MasterConfigurationException {
         ExecutionBlock executionBlock = this.getExecutionBlock(interfaceFlowPatternId, interfaceTestScenarioId, interfaceExecutionBlockId);
         return executionBlock.getOperation();
     }
@@ -542,8 +798,7 @@ public final class MasterConfiguration {
 
     /**
      *
-     * @return
-     * @throws com.ibm.soatf.config.MasterConfigurationException
+     * @return @throws com.ibm.soatf.config.MasterConfigurationException
      */
     public List<OsbReportingInstance> getOsbReportingInstanceInstances() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getOsbDatabaseReporting().getOsbReportingInstance().isEmpty()) {
@@ -551,6 +806,17 @@ public final class MasterConfiguration {
         }
         return XML_CONFIG.getEnvironments().getOsbDatabaseReporting().getOsbReportingInstance();
     }
+    
+    /**
+     *
+     * @return @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public OSBReporting getOsbReportingInstance() throws MasterConfigurationException {
+        if (XML_CONFIG.getEnvironments().getOsbDatabaseReporting() == null) {
+            throw new MasterConfigurationException("There are is no OSB Reporting instances configured.");
+        }
+        return XML_CONFIG.getEnvironments().getOsbDatabaseReporting();
+    }    
 
     /**
      *
@@ -602,9 +868,13 @@ public final class MasterConfiguration {
     }
 
     /**
-     *
+     *This method is used to check whether <code>ICFG</code> map contains any value or not. If it is 
+     * empty then it instantiate <code>InterfaceConfiguration</code> Class by passing Interface specific 
+     * configuration file location, <code>MasterFrameowrk</code> object , <code>MasterConfiguration</code> 
+     * object reference as an argument. And calls <code>InterfaceConfiguration.init()</code> method.
+     * Then it populates the map with ifaceName and instantiated InterfaceConfiguration object.
      * @param ifaceName
-     * @return
+     * @return <code>InterfaceConfiguration</code>
      * @throws com.ibm.soatf.config.MasterConfigurationException
      */
     public InterfaceConfiguration getInterfaceConfig(String ifaceName) throws MasterConfigurationException {
@@ -641,7 +911,7 @@ public final class MasterConfiguration {
      * @throws com.ibm.soatf.config.MasterConfigurationException
      */
     public File getIfaceDir(Interface interfaceObj) throws MasterConfigurationException {
-        return new File(MFC.getSoaTestHome(), getInterfaceDirName(interfaceObj.getName()));
+        return new File(MFC.getSoaTestHome(), getInterfaceDirName(interfaceObj));
     }
 
     /**
@@ -651,25 +921,140 @@ public final class MasterConfiguration {
      * @throws com.ibm.soatf.config.MasterConfigurationException
      */
     public File getIfaceConfigFile(Interface interfaceObj) throws MasterConfigurationException {
-        return new File(getIfaceDir(interfaceObj.getName()), IFACE_CONFIG_FILENAME);
+        return new File(getIfaceDir(interfaceObj), IFACE_CONFIG_FILENAME);
     }
 
     /**
      *
      * @param interfaceObj
      * @return
+     * @throws InterfaceConfigurationException
      * @throws com.ibm.soatf.config.MasterConfigurationException
      */
-    public InterfaceConfiguration getInterfaceConfig(Interface interfaceObj) throws MasterConfigurationException {
+    public InterfaceConfiguration getInterfaceConfig(Interface interfaceObj) throws MasterConfigurationException, InterfaceConfigurationException {
         if (!ICFG2.containsKey(interfaceObj)) {
-            try {
-                InterfaceConfiguration ifaceConfig = new InterfaceConfiguration(getIfaceConfigFile(interfaceObj), ConfigurationManager.getInstance().getFrameworkConfig(), this);
-                ifaceConfig.init();
-                ICFG2.put(interfaceObj, ifaceConfig);
-            } catch (FrameworkConfigurationException ex) {
-                throw new MasterConfigurationException(ex);
-            }
+            InterfaceConfiguration ifaceConfig = new InterfaceConfiguration(getIfaceConfigFile(interfaceObj), ConfigurationManager.getInstance().getFrameworkConfig(), this);
+            ifaceConfig.init();
+            ICFG2.put(interfaceObj, ifaceConfig);
         }
         return ICFG2.get(interfaceObj);
+    }
+
+    /**
+     * Returns the parent of the specified JAXB node.
+     *
+     * @param <T> expected return type, should be JAXB type
+     * @param jaxbNode node we want to find the parent for
+     * @param c class of the JAXB element we expect to be returned
+     * @return returns the parent of the <code>jaxbNode</code> that is the type
+     * of <code>T</code> or null
+     */
+    public <T> T getParent(Object jaxbNode, Class<T> c) {
+        Node xmlNode = binder.getXMLNode(jaxbNode);
+        if (xmlNode == null) {
+            return null;
+        }
+        XPathFactory xPathfactory = XPathFactory.newInstance();
+        XPath xpath = xPathfactory.newXPath();
+        Object retVal = null;
+        try {
+            Node parent = (Node) xpath.evaluate("..", xmlNode, XPathConstants.NODE);
+            retVal = binder.getJAXBNode(parent);
+            return c.cast(retVal);
+        } catch (XPathExpressionException ex) {
+            String msg = "Error during XPath query for the JAXB node's parent";
+            logger.error(msg);
+        } catch (ClassCastException ex) {
+            String type = retVal == null ? "?" : retVal.getClass().toString();
+            String msg = "Cannot cast parent of type " + type + " to the expected type of " + c.getClass();
+            logger.error(msg);
+        }
+        return null;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Document getDOM() {
+        return DOM;
+    }
+
+    /**
+     *
+     * @return
+     */
+    public Document getNoNamespaceDOM() {
+        return noNamespaceDOM;
+    }
+
+    /**
+     *
+     * @param flowPatternId
+     * @param testScenarioId
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public TestScenarioPreOrPostExecutionBlock getPreExecutionBlock(String flowPatternId, String testScenarioId) throws MasterConfigurationException {
+        return getTestScenario(flowPatternId, testScenarioId).getPreExecutionBlock();
+    }
+
+    /**
+     *
+     * @param flowPatternId
+     * @param testScenarioId
+     * @return
+     * @throws MasterConfigurationException
+     */
+    public TestScenarioPreOrPostExecutionBlock getPostExecutionBlock(String flowPatternId, String testScenarioId) throws MasterConfigurationException {
+        return getTestScenario(flowPatternId, testScenarioId).getPostExecutionBlock();
+    }
+
+    public List<String> getMasterDatabaseInstanceEnvironments(String dbId) throws MasterConfigurationException {
+        String xPathExpr = "//*/environments/databases/database[@identificator='" + dbId + "']/databaseInstance/@environment";
+        NodeList nodeList = getNodeList(xPathExpr, DOM);
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            list.add(nodeList.item(i).getNodeValue());
+        }
+        return list;
+    }
+
+    public List<String> getMasterFusionMiddlewareInstanceEnvironments() throws MasterConfigurationException {
+        String xPathExpr = "//*/environments/oracleFusionMiddleware/oracleFusionMiddlewareInstance/@environment";
+        NodeList nodeList = getNodeList(xPathExpr, DOM);
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            list.add(nodeList.item(i).getNodeValue());
+        }
+        return list;
+    }
+    
+    public List<String> getMasterFTPServerInstanceEnvironments(String ftpId) throws MasterConfigurationException {
+        String xPathExpr = "//*/environments/ftpServers/ftpServer[@identificator='" + ftpId + "']/ftpServerInstance/@environment";
+        NodeList nodeList = getNodeList(xPathExpr, DOM);
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            list.add(nodeList.item(i).getNodeValue());
+        }
+        return list;
+    }
+    
+    public List<String> getMasterOSBReportingInstanceEnvironments() throws MasterConfigurationException {
+        String xPathExpr = "//*/environments/osbDatabaseReporting/osbReportingInstance/@environment";
+        NodeList nodeList = getNodeList(xPathExpr, DOM);
+        List<String> list = new ArrayList<>();
+        for (int i = 0; i < nodeList.getLength(); i++) {
+            list.add(nodeList.item(i).getNodeValue());
+        }
+        return list;
+    }
+
+    public String getReportDirName() {
+        return XML_CONFIG.getFileSystemStructure().getFlowPatternInstanceRoot().getReportDirectory();
+    }
+    
+    public String getArchiveDirName() {
+        return XML_CONFIG.getFileSystemStructure().getFlowPatternInstanceRoot().getArchiveDirectory();
     }
 }

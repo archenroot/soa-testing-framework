@@ -17,29 +17,33 @@
  */
 package com.ibm.soatf.component.jms;
 
-import com.ibm.soatf.flow.FrameworkExecutionException;
+import com.ibm.soatf.FrameworkException;
+import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.CompOperType;
 import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.component.AbstractSoaTFComponent;
+import com.ibm.soatf.config.ConfigurationManager;
+import com.ibm.soatf.config.MasterConfiguration;
+import com.ibm.soatf.config.MasterConfigurationException;
 import com.ibm.soatf.config.iface.jms.JMSConfig;
 import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance;
 import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.AdminServer;
-import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.Cluster.ManagedServer;
-import com.ibm.soatf.flow.FlowPatternCompositeKey;
+import com.ibm.soatf.config.master.OracleFusionMiddleware.OracleFusionMiddlewareInstance.Clusters.Cluster.ManagedServer;
 import com.ibm.soatf.flow.OperationResult;
-import com.ibm.soatf.xml.ValidatorResult;
+import com.ibm.soatf.gui.ProgressMonitor;
+import com.ibm.soatf.tool.FileSystem;
 import com.ibm.soatf.xml.XMLSubsystemException;
 import com.ibm.soatf.xml.XMLValidator;
 import com.ibm.soatf.xml.XmlFormatter;
 import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
-import java.util.logging.Level;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -47,12 +51,15 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
+import javax.xml.parsers.ParserConfigurationException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apache.commons.io.filefilter.WildcardFileFilter;
 import static org.apache.commons.lang3.exception.ExceptionUtils.getStackTrace;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.xmlbeans.XmlException;
+import org.xml.sax.SAXException;
 
 /**
  * JMS Component is responsible to operate over any JMS related subsystem,
@@ -91,6 +98,7 @@ public class JmsComponent extends AbstractSoaTFComponent {
      */
     public static Set<CompOperType> supportedOperations = CompOperType.JMS_OPERATIONS;
 
+    private MasterConfiguration masterConfig;
     private final OracleFusionMiddlewareInstance jmsMasterConfig;
     private final JMSConfig jmsInterfaceConfig;
 
@@ -104,13 +112,11 @@ public class JmsComponent extends AbstractSoaTFComponent {
      *
      * @param jmsMasterConfig
      * @param jmsInterfaceConfig
-     * @param ifaceFlowPatternCompositeKey
      * @param workingDir
      */
     public JmsComponent(
             OracleFusionMiddlewareInstance jmsMasterConfig,
             JMSConfig jmsInterfaceConfig,
-            FlowPatternCompositeKey ifaceFlowPatternCompositeKey,
             File workingDir) {
         super(SOATFCompType.JMS);
 
@@ -125,19 +131,19 @@ public class JmsComponent extends AbstractSoaTFComponent {
      *
      */
     @Override
-    protected void constructComponent() {
-
+    protected final void constructComponent() {
+        this.masterConfig = ConfigurationManager.getInstance().getMasterConfig();
         this.queueName = jmsInterfaceConfig.getQueue().getName();
         this.adminServer = jmsMasterConfig.getAdminServer();
-        this.managedServer = jmsMasterConfig.getCluster().getManagedServer();
     }
 
     /**
      *
      * @param operation
+     * @throws com.ibm.soatf.flow.FrameworkExecutionException
      */
     @Override
-    public void executeOperation(Operation operation) throws FrameworkExecutionException {
+    public void executeOperation(Operation operation) throws FrameworkException {
         /*if (!supportedOperations.contains(operation.getName())) {
          try {
          throw new com.ibm.soatf.UnsupportedComponentOperationException();
@@ -147,40 +153,35 @@ public class JmsComponent extends AbstractSoaTFComponent {
          }
          }
          */
-        try {
-            switch (operation.getName()) {
-                case JMS_RECEIVE_MESSAGE_FROM_QUEUE:
-
-                    readAllMessagesInQueue();
-
-                    break;
-                case JMS_CHECK_ERROR_QUEUE_FOR_MESSAGE:
-                    checkErrorQueue();
-                    break;
-                case JMS_PURGE_QUEUE:
-                    purgeQueue();
-                    break;
-                case JMS_VALIDATE_MESSAGE:
-                    validateMessageFiles();
-                    break;
-
-                case JMS_DESTINATION_PAUSE_PRODUCTION:
-                    pauseDestionationPoduction();
-                    break;
-                case JMS_DESTINATION_RESUME_PRODUCTION:
-                    resumeDestinationConsumption();
-                    break;
-                default:
-                    break;
-
-            }
-        } catch (JmsComponentException ex) {
-            throw new FrameworkExecutionException(ex);
+        this.managedServer = masterConfig.getFirstManagedServerInCluster(masterConfig.getOsbCluster(jmsMasterConfig));
+        
+        switch (operation.getName()) {
+            case JMS_RECEIVE_MESSAGE_FROM_QUEUE:
+                readAllMessagesInQueue();
+                break;
+            case JMS_CHECK_ERROR_QUEUE_FOR_MESSAGE:
+                checkErrorQueue();
+                break;
+            case JMS_PURGE_QUEUE:
+                purgeQueue();
+                break;
+            case JMS_VALIDATE_MESSAGE:
+                validateMessageFiles();
+                break;
+            case JMS_DESTINATION_PAUSE_PRODUCTION:
+                pauseDestinationProduction();
+                break;
+            case JMS_DESTINATION_RESUME_PRODUCTION:
+                resumeDestinationConsumption();
+                break;
+            default:
+                break;
         }
     }
 
     private void readAllMessagesInQueue() throws JmsComponentException {
         try {
+            ProgressMonitor.init(2, "Creating queue browser");
             DistribuedQueueBrowser dqb = new DistribuedQueueBrowser(
                     workingDir,
                     DEFAULT_PROTO + "://" + adminServer.getHost() + ":" + adminServer.getPort(),
@@ -191,7 +192,8 @@ public class JmsComponent extends AbstractSoaTFComponent {
                     jmsInterfaceConfig.getQueue().getJndiName(),
                     adminServer.getSecurityPrincipal(),
                     adminServer.getSecurityCredentials());
-            List<TextMessage> messages = dqb.getQueueMessages();
+            ProgressMonitor.increment("Retrieveing messages...");
+            Map<File, TextMessage> messages = dqb.getQueueMessages();
             int count = messages.size();
             if (count < 0) {
                 final String msg = "There has been found no message in JMS queue "
@@ -205,18 +207,22 @@ public class JmsComponent extends AbstractSoaTFComponent {
                 logger.error(msg);
                 throw new NoMessageFoundException(msg);
             }
-            cor.markSuccessful();
             //cor.addMsg("Message read from " + jmsInterfaceConfig.getQueue().getName() + " queue available at " + managedServer.getHostName() + " managed server.");
-            cor.addMsg(//count 
-                    "1 message were read from queue "
-                    + jmsInterfaceConfig.getQueue().getName()
-                    + "."
-                    + "\nContent of the message:\n"
-                    + new XmlFormatter().format(messages.get(0).getText()));
-
+            File firstMsg = null;
+            if (messages.keySet() != null) {
+                for(File f: messages.keySet()) {
+                    firstMsg = f;
+                    break;
+                }
+            }
+            if (firstMsg != null) {
+                final String msg = "1 message was read from queue " + jmsInterfaceConfig.getQueue().getName() + ".\nContent of the message:\n %s";            
+                cor.addMsg(msg, new XmlFormatter().format(messages.get(firstMsg).getText()), "[FILE: "+FileSystem.getRelativePath(firstMsg)+"]");
+                cor.markSuccessful();
+            }
             logger.info(count + " messages were read from queue " + jmsInterfaceConfig.getQueue().getName() + ".");
         } catch (JMSException | NoMessageFoundException | XMLSubsystemException e) {
-            cor.addMsg(e.getMessage());
+            cor.addMsg("No message was read from the queue. " + e.getMessage());
             throw new JmsComponentException(e);
         }
     }
@@ -226,7 +232,7 @@ public class JmsComponent extends AbstractSoaTFComponent {
      * @param objectName
      * @return
      */
-    public Iterator<File> getGeneratedFiles(String objectName) {
+    public Iterator<File> getGeneratedFilesIterator(String objectName) {
         String pattern = "*";
         if (objectName != null) {
             pattern = objectName;
@@ -235,41 +241,64 @@ public class JmsComponent extends AbstractSoaTFComponent {
         Iterator it = FileUtils.iterateFiles(workingDir, new WildcardFileFilter(filemask), TrueFileFilter.INSTANCE);
         return it;
     }
+    
+    public File[] getGeneratedFiles(String objectName) {
+        String pattern = "*";
+        if (objectName != null) {
+            pattern = objectName;
+        }
+        String filemask = new StringBuilder(jmsInterfaceConfig.getQueue().getName()).append(NAME_DELIMITER).append(pattern).append(MESSAGE_SUFFIX).toString();
+        return FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(workingDir, new WildcardFileFilter(filemask), TrueFileFilter.INSTANCE));
+    }
 
-    private void validateMessageFiles() {
-        Iterator iterateFiles = getGeneratedFiles(null);
-        while (iterateFiles.hasNext()) {
-            String fileToValidate = iterateFiles.next().toString();
+    private void validateMessageFiles() throws JmsComponentException {
+        File[] files = getGeneratedFiles(null);
+        ProgressMonitor.init(files.length);
+        for (File file : files) {
+            ProgressMonitor.increment("Validating message files...");
+            String fileToValidate = file.getAbsolutePath();
+            try {
+                boolean result = XMLValidator.validateXMLFile(fileToValidate, jmsInterfaceConfig.getMessageSchema().getPath());
+                if (!result) {
+                    final String msg = "Message schema validation resulted in FAIL:"
+                            + "\n message file: %s"
+                            + "\n schema file: " + jmsInterfaceConfig.getMessageSchema().getPath()
+                            + "\n validator result: \n" + result;
+                    cor.addMsg(msg, "<a href='file://"+fileToValidate+"'>"+fileToValidate+"</a>", FileSystem.getRelativePath(file));
+                    //cor.addMsg("Message in queue " + jmsInterfaceConfig.getQueue().getName() + " is not valid");
+                    logger.info("Message in queue " + jmsInterfaceConfig.getQueue().getName() + " is not valid.");
+                    return;
+                }
+                logger.info("Message in queue " + jmsInterfaceConfig.getQueue().getName() + " is valid.");
+                final String msg = "Message schema validation resulted in SUCCESS:"
+                        + "\n message file: %s"
+                        + "\nXML schema file: " + jmsInterfaceConfig.getMessageSchema().getPath();
+                cor.addMsg(msg, "<a href='file://"+fileToValidate+"'>"+fileToValidate+"</a>", FileSystem.getRelativePath(file));
+                cor.markSuccessful();
+            } catch (SAXException | ParserConfigurationException | XmlException | IOException ex) {
+                final String msg = "Message schema validation resulted in FAIL:"
+                            + "\n message file: %s"
+                            + "\n schema file: " + jmsInterfaceConfig.getMessageSchema().getPath()
+                            + "\n validator result: \n" + ex.getMessage();
 
-            ValidatorResult result = XMLValidator.validateXMLFile(fileToValidate, jmsInterfaceConfig.getMessageSchema().getPath());
-            if (!result.isValid()) {
-                cor.addMsg("Message schema validation resulted in FAIL:"
-                        + "\n message file: " + fileToValidate
-                        + "\n schema file: " + jmsInterfaceConfig.getMessageSchema().getPath()
-                        + "\n validator result: \n" + result.getValidatorMessage());
-                //cor.addMsg("Message in queue " + jmsInterfaceConfig.getQueue().getName() + " is not valid");
-                logger.info("Message in queue " + jmsInterfaceConfig.getQueue().getName() + " is not valid.");
-                return;
+                cor.addMsg(msg, "<a href='file://"+fileToValidate+"'>"+fileToValidate+"</a>", FileSystem.getRelativePath(file));
+                throw new JmsComponentException(msg,ex);                
             }
-            logger.info("Message in queue " + jmsInterfaceConfig.getQueue().getName() + " is valid.");
-            cor.addMsg("Message schema validation resulted in SUCCESS:"
-                    + "\nMessage file: " + fileToValidate
-                    + "\nXML schema file: " + jmsInterfaceConfig.getMessageSchema().getPath()
-                    + "\nValidator result: " + result.getValidatorMessage());
-            cor.markSuccessful();
         }
     }
 
-    private void purgeQueue() throws JmsComponentException {
+    private void purgeQueue() throws JmsComponentException, MasterConfigurationException {
         try {
             logger.debug("Trying to purge queue " + jmsInterfaceConfig.getQueue().getJndiName());
+            ManagedServer managedServer = masterConfig.getFirstManagedServerInCluster(masterConfig.getOsbCluster(jmsMasterConfig));
             PurgeQueue pq = new PurgeQueue();
-            List<Message> messages = pq.deleteAllMessagesFromQueue(jmsInterfaceConfig, jmsMasterConfig);
+            List<Message> messages = pq.deleteAllMessagesFromQueue(jmsInterfaceConfig, jmsMasterConfig, managedServer);
             StringBuilder sb = new StringBuilder();
             sb.append("Queue " + jmsInterfaceConfig.getQueue().getName() + " configured at "
-                    + jmsMasterConfig.getCluster().getManagedServer().getHostName() + " managed server has been purged.");
+                    + managedServer.getHostName() + " managed server has been purged.");
             sb.append("\nMessage count deleted: " + messages.size() + ".");
             //sb.append("\nMessage count deleted: " + messages.size() + ".");
+            String shortMsgs = sb.toString();
 
             for (Message mes : messages) {
                 sb.append("\nMessage " + ((TextMessage) mes).getJMSMessageID() + " content:");
@@ -277,11 +306,11 @@ public class JmsComponent extends AbstractSoaTFComponent {
 
             }
             cor.markSuccessful();
-            cor.addMsg(sb.toString());
+            cor.addMsg(sb.toString(), shortMsgs);
             logger.info("Queue " + jmsInterfaceConfig.getQueue().getName() + " was purged.");
         } catch (JMSException | XMLSubsystemException ex) {
             final String msg = "Queue " + jmsInterfaceConfig.getQueue().getName() + " configured at "
-                    + jmsMasterConfig.getCluster().getManagedServer().getHostName() + " managed server cannot be purged:\n"
+                    + managedServer.getHostName() + " managed server cannot be purged:\n"
                     + getStackTrace(ex);
 
             cor.addMsg(msg);
@@ -299,6 +328,8 @@ public class JmsComponent extends AbstractSoaTFComponent {
 
     private void checkErrorQueue() throws JmsComponentException {
         try {
+            File[] messageFiles = getGeneratedFiles(null);
+            ProgressMonitor.init(messageFiles.length + 1, "Creating queue browser");
             DistribuedQueueBrowser dqb = new DistribuedQueueBrowser(workingDir, DEFAULT_PROTO + "://" + adminServer.getHost() + ":" + adminServer.getPort(),
                     DEFAULT_PROTO + "://" + managedServer.getHostName() + ":" + managedServer.getPort(),
                     jmsInterfaceConfig.getJmsServer().getName(),
@@ -307,10 +338,10 @@ public class JmsComponent extends AbstractSoaTFComponent {
                     "ErrorQueue",
                     adminServer.getSecurityPrincipal(),
                     adminServer.getSecurityCredentials());
-
-            Iterator<File> messageFilesIterator = getGeneratedFiles(null);
-            while (messageFilesIterator.hasNext()) {
-                String fileName = messageFilesIterator.next().getName();
+            
+            for (File file : messageFiles) {
+                ProgressMonitor.increment("Checking Error Queue...");
+                String fileName = file.getName();
                 String messageId = getJMSMessageIdFromFileName(fileName);
                 //String path = messageFilesIterator.next().getAbsolutePath();
                 //String content = FileSystem.readContentFromFile(path);
@@ -324,7 +355,7 @@ public class JmsComponent extends AbstractSoaTFComponent {
 
                 while (sli.hasMoreElements()) {
                     ServerLocatedMessage m = sli.nextElement();
-                    TextMessage mes = (TextMessage) m.getMessage();
+                    //TextMessage mes = (TextMessage) m.getMessage();
 
                     //String jmsMessageId = m.getMessage().getJMSMessageID().replaceAll("ID:<", "").replaceAll(">", "");
                     String jmsMessageId = m.getMessage().getJMSMessageID();
@@ -338,8 +369,8 @@ public class JmsComponent extends AbstractSoaTFComponent {
                     }
 
                 }
-                cor.addMsg("There cannot be found message with id = '"
-                        + messageId + "' withing Error queue defined as " + jmsInterfaceConfig.getQueue().getName() + ".");
+                cor.addMsg("There cannot be found any message with id = '"
+                        + messageId + "' within Error queue defined as " + jmsInterfaceConfig.getQueue().getName() + ".");
                 logger.info("There are no messages in Error Queue related to queue " + jmsInterfaceConfig.getQueue().getName() + ".");
 
             }
@@ -349,8 +380,9 @@ public class JmsComponent extends AbstractSoaTFComponent {
         }
     }
 
-    private void pauseDestionationPoduction() {
+    private void pauseDestinationProduction() {
         try {
+            ProgressMonitor.init(2, "Connecting to queue...");
             queueName = jmsInterfaceConfig.getQueue().getJndiName();
             InitialContext ctx = getInitialContext(DEFAULT_PROTO + "://" + managedServer.getHostName() + ":" + managedServer.getPort(),
                     adminServer.getSecurityPrincipal(),
@@ -359,6 +391,7 @@ public class JmsComponent extends AbstractSoaTFComponent {
             Destination queue = (Destination) ctx.lookup(jmsInterfaceConfig.getQueue().getJndiName());
 
             weblogic.management.runtime.JMSDestinationRuntimeMBean destMBean = weblogic.jms.extensions.JMSRuntimeHelper.getJMSDestinationRuntimeMBean(ctx, queue);
+            ProgressMonitor.increment("Pausing queue...");
             destMBean.pauseProduction();
             if (destMBean.isProductionPaused()) {
                 cor.markSuccessful();
@@ -377,13 +410,15 @@ public class JmsComponent extends AbstractSoaTFComponent {
 
     private void resumeDestinationConsumption() {
         try {
-            queueName = "iw.MyIrishWaterQueue";
+            ProgressMonitor.init(2, "Connecting to queue...");
+            queueName = jmsInterfaceConfig.getQueue().getJndiName();
             InitialContext ctx = getInitialContext(DEFAULT_PROTO + "://" + managedServer.getHostName() + ":" + managedServer.getPort(),
                     adminServer.getSecurityPrincipal(),
                     adminServer.getSecurityCredentials());
             //Queue queue = (Queue) ctx.lookup(queueName);
             Destination queue = (Destination) ctx.lookup(jmsInterfaceConfig.getQueue().getJndiName());
             weblogic.management.runtime.JMSDestinationRuntimeMBean destMBean = weblogic.jms.extensions.JMSRuntimeHelper.getJMSDestinationRuntimeMBean(ctx, queue);
+            ProgressMonitor.increment("Resuming queue...");
             destMBean.resumeProduction();
 
             cor.markSuccessful();

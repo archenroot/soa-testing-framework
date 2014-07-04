@@ -20,6 +20,8 @@ class Result {
     private String message;
     private CommonResult commonResult;
     private List<String> messages = new ArrayList<>();
+    private boolean prePostOperation;
+    private boolean infoRow;
     
     public static final String RESULT_PASSED = "PASSED";
     public static final String RESULT_FAILED = "FAILED";
@@ -30,6 +32,8 @@ class Result {
         this.operationName = operationName;
         this.message = "";
         this.commonResult = CommonResult.UNKNOWN;
+        this.prePostOperation = false;
+        this.infoRow = false;
     }
 
     public String getOperationName() {
@@ -71,5 +75,21 @@ class Result {
             case WARNING: return RESULT_WARNING;
             default: return RESULT_UNKNOWN;
         }
+    }
+    
+    public boolean isPrePostOperation() {
+        return prePostOperation;
+    }
+
+    public void setPrePostOperation(boolean prePostOperation) {
+        this.prePostOperation = prePostOperation;
+    }
+
+    public boolean isInfoRow() {
+        return infoRow;
+    }
+
+    public void setInfoRow(boolean infoRow) {
+        this.infoRow = infoRow;
     }
 }

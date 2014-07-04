@@ -3,6 +3,7 @@
 <Form version="1.7" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
+    <Property name="title" type="java.lang.String" value="SOA Testing Framework"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
@@ -31,9 +32,11 @@
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="btnReloadXMLConfiguration" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnExportLog" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Component id="btnValidateConfig" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
-                      <Component id="chkBoxIgnoreFailures" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnStopExecution" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="unrelated" max="-2" attributes="0"/>
                       <Component id="jLabel1" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
@@ -58,9 +61,10 @@
                   <Component id="cbEnvironment" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnClearLog" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="chkBoxIgnoreFailures" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="btnReloadXMLConfiguration" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnExportLog" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnValidateConfig" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="btnStopExecution" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
           </Group>
@@ -91,6 +95,9 @@
           <StringArray count="0"/>
         </Property>
       </Properties>
+      <Events>
+        <EventHandler event="itemStateChanged" listener="java.awt.event.ItemListener" parameters="java.awt.event.ItemEvent" handler="cbEnvironmentItemStateChanged"/>
+      </Events>
     </Component>
     <Component class="javax.swing.JLabel" name="jLabel1">
       <Properties>
@@ -219,15 +226,18 @@
 
                       <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                       <SubComponents>
-                        <Component class="javax.swing.JTree" name="details">
+                        <Component class="javax.swing.JTree" name="jtInterfaceDetails">
                           <Properties>
                             <Property name="model" type="javax.swing.tree.TreeModel" editor="org.netbeans.modules.form.editors2.TreeModelEditor">
                               <TreeModel code=""/>
                             </Property>
                           </Properties>
                           <Events>
-                            <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="detailsValueChanged"/>
+                            <EventHandler event="valueChanged" listener="javax.swing.event.TreeSelectionListener" parameters="javax.swing.event.TreeSelectionEvent" handler="jtInterfaceDetailsValueChanged"/>
                           </Events>
+                          <AuxValues>
+                            <AuxValue name="JavaCodeGenerator_CreateCodeCustom" type="java.lang.String" value="new javax.swing.JTree(new DefaultTreeModel(null));"/>
+                          </AuxValues>
                         </Component>
                       </SubComponents>
                     </Container>
@@ -252,12 +262,17 @@
               <Layout>
                 <DimensionLayout dim="0">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane3" max="32767" attributes="0"/>
+                      <Component id="jScrollPane3" pref="456" max="32767" attributes="0"/>
+                      <Component id="jPanel6" alignment="0" max="32767" attributes="0"/>
                   </Group>
                 </DimensionLayout>
                 <DimensionLayout dim="1">
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="jScrollPane3" alignment="0" pref="317" max="32767" attributes="0"/>
+                      <Group type="102" alignment="0" attributes="0">
+                          <Component id="jScrollPane3" pref="296" max="32767" attributes="0"/>
+                          <EmptySpace max="-2" attributes="0"/>
+                          <Component id="jPanel6" min="-2" max="-2" attributes="0"/>
+                      </Group>
                   </Group>
                 </DimensionLayout>
               </Layout>
@@ -279,6 +294,34 @@
                           </Table>
                         </Property>
                       </Properties>
+                      <Events>
+                        <EventHandler event="componentResized" listener="java.awt.event.ComponentListener" parameters="java.awt.event.ComponentEvent" handler="jtResultsComponentResized"/>
+                      </Events>
+                    </Component>
+                  </SubComponents>
+                </Container>
+                <Container class="javax.swing.JPanel" name="jPanel6">
+
+                  <Layout>
+                    <DimensionLayout dim="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="operationProgressBar" alignment="0" max="32767" attributes="0"/>
+                      </Group>
+                    </DimensionLayout>
+                    <DimensionLayout dim="1">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="operationProgressBar" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="0" pref="1" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                    </DimensionLayout>
+                  </Layout>
+                  <SubComponents>
+                    <Component class="javax.swing.JProgressBar" name="operationProgressBar">
+                      <AuxValues>
+                        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="24"/>
+                      </AuxValues>
                     </Component>
                   </SubComponents>
                 </Container>
@@ -332,11 +375,6 @@
         </Container>
       </SubComponents>
     </Container>
-    <Component class="javax.swing.JCheckBox" name="chkBoxIgnoreFailures">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Ignore failures"/>
-      </Properties>
-    </Component>
     <Component class="javax.swing.JButton" name="btnReloadXMLConfiguration">
       <Properties>
         <Property name="text" type="java.lang.String" value="Reload XML Configuration"/>
@@ -345,10 +383,30 @@
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnReloadXMLConfigurationActionPerformed"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JButton" name="jButton1">
+    <Component class="javax.swing.JButton" name="btnExportLog">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Export Current Result"/>
+        <Property name="text" type="java.lang.String" value="Export LOG"/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnExportLogActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnValidateConfig">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Validate Config"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnValidateConfigActionPerformed"/>
+      </Events>
+    </Component>
+    <Component class="javax.swing.JButton" name="btnStopExecution">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="STOP"/>
+        <Property name="enabled" type="boolean" value="false"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnStopExecutionActionPerformed"/>
+      </Events>
     </Component>
   </SubComponents>
 </Form>

@@ -18,16 +18,33 @@
  */
 package com.ibm.soatf.component.soap.builder;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import javax.xml.namespace.QName;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.xmlbeans.*;
-import org.w3c.dom.*;
-
-import javax.xml.namespace.QName;
-import java.io.File;
-import java.net.URL;
-import java.util.*;
+import org.apache.xmlbeans.SchemaType;
+import org.apache.xmlbeans.SchemaTypeSystem;
+import org.apache.xmlbeans.SimpleValue;
+import org.apache.xmlbeans.XmlBeans;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.w3c.dom.Attr;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -65,25 +82,25 @@ class SchemaUtils {
     static {
         initDefaultSchemas();
     }
-
-    public static URL loadResoruce(String resourceName) {
-        return ResourceUtils.getResourceWithAbsolutePackagePath(
-                SchemaUtils.class, "/xsds/", resourceName);
+    
+    public static InputStream loadResourceAsStream(String resourceName) {
+        return ResourceUtils.getResourceAsInputStream(
+                SchemaUtils.class, "/xsds/" + resourceName);
     }
 
     public static void initDefaultSchemas() {
         try {
             defaultSchemas.clear();
-            loadDefaultSchema(loadResoruce("xop.xsd"));
-            loadDefaultSchema(loadResoruce("XMLSchema.xsd"));
-            loadDefaultSchema(loadResoruce("xml.xsd"));
-            loadDefaultSchema(loadResoruce("swaref.xsd"));
-            loadDefaultSchema(loadResoruce("xmime200505.xsd"));
-            loadDefaultSchema(loadResoruce("xmime200411.xsd"));
-            loadDefaultSchema(loadResoruce("soapEnvelope.xsd"));
-            loadDefaultSchema(loadResoruce("soapEncoding.xsd"));
-            loadDefaultSchema(loadResoruce("soapEnvelope12.xsd"));
-            loadDefaultSchema(loadResoruce("soapEncoding12.xsd"));
+            loadDefaultSchema(loadResourceAsStream("xop.xsd"));
+            loadDefaultSchema(loadResourceAsStream("XMLSchema.xsd"));
+            loadDefaultSchema(loadResourceAsStream("xml.xsd"));
+            loadDefaultSchema(loadResourceAsStream("swaref.xsd"));
+            loadDefaultSchema(loadResourceAsStream("xmime200505.xsd"));
+            loadDefaultSchema(loadResourceAsStream("xmime200411.xsd"));
+            loadDefaultSchema(loadResourceAsStream("soapEnvelope.xsd"));
+            loadDefaultSchema(loadResourceAsStream("soapEncoding.xsd"));
+            loadDefaultSchema(loadResourceAsStream("soapEnvelope12.xsd"));
+            loadDefaultSchema(loadResourceAsStream("soapEncoding12.xsd"));
         } catch (Exception e) {
             throw new SoapBuilderException(e);
         }
@@ -103,6 +120,21 @@ class SchemaUtils {
         defaultSchemas.put(targetNamespace, xmlObject);
 
         log.debug("Added default schema from " + url.getPath() + " with targetNamespace " + targetNamespace);
+    }
+    
+    private static void loadDefaultSchema(InputStream is) throws Exception {
+        XmlObject xmlObject = XmlUtils.createXmlObject(is);
+        if (!((Document) xmlObject.getDomNode()).getDocumentElement().getNamespaceURI().equals(Constants.XSD_NS))
+            return;
+
+        String targetNamespace = getTargetNamespace(xmlObject);
+
+        if (defaultSchemas.containsKey(targetNamespace))
+            log.warn("Overriding schema for targetNamespace " + targetNamespace);
+
+        defaultSchemas.put(targetNamespace, xmlObject);
+
+        //log.debug("Added default schema from " + is.getPath() + " with targetNamespace " + targetNamespace);
     }
 
     public static SchemaTypeSystem loadSchemaTypes(String wsdlUrl, SchemaLoader loader) {

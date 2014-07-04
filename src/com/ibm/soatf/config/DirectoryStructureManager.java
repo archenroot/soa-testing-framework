@@ -17,7 +17,6 @@
  */
 package com.ibm.soatf.config;
 
-import com.ibm.soatf.flow.FrameworkExecutionException;
 import static com.ibm.soatf.config.MasterFrameworkConfig.FLOW_PATTERN_DIR_NAME_PREFIX;
 import static com.ibm.soatf.config.MasterFrameworkConfig.IFACE_CONFIG_FILENAME;
 import static com.ibm.soatf.config.MasterFrameworkConfig.OSB_REFERENCE_PROJECT_DIR_NAME_PREFIX;
@@ -27,13 +26,13 @@ import com.ibm.soatf.config.master.FileSystemProjectStructure;
 import com.ibm.soatf.config.master.Interface;
 import com.ibm.soatf.config.master.Project;
 import com.ibm.soatf.config.master.SOATestingFrameworkMasterConfiguration;
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import java.io.File;
 import java.io.IOException;
 import java.util.ListIterator;
-import java.util.logging.Level;
+import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.helpers.FileUtils;
 
 /**
  *
@@ -56,13 +55,19 @@ public class DirectoryStructureManager {
         }
 
     }
+    
+    public static void checkFrameworkDirectoryStructure(String interfaceName) throws FrameworkConfigurationException {
+        MasterConfiguration masterConfig = ConfigurationManager.getInstance().getMasterConfig();
+        final Interface iface = masterConfig.getInterface(interfaceName);
+        validateIfaceStructure(iface);
+    }
 
     private static void validateIfaceStructure(Interface iface) throws FrameworkConfigurationException {
         try {
-            MasterFrameworkConfig frameworkConfig = ConfigurationManager.getInstance().getFrameworkConfig();
-            MasterConfiguration masterConfig = ConfigurationManager.getInstance().getMasterConfig();
-            File soaTestHome = frameworkConfig.getSoaTestHome();
-            final File interfaceFolder = new File(soaTestHome, iface.getName() + "_" + frameworkConfig.getValidFileSystemObjectName(iface.getDescription()));
+            final MasterFrameworkConfig FCFG = ConfigurationManager.getInstance().getFrameworkConfig();
+            final MasterConfiguration MCFG = ConfigurationManager.getInstance().getMasterConfig();
+            File soaTestHome = FCFG.getSoaTestHome();
+            final File interfaceFolder = new File(soaTestHome, iface.getName() + "_" + FCFG.getValidFileSystemObjectName(iface.getDescription()));
             logger.trace("Working directory after format: " + interfaceFolder);
             try {
                 createFolder(interfaceFolder);
@@ -93,32 +98,48 @@ public class DirectoryStructureManager {
                 //masterConfig.getIfaceConfigFile(iface.getName());
                 if (interfaceConfigFile.exists()) {
                     try {
-                        InterfaceConfiguration ic = masterConfig.getInterfaceConfig(iface);
-                        final ListIterator<IfaceFlowPattern> ifaceFlowPatternIterator = ic.getIfaceFlowPatterns().listIterator();
+                        InterfaceConfiguration ICFG = MCFG.getInterfaceConfig(iface);
+                        final ListIterator<IfaceFlowPattern> ifaceFlowPatternIterator = ICFG.getIfaceFlowPatterns().listIterator();
                         IfaceFlowPattern ifaceFlowPattern;
-                        int ifaceFlowPatternIteratorCount = 0;
+                        logger.debug("Processing " + interfaceConfigFile.getAbsolutePath());
                         while (ifaceFlowPatternIterator.hasNext()) {
-                            ifaceFlowPatternIteratorCount++;
                             ifaceFlowPattern = ifaceFlowPatternIterator.next();
-                            logger.debug("Processing " + interfaceConfigFile.getAbsolutePath());
-                            final File patternDirectory = new File(interfaceFolder, FLOW_PATTERN_DIR_NAME_PREFIX + frameworkConfig.getValidFileSystemObjectName(ifaceFlowPattern.getRefId()));
+                            
+                            final File patternDirectory = new File(interfaceFolder, FLOW_PATTERN_DIR_NAME_PREFIX + FCFG.getValidFileSystemObjectName(ifaceFlowPattern.getRefId()));
                             createFolder(patternDirectory);
+                                
                             final String testName = ifaceFlowPattern.getInstanceMetadata().getTestName();
                             if (testName.isEmpty()) {
                                 throw new FrameworkConfigurationException("There is missing test name in config.xml instance metadata element in file " + interfaceConfigFile.getAbsolutePath() + ".");
                             }
-                            final File testScenarioNameDirectory = new File(patternDirectory, frameworkConfig.getValidFileSystemObjectName(testName));
+                            final File testScenarioNameDirectory = new File(patternDirectory, FCFG.getValidFileSystemObjectName(testName));
                             createFolder(testScenarioNameDirectory);
+                            
+                            /*final ListIterator<FileSystemProjectStructure.FlowPatternInstanceRoot.Directory> patternFoldersIterator = masterConfig.getXmlConfig().getFileSystemStructure().getFlowPatternInstanceRoot().getDirectory().listIterator();
+                            while (patternFoldersIterator.hasNext()) {
+                                final String fldName = frameworkConfig.getValidFileSystemObjectName(patternFoldersIterator.next().getName());
+                                final File dir = new File(testScenarioNameDirectory, fldName);
+                                createFolder(dir);
+                                // This is to check the pattern source folder and don't let it clean up
+                                cleanFolder(dir);
+                            }*/
+                            
+                            final File reportDir = new File(testScenarioNameDirectory, MCFG.getReportDirName());
+                            createFolder(reportDir);
+                            cleanFolder(reportDir);
+                            
+                            final File archiveDir = new File(testScenarioNameDirectory, MCFG.getArchiveDirName());
+                            createFolder(archiveDir);                              
                             
                             final ListIterator<IfaceTestScenario> ifaceTCIterator = ifaceFlowPattern.getIfaceTestScenario().listIterator();
                             IfaceTestScenario ifaceTestScenario;
                             while (ifaceTCIterator.hasNext()) {
                                 ifaceTestScenario = ifaceTCIterator.next();
-                                File testScenario = new File(testScenarioNameDirectory, frameworkConfig.getValidFileSystemObjectName(ifaceTestScenario.getRefId()));
+                                final File testScenario = new File(testScenarioNameDirectory, FCFG.getValidFileSystemObjectName(ifaceTestScenario.getRefId()));
                                 createFolder(testScenario);
-                                final ListIterator<FileSystemProjectStructure.TestRoot.Directory> foldersIterator = masterConfig.getXmlConfig().getFileSystemStructure().getTestRoot().getDirectory().listIterator();
+                                final ListIterator<FileSystemProjectStructure.TestRoot.Directory> foldersIterator = MCFG.getXmlConfig().getFileSystemStructure().getTestRoot().getDirectory().listIterator();
                                 while (foldersIterator.hasNext()) {
-                                    final String fldName = frameworkConfig.getValidFileSystemObjectName(foldersIterator.next().getName());
+                                    final String fldName = FCFG.getValidFileSystemObjectName(foldersIterator.next().getName());
                                     final File dir = new File(testScenario, fldName);
                                     createFolder(dir);
                                     // This is to check the pattern source folder and don't let it clean up
@@ -145,7 +166,7 @@ public class DirectoryStructureManager {
 
     private static void createFolder(File folder) throws FrameworkExecutionException {
         try {
-            FileUtils.mkdir(folder, true);
+            FileUtils.forceMkdir(folder);
         } catch (IOException ioex) {
             throw new FrameworkExecutionException("Directory " + folder + " cannot be created.", ioex);
         }

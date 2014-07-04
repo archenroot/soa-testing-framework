@@ -18,16 +18,18 @@
  */
 package com.ibm.soatf.component.soap.builder;
 
+import com.ibm.soatf.gui.ProgressMonitor;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+import javax.wsdl.Definition;
+import javax.xml.namespace.QName;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.xmlbeans.SchemaType;
 import org.apache.xmlbeans.SchemaTypeLoader;
 import org.apache.xmlbeans.SchemaTypeSystem;
 import org.apache.xmlbeans.XmlBeans;
-
-import javax.wsdl.Definition;
-import javax.xml.namespace.QName;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * This class was extracted from the soapUI code base by centeractive ag in October 2011.
@@ -50,6 +52,7 @@ import java.util.Set;
  * - minor fixes to make the class compile out of soapUI's code base
  */
 public class SchemaDefinitionWrapper {
+    private final static Logger logger = LogManager.getLogger(SchemaDefinitionWrapper.class);
     private SchemaTypeSystem schemaTypes;
     private SchemaTypeLoader schemaTypeLoader;
 
@@ -93,8 +96,14 @@ public class SchemaDefinitionWrapper {
         return getSchemaTypeLoader().findType(typeName);
     }
 
-    public void loadSchemaTypes(DefinitionLoader loader) {
+    private void loadSchemaTypes(DefinitionLoader loader) {
+        String msg = "Loading schema types...";
+        ProgressMonitor.increment(msg);
+        logger.debug(msg);
         schemaTypes = SchemaUtils.loadSchemaTypes(loader.getBaseURI(), loader);
+        msg = "Getting schema type loader...";
+        ProgressMonitor.increment(msg);
+        logger.debug(msg);
         schemaTypeLoader = XmlBeans.typeLoaderUnion(new SchemaTypeLoader[]{schemaTypes,
                 XmlBeans.getBuiltinTypeSystem()});
     }

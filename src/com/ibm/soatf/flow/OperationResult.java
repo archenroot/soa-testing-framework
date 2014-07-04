@@ -18,6 +18,7 @@
 package com.ibm.soatf.flow;
 
 import com.ibm.soatf.component.SOATFCompType;
+import com.ibm.soatf.config.master.ExecBlockOperation;
 import com.ibm.soatf.config.master.Operation;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -67,7 +68,7 @@ public final class OperationResult {
      * @return true if success, otherwise false
      */
     public boolean isSuccessful() {
-        return commonResult.isSuccess();
+        return commonResult  == CommonResult.SUCCESS;
     }
 
     /**
@@ -76,7 +77,7 @@ public final class OperationResult {
      * @return true if failure, otherwise false
      */
     public boolean isFailure() {
-        return commonResult.isFailure();
+        return commonResult.equals(CommonResult.FAILURE);
     }
 
     /**
@@ -85,7 +86,7 @@ public final class OperationResult {
      * @return true if warning, otherwise false
      */
     public boolean isWarning() {
-        return commonResult.isWarning();
+        return commonResult.equals(CommonResult.WARNING);
     }
 
     /**
@@ -94,7 +95,7 @@ public final class OperationResult {
      * @return true if unknown, otherwise false
      */
     public boolean isUnknown() {
-        return commonResult.isUnknown();
+        return commonResult.equals(CommonResult.UNKNOWN);
     }
 
     /**
@@ -121,28 +122,28 @@ public final class OperationResult {
      * Marks result as success.
      */
     public void markSuccessful() {
-        this.commonResult.setSuccess();
+        this.commonResult = CommonResult.SUCCESS;
     }
 
     /**
      * Marks result as warning.
      */
     public void markWarning() {
-        this.commonResult.setWarning();
+        this.commonResult = CommonResult.WARNING;
     }
 
     /**
      * Marks result as unknown.
      */
     public void markUnknown() {
-        this.commonResult.setUnknown();
+        this.commonResult = CommonResult.UNKNOWN;
     }
 
     /**
      * Marks result as failure.
      */
     public void markFailure() {
-        this.commonResult.setFailure();
+        this.commonResult = CommonResult.FAILURE;
     }
 
     /**
@@ -227,14 +228,57 @@ public final class OperationResult {
      * object survived
      */
     public void addMsg(final String msg) {
-        Exception exception = new Exception();
-        StackTraceElement[] stackTrace = exception.getStackTrace();
-        String className = stackTrace[1].getClassName();
-        int idx = className.lastIndexOf(".");
-        className = idx != -1 ? className.substring(idx + 1) : className;
-        messages.add("[" + className + "] " + msg);
-        shortMessages.add(msg);
+        if (msg != null) {
+            Exception exception = new Exception();
+            StackTraceElement[] stackTrace = exception.getStackTrace();
+            String className = stackTrace[1].getClassName();
+            int idx = className.lastIndexOf(".");
+            className = idx != -1 ? className.substring(idx + 1) : className;
+            messages.add("[" + className + "] " + msg);
+            shortMessages.add(msg);
+        }
     }
+    
+    /**
+     * Adds another message to current result object.
+     *
+     * @param msg can be any String message describing point in time which
+     * object survived
+     * @param shortMsg is shorter message for the purposes of report
+     */
+    public void addMsg(final String msg, final String shortMsg) {
+        if (msg != null) {
+            Exception exception = new Exception();
+            StackTraceElement[] stackTrace = exception.getStackTrace();
+            String className = stackTrace[1].getClassName();
+            int idx = className.lastIndexOf(".");
+            className = idx != -1 ? className.substring(idx + 1) : className;
+            messages.add("[" + className + "] " + msg);
+        }
+        if (shortMsg != null) {
+            shortMessages.add(shortMsg);
+        }
+    }
+    
+    /**
+     * Adds another message to current result object.
+     *
+     * @param format format of the both messages
+     * @param msg can be any String message describing point in time which
+     * object survived
+     * @param shortMsg is shorter message for the purposes of report
+     */
+    public void addMsg(final String format, final String msg, final String shortMsg) {
+        if (format != null) {
+            Exception exception = new Exception();
+            StackTraceElement[] stackTrace = exception.getStackTrace();
+            String className = stackTrace[1].getClassName();
+            int idx = className.lastIndexOf(".");
+            className = idx != -1 ? className.substring(idx + 1) : className;
+            messages.add(String.format("[" + className + "] " + format, msg));
+            shortMessages.add(String.format(format, shortMsg != null?shortMsg:msg));
+        }
+    }    
 
     /**
      * Gets collection of object messages.
@@ -273,7 +317,7 @@ public final class OperationResult {
      * clean new one.
      */
     public static void nextInstance() {
-        if (instance != null && instance.getOperation() != null) {
+        if (instance != null && instance.getOperation() != null && instance.getOperation() instanceof ExecBlockOperation) {
             prevInstances.put(instance.getSearchKey(), instance);
         }
         instance = new OperationResult();
@@ -357,7 +401,7 @@ public final class OperationResult {
         String key = scenarioName + "_~_" + blockName + "_~_" + operationName + "_~_" + executedOn.toUpperCase();
         OperationResult found = prevInstances.get(key);
         if (found == null) {
-            if (instance != null && key.equals(instance.getSearchKey())) {
+            if (instance != null && instance.getOperation() instanceof ExecBlockOperation && key.equals(instance.getSearchKey())) {
                 return instance;
             }
         } else {
@@ -389,76 +433,5 @@ public final class OperationResult {
          * Unknown state.
          */
         UNKNOWN;
-
-        private CommonResult value;
-
-        CommonResult() {
-            //dummny constructor
-        }
-
-        CommonResult(CommonResult value) {
-            this.value = value;
-        }
-
-        /**
-         * Gets current success state.
-         *
-         * @return true if success, otherwise false
-         */
-        public boolean isSuccess() {
-            return this.value.equals(SUCCESS) ? true : false;
-        }
-
-        /**
-         * Gets current failure state.
-         * @return true if failure, otherwise false
-         */
-        public boolean isFailure() {
-            return this.value.equals(FAILURE) ? true : false;
-        }
-
-        /**
-         * Gets current warning state.
-         * @return true if warning, otherwise false
-         */
-        public boolean isWarning() {
-            return this.value.equals(WARNING) ? true : false;
-        }
-
-        /**
-         * Gets current unknown state.
-         * @return true if unknown, otherwise false
-         */
-        public boolean isUnknown() {
-            return this.value.equals(UNKNOWN) ? true : false;
-        }
-
-        /**
-         *
-         */
-        public void setSuccess() {
-            this.value = SUCCESS;
-        }
-
-        /**
-         *
-         */
-        public void setFailure() {
-            this.value = FAILURE;
-        }
-
-        /**
-         *
-         */
-        public void setWarning() {
-            this.value = WARNING;
-        }
-
-        /**
-         *
-         */
-        public void setUnknown() {
-            this.value = UNKNOWN;
-        }
     }
 }

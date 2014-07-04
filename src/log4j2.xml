@@ -31,15 +31,13 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         <Console name="STDERR" target="SYSTEM_ERR">
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss,SSS}] [%t] %-5level %logger{36}:%method() - %msg%n"/>
         </Console>
-        
-          
-        <RollingFile name="Rolling" fileName="${filename}.log"
+        <RollingFile name="Rolling" fileName="log/${filename}.log"
                      filePattern="${filename}-${sd:type}.%i.log.gz">
             <PatternLayout>
                 <!-- <pattern>%d %p %c{1.} [%t] %m%n</pattern> -->
                 <pattern>[%d{yyyy-MM-dd HH:mm:ss,SSS}] [%t] %-5level %logger{36}:%method() - %msg%n</pattern>
             </PatternLayout>
-            <SizeBasedTriggeringPolicy size="5 MB" />
+            <SizeBasedTriggeringPolicy size="3 MB" />
         </RollingFile>
         
         <JTextArea name="JTextArea">
@@ -54,4 +52,3 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
         </Root>
     </Loggers>
 </Configuration>
-

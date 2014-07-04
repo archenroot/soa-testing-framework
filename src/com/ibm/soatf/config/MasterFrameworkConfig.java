@@ -23,7 +23,7 @@ import org.apache.logging.log4j.Logger;
 
 /**
  * Class responsible for SOA Testing Framework initial configuration and
- * validation. Defined as singleton with on-demand initialisation.
+ * validation. Defined as singleton with on-demand initialization.
  *
  * @author Ladislav Jech <archenroot@gmail.com>
  */
@@ -32,7 +32,6 @@ public class MasterFrameworkConfig {
     private final Logger logger = LogManager.getLogger(MasterFrameworkConfig.class.getName());
 
     public static final String SOA_TEST_HOME_ENV_VAR = "SOA_TEST_HOME";
-    public static final String SOATF_HOME_ENV_VAR = "SOATF_HOME";
 
     public static final String JAXB_CONTEXT_PACKAGE = "com.ibm.soatf.config.master";
 
@@ -43,24 +42,24 @@ public class MasterFrameworkConfig {
     public static final String FLOW_PATTERN_DIR_NAME_PREFIX = "FlowPattern_-_";
 
     private File soaTestHome;
-    private File soaTfHome;
+    public static final File SOATF_HOME = new File(".");
     private File masterConfigFile;
 
-    private final String fsValidationPattern = "^[.\\\\/:*?\"<>|]?[\\\\/:*?\"<>|]*";
+    //^[.\\/:*?"<>|]?[\\/:*?"<>|]*
+    public static final String FS_VALIDATION_PATTERN = "^[.\\\\/:*?\"<>|]?[\\\\/:*?\"<>|]*";
 
     MasterFrameworkConfig() {
         // dummy constructor
     }
-
+/**
+ * It loads the environment variable and constructs a reference to the master configuration file
+ * @throws FrameworkConfigurationException when SOA_TEST_HOME variable was not set or the "master-config.xml"
+ * does not exist.
+ */
     void init() throws FrameworkConfigurationException {
         logger.debug("Initializing main framework configuration subsystem.");
-        String var = System.getenv().get(SOATF_HOME_ENV_VAR);
-        if (var == null || var.isEmpty()) {
-            throw new FrameworkConfigurationException(SOATF_HOME_ENV_VAR + " environment variable not set.");
-        }
-        soaTfHome = new File(var);
 
-        var = System.getenv().get(SOA_TEST_HOME_ENV_VAR);
+        String var = System.getenv().get(SOA_TEST_HOME_ENV_VAR);
         if (var == null || var.isEmpty()) {
             throw new FrameworkConfigurationException(SOA_TEST_HOME_ENV_VAR + " environment variable not set.");
         }
@@ -76,28 +75,23 @@ public class MasterFrameworkConfig {
         logger.debug("Main framework configuration susbsystem initialized.");
     }
 
-    private File getSoaTfHome() throws FrameworkConfigurationException {
-        return soaTfHome;
-    }
-
     public File getSoaTestHome() {
         return soaTestHome;
     }
 
     public boolean isFileSystemNameValid(String fileSystemObjectName) throws FrameworkConfigurationException {
-        return !fileSystemObjectName.matches(fsValidationPattern)
+        return !fileSystemObjectName.matches(FS_VALIDATION_PATTERN)
                 && getValidFileSystemObjectName(fileSystemObjectName).length() > 0;
     }
 
     public String getValidFileSystemObjectName(String string) throws FrameworkConfigurationException {
-        try {
         if (string == null) {
-            throw new IllegalStateException("File Name is empty!");
+            throw new FrameworkConfigurationException("File Name is empty!");
         }
-        final String fileSystemObjectName = string.replaceAll(fsValidationPattern, "");
+        final String fileSystemObjectName = string.replaceAll(FS_VALIDATION_PATTERN, "");
         if (fileSystemObjectName.length() == 0) {
-            throw new IllegalStateException(
-                    "File Name " + fileSystemObjectName + " results in a empty fileSystemObjectName!");
+            throw new FrameworkConfigurationException(
+                    "File Name " + string + " results in a empty fileSystemObjectName!");
         }
 
         boolean wordDelimiterFound = false;
@@ -141,9 +135,6 @@ public class MasterFrameworkConfig {
             }
         }
         return preFormatedName.toString();
-        } catch (RuntimeException re){
-            throw new FrameworkConfigurationException(re);
-        }
     }
 
     public File getMasterConfigFile() {

@@ -6,24 +6,48 @@
 
 package com.ibm.soatf.gui;
 
+import com.ibm.soatf.config.UserProperties;
+import java.awt.Desktop;
+import java.awt.HeadlessException;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.GroupLayout;
-import javax.swing.JButton;
+import javax.swing.JFileChooser;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.text.Element;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.html.HTML;
+import javax.swing.text.html.HTMLDocument;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  *
  * @author user
  */
 public class ResultsDetailDialog extends EscapableDialog {
+    private static final Logger logger = LogManager.getLogger(ResultsDetailDialog.class.getName());
 
-    private Result result;
+    private final Result result;
     
     /**
      * Creates new form ResultsDetailDialog
+     * @param parent
+     * @param modal
+     * @param result
      */
     public ResultsDetailDialog(java.awt.Frame parent, boolean modal, Result result) {
         super(parent, modal);
@@ -41,20 +65,30 @@ public class ResultsDetailDialog extends EscapableDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jButton1 = new JButton();
+        jpmOpenWith = new JPopupMenu();
+        jmiOpenWith = new JMenuItem();
         jPanel1 = new JPanel();
         jScrollPane1 = new JScrollPane();
-        taResultDetails = new JTextArea();
+        taResultDetails = new JTextPane();
 
-        jButton1.setText("jButton1");
+        jmiOpenWith.setText("Open with...");
+        jmiOpenWith.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jmiOpenWithActionPerformed(evt);
+            }
+        });
+        jpmOpenWith.add(jmiOpenWith);
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 
         jPanel1.setBorder(BorderFactory.createTitledBorder("Result details"));
 
         taResultDetails.setEditable(false);
-        taResultDetails.setColumns(20);
-        taResultDetails.setRows(5);
+        taResultDetails.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
+                taResultDetailsMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(taResultDetails);
 
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
@@ -88,28 +122,143 @@ public class ResultsDetailDialog extends EscapableDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void taResultDetailsMouseClicked(MouseEvent evt) {//GEN-FIRST:event_taResultDetailsMouseClicked
+        if (evt.getButton() == MouseEvent.BUTTON3) {
+            int pos = taResultDetails.getUI().viewToModel(taResultDetails, evt.getPoint());
+            if (pos > -1) {
+                HTMLDocument hdoc = (HTMLDocument) taResultDetails.getDocument();
+                Element e = hdoc.getCharacterElement(pos);
+                final Object anchor = e.getAttributes().getAttribute(HTML.Tag.A);
+                if (anchor != null) {
+                    if (anchor instanceof SimpleAttributeSet) {
+                        SimpleAttributeSet set = (SimpleAttributeSet) e.getAttributes().getAttribute(HTML.Tag.A);
+                        final Object attrHref = set.getAttribute(HTML.Attribute.HREF);
+                        if(attrHref != null) {
+                            href = attrHref.toString();
+                            jpmOpenWith.show(evt.getComponent(), evt.getX(), evt.getY());
+                        }
+                    }
+                }
+            }
+        }
+    }//GEN-LAST:event_taResultDetailsMouseClicked
+
+    private String href;
+    private void jmiOpenWithActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jmiOpenWithActionPerformed
+        final String filePath = href.substring(7);
+        final File file = new File(filePath);
+        String filename = file.getName();
+        int idx = filename.lastIndexOf(".");
+        final String ext = idx == -1 ? null : filename.substring(idx + 1).toLowerCase();
+        final String propName = ext != null ? ext + ".viewer" : "default.viewer";
+        openWith(propName, file, ext);
+    }//GEN-LAST:event_jmiOpenWithActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private JButton jButton1;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
-    private JTextArea taResultDetails;
+    private JMenuItem jmiOpenWith;
+    private JPopupMenu jpmOpenWith;
+    private JTextPane taResultDetails;
     // End of variables declaration//GEN-END:variables
 
+    JFileChooser fileChooser = new JFileChooser();
+    
     private void additionalInit() {
         Utils.centerOnParent(getParent(), this);
         String str = result.getOperationName();
-        StringBuilder sb = new StringBuilder("Operation: ").append(str).append("\n");
+        StringBuilder sb = new StringBuilder("Operation: ").append(str).append("<br/>\n");
+        this.setTitle(str);
         
         str = result.getSuccessStr();
-        sb.append("Status: ").append(str).append("\n");
-        
-        sb.append("\n");
-        
-        sb.append("Messages:\n");
-        for (String msg : result.getMessages()) {
-            sb.append(msg).append("\n");
+        if (str != null){
+            str = str.replaceAll("\n", "<br/>\n");
         }
+        sb.append("Status: ").append(str).append("<br/>\n");
         
+        sb.append("<br/>\n");
+        
+        sb.append("Messages:<br/>\n");
+        for (String msg : result.getMessages()) {
+            str = msg;
+            if (str != null){
+                str = str.replaceAll("<","&lt;").replaceAll("&lt;a ","<a ").replaceAll("&lt;/a","</a");
+                str = str.replaceAll("\n", "<br/>\n");
+            }
+            sb.append(str).append("<br/>\n");
+        }
+        taResultDetails.addHyperlinkListener(new HyperlinkListener() {
+            @Override
+            public void hyperlinkUpdate(HyperlinkEvent r) {
+                try {
+                    if(r.getEventType() == HyperlinkEvent.EventType.ACTIVATED) {
+                        linkClicked(r.getURL().toString().substring(7));
+                    }
+                } catch (Throwable e) {
+                    logger.warn("Error occurred when clicking on the link.", e);
+                }
+            }
+        });
+        taResultDetails.setContentType("text/html");
         taResultDetails.setText(sb.toString());
+        taResultDetails.setCaretPosition(0);
+        
+        fileChooser.setMultiSelectionEnabled(false);
+        fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        fileChooser.setFileFilter(new FileNameExtensionFilter("Executables", "exe", "bat"));
+    }
+    
+    private void linkClicked(String filePath) {
+        final File file = new File(filePath);
+        String filename = file.getName();
+        int idx = filename.lastIndexOf(".");
+        final String ext = idx == -1 ? null : filename.substring(idx + 1).toLowerCase();
+        final String propName = ext != null ? ext + ".viewer" : "default.viewer";
+
+        String executablePath = UserProperties.getExecutablePath(propName);
+        if (executablePath == null || !new File(executablePath).exists()) {
+            try {
+                Desktop.getDesktop().open(file);
+            } catch (IOException ex) {
+                openWith(propName, file, ext);
+            }
+        } else {
+            execute(new File(executablePath), file);
+        }
+    }
+
+    private void openWith(final String propName, final File file, final String ext) throws HeadlessException {
+        if (!propName.equals("default.viewer")) {
+            fileChooser.setDialogTitle("Choose the application to open " + ext.toUpperCase() + " files");
+        } else {
+            fileChooser.setDialogTitle("Choose the default application to open files of unknown type");
+        }
+        String executablePath;
+        //no associated application, let the user choose the app to open this type
+        int retVal = fileChooser.showOpenDialog(this);
+        if (retVal == JFileChooser.APPROVE_OPTION) {
+            File executableFile = fileChooser.getSelectedFile();
+            executablePath = executableFile.getAbsolutePath();
+            UserProperties.setProperty(propName, executablePath);
+            UserProperties.save();
+            execute(executableFile, file);
+        }
+    }
+    
+    private void execute(File executableFile, File file) {
+        if (executableFile == null || !executableFile.exists() || file == null || !file.exists()) {
+            return;
+        }
+        String shortExecutable = com.ibm.soatf.tool.Utils.getOSSafeParentPath(executableFile);
+        String shortFile = com.ibm.soatf.tool.Utils.getOSSafeParentPath(file);
+        try {
+            if (!com.ibm.soatf.tool.Utils.isEmpty(shortExecutable) && !com.ibm.soatf.tool.Utils.isEmpty(shortFile)) {
+                String command = "\"" + shortExecutable + "\" \"" + shortFile + "\"";
+                logger.trace("Running cmdline: " + command);
+                Runtime.getRuntime().exec(command);
+            }
+        } catch (IOException e) {
+            logger.warn("Could not launch the associated application '" + executableFile.getAbsolutePath() + "' for the file '" + file.getAbsolutePath(), e);
+        }
     }
 }

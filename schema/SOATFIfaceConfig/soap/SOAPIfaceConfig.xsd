@@ -17,8 +17,7 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapconf="http://www.ibm.com/SOATF/Config/Iface/SOAP" targetNamespace="http://www.ibm.com/SOATF/Config/Iface/SOAP" elementFormDefault="qualified"
-    attributeFormDefault="unqualified">
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapconf="http://www.ibm.com/SOATF/Config/Iface/SOAP" targetNamespace="http://www.ibm.com/SOATF/Config/Iface/SOAP" elementFormDefault="qualified" attributeFormDefault="unqualified">
     <xs:complexType name="SOAPConfig">
         <xs:annotation>
             <xs:documentation>
@@ -117,7 +116,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 <xs:complexType>
                     <xs:complexContent>
                         <xs:extension base="soapconf:EnvelopeConfig">
-                            <xs:attribute name="envRefName">
+                            <xs:attribute name="envRefName" use="required" type="xs:string">
                                 <xs:annotation>
                                     <xs:documentation xml:lang="en">One or more environment references splitted by default splitting constant character defined in master-config.xml file. Currently hardcoded to pipe |.</xs:documentation>
                                 </xs:annotation>
@@ -177,5 +176,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
+        <xs:attribute name="sourceEntityRef" type="xs:string"/>
+        <xs:attribute name="sourceMessageId" type="xs:string"/>
     </xs:complexType>
 </xs:schema>

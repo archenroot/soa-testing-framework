@@ -17,8 +17,9 @@
  */
 package com.ibm.soatf.component.database;
 
-import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.flow.OperationResult;
+import com.ibm.soatf.gui.ProgressMonitor;
+import com.ibm.soatf.tool.FileSystem;
 import com.ibm.soatf.tool.Utils;
 import java.io.File;
 import java.io.IOException;
@@ -45,24 +46,28 @@ public class StatementExecutor {
     /**
      * Runs an SQL script from the file specified by the <code>inputScriptFile</code> parameter
      * 
-     * @param conn SQL connection that on which to run this script
+     * @param conn SQL connection on which you want to run this script
      * @param file script file
      * @throws StatementExecutorException if SQL or IO exception occurs
      */
     public void runScript(Connection conn, File file) throws DatabaseComponentException {
         OperationResult cor = OperationResult.getInstance();
         String inputScriptFilePath = "";
+        String inputScriptRelativePath = "";
         Statement stmt = null;
         try {
-            inputScriptFilePath = file.getCanonicalPath();
+            ProgressMonitor.increment("Loading SQL script...");
+            inputScriptFilePath = file.getAbsolutePath();
+            inputScriptRelativePath = FileSystem.getRelativePath(file);
             String sql = FileUtils.readFileToString(file);
             if(sql.endsWith(";")) sql = sql.substring(0, sql.length()-1);
-            String msg = "Successfuly loaded script file: " + inputScriptFilePath;
-            logger.debug(msg);
-            cor.addMsg(msg);
+            String msg = "Successfuly loaded script [FILE: %s]"; 
+            logger.debug(String.format(msg, inputScriptFilePath));
+            cor.addMsg(msg, "<a href='file://"+inputScriptFilePath+"'>"+inputScriptFilePath+"</a>", inputScriptRelativePath);
             
             conn.setAutoCommit(false);
             stmt = conn.createStatement();
+            ProgressMonitor.increment("Executing SQL script...");
             boolean hasResults = stmt.execute(sql);
             conn.commit();
             int updateCount = -1;
@@ -72,34 +77,20 @@ public class StatementExecutor {
             msg = "Script run successful, update count: " + updateCount;
             logger.debug(msg);
             cor.addMsg(msg);
-            cor.addMsg("Record has been inserted into source database '" + conn.getMetaData().getURL() + "'.\n"
-                        + "Insert statement executed:\n"
-                        + sql);
-			cor.markSuccessful();
+            final String logMsg = "Record has been inserted into source database '" + conn.getMetaData().getURL() + "'.\n"
+                        + "Insert statement executed:\n%s";
+            cor.addMsg(logMsg, sql, "[FILE: "+FileSystem.getRelativePath(file)+"]");
+            cor.markSuccessful();
         } catch (IOException ex) {
-            String msg = "Failed to open statement file (" + inputScriptFilePath + ").";
-            cor.addMsg(msg);
-            throw new DatabaseComponentException(msg, ex);
+            final String msg = "Failed to open statement [FILE: %s].";
+            cor.addMsg(msg, "<a href='file://"+inputScriptFilePath+"'>"+inputScriptFilePath+"</a>", inputScriptRelativePath);
+            throw new DatabaseComponentException(String.format(msg,inputScriptFilePath), ex);            
         } catch (SQLException ex) {
-            String msg = String.format("Failed to execute INSERT statement: %s", Utils.getSQLExceptionMessage(ex));
+            final String msg = String.format("Failed to execute INSERT statement: %s", Utils.getSQLExceptionMessage(ex));
             cor.addMsg(msg);
             throw new DatabaseComponentException(msg, ex);
         } finally {
-            
-            closeStatement(stmt);
-        }
-    }
-     public void closeStatement(Statement statement) throws DatabaseComponentException {
-        try {
-            if (statement != null) {
-                statement.close();
-            }
-            logger.trace("SQL statement closed.");
-        } catch (SQLException ex) {
-            final String msg = "The statement cannot be closed due to: " + Utils.getSQLExceptionMessage(ex);
-            OperationResult.getInstance().addMsg(msg);
-            throw new DatabaseComponentException(msg, ex);
-            
+            DatabaseComponent.closeStatement(stmt);
         }
     }
 }

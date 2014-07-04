@@ -11,6 +11,14 @@ package com.ibm.soatf.gui;
  * @author user
  */
 final class GUIObjects {
+    /**
+     * create a generic class called GUIObject having Object and guiName as its member.
+     * <code>GUIObject&lt;T&gt;</code> means it can accept only certain type of object
+     * <br></br>
+     * if we call <code>GUIObject&lt;com.ibm.soatf.config.master.Interface&gt;</code> then 
+     * GUIObject can accept only Interface object.
+     * This is the way to make GUIObject class a generic class
+    **/
     static class GUIObject<T> {
         protected final T object;
         protected String guiName;
@@ -32,7 +40,7 @@ final class GUIObjects {
 
         public Interface(com.ibm.soatf.config.master.Interface object) {
             super(object);
-            guiName = object.getName() + " - " + object.getDescription();
+            guiName = object.getName() + " - " + object.getDescription() + " - " + object.getRelease();
         }
         
         
@@ -82,7 +90,7 @@ final class GUIObjects {
 
         public IfaceFlowPattern(com.ibm.soatf.config.iface.IfaceFlowPattern object) {
             super(object);
-            guiName = "FlowPattern: " + object.getRefId() + " (" + object.getInstanceMetadata().getTestName() + ")";
+            guiName = object.getRefId() + " (" + object.getInstanceMetadata().getTestName() + ")";
         }
     }
 
@@ -100,5 +108,5 @@ final class GUIObjects {
             super(object);
             guiName = "ExecutionBlock: " + object.getRefId();
         }
-    }
+    }  
 }

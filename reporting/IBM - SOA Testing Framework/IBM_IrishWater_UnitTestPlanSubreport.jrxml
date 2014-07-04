@@ -8,6 +8,7 @@
 	</parameter>
 	<parameter name="MASTER_DATA_DOCUMENT" class="org.w3c.dom.Document"/>
 	<parameter name="operationResult" class="com.ibm.soatf.flow.OperationResult"/>
+	<parameter name="scenarioName" class="java.lang.String"/>
 	<queryString language="xpath">
 		<![CDATA[/*]]>
 	</queryString>
@@ -55,6 +56,7 @@
 	</title>
 	<detail>
 		<band height="150" splitType="Stretch">
+			<printWhenExpression><![CDATA[$P{scenarioName} == null || $P{scenarioName}.equals($F{scenarioName})]]></printWhenExpression>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="0" y="0" width="555" height="25" uuid="72ca2c96-3610-4a11-8577-71cdf3fc5b9d"/>
 				<textElement>
@@ -197,7 +199,6 @@
 					<subreportParameterExpression><![CDATA[$P{operationResult}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "IBM_IrishWater_UnitTestPlanRowSubreport.jasper"]]></subreportExpression>
-                <!--subreportExpression><![CDATA[JasperCompileManager.compileReport(getClass().getResource("IBM_IrishWater_UnitTestPlanRowSubreport.jrxml").openStream())]]></subreportExpression-->
 			</subreport>
 		</band>
 	</detail>

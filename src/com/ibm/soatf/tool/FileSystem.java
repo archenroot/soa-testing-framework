@@ -92,4 +92,19 @@ public class FileSystem {
         }
     }
     
+    public static String getRelativePath(File file) {
+        try {
+            final String filePath = file.getCanonicalPath();
+            final String testPath = file.getParentFile().getParentFile().getParent();
+            if (filePath.startsWith(testPath)) {
+                return filePath.substring(testPath.length() + 1);
+            } else {
+                return null;
+            }
+        } catch (IOException e) {
+            ;
+        }
+        return file.getAbsolutePath(); 
+    }    
+    
 }

@@ -3,15 +3,15 @@ package com.ibm.soatf.component;
 
 import com.ibm.soatf.FrameworkException;
 import com.ibm.soatf.config.master.Operation;
-
 import com.ibm.soatf.flow.OperationResult;
 import com.ibm.soatf.flow.OperationResult.CommonResult;
+import com.ibm.soatf.gui.ProgressMonitor;
 import java.io.File;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- *
+ * Superclass to all of the soatf components
  * @author Ladislav Jech <archenroot@gmail.com>
  */
 public abstract class AbstractSoaTFComponent {
@@ -20,13 +20,14 @@ public abstract class AbstractSoaTFComponent {
             LogManager.getLogger(AbstractSoaTFComponent.class.getName());
 
     /**
-     *
+     * Component type variable.
      */
     protected SOATFCompType componentType;
 
     /**
-     *
+     * Component identificator.
      */
+    @Deprecated
     protected String identificator;
 
     /**
@@ -66,20 +67,30 @@ public abstract class AbstractSoaTFComponent {
     protected abstract void destructComponent();
 
     /**
-     *
+     * Flow Executor entry point for operation execution - contains common initialization and logging tasks for every operation, 
+     * afterward the <clode>executeOperation</code> method is called, which contains actual body of the operation handling
      * @param operation
      * @throws FrameworkException
      */
     public void execute(Operation operation) throws FrameworkException {
         logger.info("Executing operation: " + operation.getName());
-        OperationResult.getInstance().setOperation(operation);
-        OperationResult.getInstance().setCommmonResult(CommonResult.FAILURE);
-        executeOperation(operation);
-        logger.info("Result of " + operation.getName() + " execution: " + OperationResult.getInstance().getCommmonResult());
+        final OperationResult cor = OperationResult.getInstance();        
+        try {
+            ProgressMonitor.setIndeterminate();
+            executeOperation(operation);
+            logger.info("Result of " + operation.getName() + " execution: " + cor.getCommmonResult());
+        } catch (Throwable e) {
+            final String msg = "Error during execution of operation " + operation.getName() + " in component " + componentType.name() + ".";
+            cor.addMsg(msg);
+            throw new FrameworkException(msg, e);
+        } finally {
+            ProgressMonitor.markDone();
+        }
+        
     }
 
     /**
-     *
+     * Implementation should contain how the component handles any given operation
      * @param operation
      * @throws FrameworkException
      */

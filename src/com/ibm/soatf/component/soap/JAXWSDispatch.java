@@ -1,8 +1,10 @@
 package com.ibm.soatf.component.soap;
 
+import com.ibm.soatf.gui.ProgressMonitor;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import javax.xml.soap.MessageFactory;
@@ -10,6 +12,7 @@ import javax.xml.soap.MimeHeaders;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPConstants;
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
@@ -27,11 +30,11 @@ public class JAXWSDispatch{
     
      public void invokeServiceWithProvidedSOAPRequest(String urlString, String requestFile, String responseFileName) throws SoapComponentException  {
         try {
-            final String filename = new StringBuilder("").toString();
+            //final String filename = new StringBuilder("").toString();
             final URL url = new URL(urlString);
             final String requestEnvelope = FileUtils.readFileToString(new File(requestFile));
             
-            final SOAPMessage response = invoke(url.toString(), requestEnvelope);
+            final SOAPMessage response = invoke(url, requestEnvelope);
             final File responseFile = new File(responseFileName);
             if (responseFile.exists()) {
                 FileUtils.forceDelete(responseFile);
@@ -50,9 +53,10 @@ public class JAXWSDispatch{
      * @param endpointUrl
      * @param xmlMsg
      * @return
-     * @throws Exception
+     * @throws javax.xml.soap.SOAPException
+     * @throws java.io.IOException
      */
-    public SOAPMessage invoke(String endpointUrl, String xmlMsg) throws Exception {
+    public SOAPMessage invoke(URL endpointUrl, String xmlMsg) throws SOAPException, IOException {
         /** Create a service and add at least one port to it. **/
         
         SOAPConnectionFactory sfc = SOAPConnectionFactory.newInstance();
@@ -62,13 +66,12 @@ public class JAXWSDispatch{
         InputStream is = new ByteArrayInputStream(xmlMsg.getBytes());
         SOAPMessage request = MessageFactory.newInstance(SOAPConstants.SOAP_1_1_PROTOCOL).createMessage(new MimeHeaders(), is);
         request.removeAllAttachments();
-        
-        URL endpoint = new URL(endpointUrl);
-        SOAPMessage response = connection.call(request, endpoint);
+        ProgressMonitor.increment("Invoking service...");
+        SOAPMessage response = connection.call(request, endpointUrl);
         connection.close();
         
         response.writeTo(System.out);
-        response.writeTo(new FileOutputStream(new File("res.xml")));
+        //response.writeTo(new FileOutputStream(new File("res.xml")));
         
         return response;
     }

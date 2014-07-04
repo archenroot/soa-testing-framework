@@ -30,6 +30,7 @@ import javax.wsdl.BindingOperation;
 import javax.wsdl.WSDLException;
 import javax.xml.namespace.QName;
 import javax.xml.soap.SOAPMessage;
+import org.apache.xmlbeans.XmlObject;
 
 /**
  *
@@ -38,6 +39,50 @@ import javax.xml.soap.SOAPMessage;
 public class Main {
     public static void main(String[] args) {
         try {
+            String xmlmsg = "<max:PublishIWWPRNPOINTS xmlns:max=\"http://www.ibm.com/maximo\" creationDateTime=\"2008-09-29T02:49:45\" baseLanguage=\"aeoliam venit\" transLanguage=\"ventos tempestatesque\" messageID=\"temperat iras\" maximoVersion=\"turbine corripuit\" event=\"0\">\n" +
+"         <max:IWWPRNPOINTSSet>\n" +
+"            <max:LOCATIONS action=\"Delete\" relationship=\"nimborum in\" deleteForInsert=\"foedere certo\" transLanguage=\"profundum quippe ferant\">\n" +
+"               <max:MAXINTERRORMSG>et carcere</max:MAXINTERRORMSG>\n" +
+"               <max:BGADDRESSLINE1 changed=\"1\">speluncis abdidit</max:BGADDRESSLINE1>\n" +
+"               <max:BGADDRESSLINE2 changed=\"1\">flammas turbine</max:BGADDRESSLINE2>\n" +
+"               <max:BGADDRESSLINE3 changed=\"1\">ac vinclis</max:BGADDRESSLINE3>\n" +
+"               <max:BGADDRESSLINE4 changed=\"1\">aris imponet honorem</max:BGADDRESSLINE4>\n" +
+"               <max:BGADDRESSLINE5 changed=\"1\">claustra fremunt</max:BGADDRESSLINE5>\n" +
+"               <max:BGADDRESSLINE6 changed=\"1\">quisquam numen</max:BGADDRESSLINE6>\n" +
+"               <max:BGCOUNTRY changed=\"1\">ac vinclis</max:BGCOUNTRY>\n" +
+"               <max:BGENDUSSEC changed=\"1\">pectore flammas</max:BGENDUSSEC>\n" +
+"               <max:BGGISBUILDINGID changed=\"1\">certo et</max:BGGISBUILDINGID>\n" +
+"               <max:BGGISDATE changed=\"1\">2004-12-06T03:41:44+00:00</max:BGGISDATE>\n" +
+"               <max:BGGISLOCALAUTHORITY changed=\"1\">ac terras</max:BGGISLOCALAUTHORITY>\n" +
+"               <max:BGGISPROJECTNUMBER changed=\"1\">infixit acuto</max:BGGISPROJECTNUMBER>\n" +
+"               <max:BGGPCONNTYPE changed=\"1\">montis insuper</max:BGGPCONNTYPE>\n" +
+"               <max:IWMETERREADDAY changed=\"1\">mollitque animos</max:IWMETERREADDAY>\n" +
+"               <max:IWNACEID changed=\"1\">soror et coniunx</max:IWNACEID>\n" +
+"               <max:IWPOSTAIM152 changed=\"1\">adorat praeterea</max:IWPOSTAIM152>\n" +
+"               <max:IWPREMDEPT changed=\"1\">aris imponet honorem</max:IWPREMDEPT>\n" +
+"               <max:IWPREMISECLASS changed=\"1\">premere et</max:IWPREMISECLASS>\n" +
+"               <max:IWPREMISEID changed=\"1\">ferant rapidi secum</max:IWPREMISEID>\n" +
+"               <max:IWPREMISETYPE changed=\"1\">vasto rex</max:IWPREMISETYPE>\n" +
+"               <max:IWPREMORGNAME changed=\"1\">tempestatesque sonoras</max:IWPREMORGNAME>\n" +
+"               <max:LOCATION changed=\"1\">premit ac</max:LOCATION>\n" +
+"               <max:SITEID changed=\"1\">nubibus ignem</max:SITEID>\n" +
+"               <max:STATUS maxvalue=\"austris aeoliam venit\" changed=\"1\">atris hoc metuens</max:STATUS>\n" +
+"               <max:STATUSDATE changed=\"1\">2010-04-16T23:33:23+01:00</max:STATUSDATE>\n" +
+"            </max:LOCATIONS>\n" +
+"         </max:IWWPRNPOINTSSet>\n" +
+"      </max:PublishIWWPRNPOINTS>";
+            XmlObject xmlObject = XmlObject.Factory.parse(xmlmsg);
+
+            /*String namespaces = declareXPathNamespaces(xmlObject);
+            if (namespaces != null && namespaces.trim().length() > 0)
+                xPath = namespaces + xPath;*/
+            String xqNamespace = "declare namespace max='http://www.ibm.com/maximo'";
+
+            XmlObject[] path = xmlObject.selectPath(xqNamespace+" $this//*[local-name()=\"PublishIWWPRNPOINTS\"]");
+            if (path == null || path.length != 1 || path[0].getDomNode() == null) {
+                return;
+            }
+            System.out.println(path[0]);
             //vytvorenie reqeustu (v msg)
             SoapLegacyFacade facade = new SoapLegacyFacade(new URL("http://localdev:7003/osb/PurchaseRequisitionConnectorMaximo/PurchaseRequisitionConnectorMaximoPS?wsdl"));
             Binding binding = facade.getBindingByName(new QName("http://www.example.org/OEBS_BGIPRIInterface/","OEBS_BGIPRIInterfaceSOAP"));
@@ -55,7 +100,7 @@ public class Main {
             System.out.println("----------------------------------------------------------");
             //poslanie requestu a ziskanie response v resMsg
             JAXWSDispatch jaxwsDispatch = new JAXWSDispatch();
-            SOAPMessage res = jaxwsDispatch.invoke("http://localdev:7003/osb/PurchaseRequisitionConnectorMaximo/PurchaseRequisitionConnectorMaximoPS", msg);
+            SOAPMessage res = jaxwsDispatch.invoke(new URL("http://localdev:7003/osb/PurchaseRequisitionConnectorMaximo/PurchaseRequisitionConnectorMaximoPS"), msg);
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             res.writeTo(baos );
             String resMsg = baos.toString();            

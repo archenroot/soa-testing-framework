@@ -35,37 +35,50 @@ import com.ibm.soatf.config.iface.ftp.FTPConfig.DefaultFile;
 import com.ibm.soatf.config.iface.soap.EnvelopeConfig;
 import com.ibm.soatf.config.iface.soap.SOAPConfig;
 import com.ibm.soatf.config.iface.util.UTILConfig;
+import com.ibm.soatf.config.master.ExecBlockOperation;
 import com.ibm.soatf.config.master.ExecuteOn;
 import com.ibm.soatf.config.master.ExecutionBlock;
 import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.tool.Utils;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.XMLConstants;
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.validation.SchemaFactory;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.w3c.dom.Document;
 import org.w3c.dom.Node;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 /**
- * Class responsible to marschall/unmarschall any data included in interface 
+ * Class responsible to marshal/unmarshal any data included in interface 
  * configuration files.
  * 
  * @author Ladislav Jech <archenroot@gmail.com>
  */
 public class InterfaceConfiguration {
-
+    private static final Logger logger = LogManager.getLogger(InterfaceConfiguration.class);
     private final File INTERFACE_CONFIG_FILE;
     private final MasterConfiguration MCFG;
     private final MasterFrameworkConfig FCFG;
     private SOATFIfaceConfig XML_CONFIG;
     private Binder<Node> binder;
+    private Document DOM;
 
     InterfaceConfiguration(File ifaceConfigFile, MasterFrameworkConfig fcfg, MasterConfiguration mcfg) {
         INTERFACE_CONFIG_FILE = ifaceConfigFile;
@@ -75,17 +88,45 @@ public class InterfaceConfiguration {
 
     /**
      *
-     * @throws FrameworkConfigurationException
+     * @throws InterfaceConfigurationException
      */
-    public void init() throws FrameworkConfigurationException {
-        JAXBContext jaxbContext;
-        Unmarshaller jaxbUnmarshaller;
+    public void init() throws InterfaceConfigurationException {
         try {
-            jaxbContext = JAXBContext.newInstance("com.ibm.soatf.config.iface");
-            jaxbUnmarshaller = jaxbContext.createUnmarshaller();
-            XML_CONFIG = ((JAXBElement<SOATFIfaceConfig>) jaxbUnmarshaller.unmarshal(INTERFACE_CONFIG_FILE)).getValue();
+            DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+            dbf.setNamespaceAware(true);
+            SchemaFactory sFactory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            File schemaFile = new File(new File(new File(MasterFrameworkConfig.SOATF_HOME, "schema"), "SOATFIfaceConfig"), "SOATFIfaceConfig.xsd");
+            dbf.setSchema(sFactory.newSchema(schemaFile));  
+            DocumentBuilder builder = dbf.newDocumentBuilder();
+            builder.setErrorHandler(new ErrorHandler() {
+                @Override
+                public void warning(SAXParseException exception) throws SAXParseException {
+                    throw exception;
+                }
+                @Override
+                public void error(SAXParseException exception) throws SAXParseException {
+                    throw exception;
+                }
+                @Override
+                public void fatalError(SAXParseException exception) throws SAXParseException {
+                    throw exception;
+                }
+            });
+            DOM = builder.parse(INTERFACE_CONFIG_FILE);
+            JAXBContext jaxbContext = JAXBContext.newInstance("com.ibm.soatf.config.iface");
+            binder = jaxbContext.createBinder();
+            XML_CONFIG = ((JAXBElement<SOATFIfaceConfig>) binder.unmarshal(DOM)).getValue();
         } catch (JAXBException jbex) {
-            throw new FrameworkConfigurationException("Error while unmarshalling interface configuration object from XML file " + INTERFACE_CONFIG_FILE, jbex);
+            throw new InterfaceConfigurationException("Error while unmarshalling interface configuration object from XML file " + INTERFACE_CONFIG_FILE.getAbsolutePath(), jbex);
+        } catch (ParserConfigurationException ex) {
+            String msg = "Error while attempting to create DocumentBuilder while processing " + INTERFACE_CONFIG_FILE.getAbsolutePath();
+            throw new InterfaceConfigurationException(msg, ex);
+        } catch (SAXException ex) {
+            String msg = "Error while parsing interface configuration from " + INTERFACE_CONFIG_FILE.getAbsolutePath() + ": " + ex.getMessage();
+            throw new InterfaceConfigurationException(msg, ex);
+        } catch (IOException ex) {
+            String msg = "I/O Error occured when trying to parse interface configuration file " + INTERFACE_CONFIG_FILE.getAbsolutePath() + ": " + ex.getMessage();
+            throw new InterfaceConfigurationException(msg, ex);
         }
     }
 
@@ -179,6 +220,22 @@ public class InterfaceConfiguration {
         throw new InterfaceConfigurationException("No such execution block found: " + ifaceExecBlockId + " in test scenario: " + ifaceTestScenarioId
                 + " in flow pattern: " + ifaceFlowPatternId);
     }
+    
+    /**
+     *
+     * @param ifaceTestScenario
+     * @param ifaceExecBlockId
+     * @return
+     * @throws com.ibm.soatf.config.InterfaceConfigurationException
+     */
+    public IfaceExecBlock getIfaceExecBlock(IfaceTestScenario ifaceTestScenario, String ifaceExecBlockId) throws InterfaceConfigurationException {
+        for (IfaceExecBlock refExecBlock : ifaceTestScenario.getIfaceExecBlock()) {
+            if (refExecBlock.getRefId().equals(ifaceExecBlockId)) {
+                return refExecBlock;
+            }
+        }
+        throw new InterfaceConfigurationException("No such execution block found: " + ifaceExecBlockId + " in test scenario: " + ifaceTestScenario.getRefId());
+    }
 
     /**
      *
@@ -212,7 +269,7 @@ public class InterfaceConfiguration {
      * @return
      * @throws com.ibm.soatf.config.InterfaceConfigurationException
      */
-    public List<Operation> getOperations(String ifaceFlowPatternId, String ifaceTestScenarioId, String ifaceExecBlockId) throws InterfaceConfigurationException {
+    public List<ExecBlockOperation> getOperations(String ifaceFlowPatternId, String ifaceTestScenarioId, String ifaceExecBlockId) throws InterfaceConfigurationException {
         try {
             ExecutionBlock executionBlock = MCFG.getExecutionBlock(ifaceFlowPatternId, ifaceTestScenarioId, ifaceExecBlockId);
             return executionBlock.getOperation();
@@ -490,6 +547,38 @@ public class InterfaceConfiguration {
         return list;
     }
     
+    public EnvelopeConfig getSoapEnvelopeConfig(String envName, IfaceExecBlock ifaceExecBlock, ExecuteOn execOn) throws InterfaceConfigurationException {
+        EnvelopeConfig ec = null;
+        SOAPConfig soapCfg = getSoapConfig(ifaceExecBlock, execOn);
+        
+        List<SOAPConfig.EnvelopeConfig> envelopeConfigs = soapCfg.getEnvelopeConfig(); //specific for environments
+        if (!Utils.isEmpty(envelopeConfigs)) {
+            all: for (SOAPConfig.EnvelopeConfig envelopeConfig : envelopeConfigs) {
+                String[] envRefNames = envelopeConfig.getEnvRefName().split("\\|");
+                for (String envRefName : envRefNames) {
+                    if (envRefName.equalsIgnoreCase(envName)) {
+                        ec = envelopeConfig;
+                        break all;
+                    }
+                }
+            }
+        } else {
+            SOAPConfig.DefaultEnvelopeConfig defaultEnvelopeConfig = soapCfg.getDefaultEnvelopeConfig();
+            if (defaultEnvelopeConfig == null) {
+                String msg = "Either 'envelopeConfig' or 'defaultEnvelopeConfig' element must be defined.";
+                throw new InterfaceConfigurationException(msg);
+            }
+            ec = defaultEnvelopeConfig;
+        }
+        
+        if (ec == null) {
+            String msg = "No config defined in either 'envelopeConfig' or 'defaultEnvelopeConfig' elements.";
+            throw new InterfaceConfigurationException(msg);
+        }
+        
+        return ec;
+    }    
+    
     /**
      *
      * @param interfaceExecutionBlock
@@ -498,7 +587,6 @@ public class InterfaceConfiguration {
      * @throws com.ibm.soatf.config.InterfaceConfigurationException
      */
     public FileConfig getFileConfig(IfaceExecBlock interfaceExecutionBlock, ExecuteOn execOn) throws InterfaceConfigurationException {
-        FileConfig fileConfig = null;
         for (IfaceEndPoint ifaceEndPoint : getIfaceEndPoint(interfaceExecutionBlock, execOn)) {
             if (ifaceEndPoint.getFileConfig() != null) {
                 return ifaceEndPoint.getFileConfig();
@@ -506,6 +594,15 @@ public class InterfaceConfiguration {
         }
         throw new InterfaceConfigurationException("No FILE configuration found for execution block: " + interfaceExecutionBlock.getRefId());
     }
+    
+    public FTPConfig getFTPConfig(IfaceExecBlock interfaceExecutionBlock, ExecuteOn execOn) throws InterfaceConfigurationException {
+        for (IfaceEndPoint ifaceEndPoint : getIfaceEndPoint(interfaceExecutionBlock, execOn)) {
+            if (ifaceEndPoint.getFtpServer() != null) {
+                return ifaceEndPoint.getFtpServer();
+            }
+        }
+        throw new InterfaceConfigurationException("No FTP configuration found for execution block: " + interfaceExecutionBlock.getRefId());
+    }    
     
     /**
      *
@@ -541,6 +638,38 @@ public class InterfaceConfiguration {
         
         if (Utils.isEmpty(file)) {
             String msg = "No elements defined in either 'defaultFile' or 'envSpecificFile' elements.";
+            throw new InterfaceConfigurationException(msg);
+        }
+        
+        return file;
+    }
+    
+    public com.ibm.soatf.config.iface.ftp.File getFTPFile(String envName, IfaceExecBlock ifaceExecBlock, ExecuteOn execOn) throws InterfaceConfigurationException {
+        com.ibm.soatf.config.iface.ftp.File file = null;
+        FTPConfig ftpCfg = getFTPConfig(ifaceExecBlock, execOn);
+        
+        List<FTPConfig.File> files = ftpCfg.getFile(); //specific for environments
+        if (!Utils.isEmpty(files)) {
+            all: for (FTPConfig.File envSpecificFile : files) {
+                String[] envRefNames = envSpecificFile.getEnvRefName().split("\\|");
+                for (String envRefName : envRefNames) {
+                    if (envRefName.equalsIgnoreCase(envName)) {
+                        file = envSpecificFile;
+                        break all;
+                    }
+                }
+            }
+        } else {
+            FTPConfig.DefaultFile defaultFile = ftpCfg.getDefaultFile();
+            if (defaultFile == null) {
+                String msg = "Either 'defaultFile' or 'file' element must be defined.";
+                throw new InterfaceConfigurationException(msg);
+            }
+            file = defaultFile;
+        }
+        
+        if (Utils.isEmpty(file)) {
+            String msg = "No elements defined in either 'defaultFile' or 'file' elements.";
             throw new InterfaceConfigurationException(msg);
         }
         
@@ -582,10 +711,20 @@ public class InterfaceConfiguration {
      */
     public File getTestScenarioWorkingDir(String interfaceId, IfaceFlowPattern interfaceFlowPattern, String ifaceTestScenarioId) throws InterfaceConfigurationException {
         try {
+            File dir = getFlowPatternInstanceDir(interfaceId, interfaceFlowPattern);
+            dir = new File(dir, FCFG.getValidFileSystemObjectName(ifaceTestScenarioId));
+            return dir;
+        } catch (FrameworkConfigurationException ex) {
+            final String msg = "TODO";
+            throw new InterfaceConfigurationException(msg, ex);
+        }
+    }
+    
+    public File getFlowPatternInstanceDir(String interfaceId, IfaceFlowPattern interfaceFlowPattern) throws InterfaceConfigurationException {
+        try {
             File dir = new File(FCFG.getSoaTestHome(), interfaceId + "_" + FCFG.getValidFileSystemObjectName(MCFG.getInterface(interfaceId).getDescription()));
             dir = new File(dir, MasterFrameworkConfig.FLOW_PATTERN_DIR_NAME_PREFIX + FCFG.getValidFileSystemObjectName(interfaceFlowPattern.getRefId()));
             dir = new File(dir, FCFG.getValidFileSystemObjectName(interfaceFlowPattern.getInstanceMetadata().getTestName()));
-            dir = new File(dir, FCFG.getValidFileSystemObjectName(ifaceTestScenarioId));
             return dir;
         } catch (FrameworkConfigurationException ex) {
             final String msg = "TODO";
@@ -614,12 +753,16 @@ public class InterfaceConfiguration {
             return c.cast(retVal);
         } catch (XPathExpressionException ex) {
             String msg = "Error during XPath query for the JAXB node's parent";
-            System.out.println(msg);
+            logger.error(msg);
         } catch (ClassCastException ex) {
             String type = retVal == null ? "?" : retVal.getClass().toString();
             String msg = "Cannot cast parent of type " + type + " to the expected type of " + c.getClass();
-            System.out.println(msg);
+            logger.error(msg);
         }
         return null;
+    }
+
+    public Document getDOM() {
+        return DOM;
     }
 }

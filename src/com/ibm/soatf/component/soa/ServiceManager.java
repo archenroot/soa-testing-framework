@@ -18,21 +18,26 @@
 package com.ibm.soatf.component.soa;
 
 import com.bea.wli.config.Ref;
-import com.bea.wli.sb.management.configuration.ALSBConfigurationMBean;
 import com.bea.wli.sb.management.configuration.BusinessServiceConfigurationMBean;
 import com.bea.wli.sb.management.configuration.ProxyServiceConfigurationMBean;
 import com.bea.wli.sb.management.configuration.SessionManagementMBean;
-import com.ibm.soatf.flow.FrameworkExecutionException;
+import com.ibm.soatf.component.soap.SoapComponentException;
+import com.ibm.soatf.flow.OperationResult;
+import com.ibm.soatf.gui.ProgressMonitor;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.HashMap;
-import javax.management.remote.JMXConnector;
+import javax.management.InstanceNotFoundException;
+import javax.management.MBeanException;
 import javax.management.MBeanServerConnection;
+import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
+import javax.management.ReflectionException;
+import javax.management.remote.JMXConnector;
 import javax.management.remote.JMXConnectorFactory;
 import javax.management.remote.JMXServiceURL;
 import javax.naming.Context;
-import org.apache.commons.lang.exception.ExceptionUtils;
+import oracle.soa.management.util.CompositeManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import weblogic.management.jmx.MBeanServerInvocationHandler;
@@ -70,89 +75,120 @@ public class ServiceManager {
             String password) throws MalformedURLException, IOException {
 
         JMXServiceURL serviceUrl = new JMXServiceURL(DEFAULT_PROTO, hostName, port, JNDI_PREFIX + DomainRuntimeServiceMBean.MBEANSERVER_JNDI_NAME);
-        HashMap<String, String> h = new HashMap<String, String>();
+        HashMap<String, String> h = new HashMap<>();
         h.put(Context.SECURITY_PRINCIPAL, userName);
         h.put(Context.SECURITY_CREDENTIALS, password);
         h.put(JMXConnectorFactory.PROTOCOL_PROVIDER_PACKAGES, DEFAULT_PROTO_PROVIDER_PACKAGES);
         return JMXConnectorFactory.connect(serviceUrl, h);
 
     }
-
-    public static boolean changeServiceStatus(
+    
+    public static boolean changeOsbServiceStatus(
             String servicetype, 
             boolean status, 
             String serviceURI, 
             String host, 
             int port, 
             String username, 
-            String password) throws FrameworkExecutionException {
-
+            String password) throws SoapComponentException {
+        final OperationResult cor = OperationResult.getInstance();
         SessionManagementMBean sm = null;
         JMXConnector conn = null;
-        boolean result = true;
         String statusMsg = "";
         try {
+            ProgressMonitor.init(3, "Connecting to server...");
             conn = initConnection(host, port, username, password);
             MBeanServerConnection mbconn = conn.getMBeanServerConnection();
             DomainRuntimeServiceMBean clusterService = (DomainRuntimeServiceMBean) MBeanServerInvocationHandler.newProxyInstance(mbconn, new ObjectName(DomainRuntimeServiceMBean.OBJECT_NAME));
             sm = (SessionManagementMBean) clusterService.findService(SessionManagementMBean.NAME, SessionManagementMBean.TYPE, null);
             sm.createSession(SESSION_NAME);
-            ALSBConfigurationMBean alsbSession = (ALSBConfigurationMBean) clusterService.findService(ALSBConfigurationMBean.NAME + "." + SESSION_NAME, ALSBConfigurationMBean.TYPE, null);
+            //ALSBConfigurationMBean alsbSession = (ALSBConfigurationMBean) clusterService.findService(ALSBConfigurationMBean.NAME + "." + SESSION_NAME, ALSBConfigurationMBean.TYPE, null);
 
             if (servicetype.equals("ProxyService")) {
                 Ref ref = constructRef("ProxyService", serviceURI);
                 ProxyServiceConfigurationMBean proxyConfigMBean = (ProxyServiceConfigurationMBean) clusterService.findService(ProxyServiceConfigurationMBean.NAME + "." + SESSION_NAME, ProxyServiceConfigurationMBean.TYPE, null);
                 if (status) {
+                    ProgressMonitor.increment("Enabling proxy service...");
                     proxyConfigMBean.enableService(ref);
                     statusMsg="Enable the ProxyService : " + serviceURI;
                     logger.info(statusMsg);
                 } else {
+                    ProgressMonitor.increment("Disabling proxy service...");
                     proxyConfigMBean.disableService(ref);
                     statusMsg="Disable the ProxyService : " + serviceURI;
                     logger.info(statusMsg);
                 }
             } else if (servicetype.equals("BusinessService")) {
-                try{
-                    Ref ref = constructRef("BusinessService", serviceURI);
-                    BusinessServiceConfigurationMBean businessConfigMBean = (BusinessServiceConfigurationMBean) clusterService.
-                            findService(BusinessServiceConfigurationMBean.NAME + "." + SESSION_NAME, BusinessServiceConfigurationMBean.TYPE, null);
-                    if (status) {
-                        businessConfigMBean.enableService(ref);
-                        statusMsg="Enable the BusinessService : " + serviceURI;
-                        logger.info(statusMsg);
-                    } else {
-                        businessConfigMBean.disableService(ref);
-                        statusMsg="Disable the BusinessService : " + serviceURI;
-                        logger.info(statusMsg);
-                    }
-                } catch (IllegalArgumentException ex){
-                    logger.fatal(ExceptionUtils.getStackTrace(ex));
+                Ref ref = constructRef("BusinessService", serviceURI);
+                BusinessServiceConfigurationMBean businessConfigMBean = (BusinessServiceConfigurationMBean) clusterService.
+                        findService(BusinessServiceConfigurationMBean.NAME + "." + SESSION_NAME, BusinessServiceConfigurationMBean.TYPE, null);
+                if (status) {
+                    ProgressMonitor.increment("Enabling business service...");
+                    businessConfigMBean.enableService(ref);
+                    statusMsg="Enable the BusinessService : " + serviceURI;
+                    logger.info(statusMsg);
+                } else {
+                    ProgressMonitor.increment("Disabling business service...");
+                    businessConfigMBean.disableService(ref);
+                    statusMsg="Disable the BusinessService : " + serviceURI;
+                    logger.info(statusMsg);
                 }
+            } else {
+                //wtf?
             }
+            ProgressMonitor.increment("Activating session...");
             sm.activateSession(SESSION_NAME, statusMsg);
-            conn.close();
+            return true;
         } catch (Exception ex) {
             if (null != sm) {
                 try {
                     sm.discardSession(SESSION_NAME);
                 } catch (Exception e) {
                     logger.debug("Not able to discard the session. "+e.getLocalizedMessage());
-                    throw new FrameworkExecutionException(e);
                 }
             }
-            result = false;
-            logger.error("Error in MBean Server connection. "+ex.getLocalizedMessage());
-            ex.printStackTrace();
+            final String msg = "Error in MBeanServerConnection. "+ex.getLocalizedMessage();
+            cor.addMsg(msg);
+            throw new SoapComponentException(msg, ex);
         } finally {
             if (null != conn) {
                 try {
                     conn.close();
-                } catch (Exception e) {
+                } catch (IOException e) {
                     logger.debug("Not able to close the JMX connection. "+e.getLocalizedMessage());
-                    throw new FrameworkExecutionException(e);
-                            
-                    
                 }
+            }
+        }
+    }
+
+    public static boolean changeSoaCompositeApplicationStatus(boolean status, String serviceUri, String hostName, int port, String username, String password) throws SoapComponentException {
+        final OperationResult cor = OperationResult.getInstance();
+        boolean result = false;
+        try {
+            ProgressMonitor.init(3, "Connecting to server...");
+            CompositeManager.initConnection(hostName, Integer.toString(port), username, password);  
+ //           oracle.soa.management.facade.Locator locator = LocatorFactory.createLocator();
+            ProgressMonitor.increment("Assigning default composite...");
+            CompositeManager.assignDefaultComposite(CompositeManager.getCompositeLifeCycleMBean(), serviceUri);  
+
+            if (status) {
+                ProgressMonitor.increment("Enabling service...");
+                CompositeManager.startComposite(CompositeManager.getCompositeLifeCycleMBean(), serviceUri);           
+            } else {
+                ProgressMonitor.increment("Disabling service...");
+                CompositeManager.stopComposite(CompositeManager.getCompositeLifeCycleMBean(), serviceUri);           
+            }
+            result = true;
+        } catch (IOException | MalformedObjectNameException | InstanceNotFoundException | MBeanException | ReflectionException ex) {
+            final String msg = "Error in CompositeManager. "+ex.getMessage();
+            //logger.error(msg);
+            cor.addMsg(msg);
+            throw new SoapComponentException(msg, ex);
+        } finally {
+            try {
+                CompositeManager.closeConnection();
+            } catch (IOException e) {
+                logger.debug("Not able to close the CompositeManager connection. "+e.getLocalizedMessage());
             }
         }
 

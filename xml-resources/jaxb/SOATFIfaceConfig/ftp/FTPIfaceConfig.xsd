@@ -17,7 +17,9 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Iface/FTP" targetNamespace="http://www.ibm.com/SOATF/Config/Iface/FTP" elementFormDefault="qualified"
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Iface/FTP"
+    targetNamespace="http://www.ibm.com/SOATF/Config/Iface/FTP" elementFormDefault="qualified"
     attributeFormDefault="unqualified">
     <xs:complexType name="FTPConfig">
         <xs:annotation>
@@ -35,7 +37,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 <xs:complexType>
                     <xs:complexContent>
                         <xs:extension base="ftpconf:File">
-                            <xs:attribute name="envRefName" type="xs:string"/>
+                            <xs:attribute name="envRefName" type="xs:string" use="required"/>
                         </xs:extension>
                     </xs:complexContent>
                 </xs:complexType>
@@ -75,5 +77,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                 </xs:annotation>
             </xs:element>
         </xs:sequence>
+        <xs:attribute name="sourceMessageId" type="xs:string"/>
+        <xs:attribute name="sourceEntityRef" type="xs:string"/>
     </xs:complexType>
 </xs:schema>

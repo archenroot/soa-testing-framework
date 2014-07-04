@@ -1,7 +1,7 @@
 package com.ibm.soatf.component.jms;
 
+import com.ibm.soatf.flow.OperationResult;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -19,13 +19,10 @@ import javax.jms.TextMessage;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
-
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import com.ibm.soatf.flow.OperationResult;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DistribuedQueueBrowser {
 
@@ -95,13 +92,13 @@ public class DistribuedQueueBrowser {
         }
     }
 
-    public List<TextMessage> getQueueMessagesByContent(String content) throws JmsComponentException {
-        List<TextMessage> messages = new ArrayList<>();
+    public Map<File, TextMessage> getQueueMessagesByContent(String content) throws JmsComponentException {
+        Map<File, TextMessage> messages = new HashMap<>();
 
         Enumeration<ServerLocatedMessage> sli = this.getServerLocatedEnumeration();
         int i = 0;
         if (!sli.hasMoreElements()) {
-            throw new NoMessageFoundException();
+            throw new NoMessageFoundException("Queue: " + this.distributedDestinationJndi);
         }
         while (sli.hasMoreElements()) {
             try {
@@ -116,7 +113,6 @@ public class DistribuedQueueBrowser {
 
                     }
                 }
-                messages.add(mes);
                 String filename = new StringBuilder(distributedDestinationName)
                         .append(JmsComponent.NAME_DELIMITER)
                         .append(jmsMessageId)
@@ -125,12 +121,17 @@ public class DistribuedQueueBrowser {
                         .append(JmsComponent.MESSAGE_SUFFIX)
                         .toString();
                 File file = new File(workingDirectory, filename);
-                this.writeStatementToFile(mes.getText(), file);
+                messages.put(file, mes);                
+                FileUtils.writeStringToFile(file, mes.getText());
                 System.out.println(m);
                 ++i;
             } catch (JMSException ex) {
-                final String msg = "Problem catched while trying to get JMS messages from the queue.";
-                cor.addMsg(msg);
+                final String msg = "Problem occured while trying to get JMS messages from the queue.";
+                cor.addMsg(msg, ex.getMessage());
+                throw new JmsComponentException(msg, ex);
+            } catch (IOException ex) {
+                final String msg = "Unable to save message to disk.";
+                cor.addMsg(msg, ex.getMessage());
                 throw new JmsComponentException(msg, ex);
             }
 
@@ -143,7 +144,7 @@ public class DistribuedQueueBrowser {
         return messages;
     }
 
-    public List<TextMessage> getQueueMessages() throws JmsComponentException {
+    public Map<File,TextMessage> getQueueMessages() throws JmsComponentException {
         return getQueueMessagesByContent(null);
     }
 
@@ -294,30 +295,6 @@ public class DistribuedQueueBrowser {
             final String msg = "TODO";
             cor.addMsg(msg);
             throw new JmsComponentException(msg, ex);
-        }
-    }
-
-    private void writeStatementToFile(String statement, File file) throws JmsComponentException {
-        FileWriter fw = null;
-        try {
-            fw = new FileWriter(file);
-            fw.write(statement);
-            fw.flush();
-            fw.close();
-        } catch (IOException ex) {
-            final String msg = "TODO";
-            cor.addMsg(msg);
-            throw new JmsComponentException(msg, ex);
-        } finally {
-            try {
-                if (fw != null) {
-                    fw.close();
-                }
-            } catch (IOException ex) {
-                final String msg = "TODO";
-                cor.addMsg(msg);
-                throw new JmsComponentException(msg, ex);
-            }
         }
     }
 }

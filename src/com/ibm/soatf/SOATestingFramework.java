@@ -17,7 +17,6 @@
  */
 package com.ibm.soatf;
 
-import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.config.ConfigurationManager;
 import com.ibm.soatf.config.DirectoryStructureManager;
 import com.ibm.soatf.config.FrameworkConfigurationException;
@@ -26,10 +25,13 @@ import com.ibm.soatf.config.master.Interface;
 import com.ibm.soatf.config.master.Project;
 import com.ibm.soatf.config.master.SOATestingFrameworkMasterConfiguration;
 import com.ibm.soatf.flow.FlowExecutor;
+import com.ibm.soatf.flow.FrameworkExecutionException;
 import com.ibm.soatf.gui.SOATestingFrameworkGUI;
 import com.ibm.soatf.gui.logging.JTextAreaAppender;
+import java.awt.Color;
 import java.util.List;
 import javax.swing.JTextArea;
+import javax.swing.UIManager;
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -86,11 +88,16 @@ public class SOATestingFramework {
                  * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
                  */
                 try {
-                    for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                        if ("Nimbus".equals(info.getName())) {
-                            javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                            break;
+                    if(false) { //disabled the OS Look'n'Feel
+                        UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());                        
+                    } else {
+                        for (UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
+                            if ("Nimbus".equals(info.getName())) {
+                                javax.swing.UIManager.setLookAndFeel(info.getClassName());
+                                break;
+                            }
                         }
+                        UIManager.getLookAndFeelDefaults().put("nimbusOrange", (new Color(0,128,255)));                  
                     }
                 } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
                     logger.error("Cannot set look and feel", ex);
@@ -106,11 +113,11 @@ public class SOATestingFramework {
                     }
                 });
             } else {
+                //<editor-fold defaultstate="collapsed" desc="Command line mode">
                 try {
                     // Initialization of configuration manager.
                     ConfigurationManager.getInstance().init();
-                    DirectoryStructureManager.checkFrameworkDirectoryStructure();
-
+                    
                     String env = cmd.getOptionValue("env", null);
                     String ifaceName;
                     boolean inboundOnly = false;
@@ -134,6 +141,7 @@ public class SOATestingFramework {
                         ifaceName = cmd.getOptionValue("i");
                         inboundOnly = false;
                     }
+                    DirectoryStructureManager.checkFrameworkDirectoryStructure(ifaceName);
                     FlowExecutor flowExecutor = new FlowExecutor(inboundOnly, env, ifaceName);
                     flowExecutor.execute();
                 } catch (FrameworkConfigurationException ex) {
@@ -141,17 +149,23 @@ public class SOATestingFramework {
                 } catch (FrameworkException ex) {
                     logger.fatal(ex);
                 }
+//</editor-fold>
             }
         } catch (ParseException ex) {
-            logger.fatal("Could not parse the command line arguments. Reason: " + ex.getMessage());
+            logger.fatal("Could not parse the command line arguments. Reason: " + ex);
             printUsage();
-        } catch (FrameworkExecutionException ex) {
-            logger.fatal("Unexpected error occured: ", ex.getMessage());
+        } catch (Throwable ex) {
+            logger.fatal("Unexpected error occured: ", ex);
             printUsage();
             System.exit(-1);
         }
     }
 
+    /**
+     * throws an exception if the provided command line doesn't contain enough arguments to run the framework
+     * @param cmd
+     * @throws FrameworkExecutionException 
+     */
     private static void validate(CommandLine cmd) throws FrameworkExecutionException {
         if (cmd.hasOption("gui")) {
             //ok
@@ -172,7 +186,7 @@ public class SOATestingFramework {
             }
         }
     }
-
+    
     private static void printUsage() {
         logger.info("USAGE: java -jar SOATestingFramework.jar {[-gui|{-env environment|{-p project|-i interface}}]} ");
         logger.info("Example1: java -jar SOATestingFramework.jar -gui\tRuns the framework in the gui mode");
