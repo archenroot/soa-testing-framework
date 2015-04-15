@@ -1,0 +1,182 @@
+<?xml version="1.0"?>
+<!--
+Copyright (C) 2013 zANGETSu
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-->
+
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapconf="http://www.ibm.com/SOATF/Config/Iface/SOAP" targetNamespace="http://www.ibm.com/SOATF/Config/Iface/SOAP" elementFormDefault="qualified" attributeFormDefault="unqualified">
+    <xs:complexType name="SOAPConfig">
+        <xs:annotation>
+            <xs:documentation>
+                
+                SOAP protocol configuration.
+
+                Currently only transport over HTTP protocol supported!
+                
+                SMTP and JMS protocol should be supported in future.
+                
+            </xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element name="serviceName" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">General service name.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="endPointUri" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Relative or full end-point URI. The host and port is configured from the OSB cluster configuration if relative URI, otherwise full URI string need to be provided.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="operationName" type="xs:string" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Service operation to utilize when invoking.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element minOccurs="0" name="authentication">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Type of authentication required to access the service.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" name="principal" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">User name.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element minOccurs="0" name="credentials" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">Password.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="type">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Type of authentication.</xs:documentation>
+                        </xs:annotation>
+                        <xs:simpleType>
+                            <xs:restriction base="xs:string">
+                                <xs:enumeration value="BASIC"/>
+                                <xs:enumeration value="X.509"/>
+                            </xs:restriction>
+                        </xs:simpleType>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="serviceLocationType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Indication of location of service. This can be internal type when service deployed within Fusion environments, or external when deployed within 3rd party environment.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="internal"/>
+                        <xs:enumeration value="external"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element name="serviceSOAType">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Business or Proxy service type. Related to only Fusion(internal) type of services.</xs:documentation>
+                </xs:annotation>
+                <xs:simpleType>
+                    <xs:restriction base="xs:string">
+                        <xs:enumeration value="ProxyService"/>
+                        <xs:enumeration value="BusinessService"/>
+                        <xs:enumeration value="SOACompositeApplication"/>
+                    </xs:restriction>
+                </xs:simpleType>
+            </xs:element>
+            <xs:element minOccurs="0" name="defaultEnvelopeConfig">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Default envelope config is used when now stricktly relationship to environment is created.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="soapconf:EnvelopeConfig"/>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element minOccurs="0" name="envelopeConfig" maxOccurs="unbounded">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Configuration of whole soap envelope message for specific one instance or instances of environments.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="soapconf:EnvelopeConfig">
+                            <xs:attribute name="envRefName" use="required" type="xs:string">
+                                <xs:annotation>
+                                    <xs:documentation xml:lang="en">One or more environment references splitted by default splitting constant character defined in master-config.xml file. Currently hardcoded to pipe |.</xs:documentation>
+                                </xs:annotation>
+                            </xs:attribute>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EnvelopeConfig">
+        <xs:sequence>
+            <xs:element maxOccurs="unbounded" name="element" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Single instance of element within SOAP message.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element minOccurs="0" maxOccurs="unbounded" name="attribute">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">Attribute configuration within defined element.</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:attribute name="attrName" type="xs:string" use="required">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="name">Attribute name.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                                <xs:attribute name="attrValue" type="xs:string" use="required">
+                                    <xs:annotation>
+                                        <xs:documentation xml:lang="en">Attribute value.</xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="elementXpath" type="xs:string" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">XPath to element within message.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="elementValue" type="xs:string" use="required">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Element value.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="sourceEntityRef" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Source entity reference id - related to OSB Reporting.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="sourceMessageId" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Source message id - related to OSB Reporting.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="sourceEntityRef" type="xs:string"/>
+        <xs:attribute name="sourceMessageId" type="xs:string"/>
+    </xs:complexType>
+</xs:schema>

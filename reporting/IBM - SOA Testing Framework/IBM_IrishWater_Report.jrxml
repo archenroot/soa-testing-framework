@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="IBM_IrishWater_Report" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="547" leftMargin="24" rightMargin="24" topMargin="24" bottomMargin="24" isTitleNewPage="true" uuid="bd083342-1372-40bf-81af-5d24b51066d0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="520"/>
+	<parameter name="testName" class="java.lang.String"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["reporting\\IBM - SOA Testing Framework\\"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="fileName" class="java.lang.String"/>
+	<parameter name="MASTER_DATA_DOCUMENT" class="org.w3c.dom.Document"/>
+	<parameter name="operationResult" class="com.ibm.soatf.flow.OperationResult"/>
+	<parameter name="scenarioName" class="java.lang.String"/>
+	<queryString language="xPath">
+		<![CDATA[/*]]>
+	</queryString>
+	<field name="stfconf:release" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:header/stfconf:release]]></fieldDescription>
+	</field>
+	<field name="stfconf:version" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:header/stfconf:version]]></fieldDescription>
+	</field>
+	<field name="stfconf:buildId" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:objectInformation/stfconf:buildId]]></fieldDescription>
+	</field>
+	<field name="stfconf:buildName" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:objectInformation/stfconf:buildName]]></fieldDescription>
+	</field>
+	<field name="stfconf:lastUpdateDate" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:header/stfconf:lastUpdateDate]]></fieldDescription>
+	</field>
+	<field name="testName" class="java.lang.String">
+		<fieldDescription><![CDATA[/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testName]]></fieldDescription>
+	</field>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="794" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="155" y="329" width="134" height="15" uuid="3c909cb1-a5b4-45a3-8267-5dc7c0db96fc"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{stfconf:version}]]></textFieldExpression>
+			</textField>
+			<image isLazy="true">
+				<reportElement mode="Opaque" x="457" y="2" width="90" height="42" uuid="207a03af-a634-458f-bfc2-f57ac0c363f7"/>
+				<imageExpression><![CDATA["reporting\\IBM - SOA Testing Framework\\img\\ibm-logo.png"]]></imageExpression>
+			</image>
+			<textField isBlankWhenNull="true">
+				<reportElement x="0" y="200" width="547" height="100" uuid="354f9610-6dd9-49b4-adfe-d862a1ecd8bd"/>
+				<textElement markup="none">
+					<font fontName="Arial" size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Irish Water " + $F{stfconf:release}
++"\nUnit Test Plan/Results"
++"\n" + $F{stfconf:buildId} + " " + $F{stfconf:buildName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="329" width="150" height="15" backcolor="#CCCCCC" uuid="83b6a738-9d47-424a-a2eb-d5f8ae10d2ef"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Document Version]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="344" width="150" height="15" backcolor="#CCCCCC" uuid="32ff6963-1886-44af-a766-651b6cb3643f"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Creation Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="359" width="150" height="15" backcolor="#CCCCCC" uuid="a26332f8-5977-4c36-88b1-b59a4bea882c"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Last Update Date]]></text>
+			</staticText>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="374" width="150" height="15" backcolor="#CCCCCC" uuid="26bd3566-f03b-4b33-bbcc-785d5e302a4d"/>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Arial" size="9" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Last Print Date]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="155" y="359" width="134" height="15" uuid="a4a636a9-1290-4c31-a412-3df2c6657644"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{stfconf:lastUpdateDate}]]></textFieldExpression>
+			</textField>
+			<textField pattern="yyyy-M-d" isBlankWhenNull="true">
+				<reportElement x="155" y="344" width="134" height="15" uuid="072fd052-f7cb-44ac-b44a-96f6b4edc7d0"/>
+				<textElement verticalAlignment="Middle">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new Date()]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="30" splitType="Stretch">
+			<image>
+				<reportElement x="0" y="0" width="50" height="20" uuid="ecb46868-dbaa-41b9-97d0-dead733c40c3"/>
+				<imageExpression><![CDATA["reporting\\IBM - SOA Testing Framework\\img\\ibm-logo-bw.png"]]></imageExpression>
+			</image>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="5" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="547" height="1" uuid="d2072e9b-755c-45f9-9a44-4ce10eae51f9"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="XML_DATA_DOCUMENT">
+					<subreportParameterExpression><![CDATA[$P{XML_DATA_DOCUMENT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="testName">
+					<subreportParameterExpression><![CDATA[$P{testName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fileName">
+					<subreportParameterExpression><![CDATA[$P{fileName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.XalanXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:documentControl/*/*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "IBM_IrishWater_DocumentControlSubreport.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="1" width="100" height="1" uuid="df7840ac-5c36-4f5a-89e7-6a6121cc2c14"/>
+			</break>
+		</band>
+		<band height="5" splitType="Stretch">
+			<subreport>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="547" height="1" uuid="61bb9a4c-1ff6-48e7-9edb-fcaf82d9fd15"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="XML_DATA_DOCUMENT">
+					<subreportParameterExpression><![CDATA[$P{XML_DATA_DOCUMENT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="testName">
+					<subreportParameterExpression><![CDATA[$P{testName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fileName">
+					<subreportParameterExpression><![CDATA[$P{fileName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.XalanXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:objectInformation")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "IBM_IrishWater_ObjectInformationSubreport.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="1" width="100" height="1" uuid="5519e6dd-1e9d-4fdc-9b12-0f3584edb9ce"/>
+			</break>
+		</band>
+		<band height="5" splitType="Stretch">
+			<subreport isUsingCache="false">
+				<reportElement x="0" y="0" width="547" height="1" uuid="ce645390-b547-4692-adc2-67dbd8e06d5f"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="testName">
+					<subreportParameterExpression><![CDATA[$P{testName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="XML_DATA_DOCUMENT">
+					<subreportParameterExpression><![CDATA[$P{XML_DATA_DOCUMENT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fileName">
+					<subreportParameterExpression><![CDATA[$P{fileName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.XalanXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:testingInformation/stfconf:documentReferences/*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "IBM_IrishWater_TestingInformationSubreport.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="1" width="100" height="1" uuid="ecbf9dc0-9434-4d56-abab-d784d70b6bda"/>
+			</break>
+		</band>
+		<band height="5" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="547" height="1" uuid="f1a03507-5a97-43c3-9199-8679bf68d4d9"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="scenarioName">
+					<subreportParameterExpression><![CDATA[$P{scenarioName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="XML_DATA_DOCUMENT">
+					<subreportParameterExpression><![CDATA[$P{XML_DATA_DOCUMENT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="testName">
+					<subreportParameterExpression><![CDATA[$P{testName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="operationResult">
+					<subreportParameterExpression><![CDATA[$P{operationResult}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="MASTER_DATA_DOCUMENT">
+					<subreportParameterExpression><![CDATA[$P{MASTER_DATA_DOCUMENT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fileName">
+					<subreportParameterExpression><![CDATA[$P{fileName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.XalanXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("/stfconf:ifaceFlowPattern/stfconf:ifaceTestScenario")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "IBM_IrishWater_UnitTestPlanSubreport.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="1" width="100" height="1" uuid="82d48733-7bcc-4f7f-baef-677afc5e233b"/>
+			</break>
+		</band>
+		<band height="5" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="547" height="1" uuid="07d52a60-e2ce-4398-a62b-a5ef8705e4e8"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="testName">
+					<subreportParameterExpression><![CDATA[$P{testName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="XML_DATA_DOCUMENT">
+					<subreportParameterExpression><![CDATA[$P{XML_DATA_DOCUMENT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fileName">
+					<subreportParameterExpression><![CDATA[$P{fileName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.XalanXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:supportingDocumentation/*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "IBM_IrishWater_SupportingDocumentationSubreport.jasper"]]></subreportExpression>
+			</subreport>
+			<break>
+				<reportElement x="0" y="1" width="100" height="1" uuid="dd70b94b-cdb6-4219-941f-a27557e7f4d6"/>
+			</break>
+		</band>
+		<band height="5" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="547" height="1" uuid="f6bf9061-389b-4c0b-a85b-0b8dea86ed1a"/>
+				<subreportParameter name="SUBREPORT_DIR">
+					<subreportParameterExpression><![CDATA[$P{SUBREPORT_DIR}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="XML_DATA_DOCUMENT">
+					<subreportParameterExpression><![CDATA[$P{XML_DATA_DOCUMENT}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="testName">
+					<subreportParameterExpression><![CDATA[$P{testName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="fileName">
+					<subreportParameterExpression><![CDATA[$P{fileName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[((net.sf.jasperreports.engine.data.XalanXmlDataSource)$P{REPORT_DATA_SOURCE}).subDataSource("/stfconf:ifaceFlowPattern/stfconf:InstanceMetadata/stfconf:testResultDocument/stfconf:issueLog/*")]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{SUBREPORT_DIR} + "IBM_IrishWater_IssueLogSubreport.jasper"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="20" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="259" height="20" forecolor="#666666" uuid="18c287d0-b026-4595-b6d0-bbec5f123209"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{fileName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="427" y="0" width="80" height="20" forecolor="#666666" uuid="fe7b9dea-096f-41ac-9df0-f77e07980509"/>
+				<textElement textAlignment="Right">
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="507" y="0" width="40" height="20" forecolor="#666666" uuid="cfbaf85c-38c4-4599-9a71-3d161ea7b114"/>
+				<textElement>
+					<font fontName="Arial" size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

@@ -1,0 +1,83 @@
+<?xml version="1.0"?>
+<!--
+Copyright (C) 2013 zANGETSu
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-->
+
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Iface/FTP"
+    targetNamespace="http://www.ibm.com/SOATF/Config/Iface/FTP" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:complexType name="FTPConfig">
+        <xs:annotation>
+            <xs:documentation>Configuration for the FTP component. Contains the file to work with and optionally its content (relevant for upload only)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" name="defaultFile">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="ftpconf:File"/>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="file">
+                <xs:complexType>
+                    <xs:complexContent>
+                        <xs:extension base="ftpconf:File">
+                            <xs:attribute name="envRefName" type="xs:string" use="required"/>
+                        </xs:extension>
+                    </xs:complexContent>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="refId" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation>Attribute identificator is used for execution of framework component command or which object will be used for execution of the supported command.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+    <xs:simpleType name="Security">
+        <xs:annotation>
+            <xs:documentation xml:lang="en">Enumeration of supported security modes.</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="None"/>
+            <xs:enumeration value="SSL"/>
+            <xs:enumeration value="SSH"/>
+            <!-- 
+            <xs:enumeration value="Microsoft"/>
+            <xs:enumeration value="MySql"/>
+            <xs:enumeration value="H2"/>
+            -->
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="File">
+        <xs:sequence>
+            <xs:element name="fileName" type="xs:string" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The file name to work with (upload/download)</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fileContent" type="xs:string" maxOccurs="1" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The content of the file you want to upload.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+        <xs:attribute name="sourceMessageId" type="xs:string"/>
+        <xs:attribute name="sourceEntityRef" type="xs:string"/>
+    </xs:complexType>
+</xs:schema>

@@ -1,0 +1,78 @@
+<?xml version="1.0"?>
+<!--
+Copyright (C) 2013 zANGETSu
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+-->
+
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:fileconf="http://www.ibm.com/SOATF/Config/Iface/FILE"
+    targetNamespace="http://www.ibm.com/SOATF/Config/Iface/FILE" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:complexType name="FileConfig">
+        <xs:annotation>
+            <xs:documentation>Configuration for the file component. Contains the file to work with and optionally its content (relevant for upload only)</xs:documentation>
+        </xs:annotation>
+        <xs:sequence>
+            <xs:element minOccurs="0" name="defaultFile" maxOccurs="1" type="fileconf:DefaultFile"> </xs:element>
+            <xs:element maxOccurs="unbounded" name="envSpecificFile" minOccurs="0"
+                type="fileconf:EnvSpecificFile"> </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="File">
+        <xs:sequence>
+            <xs:element name="fileName" type="xs:string" maxOccurs="1">
+                <xs:annotation>
+                    <xs:documentation>The file name to work with (put/get/check for (non)existence</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="directory" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Directory where the file should be put and polled by JCA adapter.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="archiveDirectory" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">TODO</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="errorArchiveDirectory" type="xs:string">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">TODO</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="fileContent" type="xs:string" maxOccurs="1" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>The content of the file you want to put to the remote filesystem.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="DefaultFile">
+        <xs:sequence>
+            <xs:element name="file" type="fileconf:File"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:complexType name="EnvSpecificFile">
+        <xs:sequence>
+            <xs:element name="file" type="fileconf:File"/>
+        </xs:sequence>
+        <xs:attribute name="envRefName" type="xs:string" use="required">
+            <xs:annotation>
+                <xs:documentation xml:lang="en">One or more environment references split by default splitting constant character defined in master-config.xml file.</xs:documentation>
+            </xs:annotation>
+        </xs:attribute>
+    </xs:complexType>
+</xs:schema>

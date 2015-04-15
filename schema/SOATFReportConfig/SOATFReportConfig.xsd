@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://www.ibm.com/SOATF/Config/Reporting" elementFormDefault="qualified" attributeFormDefault="unqualified"
+    xmlns:reporting="http://www.ibm.com/SOATF/Config/Reporting">
+
+    <xs:element name="soaTestingFrameworkTestReport" type="reporting:SOATestingFrameworkTestReport"/>
+    <xs:complexType name="SOATestingFrameworkTestReport">
+        <xs:sequence>
+            <xs:element name="header">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="executionDate" type="xs:date"/>
+                        <xs:element name="environmentName" type="xs:string"/>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="newElement"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
