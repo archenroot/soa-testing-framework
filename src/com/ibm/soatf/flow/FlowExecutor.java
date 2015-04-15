@@ -213,7 +213,13 @@ public class FlowExecutor {
                     FlowPatternPreOrPostExecutionBlock patternPreExecutionBlock = MCFG.getFlowPattern(interfaceFlowPattern.getRefId()).getPreExecutionBlock();
                     flowPatternPreOrPostBlockExecute(interfaceObj, interfaceFlowPattern, patternPreExecutionBlock);    
                 }
+<<<<<<< HEAD
                 fireBlockChanged(tId);
+=======
+                for (FlowExecutionListener l : flowExecutionListeners) {
+                    l.blockChanged(tId);
+                }            
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 //scenario pre-execution block
                 TestScenarioPreOrPostExecutionBlock preExecutionBlock = MCFG.getPreExecutionBlock(interfaceFlowPattern.getRefId(), interfaceTestScenario.getRefId());
                 scenarioPreOrPostBlockExecute(interfaceObj, interfaceFlowPattern, interfaceTestScenario, preExecutionBlock);
@@ -243,9 +249,12 @@ public class FlowExecutor {
         if (interfaceFlowPattern == null) {
             execute(interfaceObj);
         } else {
+<<<<<<< HEAD
             if (interfaceFlowPattern.getInstanceMetadata() != null) {
                 fireBlockChanged(interfaceFlowPattern.getInstanceMetadata().getTestName());
             }
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
             //flow pattern pre-execution block
             FlowPatternPreOrPostExecutionBlock preExecutionBlock = MCFG.getFlowPattern(interfaceFlowPattern.getRefId()).getPreExecutionBlock();
             flowPatternPreOrPostBlockExecute(interfaceObj, interfaceFlowPattern, preExecutionBlock);
@@ -321,12 +330,15 @@ public class FlowExecutor {
             l.operationFinished(new FlowExecutionEvent(operationName, prePostOperation, componentResult));
         }
     }
+<<<<<<< HEAD
     
     private void fireBlockChanged(String infoMsg) {
         for (FlowExecutionListener l : flowExecutionListeners) {
             l.blockChanged(infoMsg);
         }
     }
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 
     private String getComponentTypeName(String operationName) {
         return operationName.substring(0, operationName.indexOf("_"));
@@ -389,11 +401,18 @@ public class FlowExecutor {
     }
 
     private void executeOperation(Interface interfaceObj, IfaceFlowPattern interfaceFlowPattern, IfaceTestScenario interfaceTestScenario, IfaceExecBlock interfaceExecutionBlock, Operation operation) throws FrameworkException {
+<<<<<<< HEAD
         final String execBlockId = interfaceExecutionBlock != null ? interfaceExecutionBlock.getRefId() : "na";
         OperationResult.nextInstance();
         final OperationResult cor = OperationResult.getInstance();        
         cor.setScenarioName(interfaceTestScenario.getRefId());
         cor.setExecBlockName(execBlockId);
+=======
+        OperationResult.nextInstance();
+        final OperationResult cor = OperationResult.getInstance();        
+        cor.setScenarioName(interfaceTestScenario.getRefId());
+        cor.setExecBlockName(interfaceExecutionBlock != null ? interfaceExecutionBlock.getRefId() : "na");
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         cor.setOperation(operation);
         cor.setCommmonResult(CommonResult.FAILURE);
         
@@ -427,7 +446,11 @@ public class FlowExecutor {
                     List<DbObject> dbObjects = ICFG.getIfaceDbObjectList(this.envName, interfaceExecutionBlock, operation.getExecuteOn());
                     if (dbObjects.isEmpty()) {
                         String msg = "There exists no Database endpoint within config.xml file for interface "
+<<<<<<< HEAD
                                 + this.ifaceId + ", execution block " + execBlockId
+=======
+                                + this.ifaceId + ", execution block " + interfaceExecutionBlock.getRefId()
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                                 + " targeting " + operation.getExecuteOn().value() + ".";
                         logger.error(msg);
                         throw new FrameworkConfigurationException(msg);

@@ -31,8 +31,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+<<<<<<< HEAD
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -539,6 +542,7 @@ public final class XmlUtils {
             /*String namespaces = declareXPathNamespaces(xmlObject);
             if (namespaces != null && namespaces.trim().length() > 0)
                 xPath = namespaces + xPath;*/
+<<<<<<< HEAD
             int index = 0;            
             Pattern pattern = Pattern.compile("\\[([\\d]+)\\]$");
             Matcher matcher = pattern.matcher(xPath);
@@ -567,6 +571,14 @@ public final class XmlUtils {
                 return xmlText;
             }
             Node node = path[index].getDomNode();
+=======
+
+            XmlObject[] path = xmlObject.selectPath(xPath);
+            if (path == null || path.length != 1 || path[0].getDomNode() == null) {
+                return xmlText;
+            }
+            Node node = path[0].getDomNode();
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
             setNodeValue(node, value);
             return xmlObject.toString();
         } catch (Exception e) {

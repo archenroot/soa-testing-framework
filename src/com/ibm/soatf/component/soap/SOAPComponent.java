@@ -40,8 +40,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+<<<<<<< HEAD
 import java.util.AbstractMap;
 import java.util.ArrayList;
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -100,8 +103,12 @@ public class SOAPComponent extends AbstractSoaTFComponent {
     private String serviceLocactionType;
     private String serviceSOAType;
     
+<<<<<<< HEAD
     //private final Map<String, SOAPConfig.EnvelopeConfig.Element> customValues = new HashMap<>();
     private final List<Entry<String, SOAPConfig.EnvelopeConfig.Element>> customValues = new ArrayList<>();
+=======
+    private final Map<String, SOAPConfig.EnvelopeConfig.Element> customValues = new HashMap<>();
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
     
     private final OperationResult cor;
     private final List<EnvelopeConfig.Element> envelopeElements;
@@ -149,11 +156,16 @@ public class SOAPComponent extends AbstractSoaTFComponent {
         this.serviceLocactionType = soapIfaceConfig.getServiceLocationType();
         this.serviceSOAType = soapIfaceConfig.getServiceSOAType();
 
+<<<<<<< HEAD
         if (envelopeElements != null) {
             for (EnvelopeConfig.Element el : envelopeElements) {
                 //customValues.put(el.getElementXpath(), el);
                 customValues.add(new AbstractMap.SimpleEntry<>(el.getElementXpath(), el));
             }
+=======
+        for (EnvelopeConfig.Element el : envelopeElements) {
+            customValues.put(el.getElementXpath(), el);
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         }
                 
     }
@@ -304,8 +316,12 @@ public class SOAPComponent extends AbstractSoaTFComponent {
             ProgressMonitor.increment("Building envelope...");
             String envelope = facade.buildSoapMessageFromInput(binding, operation, SoapContext.DEFAULT);
             ProgressMonitor.increment("Setting custom values...");
+<<<<<<< HEAD
             //for (Entry<String, SOAPConfig.EnvelopeConfig.Element> xpath: customValues.entrySet()) {
             for (Entry<String, SOAPConfig.EnvelopeConfig.Element> xpath: customValues) {
+=======
+            for (Entry<String, SOAPConfig.EnvelopeConfig.Element> xpath: customValues.entrySet()) {
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 //Element e = XmlUtils.getElementForXPath(envelope, xpath.getKey());
                 envelope = XmlUtils.setTextToElement(envelope, transformXPath(xpath.getKey()), xpath.getValue().getElementValue());
                 List<SOAPConfig.EnvelopeConfig.Element.Attribute> attrs = xpath.getValue().getAttribute();
@@ -478,7 +494,11 @@ public class SOAPComponent extends AbstractSoaTFComponent {
         } else {
             path = xPath;
         }
+<<<<<<< HEAD
         path = path.replaceAll("\\*:([^/\\[\\]]+)([^/])?", "*[local-name()=\"$1\"]$2");
+=======
+        path = path.replaceAll("\\*:([^/]+)", "*[local-name()=\"$1\"]");
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         StringBuilder s = new StringBuilder("$this");
         if (path.startsWith("/")) {
             s.append(path);

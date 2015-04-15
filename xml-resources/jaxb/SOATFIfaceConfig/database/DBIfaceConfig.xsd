@@ -91,6 +91,7 @@ Checking (negative or positive) if record was polled is done ONLY on the first o
                     <xs:documentation xml:lang="en">Pair of column name and predefined value to use by SQL statement generator.</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
+<<<<<<< HEAD
                     <xs:simpleContent>
                         <xs:extension base="xs:string">
                             <xs:attribute name="columnName" use="required" type="xs:string">
@@ -120,6 +121,33 @@ Checking (negative or positive) if record was polled is done ONLY on the first o
                             </xs:attribute>
                         </xs:extension>
                     </xs:simpleContent>                    
+=======
+                    <xs:attribute name="columnName" use="required" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Column name which should be generated with predefined value.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="columnValue" use="required" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Custom value to be generated in the INSERT statement. When at the same time the polledValue attribute is used, value of columnValue should represent unpolled value (same as MarkUnreadValue in the JCA config file for the polling proxy service)</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="sourceEntityId" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">True means this column is a part of the Source_Entity_Ref string. It may be this single column only.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="sourceMessageId" type="xs:boolean">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">True means this column is a part of the Source_Message_Ref string. It may be this single column only.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                    <xs:attribute name="polledValue" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">If used, tells the framework that this column is used in the polling mechanism and, at the same time, defines which value is signalizing that this record was polled (same as MarkReadValue in JCA config file for the polling proxy service)</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 </xs:complexType>
             </xs:element>
         </xs:sequence>

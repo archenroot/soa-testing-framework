@@ -83,6 +83,7 @@ public final class StatementGenerator {
                 int type = rsmd.getColumnType(i);
                 String v;
                 int size = rsmd.getPrecision(i);
+<<<<<<< HEAD
                 String customVal = null;
                 if (customValuesMap.containsKey(columnName)) {
                     customVal = customValuesMap.get(columnName).getColumnValue();
@@ -90,6 +91,8 @@ public final class StatementGenerator {
                         customVal = customValuesMap.get(columnName).getValue();
                     }
                 }
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 switch (type) {
                     case Types.BIGINT:
                     case Types.BIT:
@@ -101,27 +104,43 @@ public final class StatementGenerator {
                     case Types.INTEGER:
                     case Types.SMALLINT:
                     case Types.TINYINT:
+<<<<<<< HEAD
                         v = customValuesMap.containsKey(columnName) ? customVal : String.valueOf(RandomGenerator.getNumeric(size == 0 ? DEFAULT_NUMBER_PRECISION : size));
+=======
+                        v = customValuesMap.containsKey(columnName) ? customValuesMap.get(columnName).getColumnValue() : String.valueOf(RandomGenerator.getNumeric(size == 0 ? DEFAULT_NUMBER_PRECISION : size));
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                         if("".equals(v)) v="null";
                         break;
                     case Types.DATE:
                     case Types.TIMESTAMP:
                         if(customValuesMap.containsKey(columnName)) {
+<<<<<<< HEAD
                             v = dateField(customVal);
+=======
+                            v = dateField(customValuesMap.get(columnName));
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                         } else {
                             v = String.format("TO_DATE('%s', 'YYYY/MM/DD HH24:MI:SS')", DatabaseComponent.DATE_FORMAT.format(cal.getTime()));
                         }
                         break;
                     case Types.TIME:
                         if(customValuesMap.containsKey(columnName)) {
+<<<<<<< HEAD
                             v = dateField(customVal);
+=======
+                            v = dateField(customValuesMap.get(columnName));
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                         } else {
                             v = String.format("TO_DATE('%s', 'HH24:MI:SS')", DatabaseComponent.TIME_FORMAT.format(cal.getTime()));
                         }
                         break;
                     default:
                         if (customValuesMap.containsKey(columnName)) {
+<<<<<<< HEAD
                             v = customVal.replaceAll("'", "''");
+=======
+                            v = customValuesMap.get(columnName).getColumnValue().replaceAll("'", "''");
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                             v = "null".equals(v) ? "null" : "'" + v + "'";
                         } else {
                             v = String.format("'%s'", RandomGenerator.getRandomAlphabetical(size));
@@ -165,6 +184,7 @@ public final class StatementGenerator {
     /**
      * Returns the value in to_date(arg1, arg2) format where arg1 is the date in string format taken from the column's value
      * and the arg2 is the corresponding database date format
+<<<<<<< HEAD
      * @param dateStr
      * @return the value in to_date(arg1, arg2) format
      */
@@ -173,6 +193,17 @@ public final class StatementGenerator {
             return "null";
         }
         if(dateStr.toUpperCase().startsWith("TO_DATE") || dateStr.toUpperCase().startsWith("TO_TIMESTAMP") || "SYSDATE".equals(dateStr.toUpperCase())|| "SYSTIMESTAMP".equals(dateStr.toUpperCase())) {
+=======
+     * @param column DB column that is of a date/timestamp type
+     * @return the value in to_date(arg1, arg2) format
+     */
+    public static String dateField(DbObject.CustomValue column) {
+        String dateStr = column.getColumnValue();
+        if (dateStr == null || "".equals(dateStr)) {
+            return "null";
+        }
+        if(dateStr.toUpperCase().startsWith("TO_DATE") || dateStr.toUpperCase().startsWith("TO_TIMESTAMP")) {
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
             return dateStr;
         }
         //automatically tries to use the correct format pattern based on the date value

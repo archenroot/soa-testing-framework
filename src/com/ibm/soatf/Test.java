@@ -25,10 +25,23 @@ import java.io.IOException;
  *
  * @author user
  */
+<<<<<<< HEAD
 @Deprecated
 public class Test {
     public static void main(String[] args) throws Exception {
         execute(new File("C:\\Apps\\Notepad++\\notepad++.exe"), new File("C:\\WORK\\Irish Water\\projects\\trunk\\soa_test\\IW.600.EBS_M_PCM_SupplierDataVendors\\FlowPattern_-_DatabaseToQueueToQueueToDatabase\\TestScenarioForVendorSitesOfTypeEBSPCM002\\PositiveScenario1SourceToDestination\\db\\eis_ebs_DatabaseAdapter_XXXIW_MW_PO_VENDOR_SITES_EXT_insert.sql"));
+=======
+public class Test {
+    public static void main(String[] args) throws Exception {
+        //execute(new File("C:\\Apps\\Notepad++\\notepad++.exe"), new File("C:\\WORK\\Irish Water\\projects\\trunk\\soa_test\\IW.600.EBS_M_PCM_SupplierDataVendors\\FlowPattern_-_DatabaseToQueueToQueueToDatabase\\TestScenarioForVendorSitesOfTypeEBSPCM002\\PositiveScenario1SourceToDestination\\db\\eis_ebs_DatabaseAdapter_XXXIW_MW_PO_VENDOR_SITES_EXT_insert.sql"));
+        int a = 0x1E;
+        int b = 0xE2;
+        int c = a & ~b;
+        System.out.println(Integer.toBinaryString(a));
+        System.out.println(Integer.toBinaryString(~b));
+        System.out.println(Integer.toBinaryString(c));
+        System.out.println(c);
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
     }
     
     private static void execute(File executableFile, File file) {

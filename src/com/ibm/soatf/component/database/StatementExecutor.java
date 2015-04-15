@@ -23,11 +23,17 @@ import com.ibm.soatf.tool.FileSystem;
 import com.ibm.soatf.tool.Utils;
 import java.io.File;
 import java.io.IOException;
+<<<<<<< HEAD
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
+=======
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -50,10 +56,16 @@ public class StatementExecutor {
      * 
      * @param conn SQL connection on which you want to run this script
      * @param file script file
+<<<<<<< HEAD
      * @return rowid of the inserted row
      * @throws com.ibm.soatf.component.database.DatabaseComponentException
      */
     public String runScript(Connection conn, File file) throws DatabaseComponentException {
+=======
+     * @throws StatementExecutorException if SQL or IO exception occurs
+     */
+    public void runScript(Connection conn, File file) throws DatabaseComponentException {
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         OperationResult cor = OperationResult.getInstance();
         String inputScriptFilePath = "";
         String inputScriptRelativePath = "";
@@ -69,15 +81,20 @@ public class StatementExecutor {
             cor.addMsg(msg, "<a href='file://"+inputScriptFilePath+"'>"+inputScriptFilePath+"</a>", inputScriptRelativePath);
             
             conn.setAutoCommit(false);
+<<<<<<< HEAD
             
             
             /*stmt = conn.createStatement();
+=======
+            stmt = conn.createStatement();
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
             ProgressMonitor.increment("Executing SQL script...");
             boolean hasResults = stmt.execute(sql);
             conn.commit();
             int updateCount = -1;
             if(!hasResults) {
                 updateCount = stmt.getUpdateCount();
+<<<<<<< HEAD
             }*/
             if (sql.endsWith(";")) {
                 sql=sql.substring(0, sql.length()-1);
@@ -100,11 +117,20 @@ public class StatementExecutor {
                 cor.addMsg(msg); 
             }
             
+=======
+            }
+            msg = "Script run successful, update count: " + updateCount;
+            logger.debug(msg);
+            cor.addMsg(msg);
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
             final String logMsg = "Record has been inserted into source database '" + conn.getMetaData().getURL() + "'.\n"
                         + "Insert statement executed:\n%s";
             cor.addMsg(logMsg, sql, "[FILE: "+FileSystem.getRelativePath(file)+"]");
             cor.markSuccessful();
+<<<<<<< HEAD
             return rowId;
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         } catch (IOException ex) {
             final String msg = "Failed to open statement [FILE: %s].";
             cor.addMsg(msg, "<a href='file://"+inputScriptFilePath+"'>"+inputScriptFilePath+"</a>", inputScriptRelativePath);

@@ -36,7 +36,10 @@ import org.apache.logging.log4j.Logger;
  *
  * @author zANGETSu
  */
+<<<<<<< HEAD
 @Deprecated
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 public final class SoaComponent extends AbstractSoaTFComponent {
     
     private static final Logger logger = LogManager.getLogger(SoaComponent.class.getName());

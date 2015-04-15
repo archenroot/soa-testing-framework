@@ -41,7 +41,10 @@ import oracle.soa.management.util.CompositeManager;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import weblogic.management.jmx.MBeanServerInvocationHandler;
+<<<<<<< HEAD
 import weblogic.management.mbeanservers.Service;
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 import weblogic.management.mbeanservers.domainruntime.DomainRuntimeServiceMBean;
 
 /**
@@ -104,6 +107,7 @@ public class ServiceManager {
             sm = (SessionManagementMBean) clusterService.findService(SessionManagementMBean.NAME, SessionManagementMBean.TYPE, null);
             sm.createSession(SESSION_NAME);
             //ALSBConfigurationMBean alsbSession = (ALSBConfigurationMBean) clusterService.findService(ALSBConfigurationMBean.NAME + "." + SESSION_NAME, ALSBConfigurationMBean.TYPE, null);
+<<<<<<< HEAD
             
             /*
             //this can be used to retrieve polling interval for util waits ... or maybe force the polling
@@ -111,13 +115,19 @@ public class ServiceManager {
             findService.getParentAttribute()
             */
                     
+=======
+
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
             if (servicetype.equals("ProxyService")) {
                 Ref ref = constructRef("ProxyService", serviceURI);
                 ProxyServiceConfigurationMBean proxyConfigMBean = (ProxyServiceConfigurationMBean) clusterService.findService(ProxyServiceConfigurationMBean.NAME + "." + SESSION_NAME, ProxyServiceConfigurationMBean.TYPE, null);
                 if (status) {
                     ProgressMonitor.increment("Enabling proxy service...");
                     proxyConfigMBean.enableService(ref);
+<<<<<<< HEAD
 
+=======
+>>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                     statusMsg="Enable the ProxyService : " + serviceURI;
                     logger.info(statusMsg);
                 } else {
