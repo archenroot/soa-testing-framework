@@ -26,11 +26,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
-<<<<<<< HEAD
  * Factory class used for creating different kind of components, was deprecated, all components are now constructed in FlowExecutor Class
-=======
- *
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
  * @author Ladislav Jech <archenroot@gmail.com>
  */
 @Deprecated
@@ -48,19 +44,11 @@ public class SOATFCompFactory {
     /**
      * Factory master method for build 
      * @param soaTestingFrameworkComponentType type of component to be created
-<<<<<<< HEAD
-=======
-     * @param identificator identificator for the component defined within configuration file
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
      * @param cor instance of operation result
      * @return
      */
     public static AbstractSoaTFComponent buildSOATFComponent(
            
-<<<<<<< HEAD
-=======
-            
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
             SOATFCompType soaTestingFrameworkComponentType,
             OperationResult cor) {
         logger.debug("Factory started to build " + soaTestingFrameworkComponentType.name() + " component.");

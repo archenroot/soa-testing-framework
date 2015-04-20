@@ -19,7 +19,6 @@ package com.ibm.soatf.component.jms;
 
 import com.ibm.soatf.FrameworkException;
 import com.ibm.soatf.component.AbstractSoaTFComponent;
-import com.ibm.soatf.component.CompOperType;
 import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.config.ConfigurationManager;
 import com.ibm.soatf.config.MasterConfiguration;
@@ -43,7 +42,6 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import javax.jms.Destination;
 import javax.jms.JMSException;
 import javax.jms.Message;
@@ -96,7 +94,7 @@ public class JmsComponent extends AbstractSoaTFComponent {
     /**
      *
      */
-    public static Set<CompOperType> supportedOperations = CompOperType.JMS_OPERATIONS;
+    //public static Set<CompOperType> supportedOperations = CompOperType.JMS_OPERATIONS;
 
     private MasterConfiguration masterConfig;
     private final OracleFusionMiddlewareInstance jmsMasterConfig;

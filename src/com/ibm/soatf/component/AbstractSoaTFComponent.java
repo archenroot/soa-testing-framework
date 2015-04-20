@@ -4,14 +4,13 @@ package com.ibm.soatf.component;
 import com.ibm.soatf.FrameworkException;
 import com.ibm.soatf.config.master.Operation;
 import com.ibm.soatf.flow.OperationResult;
-import com.ibm.soatf.flow.OperationResult.CommonResult;
 import com.ibm.soatf.gui.ProgressMonitor;
 import java.io.File;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
- * Superclass to all of the soatf components
+ * Superclass to all of the SOATF components, declares 3 abstract methods common to all components
  * @author Ladislav Jech <archenroot@gmail.com>
  */
 public abstract class AbstractSoaTFComponent {
@@ -24,14 +23,9 @@ public abstract class AbstractSoaTFComponent {
      */
     protected SOATFCompType componentType;
 
-    /**
-     * Component identificator.
-     */
-    @Deprecated
-    protected String identificator;
 
     /**
-     *
+     * local directory where current test run instance of Component stores generated/received data files
      */
     protected File workingDir;
 
@@ -45,24 +39,14 @@ public abstract class AbstractSoaTFComponent {
     }
 
     /**
-     *
-     * @param componentType
-     * @param identificator
-     */
-    public AbstractSoaTFComponent(SOATFCompType componentType, String identificator) {
-        this(componentType);
-        this.identificator = identificator;
-
-    }
-
-    /**
-     *
+     * all time intensive initialization routines should be placed here instead of constructor
+     * not implemented correctly yet
      * @throws FrameworkException
      */
     protected abstract void constructComponent() throws FrameworkException;
 
     /**
-     *
+     * no real use in the framework at the moment
      */
     protected abstract void destructComponent();
 
@@ -86,7 +70,6 @@ public abstract class AbstractSoaTFComponent {
         } finally {
             ProgressMonitor.markDone();
         }
-        
     }
 
     /**
@@ -97,45 +80,10 @@ public abstract class AbstractSoaTFComponent {
     protected abstract void executeOperation(Operation operation) throws FrameworkException;
 
     /**
-     *
-     * @param operation
-     * @return
-     */
-    public boolean easyExecute(Operation operation) {
-        //SOATFComponent soaTFComponent = SOATFCompFactory.buildSOATFComponent(CompOperType.getComponentType(operation), new ComponentResult());
-        //soaTFComponent.execute(operation);
-        return OperationResult.getInstance().isSuccessful();
-    }
-
-    /**
-     *
-     * @return
+     * getter for component type set by every subclass in constructor
+     * @return actual component type
      */
     public SOATFCompType getComponentType() {
         return this.componentType;
-    }
-
-    /**
-     *
-     * @param componentType
-     */
-    public void setComponentType(SOATFCompType componentType) {
-        this.componentType = componentType;
-    }
-
-    /**
-     *
-     * @return
-     */
-    public String getIdentificator() {
-        return this.identificator;
-    }
-
-    /**
-     *
-     * @param identificator
-     */
-    public void setIdentificator(String identificator) {
-        this.identificator = identificator;
     }
 }

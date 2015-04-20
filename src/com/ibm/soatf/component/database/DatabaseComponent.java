@@ -17,16 +17,7 @@
  */
 package com.ibm.soatf.component.database;
 
-<<<<<<< HEAD
 
-=======
-/**
- * Component used for task related to databases. Basically CRUD operation, but 
- * not restricted to. Currently only Oracle Database is supported, but extending for 
- * any JDBC compatible database is scheduled.
- * @author Ladislav Jech <archenroot@gmail.com>
- */
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.config.iface.db.DbObject;
@@ -54,15 +45,9 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
-<<<<<<< HEAD
  * Component used for task related to databases. Provides common CRUD statement generation and execution.
  * Currently only Oracle Database is supported, but extending for 
  * any JDBC compatible database is scheduled.
-=======
- * Database component server every stuff related to databases. Basically it
- * provides common CRUD statement generation and execution.
- *
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
  * @author Ladislav Jech <archenroot@gmail.com>
  */
 public class DatabaseComponent extends AbstractSoaTFComponent {
@@ -113,11 +98,8 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
     private Map<DbObject, DbObjectConfig> dbObjectConfigs;
     private DbObject parentDbObject;
     private String refId;
-<<<<<<< HEAD
     
     private static Map<DbObject, String> dbObjectInsertRowIds = new HashMap<>();
-=======
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 
     private static enum SQL_COMMAND {
         SELECT,
@@ -126,13 +108,8 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
 
     /**
      * Construct DB component. 
-<<<<<<< HEAD
      * @param databaseMasterConfig configuration of the specific database (host, port, credentials, etc...) from master-config.xml
      * @param dbObjects list of the tables that will be affected by executing operations on this instance of database component
-=======
-     * @param databaseMasterConfig configuration of the concrete database (host, port, credentials, etc...) from master-config.xml
-     * @param dbObjects tables that this component will work with
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
      * @param workingDir working dir for storing generated inserts (i.e. interface/flowpatter/testscenario/db)
      * @param refId used in the file name construction
      * @throws DatabaseComponentException 
@@ -215,11 +192,7 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
                     final String filename = new StringBuilder(refId.replace("/", "_")).append(NAME_DELIMITER).append(object.getName()).append(INSERT_FILE_SUFFIX).toString();
                     final File file = new File(workingDir, filename);
                     generateInsertStatement(object, file);
-<<<<<<< HEAD
                     executeInsertFromFile(object, file);
-=======
-                    executeInsertFromFile(file);
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 }
                 break;
             case DB_DELETE_RECORD:
@@ -270,22 +243,14 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
      * @param file file containing the INSERT statement
      * @throws DatabaseComponentException if the INSERT execution fails
      */
-<<<<<<< HEAD
     private void executeInsertFromFile(DbObject object, File file) throws DatabaseComponentException {
-=======
-    private void executeInsertFromFile(File file) throws DatabaseComponentException {
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         ProgressMonitor.increment("Getting connection...");
         Connection conn = getConnection();
         try {
             StatementExecutor se = new StatementExecutor();
-<<<<<<< HEAD
             String rowId = se.runScript(conn, file);
             
             dbObjectInsertRowIds.put(object, rowId);
-=======
-            se.runScript(conn, file);
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         } finally {
             logger.trace("Insert finished with result: " + OperationResult.getInstance().isSuccessful());
             closeConnection(conn);
@@ -401,21 +366,13 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
             }
             String msg;
             if (cnt == 1) {
-<<<<<<< HEAD
                 msg = "One record looks to be polled.";
-=======
-                msg = "One record looks to be polled." + stmt.toString();
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 logger.info(msg);
                 cor.addMsg(msg);
                 cor.markSuccessful();
             } else {
                 if (cnt == 0) {
-<<<<<<< HEAD
                     msg = "Database record has not been polled.";
-=======
-                    msg = "Database record has not been polled";
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 } else {
                     msg = "It looks like more than one polled record has been found.\n"
                             + "It can be caused by wrong configuration of the insert statement custom values, polling column or its value, etc. look into config.xml.";
@@ -524,7 +481,6 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
         DbObjectConfig parentDbConfig = dbObjectConfigs.get(parentDbObject);
         sb.append(" FROM ").append(object.getName()).append("\n");
         sb.append(" WHERE ");
-<<<<<<< HEAD
         String rowId = dbObjectInsertRowIds.get(object);
         if (rowId != null) {
            sb.append("rowid = ?");
@@ -538,16 +494,6 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
             for (String col : cols) {
                 sb.append(" AND ").append(col).append(" = ?").append("\n");
             }
-=======
-        String[] cols = parentDbConfig.getSourceEntityIdColumns();
-        sb.append(cols[0]).append(" = ?").append("\n");
-        for (int i = 1; i < cols.length; i++) {
-            sb.append(" AND ").append(cols[i]).append(" = ?").append("\n");
-        }
-        cols = parentDbConfig.getSourceMessageIdColumns();
-        for (String col : cols) {
-            sb.append(" AND ").append(col).append(" = ?").append("\n");
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         }
         if (usePolled != null) {
             sb.append(" AND ").append(dbConfig.getPolledColumnName()).append(" = ?");
@@ -558,7 +504,6 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
         try {
             stmt = conn.prepareStatement(sql);
             int i = 1;
-<<<<<<< HEAD
             if (rowId != null) {
                stmt.setString(i++, rowId);
                int idx = sb.indexOf("?");
@@ -577,20 +522,6 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
                     int idx = sb.indexOf("?");
                     sb.replace(idx, idx + 1, "'" + val.replace("'", "''") + "'");
                 }
-=======
-            for (String col : parentDbConfig.getSourceEntityIdColumns()) {
-                final String val = dbConfig.getColumnValue(col);
-                stmt.setString(i++, val);
-                int idx = sb.indexOf("?");
-                sb.replace(idx, idx + 1, "'" + val.replace("'", "''") + "'");
-            }
-            
-            for (String col : parentDbConfig.getSourceMessageIdColumns()) {
-                final String val = dbConfig.getColumnValue(col);
-                stmt.setString(i++, val);
-                int idx = sb.indexOf("?");
-                sb.replace(idx, idx + 1, "'" + val.replace("'", "''") + "'");
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
             }
             
             if (usePolled != null) {
@@ -668,13 +599,8 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
             if(customValues != null) {
                 for (DbObject.CustomValue cusVal : customValues) {
                     final String name = cusVal.getColumnName().toUpperCase();
-<<<<<<< HEAD
                     String value = cusVal.getColumnValue();
                     cusVal.setColumnValue("null".equalsIgnoreCase(value) ? "null" : value);
-=======
-                    final String value = cusVal.getColumnValue();
-                    cusVal.setColumnValue(value.equalsIgnoreCase("null") ? "null" : value);
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                     customValuesMap.put(name, cusVal);
                     
                     Boolean bSEId = cusVal.isSourceEntityId();

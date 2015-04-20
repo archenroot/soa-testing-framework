@@ -1,0 +1,339 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+<head>
+<title>Manuale di ftp4j 1.7</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+</head>
+<body>
+<h1>Manuale di ftp4j 1.7</h1>
+<ul>
+  <li><a href="#1">Requisiti</a></li>
+  <li><a href="#2">Installazione</a></li>
+  <li><a href="#3">Javadoc</a></li>
+  <li><a href="#4">Per cominciare</a></li>
+  <li><a href="#5">Connessione attraverso un proxy</a></li>
+  <li><a href="#6">Connessione sicura FTPS/FTPES</a></li>
+  <li><a href="#7">Navigare nel sito remoto</a></li>
+  <li><a href="#8">Rinominare i file e le directory</a></li>
+  <li><a href="#9">Spostare i file e le directory </a></li>
+  <li><a href="#10">Cancellare i file</a></li>
+  <li><a href="#11">Creare e cancellare le directory</a></li>
+  <li><a href="#12">Elencare i file, le directory ed i collegamenti</a></li>
+  <li><a href="#13">Data di modifica di file, directory e collegamenti</a></li>
+  <li><a href="#14">Download e upload dei file</a></li>
+  <li><a href="#15">Trasferimenti attivi e passivi</a></li>
+  <li><a href="#16">Trasferimenti binari e testuali</a></li>
+  <li><a href="#17">Compressione dei trasferimenti</a></li>
+  <li><a href="#18">Il comando NOOP</a></li>
+  <li><a href="#19">Comandi del sito e personalizzati</a></li>
+  <li><a href="#20">Gestione delle eccezioni</a></li>
+</ul>
+<a name="1"></a>
+<h2>Requisiti</h2>
+<p>Per eseguire la libreria ftp4j &egrave; necessario un Java Runtime Environment J2SE v. 1.4 o successivo.</p>
+<a name="2"></a>
+<h2>Installazione</h2>
+<p>Si aggiunga  il file JAR di ftp4j al classpath dell'applicazione che deve richiamarlo.</p><a name="3"></a>
+<h2>Documentazione javadoc</h2>
+<p><a href="api/index.html">ftp4j api</a></p>
+<a name="4"></a>
+<h2>Per cominciare</h2>
+<p>La classe principale della libreria &egrave; <em>FTPClient</em> (<em>it.sauronsoftware.ftp4j.FTPClient</em>).</p>
+<p>Si inizia creando un'istanza di <em>FTPClient</em>:</p>
+<pre>FTPClient client = new FTPClient();</pre>
+<p>Il client deve poi essere connesso ad un servizio FTP remoto:</p>
+<pre>client.connect(&quot;ftp.host.com&quot;);</pre>
+<p>Se la porta del servizio FTP remoto non &egrave; quella standard, cio&egrave; la 21:</p>
+<pre>client.connect(&quot;ftp.host.com&quot;, port);</pre>
+<p>Ad esempio:</p>
+<pre>client.connect(&quot;ftp.host.com&quot;, 8021);</pre>
+<p>Il protocollo FTP richiede ora una fase di autenticazione:</p>
+<pre>client.login(&quot;carlo&quot;, &quot;mypassword&quot;);</pre>
+<p>Se nessuna eccezione viene propagata il client &egrave; ora autenticato per l'uso del servizio. In caso contrario, se il tentativo di accesso fallisce, si riceve una <em>it.sauronsoftware.ftp4j.FTPException</em>.</p>
+<p>L'accesso anonimo, se consentito dal server, pu&ograve; essere svolto inviando lo username &quot;anonymous&quot; ed una password qualsiasi (attenzione al fatto che alcuni server, come password per l'accesso anonimo, richiedono un indirizzo e-mail):</p>
+<pre>client.login(&quot;anonymous&quot;, &quot;ftp4j&quot;);</pre>
+<p>Una volta completate le operazioni &egrave; necessario disconnettere il client:</p>
+<pre>client.disconnect(true);</pre>
+<p>Questa formula invia il comando QUIT al server FTP, richiedendo una procedura di disconnessione legale in base al protocollo. Per interrompere la connessione senza eseguire la procedura legale di disconnessione, &egrave; possibile richiamare:</p>
+<pre>client.disconnect(false);</pre>
+<a name="5"></a>
+<h2>Connessione attraverso un proxy</h2>
+<p>Il client di ftp4j si connette al server attraverso un <em>connettore</em> (un oggetto che estende la classe astratta <em>it.sauronsoftware.ftp4j.FTPConnector</em>). Il client carica il connettore che gli &egrave; stato assegnato e gli domanda la connessione con il server. Il connettore stabilisce la connessione e ne restituisce il controllo al client (attraverso un oggetto che implementa l'interfaccia <em>it.sauronsoftware.ftp4j.FTPConnection</em>). Grazie a questo meccanismo di astrazione ftp4j &egrave; in grado di supportare la connessione attraverso diversi tipi di proxy.</p>
+<p>Il connettore di un client pu&ograve; essere impostato attraverso il metodo <em>setConnector()</em>, naturalmente prima di connettere il client al server.</p>
+<pre>client.setConnector(anyConnectorYouWant);</pre>
+<p>Se nessun connettore viene impostato, il client usa quello predefinito, che &egrave; <em>DirectConnector</em> (<em>it.sauronsoftware.ftp4j.connectors.DirectConnector</em>). <em>DirectConnector</em> stabilisce una connessione TCP diretta tra il client ed il server, senza altre destinazioni o protocolli intermediari.</p>
+<p>Se il server FTP remoto pu&ograve; essere raggiunto solo passando attraverso un proxy, allora bisogna cambiare il connettore. Con ftp4j sono forniti diversi connettori, in grado di negoziare la connessione con i pi&ugrave; comuni tipi di proxy:</p>
+<ul>
+  <li><em>HTTPTunnelConnector</em> (<em>it.sauronsoftware.ftp4j.connectors.HTTPTunnelConnector</em>)<br />
+    Questo connettore si collega attraverso un proxy HTTP in grado di supportare il metodo CONNECT.</li>
+  <li><em>FTPProxyConnector</em> (<em>it.sauronsoftware.ftp4j.connectors.FTPProxyConnector</em>)<br />
+Questo connettore si collega attraverso un proxy FTP in grado di supportare il collegamento all'host remoto tramite il comando SITE o il comando OPEN. Altre tipologie di proxy FTP (come quelle che usano la forma <em>username@remotehost</em> durante l'autenticazione) possono essere usate in trasparenza senza un apposito connettore. </li>
+  <li><em>SOCKS4Connector</em> (<em>it.sauronsoftware.ftp4j.connectors.SOCKS4Connector</em>)<br />
+  Questo connettore si collega alla destinazione attraverso un proxy SOCKS 4 o 4a.</li>
+  <li><em>SOCKS5Connector</em> (<em>it.sauronsoftware.ftp4j.connectors.SOCKS5Connector</em>)<br />
+  Questo connettore si collega alla destinazione attraverso un proxy SOCKS 5.</li>
+</ul>
+<p>Poich&eacute; l'architettura di ftp4j &egrave; modulare, altri connettori possono essere sviluppati da chiunque, estendendo la classe astratta <em>FTPConnector</em>.</p>
+<a name="6"></a>
+<h2>Connessione sicura FTPS/FTPES</h2>
+<p>La libreria ftp4j supporta le due varianti sicure di FTP denominate FTPS (FTP con TLS/SSL implicito) e FTPES (FTP su TLS/SSL esplicito).</p>
+<p>Il metodo <em>setSecurity()</em> pu&ograve; essere utilizzato per attivare la funzionalit&agrave;:</p>
+<pre>client.setSecurity(FTPClient.SECURITY_FTPS); // attiva FTPS</pre>
+<pre>client.setSecurity(FTPClient.SECURITY_FTPES); // attiva FTPES</pre>
+<p>Ambo i metodi devono essere invocati prima di connettere il client al server.</p>
+<p>Se il livello di sicurezza &egrave; impostato su <em>SECURITY_FTPS</em>, la porta di default usata dal metodo <em>connect()</em> diventa 990.</p>
+<p>Il client negozia le connessioni SSL usando la socket factory restituita dalla chiamata Java    <em>javax.net.ssl.SSLSocketFactory.getDefault()</em>. La socket factory pu&ograve; essere cambiata invocando il metodo del client <em>setSSLSocketFactory()</em>. Una <em>SSLSocketFactory</em> alternativa, per esempio, pu&ograve; essere usata per fidarsi di qualunque certificato inviato dalla parte remota, anche se non riconosciuto o scaduto (da usare con cautela):</p>
+<pre>import it.sauronsoftware.ftp4j.FTPClient;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLSocketFactory;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+
+// ...
+
+TrustManager[] trustManager = new TrustManager[] { new X509TrustManager() {
+	public X509Certificate[] getAcceptedIssuers() {
+		return null;
+	}
+	public void checkClientTrusted(X509Certificate[] certs, String authType) {
+	}
+	public void checkServerTrusted(X509Certificate[] certs, String authType) {
+	}
+} };
+SSLContext sslContext = null;
+try {
+	sslContext = SSLContext.getInstance("SSL");
+	sslContext.init(null, trustManager, new SecureRandom());
+} catch (NoSuchAlgorithmException e) {
+	e.printStackTrace();
+} catch (KeyManagementException e) {
+	e.printStackTrace();
+}
+SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
+FTPClient client = new FTPClient();
+client.setSSLSocketFactory(sslSocketFactory);
+client.setSecurity(FTPClient.SECURITY_FTPS); // o client.setSecurity(FTPClient.SECURITY_FTPES);
+
+// ...</pre>
+<a name="7"></a>
+<h2>Navigare nel sito  remoto</h2>
+<p>Per recuperare il percorso della directory di lavoro corrente:</p>
+<pre>String dir = client.currentDirectory();</pre>
+<p>Per cambiare la directory di lavoro:</p>
+<pre>client.changeDirectory(newPath);</pre>
+<p>Possono essere usati sia i percorsi assoluti (rispetto alla radice del sito) sia quelli relativi:</p>
+<pre>client.changeDirectory(&quot;/an/absolute/one&quot;);
+client.changeDirectory(&quot;relative&quot;);</pre>
+<p>Per spostarsi nella directory superiore, cio&egrave; quella che contiene la directory di lavoro corrente:</p>
+<pre>client.changeDirectoryUp();</pre>
+<a name="8"></a>
+<h2>Rinominare i file e le directory</h2>
+<p>Per rinominare un file o una directory:</p>
+<pre>client.rename(&quot;oldname&quot;, &quot;newname&quot;);</pre>
+<a name="9"></a>
+<h2>Spostare i file e le directory:</h2>
+<p>Il metodo <em>rename()</em> pu&ograve; essere usato anche per spostare i file e le directory da una posizione ad un'altra.</p>
+<p>Si immagini  di avere nella directory di lavoro corrente un file chiamato &quot;myfile.txt&quot;, che deve essere spostato nella sotto-directory &quot;myfolder&quot;:</p>
+<pre>client.rename(&quot;myfile.txt&quot;, &quot;myfolder/myfile.txt&quot;);</pre>
+<a name="10"></a>
+<h2>Cancellare i file</h2>
+<p>Per cancellare un file remoto:</p>
+<pre>client.deleteFile(relativeOrAbsolutePath);</pre>
+<p>Ad esempio:</p>
+<pre>client.deleteFile(&quot;useless.txt&quot;);</pre>
+<a name="11"></a>
+<h2>Creare e cancellare le directory</h2>
+<p>Per creare una nuova directory nel sito remoto, ammesso che i diritti di accesso lo consentano:</p>
+<pre>client.createDirectory(&quot;newfolder&quot;);</pre>
+<p>Per cancellare una directory esistente:</p>
+<pre>client.deleteDirectory(absoluteOrRelativePath);</pre>
+<p>Ad esempio:</p>
+<pre>client.deleteDirectory(&quot;oldfolder&quot;);</pre>
+<p>Si faccia attenzione al fatto che, generalmente, i servizi FTP si rifiutano di cancellare le directory non vuote.</p>
+<a name="12"></a>
+<h2>Elencare i file, le directory ed i collegamenti</h2>
+<p>Il protocollo FTP non specifica alcun metodo ampiamente supportato per elencare i dettagli del contenuto di una directory. La cosa che ci va pi&ugrave; vicina &egrave; il comando LIST, ma che purtroppo lascia al server libera scelta sul formato della risposta. Cos&igrave; accade che alcuni server rispondono con un output che ricorda quello del comando <em>ls</em> di UNIX, altri come il <em>dir</em> di DOS, altri ancora con formati alternativi ai due.</p>
+<p>La libreria ftp4j pu&ograve; riconoscere diversi formati. Una volta interpretata la risposta in base al formato riconosciuto, al programmatore viene restituita una rappresentazione ad oggetti di quanto elaborato. Attualmente ftp4j pu&ograve; riconoscere ed interpretare gli stili del tipo:</p>
+<ul>
+  <li>UNIX e varianti (come lo stile del MAC)</li>
+  <li>DOS</li>
+  <li>NetWare</li>
+  <li>EPLF</li>
+  <li>MLSD</li>
+</ul>
+<p>Tutto ci&ograve; viene fatto attraverso degli interpreti modulari. Il pacchetto <em>it.sauronsoftware.ftp4j.listparsers</em> contiene gli interpreti in grado di gestire i formati appena elencati. Il pi&ugrave; delle volte sono sufficienti.</p><p>Per elencare il contenuto della directory di lavoro corrente:</p>
+<pre>FTPFile[] list = client.list();</pre>
+<p>Se si riceve una <em>FTPListParseException</em> (<em>it.sauronsoftware.ftp4j.FTPListParseException</em>) significa che nessuno degli interpreti di ftp4j &egrave; riuscito a decodificare la risposta fornita dal server. Se dovesse capitare, si pu&ograve; provare ad usare il metodo alternativo <em>listNames()</em>, che per&ograve; restituisce molte meno informazioni rispetto a <em>list()</em>. A mali estremi, estremi rimedi: &egrave; possibile costruire un nuovo interprete in grado di gestire il particolare formato riscontrato, estendendo l'interfaccia <em>FTPListParser</em> (<em>it.sauronsoftware.ftp4j.FTPListParser</em>). L'istanza del nuovo interprete pu&ograve; essere aggiunta al client con il metodo <em>addListParser()</em>.</p>
+<p>Gli oggetti <em>FTPFile</em> (<em>it.sauronsoftware.ftp4j.FTPFile</em>) mantengono una rappresentazione dei contenuti della directory di lavoro, e sono usati per rappresentare i file, le sotto-directory ed i collegamenti. In base al tipo di risposta dato dal server alcune informazioni di un oggetto <em>FTPFile</em> possono essere assenti o impostate su valori di poco senso. Si faccia riferimento ai javadoc della libreria per maggiori dettagli.</p>
+<p>E' possibile filtrare i risultati restituiti dal metodo <em>list()</em>, come nel seguente esempio:</p>
+<pre>FTPFile[] list = client.list(&quot;*.jpg&quot;);</pre>
+<p>Se il server dichiara esplicitamente di supportare il comando MLSD, ftp4j lo usa al posto del comando LIST. Gli elenchi MLSD, infatti, sono standard e per questo permettono un'interpretazione pi&ugrave; accurata. Purtroppo non tutti i server supportano questo standard, ed alcuni lo supportano malamente. Si pu&ograve; controllare il comportamento di ftp4j rispetto all'uso del comando MLSD attraverso il metodo <em>setMLSDPolicy()</em> di <em>FTPClient</em>. I valori possibili sono:</p>
+<ul>
+  <li><p><em>FTPClient.MLSD_IF_SUPPORTED</em><br />
+  Usa il comando MLSD al posto di LIST solo se il server dichiara esplicitamente di supportarlo. Questo &egrave; il comportamento predefinito di ftp4j.</p></li>
+  <li><p><em>FTPClient.MLSD_ALWAYS</em><br />
+  Usa sempre il comando MLSD al posto di LIST, anche se il server non dichiara di supportarlo.</p></li>
+  <li><p><em>FTPClient.MLSD_NEVER</em><br />
+  Non usa mai il comando MLSD al posto di LIST, anche se il server dichiara di supportarlo.</p></li>
+</ul>
+<p>Ad esempio:</p>
+<code>client.setMLSDPolicy(FTPClient.MLSD_NEVER);</code>
+<a name="13"></a>
+<h2>Data di modifica di file, directory e collegamenti</h2>
+<p>Normalmente un oggetto <em>FTPFile</em> riporta la data di modifica dell'entit&agrave; rappresentata, ma come si &egrave; appena detto il dettaglio e la completezza della risposta dipendono dalla tipologia del server remoto. Quando l'informazione manca si pu&ograve; provare a recuperarla in questo modo:</p>
+<pre>java.util.Date md = client.modifiedDate(&quot;filename.ext&quot;);</pre>
+<a name="14"></a>
+<h2>Download ed upload dei file</h2>
+<p>La maniera pi&ugrave; semplice per scaricare un file &egrave; chiamare il metodo <em>download(String, 
+  File)</em>:</p>
+<pre>client.download(&quot;remoteFile.ext&quot;, new java.io.File(&quot;localFile.ext&quot;));</pre>
+<p>L'analogo per l'upload &egrave;:</p>
+<pre>client.upload(new java.io.File(&quot;localFile.ext&quot;));</pre>
+<p>L'upload in modalit&agrave; appending &egrave; possibile facendo:</p>
+<pre>client.append(new java.io.File(&quot;localFile.ext&quot;));</pre>
+<p>Si faccia attenzione al fatto che queste sono chiamate bloccanti: il metodo ritorna solo dopo che il trasferimento &egrave; stato completato (oppure interrotto, o anche fallito). Durante il trasferimento, inoltre, un lock viene imposto sull'intero client e quindi anche usando pi&ugrave; thread non &egrave; proprio possibile fare upload e download di pi&ugrave; file simultaneamente con un solo oggetto <em>FTPClient</em>. Questo limite &egrave; stato imposto perch&eacute; il protocollo FTP ammette un solo trasferimento alla volta per sessione. Sicuramente, per&ograve;, sar&agrave; capitato di osservare dei client FTP in grado di trasferire simultaneamente due o pi&ugrave; file. Ci&ograve; viene ottenuto stabilendo pi&ugrave; sessioni con lo stesso sito remoto. Naturalmente &egrave; possibile farlo anche con ftp4j, istanziando e connettendo allo stesso sito pi&ugrave; oggetti <em>FTPClient</em>. Lato-client nessun limite in tal senso viene imposto, si faccia per&ograve; attenzione al fatto che lato-server pu&ograve; esserci una regola che limita il numero di connessioni ricevibili da parte del medesimo host.</p>
+<p>Piuttosto che attendere il completamento di un trasferimento senza fare nulla, pu&ograve; essere preferibile monitorare il progresso dell'operazione. Pu&ograve; essere fatto mediante un <em>FTPDataTransferListener</em> (<em>it.sauronsoftware.ftp4j.FTPDataTransferListener</em>). Si implementi il proprio:</p>
+<pre>import it.sauronsoftware.ftp4j.FTPDataTransferListener;
+
+public class MyTransferListener implements FTPDataTransferListener {
+
+	public void started() {
+		// Trasferimento avviato
+	}
+
+	public void transferred(int length) {
+		// Altri length byte sono stati trasferiti da quando questo metodo
+		// &egrave; stato richiamanto l'ultima volta
+	}
+
+	public void completed() {
+		// Trasferimento completato
+	}
+
+	public void aborted() {
+		// Trasferimento annullato
+	}
+
+	public void failed() {
+		// Trasferimento fallito
+	}
+
+}</pre>
+<p>Adesso si trasferisca come segue:</p>
+<pre>client.download(&quot;remoteFile.ext&quot;, new java.io.File(&quot;localFile.ext&quot;), new MyTransferListener());</pre>
+<pre>client.upload(new java.io.File(&quot;localFile.ext&quot;), new MyTransferListener());</pre>
+<pre>client.append(new java.io.File(&quot;localFile.ext&quot;), new MyTransferListener());</pre>
+<p>Mentre il client sta trasferendo un file, l'operazione pu&ograve; essere interrotta da un altro thread che richiama il metodo <em>abortCurrentDataTransfer()</em> sul medesimo oggetto <em>FTPClient</em>. Il metodo richiede un parametro booleano: <em>true</em> per negoziare l'annullamento del trasferimento con il server (mediante il comando ABOR), <em>false</em> per chiudere bruscamente il canale di trasferimento senza darne previa comunicazione al server.</p>
+<pre>client.abortCurrentDataTransfer(true); // Invia ABOR</pre>
+<pre>client.abortCurrentDataTransfer(false); // Interrompre bruscamente</pre>
+<p>Si osservi che anche i metodi <em>list()</em> e <em>listNames()</em> implicameno un trasferimento (la risposta del server viene fornita su un canale di trasferimento secondario, e non lungo la linea di comunicazione principale). Per questo motivo il metodo <em>abortCurrentDataTransfer()</em> pu&ograve; interrompere anche una procedura di tipo list.</p>
+<p>Quando un trasferimento viene interrotto su comando del client, i metodi <em>download()</em>, <em>upload(), <em>append()</em></em>, <em>list()</em> e <em>listNames()</em> terminano lanciando una <em>FTPAbortedException</em> (<em>it.sauronsoftware.ftp4j.FTPAbortedException</em>).</p>
+<p>Le operazioni di download ed upload non completate possono essere riprese fornendo un parametro <em>restartAt</em>:</p>
+<pre>client.download(&quot;remoteFile.ext&quot;, new java.io.File(&quot;localFile.ext&quot;), 1056);</pre>
+<p>Questo esempio riprende l'operazione a partire dal byte 1056 del file. Il primo byte trasferito sar&agrave; il numero 1057.</p>
+<p>Altre varianti di <em>download()</em>, <em>upload()</em> ed <em>append()</em> lavorano con gli stream invece che con gli oggetti <em>java.io.File</em>. In questa maniera &egrave; possibile scambiare i dati non solo con il file system, ma anche con un database, una connessione di rete o altro ancora.</p>
+<a name="15"></a>
+<h2>Trasferimenti attivi e passivi</h2>
+<p>I canali di trasferimento sono stabiliti su una separata connessione di rete tra il client ed il server. Chi contatta l'altro? La risposta dipende dal modo adottato. Il server pu&ograve; essere <em>attivo</em> o <em>passivo</em>. Quando &egrave; attivo il server si connette al client per trasferire dei dati; quando &egrave; passivo &egrave; il client a dover stabilire la connessione.</p>
+<p>Il trasferimento attivo pu&ograve; essere utilizzato solo se il client &egrave; in grado di ricevere connessioni da parte del server. Se il client &egrave; dietro un firewall, un proxy, un gateway o un misto di questi &egrave; molto poco probabile che il server possa raggiungerlo per stabilire una connessione. Perci&ograve; di solito si preferisce chiedere al server di operare in maniera passiva, in modo che sia sempre e solo il client a svolgere le connessioni attraverso il proprio connettore.</p>
+<p>Con ftp4j &egrave; possibile scegliere il modo in cui sar&agrave; stabilita la connessione per un trasferimento:</p>
+<pre>client.setPassive(false); // Server attivo</pre>
+<pre>client.setPassive(true); // Server passivo</pre>
+<p>Il valore predefinito &egrave; <em>true</em>, cio&egrave; al server viene chiesto di restare passivo in modo che sia sempre il client a connettersi.</p>
+<p>Durante la negoziazione di un trasferimento di file passivo, il server comunica al client un indirizzo IP ed un numero di porta. Il client dovrebbe usare questi dati per connettersi ed eseguire lo scambio file.
+In ambienti di produzione aziendali, tuttavia, questo comportamento richiesto dalla specifica FTP risulta spesso problematico.
+La presenza di firewall, proxy e configurazioni NAT, infatti, determinano spesso delle condizioni per cui l'indirizzo IP comunicato dal server non risulta direttamente raggiungibile partendo dal client.
+Questo &egrave; il motivo per cui molti client FTP non rispettano la specifica ed ignorano l'indirizzo IP comunicato dal server, connettendosi invece automaticamente allo stesso host con il quale hanno stabilito la linea di comunicazione principale.
+Anche la libreria ftp4j opta solitamente per questo approccio, tuttavia la caratteristica &egrave; ampiamente configurabile. Per capire cosa far&agrave; ftp4j, bisogna prendere in considerazione i seguenti elementi:</p>  
+<ul>
+  <li>Ogni <em>FTPConnector</em> ha un suo comportamento predefinito. Quindi, in base al connettore utilizzato, ftp4j potrebbe comportarsi diversamente. A dire il vero, quasi tutti i connettori ufficiali di ftp4j ignorano l'indirizzo IP comunicato dal server e scelgono di connettersi a quello indicato dall'utente e usato per stabilire la linea di comunicazione principale. L'unico connettore ufficiale che si comporta diversamente &egrave; <em>FTPProxyConnector</em>, che per sua natura preferisce invece l'indirizzo ricevuto dal server.</li>
+  <li>Qualunque sia il comportamento predefinito del connettore, &egrave; sempre possibile sovrascriverlo globalmente usando la propriet&agrave; di sistema <em>ftp4j.passiveDataTransfer.useSuggestedAddress</em>. Impostando il valore di questa propriet&egrave; su &quot;true&quot;, &quot;yes&quot; o &quot;1&quot; si fa in modo che qualunque connettore user&agrave; sempre l'indirizzo IP specificato dal server; viceversa, usando i valori &quot;false&quot;, &quot;no&quot; o &quot;0&quot;, tutti i connettori useranno sempre e solamente il nome host originario.</li>
+  <li>Infine, qualunque sia il comportamento predefinito del connettore e qualunque sia il valore della propriet&agrave; di sistema <em>ftp4j.passiveDataTransfer.useSuggestedAddress</em>, &egrave; sempre possibile definire il comportamento da intraprendere di volta in volta. Lo si pu&ograve; fare recuperando il connettore usato dal client ed invocando il suo metodo <em>setUseSuggestedAddressForDataConnections()</em>. Questo controllo &egrave; il pi&ugrave; raffinato possibile in ftp4j, perch&eacute; permette di avere diverse istanze del medesimo connettore che si comportano diversamente.</li>
+</ul>
+<p>Quando il modo di trasferimento &egrave; impostato su <em>attivo</em>, le seguenti propriet&agrave; di sistema possono essere impostate:</p>
+<ul>
+  <li><p><em>ftp4j.activeDataTransfer.hostAddress</em><br />
+  Indirizzo dell'host. Il client indica al server a quale indirizzo deve connettersi, quando un trasferimento in modo attivo ha inizio. Il client, per default, domanda al sistema operativo quale sia il suo indirizzo di rete predefinito, che poi comunica al server. Il server usa l'indirizzo suggerito per connettersi al client. In alcune condizioni l'indirizzo individuato non &egrave; quello corretto. Accade, ad esempio, quando il sistema dispone di pi&ugrave; di un indirizzo di rete, e quello che si deve usare non &egrave; il principale. Accade anche quando si &egrave; in una LAN e ci si connette al server remoto passando attraverso un router, che poi trasferisce all'indietro le connessioni mediante un servizio di port-forwarding. In quest'ultimo caso l'indirizzo da fornire al server &egrave; quello del router, che per&ograve; la libreria non ha modo di individuare automaticamente. Allora &egrave; possibile valorizzare la propriet&agrave; per forzare l'uso di uno specifico indirizzo. Il valore deve essere un indirizzo IPv4 valido, nella forma <em>a.b.c.d</em>. Ad esempio: <em>178.12.34.167</em></p></li>
+  <li><p><em>ftp4j.activeDataTransfer.portRange</em><br />
+  Intervallo di porte. Il client, quando chiede al server di connettersi per uno scambio dati, si mette in ascolto su una porta del sistema. Normalmente questa porta viene scelta casualmente tra tutte quelle disponibili. In alcuni casi questo comportamento non &egrave; desiderabile. Ad esempio nel caso in cui sia configurato un port-forwarding su un router solo per un certo intervallo. Allora &egrave; possibile forzare l'uso dell'intervallo desiderato specificandolo nella forma <em>inizio-fine</em>, ad esempio <em>6000-7000</em> per fare in modo che il client utilizzi solo le porte tra la 6000 e la 7000 (estremi inclusi).</p></li>
+  <li><p><em>ftp4j.activeDataTransfer.acceptTimeout</em><br />
+  Timeout di connessione. Quando il client attende una connessione da parte del server per uno scambio dati, resta in attesa per 30 secondi. Se entro questo intervallo il server non esegue la connessione, lo scambio dati viene interrotto propagando una <em>FTPDataTransferException</em>. E' possibile alterare il timeout impostando il valore della propriet&agrave;. Un valore pari a 0 (zero) disattiva il timeout (attesa indefinita); un valore positivo viene invece interpretato come espresso in millisecondi. Ad esempio il valore 5000 far&agrave; in modo che le connessioni da parte del server saranno attese al massimo per 5 secondi.</p></li>
+</ul>
+<p>Per impostare una propriet&agrave; di sistema si pu&ograve;:</p>
+<ul>
+  <li>
+  <p>Avviare la macchina virtuale con uno o pi&ugrave; argomenti di tipo <em>-Dpropriet&agrave;=valore</em>. Ad esempio:</p>
+<pre>java -Dftp4j.activeDataTransfer.hostAddress=178.12.34.167
+     -Dftp4j.activeDataTransfer.portRange=6000-7000
+     -Dftp4j.activeDataTransfer.acceptTimeout=5000 MyClass</pre>
+  </li>
+  <li>
+  <p>Valorizzare le propriet&agrave; direttamente da codice Java. Ad esempio:</p>
+  <pre>System.setProperty(&quot;ftp4j.activeDataTransfer.hostAddress&quot;, &quot;178.12.34.167&quot;);
+System.setProperty(&quot;ftp4j.activeDataTransfer.portRange&quot;, &quot;6000-7000&quot;);
+System.setProperty(&quot;ftp4j.activeDataTransfer.acceptTimeout&quot;, &quot;5000&quot;);</pre>
+  </li>
+</ul>
+<a name="16"></a>
+<h2>Trasferimenti binari e testuali</h2>
+<p>Un altro concetto legato ai trasferimenti riguarda i tipi <em>binari</em> e <em>testuali</em>. Quando un trasferimento &egrave; binario il file viene trattato da ambo le parti come una sequenza binaria, cio&egrave; un flusso di byte, e viene registrato da chi lo riceve cos&igrave; come gli &egrave; arrivato, senza analisi o manipolazioni dei dati ricevuti. Quando un trasferimento &egrave; testuale, al contrario, ambo le parti possono applicare delle trasformazioni di charset. Si immagini di avere un client in esecuzione su una piattaforma Windows, mentre il server gira su un sistema UNIX. Normalmente i charset usati dalle due piattaforme sono diversi. Il client deve inviare al sito remoto un file dai contenuti testuali. Scegliendo il trasferimento testuale il client legger&agrave; il file supponendo che i suoi contenuti siano stati codificati secondo il charset predefinito della macchina che lo esegue. Il contenuto del file sar&agrave; decodificato e ricodificato in una codifica intermedia. Il server ricever&agrave;  i dati nella codifica intermedia, e sar&agrave; suo compito riconvertirli secondo il charset predefinito della propria macchina. Se i charset di partenza e di destinazione sono differenti la sequenza di byte che compone il file trasferito sar&agrave; molto probabilmente cambiata, ma il contenuto rimarr&agrave; lo stesso e la leggibilit&agrave; mantenuta.</p>
+<p>Per scegliere il tipo del trasferimento con ftp4j:</p>
+<pre>client.setType(FTPClient.TYPE_TEXTUAL);</pre>
+<pre>client.setType(FTPClient.TYPE_BINARY);</pre>
+<pre>client.setType(FTPClient.TYPE_AUTO);</pre>
+<p>La costante <em>TYPE_AUTO</em> chiede al client di scegliere di volta in volta quale tipo di trasferimento negoziare con il server. Il client individua la natura del file da trasferire in base alla sua estensione, e lo fa attraverso un <em>FTPTextualExtensionRecognizer</em> (<em>it.sauronsoftware.ftp4j.FTPTextualExtensionRecognizer</em>). Il riconoscitore di estensioni testuali predefinito &egrave; un'istanza di <em>it.sauronsoftware.ftp4j.recognizers.DefaultTextualExtensionRecognizer</em>, che riconosce come testuali le seguenti estensioni:</p>
+<pre>abc acgi aip asm asp c c cc cc com conf cpp<br />csh css cxx def el etx f f f77 f90 f90 flx<br />for for g h h hh hh hlb htc htm html htmls<br />htt htx idc jav jav java java js ksh list<br />log lsp lst lsx m m mar mcf p pas php pl pl<br />pm py rexx rt rt rtf rtx s scm scm sdml sgm<br />sgm sgml sgml sh shtml shtml spc ssi talk<br />tcl tcsh text tsv txt uil uni unis uri uris<br />uu uue vcs wml wmls wsc xml zsh</pre>
+<p>E' possibile costruire altri riconoscitori, implementando l'interfaccia <em>FTPTextualExtensionRecognizer</em>, ma &egrave; molto pi&ugrave; conveniente istanziare la classe <em>ParametricTextualExtensionRecognizer</em> (<em>it.sauronsoftware.ftp4j.recognizers.ParametricTextualExtensionRecognizer</em>), che permette al programmatore di specificare liberamente la lista delle estensioni da riconoscere come testuali. In ogni caso un'istanza del riconoscitore va poi registrata presso il client:</p>
+<pre>client.setTextualExtensionRecognizer(myRecognizer);</pre>
+<a name="17"></a>
+<h2>Compressione dei trasferimenti</h2>
+<p>Alcuni server supportano la compressione dei trasferimenti attraverso una funzionalit&agrave; chiamata MODE Z. Questa funzionalit&agrave; fa risparmiare tempo e banda quando si scambiano file molto grandi e non compressi all'origine. Dopo che il client si &egrave; connesso ed autenticato, si pu&ograve; verificare se il server supporta la compressione chiamando:</p>
+<code>boolean compressionSupported = client.isCompressionSupported();</code>
+<p>Se la compressione &egrave; supportata, la si pu&ograve; abilitare:</p>
+<code>client.setCompressionEnabled(true);</code>
+<p>Tutti i trasferimenti successivi a questa chiamata (download, upload e operazioni di scansione delle directory) saranno compressi, risparmiando banda.</p>
+<p>In qualsiasi momento la compressione pu&ograve; essere nuovamente disabilitata, chiamando:</p>
+<code>client.setCompressionEnabled(false);</code>
+<p>Per controllare se la compressione &egrave; abilitata &egrave; possibile fare cos&igrave;:</p>
+<code>boolean compressionEnabled = client.isCompressionEnabled();</code>
+<p>Attenzione: i trasferimenti saranno realmente compressi se e solo se la compressione &egrave; sia abilitata sia supportata dal server. Se la compressione &egrave; abilitata, ma non supportata dal server, i trasferimenti avranno luogo in maniera non compressa.</p>
+<p>Please note that compressed data transfer will take place only if compression is both supported and enabled.</p>
+<p>Di default la compressione non &egrave; abilitata, anche quando il server dichiara di supportarla. Se si vuole usare la compressione, quindi, bisogna sempre attivarla esplicitamente.</p>
+<a name="18"></a>
+<h2>Il comando NOOP</h2>
+<p>Si immagini che il client &egrave; fermo senza fare nulla perch&eacute; in attesa di input da parte dell'utente. Pu&ograve; accadere che il server, non riscontrando alcuna attivit&agrave; per un periodo troppo lungo, chiuda la connessione con il client. Non appena il client tenter&agrave; un'operazione questa fallir&agrave;, poich&eacute; la linea di comunicazione &egrave; stata chiusa unilateralmente. Per evitare lo scadere del timeout di inattivit&agrave; &egrave; possibile inviare di tanto in tanto, durante i periodi di stasi, un comando NOOP al server. Questo genere di comando non esegue alcuna reale operazione, ed ha il solo effetto di far sapere al server che il client &egrave; ancora attivo.</p>
+<p>Con ftp4j &egrave; sufficiente chiamare:</p>
+<pre>client.noop();</pre>
+<p>Operazioni NOOP possono anche essere eseguite automaticamente dal client allo scadere di un certo periodo di inattivit&agrave;. Inizialmente questa caratteristica &egrave; disabilitata. La si pu&ograve; attivare invocando il metodo <em>setAutoNoopTimeout()</em>, attraverso il quale va impostata la durata del timeout di inattivit&agrave; con un valore espresso in millisecondi. Ad esempio:</p>
+<pre>client.setAutoNoopTimeout(30000);</pre>
+<p>In questa maniera, il client invia un comando NOOP al server dopo 30 secondi di inattivit&agrave;.</p>
+<p>L'invio automatico dei comandi NOOP pu&ograve; essere nuovamente disabilitato usando un valore minore o uguale a zero:</p>
+<pre>client.setAutoNoopTimeout(0);</pre>
+<a name="19"></a>
+<h2>Comandi del sito e personalizzati</h2>
+<p>Per inviare un comando specifico del sito:</p>
+<pre>FTPReply reply = client.sendSiteCommand(&quot;YOUR COMMAND&quot;);</pre>
+<p>Per inviare comandi personalizzati:</p>
+<pre>FTPReply reply = client.sendCustomCommand(&quot;YOUR COMMAND&quot;);</pre>
+<p>Sia <em>sendSiteCommand()</em> che <em>sendCustomCommand()</em> restituiscono un oggetto <em>FTPReply</em> (<em>it.sauronsoftware.ftp4j.FTPReply</em>). Attraverso questo oggetto &egrave; possibile controllare la risposta ricevuta, recuperando il codice ed il messaggio che la costituiscono. L'interfaccia <em>FTPCodes </em>(<em>it.sauronsoftware.ftp4j.FTPCodes</em>) riporta i codici comuni delle risposte FTP, cos&igrave; che &egrave; possibile andare a raffrontare il codice di una <em>FTPReply</em> senza dover consultare le specifiche FTP.</p>
+<a name="20"></a>
+<h2>Gestione delle eccezioni</h2>
+<p>La libreria ftp4j definisce cinque tipi di eccezione:</p>
+<ul>
+  <li><em>FTPException</em> (<em>it.sauronsoftware.ftp4.FTPException</em>) <br />
+    A seconda del metodo, questa eccezione viene lanciata per rappresentare il fallimento di un'operazione FTP. L'eccezione riporta  il codice ed il messaggio della risposta del server che &egrave; stata interpretata come un responso negativo all'operazione tentata, in modo che sia possibile fare eventuali raffronti con i valori contenuti in <em>FTPCodes</em> per avere maggiori dettagli circa la causa del problema.</li>
+  <li><em>FTPIllegalReplyException</em>  (<em>it.sauronsoftware.ftp4.FTPIllegalReplyException</em>)<br>
+    Questa eccezione viene lanciata quando il server risponde in maniera non aderente alle specifiche FTP, e quindi non &egrave; possibile interpretare il significato della risposta fornita. Dovrebbe capitare molto raramente.</li>
+  <li><em>FTPListParseException</em>  (<em>it.sauronsoftware.ftp4.FTPListParseException</em>)<br />
+    Questa eccezione viene lanciata dal metodo <em>list()</em> quando la risposta fornita del server non pu&ograve; essere interpretata da nessuno dei list parser registrati presso il client.</li>
+  <li><em>FTPDataTransferException</em>  (<em>it.sauronsoftware.ftp4.FTPDataTransferException</em>)<br />
+  Questa eccezione viene lanciata quando un trasferimento (<em>download</em>, <em>upload</em>, e anche <em>list</em> e <em>listNames</em>) fallisce, generalmente a causa di un errore di rete.</li>
+  <li><em>FTPAbortedException</em> (<em>it.sauronsoftware.ftp4.FTPAbortedException</em>)<br />
+  Questa eccezione viene lanciata quando un trasferimento (<em>download</em>, <em>upload</em>, e anche <em>list</em> e <em>listNames</em>) viene interrotto su richiesta del client.</li>
+</ul>
+</body>
+</html>

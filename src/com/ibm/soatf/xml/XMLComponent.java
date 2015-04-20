@@ -33,10 +33,7 @@ import org.apache.logging.log4j.Logger;
  *
  * @author zANGETSu
  */
-<<<<<<< HEAD
 @Deprecated
-=======
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 public class XMLComponent extends AbstractSoaTFComponent {
     private static final Logger logger = LogManager.getLogger(XMLComponent.class.getName());
     
@@ -46,13 +43,8 @@ public class XMLComponent extends AbstractSoaTFComponent {
     
     private final OperationResult cor;
     
-<<<<<<< HEAD
     public XMLComponent(JMSConfig jmsConfiguration) {
         super(SOATFCompType.XML);
-=======
-    public XMLComponent(JMSConfig jmsConfiguration, String identificator) {
-        super(SOATFCompType.XML, identificator);
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
         this.jmsConfiguration = jmsConfiguration;
         cor = OperationResult.getInstance();
         constructComponent();

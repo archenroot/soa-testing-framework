@@ -21,11 +21,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 /**
-<<<<<<< HEAD
  * Enumeration of all component type supported by framework, useful on some places in the framework, where program flow is based on type of the component, or description of component type is needed
-=======
- *
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
  * @author Ladislav Jech <archenroot@gmail.com>
  */
 public enum SOATFCompType {
@@ -99,11 +95,7 @@ public enum SOATFCompType {
     }
 
     /**
-<<<<<<< HEAD
      * returns description of selected component type
-=======
-     *
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
      * @return
      */
     public String getDisplayName() {

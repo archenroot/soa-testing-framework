@@ -5,10 +5,7 @@ import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.SOATFCompType;
 import com.ibm.soatf.component.database.DatabaseComponent;
 import static com.ibm.soatf.component.database.DatabaseComponent.constructJdbcUrl;
-<<<<<<< HEAD
 import com.ibm.soatf.component.soap.SOAPComponent;
-=======
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 import com.ibm.soatf.config.ConfigurationManager;
 import com.ibm.soatf.config.FrameworkConfigurationException;
 import com.ibm.soatf.config.InterfaceConfiguration;
@@ -21,20 +18,14 @@ import com.ibm.soatf.config.iface.SOATFIfaceConfig.IfaceEndPoints.IfaceEndPoint;
 import com.ibm.soatf.config.iface.db.DbObject;
 import com.ibm.soatf.config.iface.db.DbObject.CustomValue;
 import com.ibm.soatf.config.iface.soap.EnvelopeConfig;
-<<<<<<< HEAD
 import com.ibm.soatf.config.iface.soap.SOAPConfig;
-=======
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 import com.ibm.soatf.config.iface.util.UTILConfig;
 import com.ibm.soatf.config.master.ExecuteOn;
 import com.ibm.soatf.config.master.OSBReporting;
 import com.ibm.soatf.config.master.OSBReporting.OsbReportingInstance;
 import com.ibm.soatf.config.master.Operation;
-<<<<<<< HEAD
 import com.ibm.soatf.config.master.OperationName;
 import com.ibm.soatf.config.master.OracleFusionMiddleware;
-=======
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
 import com.ibm.soatf.config.master.Project;
 import com.ibm.soatf.flow.FlowExecutor;
 import com.ibm.soatf.flow.FrameworkExecutionException;
@@ -217,14 +208,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
          */
         switch (operation.getName()) {
             case UTIL_WAIT_FOR_DB_POOLING_TRIGGER:
-<<<<<<< HEAD
                 waitOrRestartPoller("db poller", utilIfaceConfig.getDelays().getWaitForDbPool());
-=======
-                logger.info("Wait for db poller for " + utilIfaceConfig.getDelays().getWaitForDbPool() / 1000 + " seconds.");
-                threadSleep(utilIfaceConfig.getDelays().getWaitForDbPool());
-                cor.markSuccessful();
-                cor.addMsg("Test process paused for db poller.");
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 break;
             case UTIL_WAIT_FOR_ENQUEUE_TO_ERROR_QUEUE:
                 logger.info("Wait for error enqueue for " + utilIfaceConfig.getDelays().getWaitForErrorQueue() / 1000 + " seconds.");
@@ -233,14 +217,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
                 cor.addMsg("Test process paused for error queue.");
                 break;
             case UTIL_WAIT_FOR_FTP_POOLING_TRIGGER:
-<<<<<<< HEAD
                 waitOrRestartPoller("ftp poller", utilIfaceConfig.getDelays().getWaitForFTPPool());
-=======
-                logger.info("Wait for ftp poller for " + utilIfaceConfig.getDelays().getWaitForFTPPool() / 1000 + " seconds.");
-                threadSleep(utilIfaceConfig.getDelays().getWaitForFTPPool());
-                cor.markSuccessful();
-                cor.addMsg("Test process paused for FTP poller.");
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 break;
             case UTIL_WAIT_FOR_JMS_MESSAGE_TRANSFER:
                 logger.info("Wait for jms transfer for " + utilIfaceConfig.getDelays().getWaitForQueueMsgTransfer() / 1000 + " seconds.");
@@ -249,14 +226,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
                 cor.addMsg("Test process paused for JMS message transfer.");
                 break;
             case UTIL_WAIT_FOR_FILE_POLLING_TRIGGER:
-<<<<<<< HEAD
                 waitOrRestartPoller("file poller", utilIfaceConfig.getDelays().getWaitForFilePoll());
-=======
-                logger.info("Wait for FILE poller for " + utilIfaceConfig.getDelays().getWaitForFilePoll() / 1000 + " seconds.");
-                threadSleep(utilIfaceConfig.getDelays().getWaitForFilePoll());
-                cor.markSuccessful();
-                cor.addMsg("Test process paused for FILE poller.");
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                 break;
             case UTIL_CLEAR_REPORTING:
                 initiateReporting();
@@ -622,7 +592,6 @@ public class UtilityComponent extends AbstractSoaTFComponent {
                     //entityRefColValue = entitySb.deleteCharAt(entitySb.length() - 1).toString();
                     //messageRefColValue = messageSb.deleteCharAt(entitySb.length() - 1).toString();
                     entityRefColValue = entitySb.toString();
-<<<<<<< HEAD
                     if ("null".equals(entityRefColValue)) {
                         entityRefColValue = null;
                     }
@@ -630,9 +599,6 @@ public class UtilityComponent extends AbstractSoaTFComponent {
                     if ("null".equals(messageRefColValue)) {
                         messageRefColValue = null;
                     }
-=======
-                    messageRefColValue = messageSb.toString();
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
                     break;
                 case FTP:
                     com.ibm.soatf.config.iface.ftp.File ftpfile = ICFG.getFTPFile(this.envName, firstIfaceExecBlock, operation.getExecuteOn());
@@ -1326,7 +1292,6 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             throw new UtilComponentException(msg, ex);
         }
     }
-<<<<<<< HEAD
 
     private void waitOrRestartPoller(String pollerName, Long waitingInterval) throws UtilComponentException {
         SOAPConfig soapCfg = null;
@@ -1363,6 +1328,3 @@ public class UtilityComponent extends AbstractSoaTFComponent {
     }
 }
  
-=======
-}
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422

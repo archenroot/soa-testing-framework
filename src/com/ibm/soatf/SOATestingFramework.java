@@ -187,12 +187,9 @@ public class SOATestingFramework {
         }
     }
     
-<<<<<<< HEAD
     /**
      * prints list of command line arguments identified by framework
      */
-=======
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
     private static void printUsage() {
         logger.info("USAGE: java -jar SOATestingFramework.jar {[-gui|{-env environment|{-p project|-i interface}}]} ");
         logger.info("Example1: java -jar SOATestingFramework.jar -gui\tRuns the framework in the gui mode");

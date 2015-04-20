@@ -5,11 +5,7 @@ import java.util.EnumSet;
 import java.util.Set;
 
 /**
-<<<<<<< HEAD
  * This class need to be completely removed due to
-=======
- * This class need to be completely refactorized or even deleted due to
->>>>>>> 7c2802d5d20e30d5191a0f8f327cacd09e189422
  * duplicate configuration here and within the XML schemas. My proposal is to
  * delete this class and keep enumarions only within XML schema files.
  *
