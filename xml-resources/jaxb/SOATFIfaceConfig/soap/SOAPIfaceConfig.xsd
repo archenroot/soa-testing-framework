@@ -17,7 +17,10 @@ along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 -->
 
-<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:soapconf="http://www.ibm.com/SOATF/Config/Iface/SOAP" targetNamespace="http://www.ibm.com/SOATF/Config/Iface/SOAP" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema version="1.0" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:soapconf="http://www.ibm.com/SOATF/Config/Iface/SOAP"
+    targetNamespace="http://www.ibm.com/SOATF/Config/Iface/SOAP" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
     <xs:complexType name="SOAPConfig">
         <xs:annotation>
             <xs:documentation>
@@ -158,7 +161,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                             <xs:documentation xml:lang="en">XPath to element within message.</xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
-                    <xs:attribute name="elementValue" type="xs:string" use="required">
+                    <xs:attribute name="elementValue" type="xs:string">
                         <xs:annotation>
                             <xs:documentation xml:lang="en">Element value.</xs:documentation>
                         </xs:annotation>
@@ -173,6 +176,7 @@ Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
                             <xs:documentation xml:lang="en">Source message id - related to OSB Reporting.</xs:documentation>
                         </xs:annotation>
                     </xs:attribute>
+                    <xs:attribute default="false" name="remove" type="xs:boolean"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>

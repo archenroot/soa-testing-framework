@@ -307,12 +307,16 @@ public class SOAPComponent extends AbstractSoaTFComponent {
             //for (Entry<String, SOAPConfig.EnvelopeConfig.Element> xpath: customValues.entrySet()) {
             for (Entry<String, SOAPConfig.EnvelopeConfig.Element> xpath: customValues) {
                 //Element e = XmlUtils.getElementForXPath(envelope, xpath.getKey());
-                envelope = XmlUtils.setTextToElement(envelope, transformXPath(xpath.getKey()), xpath.getValue().getElementValue());
-                List<SOAPConfig.EnvelopeConfig.Element.Attribute> attrs = xpath.getValue().getAttribute();
-                if (attrs != null) {
-                    for (SOAPConfig.EnvelopeConfig.Element.Attribute attr: attrs) {
-                        envelope = XmlUtils.setTextToElementAttribute(envelope, transformXPath(xpath.getKey()), attr.getAttrName(), attr.getAttrValue());
+                if (!xpath.getValue().isRemove()) {
+                    envelope = XmlUtils.setTextToElement(envelope, transformXPath(xpath.getKey()), xpath.getValue().getElementValue());
+                    List<SOAPConfig.EnvelopeConfig.Element.Attribute> attrs = xpath.getValue().getAttribute();
+                    if (attrs != null) {
+                        for (SOAPConfig.EnvelopeConfig.Element.Attribute attr: attrs) {
+                            envelope = XmlUtils.setTextToElementAttribute(envelope, transformXPath(xpath.getKey()), attr.getAttrName(), attr.getAttrValue());
+                        }
                     }
+                } else {
+                    envelope = XmlUtils.removeElement(envelope, transformXPath(xpath.getKey()));
                 }
             }
             

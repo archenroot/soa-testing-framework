@@ -56,7 +56,7 @@ public abstract class AbstractSoaTFComponent {
      * @param operation
      * @throws FrameworkException
      */
-    public void execute(Operation operation) throws FrameworkException {
+    public final void execute(Operation operation) throws FrameworkException {
         logger.info("Executing operation: " + operation.getName());
         final OperationResult cor = OperationResult.getInstance();        
         try {

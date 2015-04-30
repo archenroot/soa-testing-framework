@@ -97,9 +97,9 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
     
     private Map<DbObject, DbObjectConfig> dbObjectConfigs;
     private DbObject parentDbObject;
-    private String refId;
+    private final String refId;
     
-    private static Map<DbObject, String> dbObjectInsertRowIds = new HashMap<>();
+    private static final Map<DbObject, String> dbObjectInsertRowIds = new HashMap<>();
 
     private static enum SQL_COMMAND {
         SELECT,
@@ -204,10 +204,10 @@ public class DatabaseComponent extends AbstractSoaTFComponent {
                     deleteRecord(dbObjects.get(i));
                 }
                 break;
-            case DB_CHECK_RECORD_POOLED:
+            case DB_CHECK_RECORD_POLLED:
                 checkIfRecordIsPolled(dbObjects.get(0)); //we check only the parent object (i.e. the first one)
                 break;
-            case DB_CHECK_RECORD_NOT_POOLED:
+            case DB_CHECK_RECORD_NOT_POLLED:
                 checkIfRecordIsNotPolled(dbObjects.get(0)); //we check only the parent object (i.e. the first one)
                 break;
             default:

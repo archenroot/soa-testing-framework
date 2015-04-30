@@ -81,13 +81,16 @@ public class UtilityComponent extends AbstractSoaTFComponent {
     private String entityRefColName;
     private String entityRefColValue;
     private String startDate;
-    private String osbReportingEventsTestRunConditions;
+    private StringBuilder osbReportingEventsTestRunConditions;
     private SOATFCompType component = null;
     
-    private final String reportingEventsTable;
-    private final String gatherOSBReportsProcedure;
-    private final boolean executeGatherProcedure;
-    private final int gatherWaitInterval;
+    private final boolean advancedReporting;
+    private String reportingEventsTable;
+    private String gatherOSBReportsProcedure;
+    private boolean executeGatherProcedure;
+    private int gatherWaitInterval;
+    private String errorsTable;
+    private String errorDetailsTable;
 
     private String deleteSOAWLIDataTable;
     private String deleteSOAWLIAttributeTable;
@@ -117,10 +120,15 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             Operation operation) throws FrameworkConfigurationException, FrameworkExecutionException {
         super(SOATFCompType.UTIL);
         this.interfaceName = interfaceName;
-        this.reportingEventsTable = osbDbObjects.getReportEventsTable().getName();
-        this.gatherOSBReportsProcedure = osbDbObjects.getGatherOSBReportsProcedure().getName();
-        this.gatherWaitInterval = osbDbObjects.getGatherOSBReportsProcedure().getScheduledInterval();
-        this.executeGatherProcedure = osbDbObjects.getGatherOSBReportsProcedure().isForceProcedureExecution();
+        this.advancedReporting = osbDbObjects.isAdvancedReporting();
+        if (this.advancedReporting) {
+            this.reportingEventsTable = osbDbObjects.getReportEventsTable().getName();
+            this.gatherOSBReportsProcedure = osbDbObjects.getGatherOSBReportsProcedure().getName();
+            this.gatherWaitInterval = osbDbObjects.getGatherOSBReportsProcedure().getScheduledInterval();
+            this.executeGatherProcedure = osbDbObjects.getGatherOSBReportsProcedure().isForceProcedureExecution();
+            this.errorsTable = osbDbObjects.getErrorsTable().getName();
+            this.errorDetailsTable = osbDbObjects.getErrorDetailsTable().getName();
+        }
         this.envName = envName;
         this.ifaceTestScenario = ifaceTestScenario;
         this.osbReportingInstance = osbReportingInstance;
@@ -207,8 +215,8 @@ public class UtilityComponent extends AbstractSoaTFComponent {
          } else {
          */
         switch (operation.getName()) {
-            case UTIL_WAIT_FOR_DB_POOLING_TRIGGER:
-                waitOrRestartPoller("db poller", utilIfaceConfig.getDelays().getWaitForDbPool());
+            case UTIL_WAIT_FOR_DB_POLLING_TRIGGER:
+                waitOrRestartPoller("db poller", utilIfaceConfig.getDelays().getWaitForDbPoll());
                 break;
             case UTIL_WAIT_FOR_ENQUEUE_TO_ERROR_QUEUE:
                 logger.info("Wait for error enqueue for " + utilIfaceConfig.getDelays().getWaitForErrorQueue() / 1000 + " seconds.");
@@ -216,9 +224,12 @@ public class UtilityComponent extends AbstractSoaTFComponent {
                 cor.markSuccessful();
                 cor.addMsg("Test process paused for error queue.");
                 break;
-            case UTIL_WAIT_FOR_FTP_POOLING_TRIGGER:
-                waitOrRestartPoller("ftp poller", utilIfaceConfig.getDelays().getWaitForFTPPool());
+            case UTIL_WAIT_FOR_FTP_POLLING_TRIGGER:
+                waitOrRestartPoller("ftp poller", utilIfaceConfig.getDelays().getWaitForFTPPoll());
                 break;
+            case UTIL_WAIT_FOR_EMAIL_POLLING_TRIGGER:
+                waitOrRestartPoller("email poller", utilIfaceConfig.getDelays().getWaitForEmailPoll());
+                break;                
             case UTIL_WAIT_FOR_JMS_MESSAGE_TRANSFER:
                 logger.info("Wait for jms transfer for " + utilIfaceConfig.getDelays().getWaitForQueueMsgTransfer() / 1000 + " seconds.");
                 threadSleep(utilIfaceConfig.getDelays().getWaitForQueueMsgTransfer());
@@ -298,46 +309,69 @@ public class UtilityComponent extends AbstractSoaTFComponent {
         String projectName = null;
         
         try {
-            if (executeGatherProcedure) {
-                ProgressMonitor.init(3, "Getting DB connection");
-                conn = getConnection();
-                ProgressMonitor.increment("Invoking " + gatherOSBReportsProcedure + " procedure");
-                callableStatement = conn.prepareCall("{call "+gatherOSBReportsProcedure+"()}");
-                boolean result = callableStatement.execute();
-                logger.debug("Tried to update osb reporting table with result: " + result);
-                DatabaseComponent.closeConnection(conn);
-            } else {
-                logger.info("Wait for scheduled gather job for " + gatherWaitInterval + " seconds."); 
-                ProgressMonitor.init(3, "Waiting for stored procedure execution: " + gatherWaitInterval + "s");
-                ProgressMonitor.increment();
-                for (int i = gatherWaitInterval - 1; i >= 0; i--) {
-                    Thread.sleep(1000);
-                    ProgressMonitor.setMsg("Waiting for stored procedure execution: " + i + "s");
-                }               
+            if (this.advancedReporting) {
+                if (executeGatherProcedure) {
+                    ProgressMonitor.init(3, "Getting DB connection");
+                    conn = getConnection();
+                    ProgressMonitor.increment("Invoking " + gatherOSBReportsProcedure + " procedure");
+                    callableStatement = conn.prepareCall("{call "+gatherOSBReportsProcedure+"()}");
+                    boolean result = callableStatement.execute();
+                    logger.debug("Tried to update osb reporting table with result: " + result);
+                    DatabaseComponent.closeConnection(conn);
+                } else {
+                    logger.info("Wait for scheduled gather job for " + gatherWaitInterval + " seconds."); 
+                    ProgressMonitor.init(3, "Waiting for stored procedure execution: " + gatherWaitInterval + "s");
+                    ProgressMonitor.increment();
+                    for (int i = gatherWaitInterval - 1; i >= 0; i--) {
+                        Thread.sleep(1000);
+                        ProgressMonitor.setMsg("Waiting for stored procedure execution: " + i + "s");
+                    }               
+                }
             }
             loadQueryVariablesOSBReporting();            
             ProgressMonitor.increment("Invoking SELECT");
             conn = getConnection();
-            String command = "SELECT * " + osbReportingEventsTestRunConditions + " ORDER BY TIME DESC";
             statement = conn.createStatement();
+            String command = "";
+            if (osbReportingEventsTestRunConditions != null) {
+                command = osbReportingEventsTestRunConditions.toString();
+            }
             logger.trace("Statement to execute: " + command);
             rs = statement.executeQuery(command);
             int cnt = 0;
             boolean entryFound = false, exitFound = false, errorFound = false;
+            String state = "";
             while (rs.next()) {
                 cnt++;
-                if (rs.getString("PROJECT_NAME") != null) {
-                    projectName = rs.getString("PROJECT_NAME");
+                if (this.advancedReporting) {
+                    if (rs.getString("PROJECT_NAME") != null) {
+                        projectName = rs.getString("PROJECT_NAME");
+                    }
+                    state = rs.getString("STATUS");
+                    if (state.equals("Entry")) {
+                        jmsMessageId = rs.getString("JMS_MESSAGE_ID");
+                    }
+                } else {
+                    final String[] serviceName = rs.getString("INBOUND_SERVICE_NAME").split("\\$");
+                    projectName = serviceName[0];
+                    if ("Pipeline".equals(projectName) && serviceName.length > 1) {
+                        projectName = serviceName[1];
+                    }
+                    state = rs.getString("MSG_LABELS");
+                    int start = state.indexOf("Status=");
+                    if (start > -1) {
+                        start+=7;
+                        int end = state.indexOf(";", start);
+                        state = state.substring(start, end);
+                    } 
                 }
-
-                if (rs.getString("STATUS").equals("Entry")) {
+                if (state.equals("Entry")) {
                     entryFound = true;
-                    jmsMessageId = rs.getString("JMS_MESSAGE_ID");
-                }
-                if (rs.getString("STATUS").equals("Exit")) {
+                }                
+                if (state.equals("Exit")) {
                     if (!errorFound) exitFound = true;
                 }
-                if (rs.getString("STATUS").equals("Error")) {
+                if (state.equals("Error")) {
                     if (!exitFound) errorFound = true;
                 }
             }
@@ -347,7 +381,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             if (entryFound && !exitFound && errorFound) {
                 cor.markSuccessful();
                 resultMessage.append("Checking OSB reporting for FAILURE resulted in overall success by issuing command:\n");
-                resultMessage.append(command).append("\n");
+                resultMessage.append(osbReportingEventsTestRunConditions).append("\n");
                 resultMessage.append("Both reports of type Entry and Error found.\n");
                 resultMessage.append("JMSMessageId: ").append(jmsMessageId);
                 shortMessage.append("Checking OSB reporting for FAILURE resulted in overall success\n");
@@ -360,7 +394,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
                 return;
             } else if (entryFound && exitFound && !errorFound) {
                 resultMessage.append("Checking OSB reporting for FAILURE was not successful, check done by issuing command:\n");
-                resultMessage.append(command).append("\n");
+                resultMessage.append(osbReportingEventsTestRunConditions).append("\n");
                 resultMessage.append("Reports of type Entry and Exit were found.");
                 shortMessage.append("Checking OSB reporting failed, the process reported error\n");
                 shortMessage.append("Reports of type Entry and Exit were found.");
@@ -371,11 +405,11 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             } else {
                 if (cnt == 0) {
                     resultMessage.append("There has not been found any records in the OSB Reporting Database system by issuing command:\n");
-                    resultMessage.append(command);
+                    resultMessage.append(osbReportingEventsTestRunConditions);
                     shortMessage.append("There has not been found any records in the OSB Reporting Database system.");
                 } else {
                     resultMessage.append("Checking OSB reporting failed, the process reports looks inconsistent, check done by issuing command:\n");
-                    resultMessage.append(command).append("\n");
+                    resultMessage.append(osbReportingEventsTestRunConditions).append("\n");
                     resultMessage.append("It looks like there is a problem with reporting configuration on database, osb levels, or wrong configuration on OSB proxy level.\n");
                     resultMessage.append("Check xpath and xquery implementation for project: ").append(projectName).append(".");
                     shortMessage.append("Checking OSB reporting failed, the process reports looks inconsistent\n");
@@ -415,48 +449,71 @@ public class UtilityComponent extends AbstractSoaTFComponent {
         String projectName = null;      
 
         try {
-            if (executeGatherProcedure) {
-                ProgressMonitor.init(3, "Getting DB connection");
-                conn = getConnection();
-                ProgressMonitor.increment("Invoking " + gatherOSBReportsProcedure + " procedure");
-                callableStatement = conn.prepareCall("{call "+gatherOSBReportsProcedure+"()}");
-                boolean result = callableStatement.execute();
-                logger.debug("Tried to update osb reporting table with result: " + result);
-                DatabaseComponent.closeConnection(conn);
-            } else {
-                logger.info("Wait for scheduled gather job for " + gatherWaitInterval + " seconds."); 
-                ProgressMonitor.init(3, "Waiting for stored procedure execution: " + gatherWaitInterval + "s");
-                ProgressMonitor.increment();
-                for (int i = gatherWaitInterval - 1; i >= 0; i--) {
-                    Thread.sleep(1000);
-                    ProgressMonitor.setMsg("Waiting for stored procedure execution: " + i + "s");
-                }               
+            if (this.advancedReporting) {
+                if (executeGatherProcedure) {
+                    ProgressMonitor.init(3, "Getting DB connection");
+                    conn = getConnection();
+                    ProgressMonitor.increment("Invoking " + gatherOSBReportsProcedure + " procedure");
+                    callableStatement = conn.prepareCall("{call "+gatherOSBReportsProcedure+"()}");
+                    boolean result = callableStatement.execute();
+                    logger.debug("Tried to update osb reporting table with result: " + result);
+                    DatabaseComponent.closeConnection(conn);
+                } else {
+                    logger.info("Wait for scheduled gather job for " + gatherWaitInterval + " seconds."); 
+                    ProgressMonitor.init(3, "Waiting for stored procedure execution: " + gatherWaitInterval + "s");
+                    ProgressMonitor.increment();
+                    for (int i = gatherWaitInterval - 1; i >= 0; i--) {
+                        Thread.sleep(1000);
+                        ProgressMonitor.setMsg("Waiting for stored procedure execution: " + i + "s");
+                    }               
+                }
             }
             loadQueryVariablesOSBReporting();            
             ProgressMonitor.increment("Invoking SELECT");
             conn = getConnection();
-            String command = "SELECT * " + osbReportingEventsTestRunConditions + " ORDER BY TIME DESC";
             statement = conn.createStatement();
+            String command = "";
+            if (osbReportingEventsTestRunConditions != null) {
+                command = osbReportingEventsTestRunConditions.toString();
+            }            
             logger.trace("Statement to execute: " + command);
             rs = statement.executeQuery(command);
             int cnt = 0;
             boolean entryFound = false, exitFound = false, errorFound = false;
+            String state = "";
             while (rs.next()) {
                 cnt++;
-                if (rs.getString("PROJECT_NAME") != null) {
-                    projectName = rs.getString("PROJECT_NAME");
+                if (this.advancedReporting) {
+                    if (rs.getString("PROJECT_NAME") != null) {
+                        projectName = rs.getString("PROJECT_NAME");
+                    }
+                    state = rs.getString("STATUS");
+                    if (state.equals("Entry")) {
+                        jmsMessageId = rs.getString("JMS_MESSAGE_ID");
+                    }
+                } else {
+                    final String[] serviceName = rs.getString("INBOUND_SERVICE_NAME").split("\\$");
+                    projectName = serviceName[0];
+                    if ("Pipeline".equals(projectName) && serviceName.length > 1) {
+                        projectName = serviceName[1];
+                    }
+                    state = rs.getString("MSG_LABELS");
+                    int start = state.indexOf("Status=");
+                    if (start > -1) {
+                        start+=7;
+                        int end = state.indexOf(";", start);
+                        state = state.substring(start, end);
+                    }                    
                 }
-
-                if (rs.getString("STATUS").equals("Entry")) {
+                if (state.equals("Entry")) {
                     entryFound = true;
-                    jmsMessageId = rs.getString("JMS_MESSAGE_ID");
                 }
-                if (rs.getString("STATUS").equals("Exit")) {
+                if (state.equals("Exit")) {
                     if (!errorFound) exitFound = true;
                 }
-                if (rs.getString("STATUS").equals("Error")) {
+                if (state.equals("Error")) {
                     if (!exitFound) errorFound = true;                    
-                }
+                }                
             }
             if ("".equals(projectName) || projectName == null) {
                 projectName = "<Unknown Project - issue within OSB reporting level!!!>";
@@ -464,7 +521,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             if (entryFound && exitFound && !errorFound) {
                 cor.markSuccessful();
                 resultMessage.append("Checking OSB reporting for SUCCESS resulted in overall success by issuing command:\n");
-                resultMessage.append(command).append("\n");
+                resultMessage.append(osbReportingEventsTestRunConditions).append("\n");
                 resultMessage.append("Both reports of type Entry and Exit found.\n");
                 resultMessage.append("JMSMessageId: ").append(jmsMessageId);
                 shortMessage.append("Checking OSB reporting for SUCCESS resulted in overall success\n");
@@ -473,7 +530,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
                 return;
             } else if (entryFound && !exitFound && errorFound) {
                 resultMessage.append("Checking OSB reporting failed, the process reported error, check done by issuing command:\n");
-                resultMessage.append(command).append("\n");
+                resultMessage.append(osbReportingEventsTestRunConditions).append("\n");
                 resultMessage.append("Reports of type Entry and Error were found.");
                 shortMessage.append("Checking OSB reporting failed, the process reported error\n");
                 shortMessage.append("Reports of type Entry and Error were found.");
@@ -484,11 +541,11 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             } else {
                 if (cnt == 0) {
                     resultMessage.append("There has not been found any records in the OSB Reporting Database system by issuing command:\n ");
-                    resultMessage.append(command);
+                    resultMessage.append(osbReportingEventsTestRunConditions);
                     shortMessage.append("There has not been found any records in the OSB Reporting Database system.");
                 } else {
                     resultMessage.append("Checking OSB reporting failed, the process reports looks inconsistent, check done by issuing command:\n");
-                    resultMessage.append(command).append("\n");
+                    resultMessage.append(osbReportingEventsTestRunConditions).append("\n");
                     resultMessage.append("It looks like there is a problem with reporting configuration on database, osb levels, or wrong configuration on OSB proxy level.\n");
                     resultMessage.append("Check xpath and xquery implementation for project: ").append(projectName).append(".");
                     shortMessage.append("Checking OSB reporting resulted failed, the process reports looks inconsistent\n");
@@ -536,7 +593,6 @@ public class UtilityComponent extends AbstractSoaTFComponent {
     private void loadQueryVariablesOSBReporting() throws UtilComponentException {
         Connection conn = null;
         try {
-            osbReportingEventsTestRunConditions = " FROM "+reportingEventsTable+" WHERE ";
             entityRefColName = "ENTITY_REF";
             messageRefColName = "MESSAGE_REF";
             //component = Component.DB;
@@ -716,15 +772,61 @@ public class UtilityComponent extends AbstractSoaTFComponent {
                 cal.add(Calendar.MILLISECOND, -(int)diff);
                 startDate = String.format("TO_DATE('%s', 'YYYY/MM/DD HH24:MI:SS')", DatabaseComponent.DATE_FORMAT.format(cal.getTime()));
             }
-            osbReportingEventsTestRunConditions += "time > " + startDate;
-            osbReportingEventsTestRunConditions += " AND time <= " + FlowExecutor.getActualRunDBDateString();
-            osbReportingEventsTestRunConditions += " AND interface = '" + interfaceName +"'";
-            if (entityRefColValue != null && entityRefColValue.length() > 0) {
-                osbReportingEventsTestRunConditions += " AND " + entityRefColName + "= '" + entityRefColValue + "'";
+            
+            if (this.advancedReporting) {
+                osbReportingEventsTestRunConditions = new StringBuilder("SELECT * FROM ").append(reportingEventsTable).append(" WHERE ");
+                osbReportingEventsTestRunConditions.append("time > ").append(startDate);
+                osbReportingEventsTestRunConditions.append(" AND time <= ").append(FlowExecutor.getActualRunDBDateString());
+                osbReportingEventsTestRunConditions.append(" AND interface = '").append(interfaceName).append("'");
+                if (entityRefColValue != null && entityRefColValue.length() > 0) {
+                    osbReportingEventsTestRunConditions.append(" AND ").append(entityRefColName).append("= '").append(entityRefColValue).append("'");
+                }
+                if (messageRefColValue != null && messageRefColValue.length() > 0) {
+                    osbReportingEventsTestRunConditions.append(" AND ").append(messageRefColName).append(" = '").append(messageRefColValue).append("'");
+                }
+                osbReportingEventsTestRunConditions.append(" ORDER BY TIME DESC");
+            } else {
+                osbReportingEventsTestRunConditions = new StringBuilder("SELECT * FROM WLI_QS_REPORT_ATTRIBUTE WHERE ");
+                osbReportingEventsTestRunConditions.append("DB_TIMESTAMP >= ").append(startDate); //>= because of low resolution (seconds only)
+                osbReportingEventsTestRunConditions.append(" AND DB_TIMESTAMP <= ").append(FlowExecutor.getActualRunDBDateString());
+                if (messageRefColValue != null || entityRefColValue != null) {
+                    osbReportingEventsTestRunConditions.append(" AND MSG_LABELS LIKE '%");
+                    if (messageRefColValue != null) {
+                        osbReportingEventsTestRunConditions.append("Key=");
+                        osbReportingEventsTestRunConditions.append(entityRefColValue);
+                        osbReportingEventsTestRunConditions.append(";");
+                    }
+                    if (messageRefColValue != null) {
+                        osbReportingEventsTestRunConditions.append("SourceMessageId=");
+                        osbReportingEventsTestRunConditions.append(messageRefColValue);
+                        osbReportingEventsTestRunConditions.append(";");
+                    }
+                    osbReportingEventsTestRunConditions.append("%'");
+                } else {
+                    final List<String> projects = new ArrayList<>();
+                    try {
+                        for(Project p: MCFG.getProjects(interfaceName)){
+                            projects.add(p.getName());
+                        }
+                    } catch(MasterConfigurationException e) {
+                        logger.warn(e.getLocalizedMessage());
+                    }                    
+                    if (projects.size() > 0) {
+                        osbReportingEventsTestRunConditions.append(" AND (");
+                        String delim = "";
+                        for (String projectName: projects) {
+                            osbReportingEventsTestRunConditions.append(delim);
+                            osbReportingEventsTestRunConditions.append("INBOUND_SERVICE_NAME LIKE '%");
+                            osbReportingEventsTestRunConditions.append(projectName);
+                            osbReportingEventsTestRunConditions.append("%'");
+                            delim = " OR ";
+                        }
+                        osbReportingEventsTestRunConditions.append(")");
+                    }
+                }                
             }
-            if (messageRefColValue != null && messageRefColValue.length() > 0) {
-                osbReportingEventsTestRunConditions += " AND " + messageRefColName + " = '" + messageRefColValue + "'";
-            }
+            
+            
         } catch (SQLException | InterfaceConfigurationException ex) {
             DatabaseComponent.closeConnection(conn);
             final String msg = "Error occured while trying to configure OSB reporting subsystem with origin source of type " + component.name() + ":\n" + ex.getLocalizedMessage();
@@ -736,41 +838,56 @@ public class UtilityComponent extends AbstractSoaTFComponent {
     private void checkOSBDBReportingForNothing() throws UtilComponentException {
         Connection conn = null;
         CallableStatement callableStatement = null;
-        ResultSet rs = null;
-        Statement statement = null;
-        DbObject dbObject = null;
+        ResultSet rs;
+        Statement statement;
         resultMessage = new StringBuilder();
         shortMessage = new StringBuilder();
-        String projectName = null;
         try {
-            if (executeGatherProcedure) {
-                ProgressMonitor.init(3, "Getting DB connection");
-                conn = getConnection();
-                ProgressMonitor.increment("Invoking " + gatherOSBReportsProcedure + " procedure");
-                callableStatement = conn.prepareCall("{call "+gatherOSBReportsProcedure+"()}");
-                boolean result = callableStatement.execute();
-                logger.debug("Tried to update osb reporting table with result: " + result);
-                DatabaseComponent.closeConnection(conn);
-            } else {
-                logger.info("Wait for scheduled gather job for " + gatherWaitInterval + " seconds."); 
-                ProgressMonitor.init(3, "Waiting for stored procedure execution: " + gatherWaitInterval + "s");
-                ProgressMonitor.increment();
-                for (int i = gatherWaitInterval - 1; i >= 0; i--) {
-                    Thread.sleep(1000);
-                    ProgressMonitor.setMsg("Waiting for stored procedure execution: " + i + "s");
-                }               
+            if (this.advancedReporting) {
+                if (executeGatherProcedure) {
+                    ProgressMonitor.init(3, "Getting DB connection");
+                    conn = getConnection();
+                    ProgressMonitor.increment("Invoking " + gatherOSBReportsProcedure + " procedure");
+                    callableStatement = conn.prepareCall("{call "+gatherOSBReportsProcedure+"()}");
+                    boolean result = callableStatement.execute();
+                    logger.debug("Tried to update osb reporting table with result: " + result);
+                    DatabaseComponent.closeConnection(conn);
+                } else {
+                    logger.info("Wait for scheduled gather job for " + gatherWaitInterval + " seconds."); 
+                    ProgressMonitor.init(3, "Waiting for stored procedure execution: " + gatherWaitInterval + "s");
+                    ProgressMonitor.increment();
+                    for (int i = gatherWaitInterval - 1; i >= 0; i--) {
+                        Thread.sleep(1000);
+                        ProgressMonitor.setMsg("Waiting for stored procedure execution: " + i + "s");
+                    }               
+                }
             }
             loadQueryVariablesOSBReporting();            
             conn = getConnection();
-            String command = "SELECT * " + osbReportingEventsTestRunConditions + " ORDER BY TIME DESC";
             statement = conn.createStatement();
+            String command = "";
+            if (osbReportingEventsTestRunConditions != null) {
+                command = osbReportingEventsTestRunConditions.toString();
+            }            
             logger.trace("Statement to execute: " + command);
             rs = statement.executeQuery(command);
             int cnt = 0;
             boolean errorFound = false;
+            String state = "";
             while (rs.next()) {
                 cnt++;
-                if (rs.getString("STATUS").equals("Error")) {
+                if(this.advancedReporting) {
+                    state = rs.getString("STATUS");
+                } else {
+                    state = rs.getString("MSG_LABELS");
+                    int start = state.indexOf("Status=");
+                    if (start > -1) {
+                        start+=7;
+                        int end = state.indexOf(";", start);
+                        state = state.substring(start, end);
+                    }                     
+                }
+                if (state.equals("Error")) {
                     errorFound = true;                    
                 }
             }
@@ -778,11 +895,11 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             if (cnt == 0) {
                 cor.markSuccessful();
                 resultMessage.append("Checking OSB reporting for no reports resulted in overall success by issuing command:\n");
-                resultMessage.append(command).append("\n");
+                resultMessage.append(osbReportingEventsTestRunConditions).append("\n");
                 shortMessage.append("Checking OSB reporting for no reports resulted in overall success\n");
             } else {
                 resultMessage.append("Checking OSB reporting failed, there were found ").append(cnt).append(" reports by issuing command:\n");
-                resultMessage.append(command).append("\n");
+                resultMessage.append(osbReportingEventsTestRunConditions).append("\n");
                 shortMessage.append("Checking OSB reporting failed, there were found ").append(cnt).append(" reports\n");
                 if (errorFound) {
                     final String errors = getListOfErrors(conn, interfaceName, entityRefColValue, messageRefColValue, startDate);
@@ -1020,7 +1137,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
      * @param dateFrom
      * @return 
      */
-    private static String getListOfErrors(Connection conn, String interfaceName, String entityRefColValue, String messageRefColValue, String dateFrom) {
+    private String getListOfErrors(Connection conn, String interfaceName, String entityRefColValue, String messageRefColValue, String dateFrom) {
         ResultSet ers = null;
         Statement errorStatement = null;
         List<String> projects = new ArrayList<>();
@@ -1033,8 +1150,8 @@ public class UtilityComponent extends AbstractSoaTFComponent {
         }
         StringBuilder sb = new StringBuilder();
         
-        final StringBuilder errors = new StringBuilder("SELECT ERROR_MESSAGE FROM XXXIW_MWP_ERROR_DETAILS WHERE error_id IN \n");
-        errors.append(" (\n  SELECT ID FROM xxxiw_mwp_errors ERR WHERE err.int_name like '");
+        final StringBuilder errors = new StringBuilder("SELECT ERROR_MESSAGE FROM ").append(this.errorDetailsTable).append(" WHERE error_id IN \n");
+        errors.append(" (\n  SELECT ID FROM ").append(this.errorsTable).append(" ERR WHERE err.int_name like '");
         errors.append(interfaceName).append("%'");
         errors.append(" AND err.created_date > ");
         errors.append(dateFrom);        
@@ -1049,6 +1166,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             errors.append("'");
         }
         errors.append("\n )");
+            
         final StringBuilder reportErrors = new StringBuilder("SELECT ERROR_CODE, ERROR_REASON FROM WLI_QS_REPORT_ATTRIBUTE WHERE DB_TIMESTAMP > ");
         reportErrors.append(dateFrom);
         if (messageRefColValue != null || entityRefColValue != null) {
@@ -1079,27 +1197,29 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             }
         }
         try {
-            errorStatement = conn.createStatement();
-            logger.debug("Gathering error data #1:\n" + errors.toString());
-            ers = errorStatement.executeQuery(errors.toString());
-            int ecnt=0;
-            while (ers.next()) {
-                if (ers.getString("ERROR_MESSAGE") != null) {
-                    if (ecnt == 0) {
-                        sb.append("-----------------------------------------------------\nError messages found in XXXIW_MWP_ERROR_DETAILS table:\n");
+            int ecnt=0;            
+            if(this.advancedReporting) {
+                errorStatement = conn.createStatement();
+                logger.debug("Gathering error data #2:\n" + errors.toString());
+                ers = errorStatement.executeQuery(errors.toString());
+                while (ers.next()) {
+                    if (ers.getString("ERROR_MESSAGE") != null) {
+                        if (ecnt == 0) {
+                            sb.append("-----------------------------------------------------\nError messages found in ").append(this.errorDetailsTable).append(" table:\n");
+                        }
+                        sb.append(++ecnt);
+                        sb.append(". ");
+                        sb.append(ers.getString("ERROR_MESSAGE"));
+                        sb.append("\n");
                     }
-                    sb.append(++ecnt);
-                    sb.append(". ");
-                    sb.append(ers.getString("ERROR_MESSAGE"));
-                    sb.append("\n");
                 }
+                DatabaseComponent.closeResultSet(ers);
+                DatabaseComponent.closeStatement(errorStatement);
+                ecnt=0;
             }
-            DatabaseComponent.closeResultSet(ers);
-            DatabaseComponent.closeStatement(errorStatement);                        
-            errorStatement = conn.createStatement();
-            logger.debug("Gathering error data #2:\n" + reportErrors.toString());
+            errorStatement = conn.createStatement();            
+            logger.debug("Gathering error data #1:\n" + reportErrors.toString());
             ers = errorStatement.executeQuery(reportErrors.toString());
-            ecnt=0;
             while (ers.next()) {
                 if (ers.getString("ERROR_CODE") != null) {
                     if (ecnt == 0) {
@@ -1204,7 +1324,7 @@ public class UtilityComponent extends AbstractSoaTFComponent {
             boolean result = callableStatement.execute();
             connection.commit();
             logger.debug("Tried to update osb reporting table with result: " + result);
-            ResultSet rsRepEvent, rsErrors = null;
+            ResultSet rsRepEvent, rsErrors;
             String repEventCommand = "SELECT DISTINCT\n"
                     + "repev.originator,\n"
                     + "repev.status,\n"

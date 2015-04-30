@@ -5,6 +5,7 @@
 	xmlns:osbconf="http://www.ibm.com/SOATF/Config/Iface/OSB"
 	xmlns:soapconf="http://www.ibm.com/SOATF/Config/Iface/SOAP"
 	xmlns:ftpconf="http://www.ibm.com/SOATF/Config/Iface/FTP"
+	xmlns:emailconf="http://www.ibm.com/SOATF/Config/Iface/EMAIL"
 	xmlns:fileconf="http://www.ibm.com/SOATF/Config/Iface/FILE"
 	xmlns:utilconf="http://www.ibm.com/SOATF/Config/Iface/UTIL"
 	targetNamespace="http://www.ibm.com/SOATF/Config/Iface" elementFormDefault="qualified"
@@ -13,6 +14,8 @@
 		schemaLocation="database/DBIfaceConfig.xsd"/>
 	<xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/FTP"
 		schemaLocation="ftp/FTPIfaceConfig.xsd"/>
+	<xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/EMAIL"
+		schemaLocation="email/EMAILIfaceConfig.xsd"/>	
 	<xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/JMS"
 		schemaLocation="jms/JMSIfaceConfig.xsd"/>
 	<xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/UTIL"

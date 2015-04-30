@@ -1,5 +1,9 @@
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:master="http://www.ibm.com/SOATF/Config/Master" targetNamespace="http://www.ibm.com/SOATF/Config/Master" elementFormDefault="qualified" attributeFormDefault="unqualified">
-    <xs:element name="soaTestingFrameworkMasterConfiguration" type="master:SOATestingFrameworkMasterConfiguration">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:master="http://www.ibm.com/SOATF/Config/Master"
+    targetNamespace="http://www.ibm.com/SOATF/Config/Master" elementFormDefault="qualified"
+    attributeFormDefault="unqualified">
+    <xs:element name="soaTestingFrameworkMasterConfiguration"
+        type="master:SOATestingFrameworkMasterConfiguration">
         <xs:annotation>
             <xs:documentation xml:lang="en">Root element. Master configuration file defines information for interface testing within heterogenous environments. It keeps concrete technology enpoints if relevant and consists of following elements: - Interfaces - Environements - File System Structure - Flow Patterns</xs:documentation>
         </xs:annotation>
@@ -29,7 +33,8 @@
                         <xs:element minOccurs="0" name="operations">
                             <xs:complexType>
                                 <xs:sequence>
-                                    <xs:element maxOccurs="unbounded" minOccurs="0" name="operation"/>
+                                    <xs:element maxOccurs="unbounded" minOccurs="0" name="operation"
+                                    />
                                 </xs:sequence>
                             </xs:complexType>
                         </xs:element>
@@ -112,7 +117,8 @@
             <xs:element name="flowPatternInstanceRoot">
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="1" minOccurs="1" name="reportDirectory" type="xs:string"> </xs:element>
+                        <xs:element maxOccurs="1" minOccurs="1" name="reportDirectory"
+                            type="xs:string"> </xs:element>
                         <xs:element name="archiveDirectory" type="xs:string"/>
                     </xs:sequence>
                 </xs:complexType>
@@ -158,7 +164,8 @@
                 </xs:annotation>
                 <xs:complexType>
                     <xs:sequence>
-                        <xs:element maxOccurs="unbounded" minOccurs="1" name="project" type="master:Project">
+                        <xs:element maxOccurs="unbounded" minOccurs="1" name="project"
+                            type="master:Project">
                             <xs:annotation>
                                 <xs:documentation xml:lang="en">Instance of OSB or SOA project related to interface.</xs:documentation>
                             </xs:annotation>
@@ -182,7 +189,8 @@
                                         <xs:documentation xml:lang="en">Identificator of referenced flow pattern.</xs:documentation>
                                     </xs:annotation>
                                 </xs:attribute>
-                                <xs:attribute name="occurrence" type="xs:int" use="optional" default="1">
+                                <xs:attribute name="occurrence" type="xs:int" use="optional"
+                                    default="1">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="en">Defines how many times is referenced flow pattern used for particular interface.</xs:documentation>
                                     </xs:annotation>
@@ -206,6 +214,8 @@
         <xs:attribute name="release" use="required">
             <xs:simpleType>
                 <xs:restriction base="xs:string">
+                    <xs:enumeration value="M1.0"/>
+                    <xs:enumeration value="M2.0"/>
                     <xs:enumeration value="M3.0"/>
                     <xs:enumeration value="M3.1"/>
                 </xs:restriction>
@@ -245,7 +255,8 @@
     </xs:complexType>
     <xs:complexType name="Environments">
         <xs:sequence>
-            <xs:element maxOccurs="1" name="oracleFusionMiddleware" minOccurs="0" type="master:OracleFusionMiddleware">
+            <xs:element maxOccurs="1" name="oracleFusionMiddleware" minOccurs="0"
+                type="master:OracleFusionMiddleware">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">List of Oracle Fusion Middleware instances.</xs:documentation>
                 </xs:annotation>
@@ -258,6 +269,11 @@
             <xs:element name="ftpServers" type="master:FTPServers" minOccurs="0">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">List of FTP servers.</xs:documentation>
+                </xs:annotation>
+            </xs:element>
+            <xs:element name="emailServers" type="master:EmailServers" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">List of EMAIL servers.</xs:documentation>
                 </xs:annotation>
             </xs:element>
             <xs:element name="osbDatabaseReporting" type="master:OSBReporting">
@@ -283,19 +299,20 @@
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:sequence>
-                                            <xs:element minOccurs="1" name="sshUser" type="xs:string">
+                                            <xs:element minOccurs="1" name="sshUser"
+                                                type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">User name for SSH/SCP access.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">User name for SSH/SCP access.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                             <xs:element name="sshPassword" type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">User password for SSH/SCP access.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">User password for SSH/SCP access.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                             <xs:element name="port" type="xs:int">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">TCP port of SSH service running on first managed server.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">TCP port of SSH service running on first managed server.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                         </xs:sequence>
@@ -307,29 +324,33 @@
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:sequence>
-                                            <xs:element default="t3" name="jmxProtocol" type="xs:string">
+                                            <xs:element default="t3" name="jmxProtocol"
+                                                type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">Default protocol used for communicatio with OSB cluster.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">Default protocol used for communicatio with OSB cluster.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
-                                            <xs:element name="host" type="xs:string" minOccurs="1" maxOccurs="1">
+                                            <xs:element name="host" type="xs:string" minOccurs="1"
+                                                maxOccurs="1">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                             <xs:element name="port" type="xs:int">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">TCP port.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
-                                            <xs:element name="securityPrincipal" type="xs:string" minOccurs="1" maxOccurs="1">
+                                            <xs:element name="securityPrincipal" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">User name for log onto OSB cluster.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">User name for log onto OSB cluster.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
-                                            <xs:element name="securityCredentials" type="xs:string" minOccurs="1" maxOccurs="1">
+                                            <xs:element name="securityCredentials" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">Password used to login onto OSB cluster.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">Password used to login onto OSB cluster.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                         </xs:sequence>
@@ -341,55 +362,58 @@
                                     </xs:annotation>
                                     <xs:complexType>
                                         <xs:sequence>
-                                            <xs:element name="cluster" minOccurs="0" maxOccurs="unbounded">
+                                            <xs:element name="cluster" minOccurs="0"
+                                                maxOccurs="unbounded">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">Concrete cluster type running within fusion middleware environment.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">Concrete cluster type running within fusion middleware environment.</xs:documentation>
                                                 </xs:annotation>
                                                 <xs:complexType>
-                                                    <xs:sequence>
-                                                        <xs:element name="managedServer" maxOccurs="unbounded" minOccurs="0">
-                                                            <xs:complexType>
-                                                                <xs:sequence>
-                                                                    <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1">
-                                                                        <xs:annotation>
-                                                                            <xs:documentation xml:lang="en">IPv4 or hostname.</xs:documentation>
-                                                                        </xs:annotation>
-                                                                    </xs:element>
-                                                                    <xs:element name="port" type="xs:int">
-                                                                        <xs:annotation>
-                                                                            <xs:documentation xml:lang="en">The port here is required due to supporting distributed JMS queue browser. In future this should be replaced/removed by get all distributed queue/topic connections from/trough admin server as soon as getting everything trough admin server is Oracle proposed way.</xs:documentation>
-                                                                        </xs:annotation>
-                                                                    </xs:element>
-                                                                </xs:sequence>
-                                                                <xs:attribute name="name" type="xs:string">
-                                                                    <xs:annotation>
-                                                                        <xs:documentation xml:lang="en">Should be managed server name, for example "osb_server_1".</xs:documentation>
-                                                                    </xs:annotation>
-                                                                </xs:attribute>
-                                                            </xs:complexType>
-                                                        </xs:element>
-                                                    </xs:sequence>
-                                                    <xs:attribute name="type">
-                                                        <xs:annotation>
-                                                            <xs:documentation>Type of cluster. SOA Suite allow any infrastructure extension component set to run within separate cluster</xs:documentation>
-                                                        </xs:annotation>
-                                                        <xs:simpleType>
-                                                            <xs:restriction base="xs:string">
-                                                                <xs:enumeration value="OSB"/>
-                                                                <xs:enumeration value="SOA"/>
-                                                                <xs:enumeration value="WSM">
-                                                                    <xs:annotation>
-                                                                        <xs:documentation>Oracle Web Service Manager</xs:documentation>
-                                                                    </xs:annotation>
-                                                                </xs:enumeration>
-                                                            </xs:restriction>
-                                                        </xs:simpleType>
-                                                    </xs:attribute>
-                                                    <xs:attribute name="name" type="xs:string">
-                                                        <xs:annotation>
-                                                            <xs:documentation xml:lang="en">Name of the cluster.</xs:documentation>
-                                                        </xs:annotation>
-                                                    </xs:attribute>
+                                                  <xs:sequence>
+                                                  <xs:element name="managedServer"
+                                                  maxOccurs="unbounded" minOccurs="0">
+                                                  <xs:complexType>
+                                                  <xs:sequence>
+                                                  <xs:element name="hostName" type="xs:string"
+                                                  minOccurs="1" maxOccurs="1">
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">IPv4 or hostname.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  <xs:element name="port" type="xs:int">
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">The port here is required due to supporting distributed JMS queue browser. In future this should be replaced/removed by get all distributed queue/topic connections from/trough admin server as soon as getting everything trough admin server is Oracle proposed way.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  <xs:attribute name="name" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Should be managed server name, for example "osb_server_1".</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:attribute>
+                                                  </xs:complexType>
+                                                  </xs:element>
+                                                  </xs:sequence>
+                                                  <xs:attribute name="type">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Type of cluster. SOA Suite allow any infrastructure extension component set to run within separate cluster</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:simpleType>
+                                                  <xs:restriction base="xs:string">
+                                                  <xs:enumeration value="OSB"/>
+                                                  <xs:enumeration value="SOA"/>
+                                                  <xs:enumeration value="WSM">
+                                                  <xs:annotation>
+                                                  <xs:documentation>Oracle Web Service Manager</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:enumeration>
+                                                  </xs:restriction>
+                                                  </xs:simpleType>
+                                                  </xs:attribute>
+                                                  <xs:attribute name="name" type="xs:string">
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Name of the cluster.</xs:documentation>
+                                                  </xs:annotation>
+                                                  </xs:attribute>
                                                 </xs:complexType>
                                             </xs:element>
                                         </xs:sequence>
@@ -470,38 +494,43 @@
                         <xs:element maxOccurs="unbounded" minOccurs="1" name="databaseInstance">
                             <xs:complexType>
                                 <xs:complexContent>
-                                    <xs:extension base="master:AbstractMasterConfigEnvironmentInstance">
+                                    <xs:extension
+                                        base="master:AbstractMasterConfigEnvironmentInstance">
                                         <xs:sequence>
-                                            <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1">
+                                            <xs:element name="hostName" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
-                                            <xs:element name="port" type="xs:int" minOccurs="1" maxOccurs="1">
+                                            <xs:element name="port" type="xs:int" minOccurs="1"
+                                                maxOccurs="1">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">TCP port.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
-                                            <xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="1">
+                                            <xs:element name="userName" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">Database user name.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">Database user name.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
-                                            <xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="1">
+                                            <xs:element name="password" type="xs:string"
+                                                minOccurs="1" maxOccurs="1">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">Password.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">Password.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                             <xs:choice>
                                                 <xs:element name="serviceId" type="xs:string">
-                                                    <xs:annotation>
-                                                        <xs:documentation xml:lang="en">Database Service ID</xs:documentation>
-                                                    </xs:annotation>
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Database Service ID</xs:documentation>
+                                                  </xs:annotation>
                                                 </xs:element>
                                                 <xs:element name="serviceName" type="xs:string">
-                                                    <xs:annotation>
-                                                        <xs:documentation xml:lang="en">Database Service Name</xs:documentation>
-                                                    </xs:annotation>
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Database Service Name</xs:documentation>
+                                                  </xs:annotation>
                                                 </xs:element>
                                             </xs:choice>
                                         </xs:sequence>
@@ -547,53 +576,55 @@
                             </xs:annotation>
                             <xs:complexType>
                                 <xs:complexContent>
-                                    <xs:extension base="master:AbstractMasterConfigEnvironmentInstance">
+                                    <xs:extension
+                                        base="master:AbstractMasterConfigEnvironmentInstance">
                                         <xs:annotation>
                                             <xs:documentation> Ftp framework component is not implemented yet!. </xs:documentation>
                                         </xs:annotation>
                                         <xs:sequence>
                                             <xs:element name="hostName" type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">FTP host name or IP address.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">FTP host name or IP address.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                             <xs:element name="port" type="xs:int">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">TCP port.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                             <xs:element name="user" type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">FTP account user name.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">FTP account user name.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                             <xs:element name="password" type="xs:string">
                                                 <xs:annotation>
-                                                    <xs:documentation xml:lang="en">FTP account password.</xs:documentation>
+                                                  <xs:documentation xml:lang="en">FTP account password.</xs:documentation>
                                                 </xs:annotation>
                                             </xs:element>
                                             <xs:element name="security">
                                                 <xs:annotation>
-                                                    <xs:documentation>Is FTP service enabled with SSL support.</xs:documentation>
+                                                  <xs:documentation>Is FTP service enabled with SSL support.</xs:documentation>
                                                 </xs:annotation>
                                                 <xs:simpleType>
-                                                    <xs:annotation>
-                                                        <xs:documentation xml:lang="en">Enumeration of supported security modes.</xs:documentation>
-                                                    </xs:annotation>
-                                                    <xs:restriction base="xs:normalizedString">
-                                                        <xs:enumeration value="NONE"/>
-                                                        <xs:enumeration value="SSL"/>
-                                                        <xs:enumeration value="SSH"/>
-                                                        <!-- 
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Enumeration of supported security modes.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:restriction base="xs:normalizedString">
+                                                  <xs:enumeration value="NONE"/>
+                                                  <xs:enumeration value="SSL"/>
+                                                  <xs:enumeration value="SSH"/>
+                                                  <!-- 
                                                         <xs:enumeration value="Microsoft"/>
                                                         <xs:enumeration value="MySql"/>
                                                         <xs:enumeration value="H2"/>
                                                         -->
-                                                    </xs:restriction>
+                                                  </xs:restriction>
                                                 </xs:simpleType>
                                             </xs:element>
                                         </xs:sequence>
-                                        <xs:attribute name="environment" use="required" type="xs:string">
+                                        <xs:attribute name="environment" use="required"
+                                            type="xs:string">
                                             <xs:annotation>
                                                 <xs:documentation xml:lang="en">Environemnt identificator, usually common name of interface.</xs:documentation>
                                             </xs:annotation>
@@ -636,6 +667,120 @@
             </xs:element>
         </xs:sequence>
     </xs:complexType>
+    <xs:complexType name="EmailServers">
+        <xs:sequence>
+            <xs:element name="emailServer" maxOccurs="unbounded" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation xml:lang="en">Email server configuration usually related to only one particular interface. It includes all environment instances which exists for specific interface Email server.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="emailServerInstance" maxOccurs="unbounded">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">Concrete interface related FTP server instance.</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:complexContent>
+                                    <xs:extension
+                                        base="master:AbstractMasterConfigEnvironmentInstance">
+                                        <xs:annotation>
+                                            <xs:documentation> Ftp framework component is not implemented yet!. </xs:documentation>
+                                        </xs:annotation>
+                                        <xs:sequence>
+                                            <xs:element name="hostName" type="xs:string">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Email host name or IP address.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="port" type="xs:int">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">TCP port.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="principal" type="xs:string">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Email account user name.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="password" type="xs:string">
+                                                <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Email account password.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:element>
+                                            <xs:element name="readProtocol" minOccurs="0">
+                                                <xs:annotation>
+                                                  <xs:documentation>Protocol used for communication with the email server</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Enumeration of supported email protocols.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:restriction base="xs:normalizedString">
+                                                  <xs:enumeration value="POP3"/>
+                                                  <xs:enumeration value="IMAP"/>
+                                                  </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                            <xs:element name="security">
+                                                <xs:annotation>
+                                                  <xs:documentation>Is email service enabled with SSL support.</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                  <xs:annotation>
+                                                  <xs:documentation xml:lang="en">Enumeration of supported email protocols.</xs:documentation>
+                                                  </xs:annotation>
+                                                  <xs:restriction base="xs:normalizedString">
+                                                  <xs:enumeration value="NONE"/>
+                                                  <xs:enumeration value="SSL"/>
+                                                  <xs:enumeration value="TLS"/>
+                                                  </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:element>
+                                        </xs:sequence>
+                                        <xs:attribute name="environment" use="required"
+                                            type="xs:string">
+                                            <xs:annotation>
+                                                <xs:documentation xml:lang="en">Environemnt identificator, usually common name of interface.</xs:documentation>
+                                            </xs:annotation>
+                                        </xs:attribute>
+                                    </xs:extension>
+                                </xs:complexContent>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="directories" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation xml:lang="en">Email directories are statical from different environment instances point of view. Directories are needed only for inbound mail interfaces</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="stageDirectory" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en">Staging directory means where are files dowloaded after polling email server, before invoking PS pipeline.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="archiveDirectory" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en">If defined, it means where are all files placed in case they were sucessfully polled.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                    <xs:element name="errorDirectory" type="xs:string">
+                                        <xs:annotation>
+                                            <xs:documentation xml:lang="en">Directory where are available files which were polled but cannot be delivered to target endpoint.</xs:documentation>
+                                        </xs:annotation>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="identificator" use="required" type="xs:string">
+                        <xs:annotation>
+                            <xs:documentation xml:lang="en">Identificator which is then referenced from concrete interface config.xml file.</xs:documentation>
+                        </xs:annotation>
+                    </xs:attribute>
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
     <xs:complexType name="OSBReporting">
         <xs:sequence>
             <xs:element maxOccurs="unbounded" name="osbReportingInstance">
@@ -646,22 +791,26 @@
                     <xs:complexContent>
                         <xs:extension base="master:AbstractMasterConfigEnvironmentInstance">
                             <xs:sequence>
-                                <xs:element name="hostName" type="xs:string" minOccurs="1" maxOccurs="1">
+                                <xs:element name="hostName" type="xs:string" minOccurs="1"
+                                    maxOccurs="1">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="en">IPv4 address or hostname.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
-                                <xs:element name="port" type="xs:int" minOccurs="1" maxOccurs="1" default="1521">
+                                <xs:element name="port" type="xs:int" minOccurs="1" maxOccurs="1"
+                                    default="1521">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="en">TCP port.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
-                                <xs:element name="userName" type="xs:string" minOccurs="1" maxOccurs="1" default="NWK_XXXIW">
+                                <xs:element name="userName" type="xs:string" minOccurs="1"
+                                    maxOccurs="1" default="NWK_XXXIW">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="en">Database user name.</xs:documentation>
                                     </xs:annotation>
                                 </xs:element>
-                                <xs:element name="password" type="xs:string" minOccurs="1" maxOccurs="1">
+                                <xs:element name="password" type="xs:string" minOccurs="1"
+                                    maxOccurs="1">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="en">Password.</xs:documentation>
                                     </xs:annotation>
@@ -688,18 +837,19 @@
                     </xs:complexContent>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="dbObjects">
+            <xs:element name="dbObjects" minOccurs="1">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">List of object related to reporting.</xs:documentation>
                 </xs:annotation>
                 <xs:complexType>
-                    <xs:sequence>
+                    <xs:sequence minOccurs="0">
                         <xs:element name="reportEventsTable">
                             <xs:annotation>
                                 <xs:documentation xml:lang="en">Name of the table within NWK_XXXIW schema where are available OSB reports already transformed from its Oracle Fusion Middleware native form.</xs:documentation>
                             </xs:annotation>
                             <xs:complexType>
-                                <xs:attribute default="REPORTING_EVENTS" name="name" type="xs:string" use="optional"/>
+                                <xs:attribute default="REPORTING_EVENTS" name="name"
+                                    type="xs:string" use="optional"/>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="errorsTable">
@@ -707,7 +857,8 @@
                                 <xs:documentation xml:lang="en">Table available in NWK_XXXIW which keeps high-level information of error fusion events.</xs:documentation>
                             </xs:annotation>
                             <xs:complexType>
-                                <xs:attribute default="XXXIW_MWP_ERRORS" name="name" type="xs:string"/>
+                                <xs:attribute default="XXXIW_MWP_ERRORS" name="name"
+                                    type="xs:string"/>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="errorDetailsTable">
@@ -715,7 +866,8 @@
                                 <xs:documentation xml:lang="en">Table available in NWK_XXXIW which keeps detailed information of error fusion events.</xs:documentation>
                             </xs:annotation>
                             <xs:complexType>
-                                <xs:attribute default="XXXIW_MWP_ERROR_DETAILS" name="name" type="xs:string"/>
+                                <xs:attribute default="XXXIW_MWP_ERROR_DETAILS" name="name"
+                                    type="xs:string"/>
                             </xs:complexType>
                         </xs:element>
                         <xs:element name="gatherOSBReportsProcedure">
@@ -723,13 +875,16 @@
                                 <xs:documentation xml:lang="en">Procedure name available within NWK_XXXIW database schema which is responsible of transfering the OSB reporting events from Oracle Fusion Middleware 'WLI*' tables to tables which are used as intefaces for Irish Water Web Admin Tool.</xs:documentation>
                             </xs:annotation>
                             <xs:complexType>
-                                <xs:attribute default="ERROR_HOSPITAL.gather_osb_data" name="name" type="xs:string"/>
-                                <xs:attribute default="60" name="scheduledInterval" type="xs:int" use="optional">
+                                <xs:attribute default="ERROR_HOSPITAL.gather_osb_data" name="name"
+                                    type="xs:string"/>
+                                <xs:attribute default="60" name="scheduledInterval" type="xs:int"
+                                    use="optional">
                                     <xs:annotation>
                                         <xs:documentation>interval in seconds</xs:documentation>
                                     </xs:annotation>
                                 </xs:attribute>
-                                <xs:attribute default="false" name="forceProcedureExecution" type="xs:boolean">
+                                <xs:attribute default="false" name="forceProcedureExecution"
+                                    type="xs:boolean">
                                     <xs:annotation>
                                         <xs:documentation xml:lang="en">if true, procedure is executed. if false, framework waits for scheduled interval</xs:documentation>
                                     </xs:annotation>
@@ -737,13 +892,15 @@
                             </xs:complexType>
                         </xs:element>
                     </xs:sequence>
+                    <xs:attribute default="true" name="advancedReporting" type="xs:boolean"/>
                 </xs:complexType>
             </xs:element>
         </xs:sequence>
     </xs:complexType>
     <xs:complexType name="FlowPatterns">
         <xs:sequence>
-            <xs:element maxOccurs="unbounded" minOccurs="0" name="flowPattern" type="master:FlowPattern">
+            <xs:element maxOccurs="unbounded" minOccurs="0" name="flowPattern"
+                type="master:FlowPattern">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">Flow pattern master element which can be seen like parent object from framework interface testing perspective.</xs:documentation>
                 </xs:annotation>
@@ -809,10 +966,10 @@
             <xs:enumeration value="DB_EXECUTE_UPDATE"/>
             <xs:enumeration value="DB_SELECT_COUNT_AND_REMEMBER"/>
             <xs:enumeration value="DB_SELECT_COUNT_AND_COMPARE"/>
-            <xs:enumeration value="DB_CHECK_RECORD_POOLED"/>
+            <xs:enumeration value="DB_CHECK_RECORD_POLLED"/>
             <xs:enumeration value="DB_CHECK_REPORTING"/>
             <xs:enumeration value="DB_INSERT_RECORD"/>
-            <xs:enumeration value="DB_CHECK_RECORD_NOT_POOLED"/>
+            <xs:enumeration value="DB_CHECK_RECORD_NOT_POLLED"/>
             <xs:enumeration value="JMS_GENERATE_MESSAGE"/>
             <xs:enumeration value="JMS_SEND_MESSAGE_TO_QUEUE"/>
             <xs:enumeration value="JMS_RECEIVE_MESSAGE_FROM_QUEUE"/>
@@ -843,11 +1000,14 @@
             <xs:enumeration value="FTP_CHECK_DELIVERED_FOLDER_FOR_FILE"/>
             <xs:enumeration value="FTP_CHECK_ERROR_FOLDER_FOR_FILE"/>
             <xs:enumeration value="FTP_CHECK_REPORTING"/>
+            <xs:enumeration value="EMAIL_SEND"/>
+            <xs:enumeration value="EMAIL_READ"/>
             <xs:enumeration value="SOAP_DISABLE_SERVICE"/>
             <xs:enumeration value="SOAP_ENABLE_SERVICE"/>
-            <xs:enumeration value="UTIL_WAIT_FOR_DB_POOLING_TRIGGER"/>
+            <xs:enumeration value="UTIL_WAIT_FOR_DB_POLLING_TRIGGER"/>
             <xs:enumeration value="UTIL_WAIT_FOR_JMS_MESSAGE_TRANSFER"/>
-            <xs:enumeration value="UTIL_WAIT_FOR_FTP_POOLING_TRIGGER"/>
+            <xs:enumeration value="UTIL_WAIT_FOR_FTP_POLLING_TRIGGER"/>
+            <xs:enumeration value="UTIL_WAIT_FOR_EMAIL_POLLING_TRIGGER"/>
             <xs:enumeration value="UTIL_WAIT_FOR_ENQUEUE_TO_ERROR_QUEUE"/>
             <xs:enumeration value="UTIL_WAIT_FOR_FILE_POLLING_TRIGGER"/>
             <xs:enumeration value="UTIL_CLEAR_REPORTING"/>
@@ -883,7 +1043,8 @@
     </xs:simpleType>
     <xs:complexType name="FlowPattern">
         <xs:sequence>
-            <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1" type="master:FlowPatternPreOrPostExecutionBlock">
+            <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1"
+                type="master:FlowPatternPreOrPostExecutionBlock">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">NOT implemented yet within framework. This block should be used for configuration which helps to lock concrete environment and prepare it for execution of test scenario. Locking of the world should help to keep environments consistent even when unexpected behavior of the framework occurs.</xs:documentation>
                 </xs:annotation>
@@ -893,7 +1054,8 @@
                     <xs:documentation xml:lang="en">Test scenario element defines concrete unit test defined within it's flow pattern parent object.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="postExecutionBlock" minOccurs="0" maxOccurs="1" type="master:FlowPatternPreOrPostExecutionBlock">
+            <xs:element name="postExecutionBlock" minOccurs="0" maxOccurs="1"
+                type="master:FlowPatternPreOrPostExecutionBlock">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">NOT implemented yet! These are tasks which are not directly related to test scenario execution, but on the other hand help keeping environments in consistent state or can do other custom tasks like email test execution results.</xs:documentation>
                 </xs:annotation>
@@ -917,7 +1079,8 @@
                     <xs:documentation xml:lang="en">Test scenario description.</xs:documentation>
                 </xs:annotation>
             </xs:element>
-            <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1" type="master:TestScenarioPreOrPostExecutionBlock">
+            <xs:element name="preExecutionBlock" minOccurs="0" maxOccurs="1"
+                type="master:TestScenarioPreOrPostExecutionBlock">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">NOT implemented yet within framework. This block should be used for configuration which helps to lock concrete environment and prepare it for execution of test scenario. Locking of the world should help to keep environments consistent even when unexpected behavior of the framework occurs.</xs:documentation>
                 </xs:annotation>
@@ -967,7 +1130,8 @@
                     </xs:complexContent>
                 </xs:complexType>
             </xs:element>
-            <xs:element name="postExecutionBlock" minOccurs="0" maxOccurs="1" type="master:TestScenarioPreOrPostExecutionBlock">
+            <xs:element name="postExecutionBlock" minOccurs="0" maxOccurs="1"
+                type="master:TestScenarioPreOrPostExecutionBlock">
                 <xs:annotation>
                     <xs:documentation xml:lang="en">NOT implemented yet! These are tasks which are not directly related to test scenario execution, but on the other hand help keeping environments in consistent state or can do other custom tasks like email test execution results.</xs:documentation>
                 </xs:annotation>
@@ -1011,7 +1175,8 @@
             <xs:element minOccurs="0" name="expectedResult" type="xs:string"/>
             <xs:sequence maxOccurs="unbounded">
                 <xs:choice maxOccurs="1">
-                    <xs:element name="operation" type="master:ExecBlockOperation" minOccurs="1" maxOccurs="1">
+                    <xs:element name="operation" type="master:ExecBlockOperation" minOccurs="1"
+                        maxOccurs="1">
                         <xs:annotation>
                             <xs:documentation xml:lang="en">Atomic operation from framework integration perspective.</xs:documentation>
                         </xs:annotation>
@@ -1025,7 +1190,8 @@
             <xs:element name="description" maxOccurs="1" minOccurs="0" type="xs:string"/>
             <xs:element minOccurs="0" name="expectedResult" type="xs:string"/>
             <xs:sequence maxOccurs="unbounded">
-                <xs:element name="operation" type="master:PreOrPostExecBlockOperation" minOccurs="1" maxOccurs="1">
+                <xs:element name="operation" type="master:PreOrPostExecBlockOperation" minOccurs="1"
+                    maxOccurs="1">
                     <xs:annotation>
                         <xs:documentation xml:lang="en">Operation that should be executed after all executions blocks are executed.</xs:documentation>
                     </xs:annotation>

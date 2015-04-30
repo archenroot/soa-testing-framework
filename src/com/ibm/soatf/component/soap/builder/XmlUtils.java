@@ -575,6 +575,44 @@ public final class XmlUtils {
         return xmlText;
     }
     
+    public static String removeElement(String xmlText, String xPath) {
+        if (xmlText == null || xPath == null) {
+            return xmlText;
+        }
+         try {
+            XmlObject xmlObject = XmlObject.Factory.parse(xmlText);
+
+            /*String namespaces = declareXPathNamespaces(xmlObject);
+            if (namespaces != null && namespaces.trim().length() > 0)
+                xPath = namespaces + xPath;*/
+            int index = 0;            
+            Pattern pattern = Pattern.compile("\\[([\\d]+)\\]$");
+            Matcher matcher = pattern.matcher(xPath);
+            if (matcher.find()) {
+                String suffix = matcher.group(0);
+                xPath = xPath.substring(0,xPath.length() - suffix.length());
+                try{
+                    index = Integer.parseInt(matcher.group(1))-1;
+                }catch(NumberFormatException| IndexOutOfBoundsException e) {}
+            }            
+           
+            XmlObject[] path = xmlObject.selectPath(xPath);
+            if (path == null || path.length == 0 || path[0].getDomNode() == null) {
+                return xmlText;
+            }
+            if (path.length <= index || path[index].getDomNode() == null) {
+                return xmlText;
+            }
+            Node parent = path[index].getDomNode().getParentNode();
+            Node node = path[index].getDomNode();
+            parent.removeChild(node);
+            return xmlObject.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return xmlText;
+    }
+    
     public static String setTextToElementAttribute(String xmlText, String xPath, String attrName, String attrValue) {
         if (xmlText == null || xPath == null || attrName == null) {
             return xmlText;
