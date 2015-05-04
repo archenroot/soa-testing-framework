@@ -28,6 +28,8 @@ import com.ibm.soatf.config.iface.db.DBConfig;
 import com.ibm.soatf.config.iface.db.DBConfig.DbObjects;
 import com.ibm.soatf.config.iface.db.DBConfig.DefaultDbObjects;
 import com.ibm.soatf.config.iface.db.DbObject;
+import com.ibm.soatf.config.iface.email.EMAILConfig;
+import com.ibm.soatf.config.iface.email.EMAILConfig.DefaultEmail;
 import com.ibm.soatf.config.iface.file.EnvSpecificFile;
 import com.ibm.soatf.config.iface.file.FileConfig;
 import com.ibm.soatf.config.iface.ftp.FTPConfig;
@@ -493,6 +495,67 @@ public class InterfaceConfiguration {
     
     /**
      *
+     * @param envName
+     * @param ifaceExecBlock
+     * @param execOn
+     * @return
+     * @throws com.ibm.soatf.config.InterfaceConfigurationException
+     */
+    public EMAILConfig.Email getIfaceEmail(String envName, IfaceExecBlock ifaceExecBlock, ExecuteOn execOn) throws InterfaceConfigurationException {
+        // Variables init
+        List<IfaceEndPoint> ifaceEndPoints = getIfaceEndPoint(ifaceExecBlock, execOn);
+        EMAILConfig emailConfig = null;
+
+        String[] envRefNames = envName.split("|");
+
+        // Get the database endpoint object
+        for (IfaceEndPoint ifep : ifaceEndPoints) {
+            if (ifep.getEmail() != null) {
+                emailConfig = ifep.getEmail();
+            }
+        }
+
+        // Error raised if endpoint object null
+        if (emailConfig == null) {
+            String msg = "TODO";
+            throw new InterfaceConfigurationException(msg);
+        }
+
+        // Get default db objects
+        DefaultEmail defaultEmail = emailConfig.getDefaultEmail();
+        // Get environment email objects list
+        List<EMAILConfig.Email> emailList = emailConfig.getEmail();
+
+        // Seek db objects for selected environment
+        boolean emailExists = false;
+        for (EMAILConfig.Email email : emailList) {
+            for (String envRefName : envRefNames) {
+                if (email.getEnvRefName().equals(envRefName)) {
+                    // ATTENTION: This will seek only first occurency, if multiple environment data source exists due to wrong 
+                    // iface configuration, those will not be picked up. Should be added to configuration sanity check process.
+                    emailExists = true;
+                    return email;
+                }
+                break;
+            }
+        }
+
+        // Execption if no dbObjects found for selected environment and no defaultDbObject exists
+        if (!emailExists && defaultEmail == null) {
+            String msg = "TODO";
+            throw new InterfaceConfigurationException(msg);
+        } else {
+            // Return default object
+            EMAILConfig.Email email = new EMAILConfig.Email();
+            email.setInbound(defaultEmail.getInbound());
+            email.setOutbound(defaultEmail.getOutbound());
+            email.getEmailAttachment().addAll(defaultEmail.getEmailAttachment());
+            return email;
+        }
+    }    
+    
+    /**
+     *
      * @param interfaceExecutionBlock
      * @param execOn
      * @return
@@ -506,6 +569,22 @@ public class InterfaceConfiguration {
         }
         throw new InterfaceConfigurationException("No SOAP configuration found for execution block: " + interfaceExecutionBlock.getRefId());
     }
+    
+    /**
+     *
+     * @param interfaceExecutionBlock
+     * @param execOn
+     * @return
+     * @throws com.ibm.soatf.config.InterfaceConfigurationException
+     */
+    public EMAILConfig getEmailConfig(IfaceExecBlock interfaceExecutionBlock, ExecuteOn execOn) throws InterfaceConfigurationException {
+        for (IfaceEndPoint ifaceEndPoint : getIfaceEndPoint(interfaceExecutionBlock, execOn)) {
+            if (ifaceEndPoint.getEmail() != null) {
+                return ifaceEndPoint.getEmail();
+            }
+        }
+        throw new InterfaceConfigurationException("No Email configuration found for execution block: " + interfaceExecutionBlock.getRefId());
+    }    
     
     /**
      *

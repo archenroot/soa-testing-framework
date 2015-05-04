@@ -1002,6 +1002,7 @@
             <xs:enumeration value="FTP_CHECK_REPORTING"/>
             <xs:enumeration value="EMAIL_SEND"/>
             <xs:enumeration value="EMAIL_READ"/>
+            <xs:enumeration value="EMAIL_CHECK_STRUCTURE"/>
             <xs:enumeration value="SOAP_DISABLE_SERVICE"/>
             <xs:enumeration value="SOAP_ENABLE_SERVICE"/>
             <xs:enumeration value="UTIL_WAIT_FOR_DB_POLLING_TRIGGER"/>

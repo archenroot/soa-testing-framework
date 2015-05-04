@@ -15,7 +15,7 @@
 	<xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/FTP"
 		schemaLocation="ftp/FTPIfaceConfig.xsd"/>
 	<xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/EMAIL"
-		schemaLocation="email/EMAILIfaceConfig.xsd"/>	
+		schemaLocation="email/EMAILIfaceConfig.xsd"/>
 	<xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/JMS"
 		schemaLocation="jms/JMSIfaceConfig.xsd"/>
 	<xs:import namespace="http://www.ibm.com/SOATF/Config/Iface/UTIL"
@@ -117,7 +117,14 @@
                                 configuration.</xs:documentation>
 						</xs:annotation>
 					</xs:element>
-					<xs:element name="fileConfig" type="fileconf:FileConfig"/>
+					<xs:element name="email" type="emailconf:EMAILConfig" maxOccurs="1"
+						minOccurs="0">
+						<xs:annotation>
+							<xs:documentation xml:lang="en">Web services based on SOAP protocol
+                                configuration.</xs:documentation>
+						</xs:annotation>
+					</xs:element>
+					<xs:element name="fileConfig" type="fileconf:FileConfig" minOccurs="0"/>
 				</xs:choice>
 			</xs:extension>
 		</xs:complexContent>

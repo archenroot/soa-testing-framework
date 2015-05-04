@@ -19,7 +19,6 @@ package com.ibm.soatf.component.email;
 
 import com.ibm.soatf.component.AbstractSoaTFComponent;
 import com.ibm.soatf.component.SOATFCompType;
-import com.ibm.soatf.component.jms.JmsComponent;
 import com.ibm.soatf.config.iface.IfaceExecBlock;
 import com.ibm.soatf.config.iface.email.Attachment;
 import com.ibm.soatf.config.iface.email.Email;
@@ -34,19 +33,30 @@ import com.ibm.soatf.flow.OperationResult;
 import com.ibm.soatf.gui.ProgressMonitor;
 import com.ibm.soatf.tool.Utils;
 import com.sun.mail.pop3.POP3SSLStore;
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.Charset;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Properties;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.mail.BodyPart;
 import javax.mail.Folder;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
+import javax.mail.Part;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Store;
@@ -98,7 +108,8 @@ public class EmailComponent extends AbstractSoaTFComponent {
     private String archiveDirectory;
     private String fileContent;
     private String fileName;
-    private String actualFileUsed;
+
+    private static final Map<String, File> attachments = new HashMap<>();
 
     private final OperationResult cor;
 
@@ -112,7 +123,6 @@ public class EmailComponent extends AbstractSoaTFComponent {
         this.emailMasterConfig = emailMasterConfig;
         //this.ftpConfiguration = ftpInterfaceConfig;
         this.email = email;
-        this.actualFileUsed = "";
         this.directories = directories;
         this.workingDir = workingDir;
         cor = OperationResult.getInstance();
@@ -140,9 +150,9 @@ public class EmailComponent extends AbstractSoaTFComponent {
         this.port = this.emailMasterConfig.getPort();
         this.user = this.emailMasterConfig.getPrincipal();
         this.password = this.emailMasterConfig.getPassword();
-        this.security = Security.valueOf(this.emailMasterConfig.getSecurity());
+        this.security = Security.fromValue(this.emailMasterConfig.getSecurity());
         if (this.emailMasterConfig.getReadProtocol() != null) {
-            this.protocol = ReadProtocol.valueOf(this.emailMasterConfig.getReadProtocol());
+            this.protocol = ReadProtocol.fromValue(this.emailMasterConfig.getReadProtocol());
         }
         if (directories != null) {
             this.stageDirectory = directories.getStageDirectory();
@@ -169,6 +179,9 @@ public class EmailComponent extends AbstractSoaTFComponent {
             case EMAIL_SEND:
                 //generateFile();
                 emailSend();
+                break;
+            case EMAIL_CHECK_STRUCTURE:
+                emailCheck();
                 break;
             /*case FTP_CHECK_DELIVERED_FOLDER_FOR_FILE:
              checkFolderForFile(this.archiveDirectory);
@@ -271,14 +284,8 @@ public class EmailComponent extends AbstractSoaTFComponent {
             ProgressMonitor.increment("Reading the email message...");
             Message msg = inbox.getMessage(inbox.getMessageCount());
             
-            ProgressMonitor.increment("Storing the email message to disk...");
-            String filename = new StringBuilder(this.hostName)
-                        .append(MESSAGE_SUFFIX)
-                        .toString();
-            File file = new File(workingDir, filename);                
-            FileUtils.writeStringToFile(file, msg.getContent().toString());
-//            ProgressMonitor.increment("Sending the email message...");
-//            Transport.send(msg); 
+            ProgressMonitor.increment("Saving the email message to disk...");               
+            storeAttachments(msg, workingDir, this.hostName);
             cor.addMsg("Email was successfully read.");
             cor.markSuccessful();
         } catch (MessagingException | IOException emailex) {
@@ -498,6 +505,94 @@ public class EmailComponent extends AbstractSoaTFComponent {
 //                throw new EmailComponentException(msg);
 //        }
 //    }
+    
+     private void emailCheck() throws EmailComponentException {
+        if (email.getEmailAttachment() != null) {
+            ProgressMonitor.init(2+email.getEmailAttachment().size(), "Preparing to read email structure...");        
+        } else {
+            ProgressMonitor.init(2, "Preparing for reading email structure...");
+        }
+        boolean hasError = false;
+
+        File file = new File(workingDir, this.hostName+MESSAGE_SUFFIX);
+        if (!file.exists()) {
+            hasError = true;
+            cor.addMsg("Email body was not found");
+        } else {
+            String subject = null;
+            try (
+                InputStream fis = new FileInputStream(file);
+                InputStreamReader isr = new InputStreamReader(fis, Charset.forName("UTF-8"));
+                BufferedReader br = new BufferedReader(isr);
+            ) {
+                subject = br.readLine();
+                Pattern pattern = Pattern.compile(this.email.getInbound().getSubject());
+                Matcher matcher = pattern.matcher(subject); 
+                if (subject == null || !matcher.find()) {
+                    hasError = true;
+                    cor.addMsg("Email subject don't match the expected string");
+                }
+            } catch (IOException e) {
+                hasError = true;
+                cor.addMsg("Error while reading the email subject");
+            }            
+        }
+        ProgressMonitor.increment("Email body & subject checked");
+        if (email.getEmailAttachment() != null) {
+            for (Attachment a: email.getEmailAttachment()) {
+                final String fileName = new StringBuilder(this.hostName).append(NAME_DELIMITER).append(a.getFileName()).toString();
+                logger.trace("Looking for attachment with name "+fileName);
+                if (attachments.size() > 0) {
+                    if (attachments.get(fileName.toLowerCase()) == null) {
+                        hasError = true;
+                        cor.addMsg("Email attachment with name "+fileName+" was not found");                    
+                    }
+                } else {
+                    file = new File(workingDir, fileName.toLowerCase());
+                    if (!file.exists()) {
+                        hasError = true;
+                        cor.addMsg("Email attachment with name "+fileName+" was not found");                        
+                    }
+                }
+                ProgressMonitor.increment("Email attachmend "+fileName+" was checked");
+            }
+        }
+        if (!hasError) {
+            cor.addMsg("Email structure is complete.");
+            cor.markSuccessful();
+        }
+        ProgressMonitor.markDone();
+    }
+     
+    private static void storeAttachments(Message message, File path, String fileNamePrefix) throws MessagingException, IOException {
+        if (!(message.getContent() instanceof Multipart)) {
+                final File file = new File(path, fileNamePrefix+MESSAGE_SUFFIX);
+                final StringBuilder bodyContent = new StringBuilder(message.getSubject());
+                bodyContent.append("\n");
+                bodyContent.append(message.getContent().toString());                       
+                FileUtils.writeStringToFile(file, bodyContent.toString());
+                return;
+        }
+        Multipart multipart = (Multipart) message.getContent();
+        attachments.clear();
+        for (int i = 0; i < multipart.getCount(); i++) {
+            BodyPart bodyPart = multipart.getBodyPart(i);
+            if(!Part.ATTACHMENT.equalsIgnoreCase(bodyPart.getDisposition()) && (bodyPart.getFileName() == null || "".equals(bodyPart.getFileName()))) {
+                final File file = new File(path, fileNamePrefix+MESSAGE_SUFFIX);
+                final StringBuilder bodyContent = new StringBuilder(message.getSubject());
+                bodyContent.append("\n");
+                bodyContent.append(bodyPart.getContent().toString());                       
+                FileUtils.writeStringToFile(file, bodyContent.toString());
+                continue;
+            }
+            final String filename = new StringBuilder(fileNamePrefix).append(NAME_DELIMITER).append(bodyPart.getFileName()).toString();
+            final File file = new File(path, filename);
+            FileUtils.writeStringToFile(file, bodyPart.getContent().toString());
+            //attachments.add(file);
+            attachments.put(filename.toLowerCase(), file);
+        }
+    }
+    
     private void emailSend() throws EmailComponentException {
 
         //File localFile = new File(workingDir, actualFileUsed);
@@ -535,7 +630,7 @@ public class EmailComponent extends AbstractSoaTFComponent {
             Message msg = new MimeMessage(session);
             msg.setFrom(new InternetAddress(this.user));
             msg.addRecipient(Message.RecipientType.TO, new InternetAddress(this.email.getOutbound().getRecipient()));
-            msg.setSubject(Utils.insertTimestampToFilename(this.email.getOutbound().getSubject(), new Date()));//FlowExecutor.getActualRunDate()));
+            msg.setSubject(Utils.insertTimestampToFilename(this.email.getOutbound().getSubject(), FlowExecutor.getActualRunDate()));
             if (this.email.getEmailAttachment() != null && this.email.getEmailAttachment().size() > 0) {
                 Multipart mp = new MimeMultipart();
 
@@ -592,9 +687,18 @@ public class EmailComponent extends AbstractSoaTFComponent {
         }
         return localFile;
     }
+    
+    public File[] getStoredFiles(String fileNamePrefix, String objectName) {
+        String pattern = "*";
+        if (objectName != null) {
+            pattern = objectName;
+        }
+        final String filemask = new StringBuilder(fileNamePrefix).append(NAME_DELIMITER).append(pattern).toString();
+        return FileUtils.convertFileCollectionToFileArray(FileUtils.listFiles(workingDir, new WildcardFileFilter(filemask), TrueFileFilter.INSTANCE));
+    }
 
     public File getFile(File workingDirectory, String fileName, String fileContent) throws EmailComponentException {
-        String pattern = "*_" + fileName;
+        String pattern = "*-" + fileName;
         Iterator<File> it = FileUtils.iterateFiles(workingDirectory, new WildcardFileFilter(pattern), TrueFileFilter.INSTANCE);
         int count = 0;
         File f = null;
