@@ -40,6 +40,11 @@ public enum SOATFCompType {
      *
      */
     FTP("FTP Testing Framework Type Domain"),
+    
+    /**
+     *
+     */
+    EMAIL("Email Testing Framework Type Domain"),
 
     /**
      *

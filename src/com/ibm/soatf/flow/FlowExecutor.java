@@ -19,6 +19,7 @@ package com.ibm.soatf.flow;
 
 import com.ibm.soatf.FrameworkException;
 import com.ibm.soatf.component.database.DatabaseComponent;
+import com.ibm.soatf.component.email.EmailComponent;
 import com.ibm.soatf.component.file.FileComponent;
 import com.ibm.soatf.component.ftp.FTPComponent;
 import com.ibm.soatf.component.jms.JmsComponent;
@@ -36,12 +37,14 @@ import com.ibm.soatf.config.iface.SOATFIfaceConfig;
 import com.ibm.soatf.config.iface.SOATFIfaceConfig.IfaceEndPoints.IfaceEndPoint;
 import com.ibm.soatf.config.iface.db.DBConfig;
 import com.ibm.soatf.config.iface.db.DbObject;
+import com.ibm.soatf.config.iface.email.EMAILConfig;
 import com.ibm.soatf.config.iface.ftp.FTPConfig;
 import com.ibm.soatf.config.iface.jms.JMSConfig;
 import com.ibm.soatf.config.iface.soap.EnvelopeConfig;
 import com.ibm.soatf.config.iface.soap.SOAPConfig;
 import com.ibm.soatf.config.iface.util.UTILConfig;
 import com.ibm.soatf.config.master.Databases.Database.DatabaseInstance;
+import com.ibm.soatf.config.master.EmailServers;
 import com.ibm.soatf.config.master.ExecBlockOperation;
 import com.ibm.soatf.config.master.ExecuteOn;
 import com.ibm.soatf.config.master.FTPServers;
@@ -412,6 +415,7 @@ public class FlowExecutor {
             FTPConfig ftpConfig = null;
             JMSConfig jmsConfig = null;
             SOAPConfig soapConfig = null;
+            EMAILConfig emailConfig = null;
             DatabaseComponent dbComp = null;
             File workingDir = ICFG.getComponentWorkingDir(ifaceId, interfaceFlowPattern, interfaceTestScenario.getRefId(), component.toLowerCase());
             File rootWorkingDir = ICFG.getComponentWorkingDir(ifaceId, interfaceFlowPattern, interfaceTestScenario.getRefId(), null);
@@ -518,6 +522,21 @@ public class FlowExecutor {
                     }
                     SOAPComponent soapComp = new SOAPComponent(ofmInstance, soapConfig, workingDir, soapEnvelopeElements);
                     soapComp.execute(operation);
+                    break;
+                case "EMAIL":
+                    emailConfig = ICFG.getEmailConfig(interfaceExecutionBlock, operation.getExecuteOn());
+                    EmailServers.EmailServer.EmailServerInstance emailServerInstance = MCFG.getEmailServerInstance(envName, emailConfig.getRefId());
+                    EMAILConfig.Email email = ICFG.getIfaceEmail(this.envName, interfaceExecutionBlock, operation.getExecuteOn());
+                    if (email == null) {
+                        String msg = "There exists no Email configurations within config.xml file for interface "
+                                + this.ifaceId + ", execution block " + interfaceExecutionBlock.getRefId()
+                                + " targeting " + operation.getExecuteOn().value() + ".";
+                        logger.error(msg);
+                        throw new FrameworkConfigurationException(msg);
+                    }
+                    
+                    EmailComponent emailComp = new EmailComponent(interfaceExecutionBlock, emailServerInstance, email, null, workingDir);
+                    emailComp.execute(operation);
                     break;
                 case "UTIL":
                     UTILConfig utilConfig = ICFG.getUtilConfig();

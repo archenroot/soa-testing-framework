@@ -45,7 +45,7 @@ public enum CompOperType {
     /**
      *
      */
-    DB_CHECK_RECORD_NOT_POOLED(SOATFCompType.DATABASE, ""),
+    DB_CHECK_RECORD_NOT_POLLED(SOATFCompType.DATABASE, ""),
     /**
      * Generate dynamically update statement with random values based on column
      * definition for one row based on defined primary/unique key column and its
@@ -85,7 +85,7 @@ public enum CompOperType {
     /**
      *
      */
-    DB_CHECK_RECORD_POOLED(SOATFCompType.DATABASE, ""),
+    DB_CHECK_RECORD_POLLED(SOATFCompType.DATABASE, ""),
     /**
      * Dummy constant for database operations EnumSet.range() end.
      */

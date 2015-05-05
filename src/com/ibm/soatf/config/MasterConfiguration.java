@@ -20,6 +20,8 @@ package com.ibm.soatf.config;
 import static com.ibm.soatf.config.MasterFrameworkConfig.IFACE_CONFIG_FILENAME;
 import com.ibm.soatf.config.master.Databases.Database;
 import com.ibm.soatf.config.master.Databases.Database.DatabaseInstance;
+import com.ibm.soatf.config.master.EmailServers.EmailServer;
+import com.ibm.soatf.config.master.EmailServers.EmailServer.EmailServerInstance;
 import com.ibm.soatf.config.master.ExecBlockOperation;
 import com.ibm.soatf.config.master.FTPServers.FtpServer;
 import com.ibm.soatf.config.master.FTPServers.FtpServer.Directories;
@@ -589,10 +591,22 @@ public final class MasterConfiguration {
      */
     public List<FtpServer> getFTPServers() throws MasterConfigurationException {
         if (XML_CONFIG.getEnvironments().getFtpServers().getFtpServer().isEmpty()) {
-            throw new MasterConfigurationException("There are is FTP servers configuration.");
+            throw new MasterConfigurationException("There are zero FTP servers in configuration.");
         }
         return XML_CONFIG.getEnvironments().getFtpServers().getFtpServer();
     }
+    
+    /**
+     *
+     * @return @throws com.ibm.soatf.config.MasterConfigurationException @throws
+     * FrameworkConfigurationException
+     */
+    public List<EmailServer> getEmailServers() throws MasterConfigurationException {
+        if (XML_CONFIG.getEnvironments().getEmailServers().getEmailServer().isEmpty()) {
+            throw new MasterConfigurationException("There are zero Email servers in configuration.");
+        }
+        return XML_CONFIG.getEnvironments().getEmailServers().getEmailServer();
+    }    
 
     /**
      *
@@ -608,6 +622,21 @@ public final class MasterConfiguration {
         }
         throw new MasterConfigurationException("FTP server configuration with identificator " + identificator + " cannot be found.");
     }
+    
+    /**
+     *
+     * @param identificator
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public EmailServer getEmailServer(String identificator) throws MasterConfigurationException {
+        for (EmailServer emailServer : getEmailServers()) {
+            if (emailServer.getIdentificator().equals(identificator)) {
+                return emailServer;
+            }
+        }
+        throw new MasterConfigurationException("Email server configuration with identificator " + identificator + " cannot be found.");
+    }    
 
     /**
      *
@@ -636,6 +665,19 @@ public final class MasterConfiguration {
         }
         return getFTPServer(identificator).getFtpServerInstance();
     }
+    
+    /**
+     *
+     * @param identificator
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public List<EmailServerInstance> getEmailServerInstances(String identificator) throws MasterConfigurationException {
+        if (getEmailServer(identificator).getEmailServerInstance().isEmpty()) {
+            throw new MasterConfigurationException("There are no email server instances configured for environment identificator " + identificator + ".");
+        }
+        return getEmailServer(identificator).getEmailServerInstance();
+    }    
 
     /**
      *
@@ -652,6 +694,22 @@ public final class MasterConfiguration {
         }
         throw new MasterConfigurationException("FTP instance configuration with identificator " + identificator + " for environment " + environment + " cannot be found.");
     }
+    
+    /**
+     *
+     * @param environment
+     * @param identificator
+     * @return
+     * @throws com.ibm.soatf.config.MasterConfigurationException
+     */
+    public EmailServerInstance getEmailServerInstance(String environment, String identificator) throws MasterConfigurationException {
+        for (EmailServerInstance inst : getEmailServerInstances(identificator)) {
+            if (inst.getEnvironment().equals(environment)) {
+                return inst;
+            }
+        }
+        throw new MasterConfigurationException("Email instance configuration with identificator " + identificator + " for environment " + environment + " cannot be found.");
+    }    
 
     /**
      *
